@@ -42,6 +42,7 @@
       transition: background .25s ease, color .25s ease;
     }
 
+    /* style 背景跟主站同步 */
     html[data-style="panther"] body{
       background:
         radial-gradient(circle at top,rgba(244,114,182,.28),transparent),
@@ -53,18 +54,65 @@
         var(--bg);
     }
 
+    /* 角色背景（左右兩邊的圖） */
+    .side-panther,
+    .side-hangyodon{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      width:320px;
+      opacity:.9;
+      z-index:1;
+      pointer-events:none;
+      user-select:none;
+      transition: transform .25s ease, opacity .25s ease;
+      display:none;
+    }
+
+    .side-panther.left{left:1.5%; transform:translateY(-50%) scaleX(1);}
+    .side-panther.right{right:1.5%; transform:translateY(-50%) scaleX(1);}
+
+    .side-hangyodon.left{left:1.5%; transform:translateY(-50%) scaleX(-1);}
+    .side-hangyodon.right{right:1.5%; transform:translateY(-50%) scaleX(-1);}
+
+    html[data-style="panther"] .side-panther{display:block;}
+    html[data-style="hangyodon"] .side-hangyodon{display:block;}
+
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{
+        display:none !important;
+      }
+
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block !important;
+        position:fixed !important;
+        left:50% !important;
+        right:auto !important;
+        top:50% !important;
+        transform:translate(-50%, -50%) !important;
+        width:260px;
+        opacity:.7;
+      }
+    }
+
     h1 {
       color: var(--accent);
       font-size: 20px;
       font-weight: 600;
       margin: 0 0 4px 0;
       text-align: center;
+      position: relative;
+      z-index: 2;
     }
     .subtitle {
       font-size: 13px;
       color: var(--text-soft);
       margin: 0 0 12px 0;
       text-align: center;
+      position: relative;
+      z-index: 2;
     }
 
     .toolbar {
@@ -73,6 +121,8 @@
       flex-wrap: wrap;
       justify-content: center;
       margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
     }
     .btn {
       font-size: 13px;
@@ -106,6 +156,7 @@
       overflow: hidden;
       -webkit-overflow-scrolling: touch;
       position: relative;
+      z-index: 2;
     }
     .viewer iframe{
       width:100%;
@@ -128,6 +179,13 @@
 </head>
 <body>
 
+  <!-- 左右角色圖 -->
+  <img src="pinkpanther1.png" alt="" class="side-panther left">
+  <img src="pinkpanther2.png" alt="" class="side-panther right">
+
+  <img src="hangyodon1.png" alt="" class="side-hangyodon left">
+  <img src="hangyodon2.png" alt="" class="side-hangyodon right">
+
   <h1>Tags List</h1>
   <div class="subtitle">PLC / SCADA Tag Reference</div>
 
@@ -143,10 +201,9 @@
   <script>
     (function () {
       // ===== 1. 設定 Tags list PDF 檔名 =====
-      // TODO：這裡改成你的實際檔名
       const pdfFileName = 'F13_PLC_Tags list.pdf';
 
-      // 和 Tags-list.html 在同一層
+      // 和 F13_PLC_Tags list.html 在同一層
       const pdfUrlDirect = pdfFileName;
 
       // 從 pdfjs/web/viewer.html 的角度看，要回到根目錄再找 PDF
