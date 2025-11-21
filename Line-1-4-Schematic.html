@@ -53,6 +53,56 @@
         radial-gradient(circle at top,rgba(56,189,248,.35),transparent),
         var(--bg);
     }
+    /* Back to Top button base */
+#backToTop {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  z-index: 9999;
+  display: none;
+  transition: all .25s ease;
+}
+
+/* hover */
+#backToTop:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.30);
+}
+
+/* === 主題變換版本 === */
+
+/* panther → 使用粉紅角色圖片 */
+html[data-style="panther"] #backToTop {
+  background: transparent;
+  background-image: url("pinkpanther2.png");
+  background-size: 100% 100%;
+  background-position: center;
+  color: transparent;
+  border: none;
+}
+
+/* hangyodon → 使用魚丁角色圖片 */
+html[data-style="hangyodon"] #backToTop {
+  background: transparent;
+  background-image: url("hangyodon2.png");
+  background-size: 100% 100%;
+  background-position: center;
+  color: transparent;
+  border: none;
+}
 
     /* 角色背景 */
     .side-panther,
@@ -200,6 +250,28 @@
     <!-- 電腦：pdf.js viewer；手機 / iPad：會被 JS 改成按鈕 -->
     <iframe id="pdfFrame" title="PDF viewer"></iframe>
   </div>
+<script>
+(function(){
+  const btn = document.getElementById('backToTop');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 250) {
+      btn.style.display = 'flex';
+      btn.style.opacity = '1';
+    } else {
+      btn.style.opacity = '0';
+      btn.style.display = 'none';
+    }
+  });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+})();
+</script>
 
   <script>
   (function () {
