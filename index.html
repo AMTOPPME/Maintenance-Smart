@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Maintenance Smart | Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --card-bg:#fff;
+      --border-subtle:#e5e7eb;
+      --accent:#2563eb;
+      --accent-soft:#eff6ff;
+      --accent-hover:#1d4ed8;
+      --text:#111827;
+      --text-soft:#6b7280;
+      --radius-xl:18px;
+      --shadow-soft-sm:0 10px 26px rgba(15,23,42,.06);
+      --shadow-soft-md:0 16px 40px rgba(15,23,42,.09);
+      --small-font:13px; --xsmall-font:11px;
+    }
+
+    /* style 主題底色（index 用純色，不用圖） */
+    html[data-style="panther"]{
+      --bg:#ffe4ec;   /* 淡粉 */
+    }
+    html[data-style="hangyodon"]{
+      --bg:#dbeafe;   /* 淡藍 */
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      font-size:15px;
+      color:var(--text);
+      background:var(--bg); /* 純顏色背景 */
+      min-height:100vh;
+      overflow-x:hidden;
+      transition:background .25s ease,color .25s ease;
+    }
+
+    .page{
+      position:relative;
+      width:100%;
+      max-width:none;
+      margin:0;
+      padding:24px 16px 40px;
+      z-index:2;
+    }
+
+    .topbar{
+      background:var(--card-bg);
+      padding:18px 20px;
+      border-radius:22px;
+      border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow-soft-md);
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-start;
+      margin-bottom:18px;
+      transition:background .25s ease,box-shadow .25s ease,border-color .25s ease;
+    }
+
+    /* 左側：品牌 + Modules 按鈕（上下排列） */
+    .top-left{
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;  /* 上 logo、下按鈕 */
+      gap:10px;
+      align-items:flex-start;
+      min-height:72px;                /* 讓按鈕靠左下 */
+    }
+
+    .brand-wrap{display:flex;align-items:center;gap:10px}
+
+    /* 左上主題 icon：藍色主題用漸層方塊，其他主題顯示角色頭像 */
+    .mascot{
+      width:28px;
+      height:28px;
+      border-radius:9px;
+      background:radial-gradient(circle at 30% 0,#bfdbfe,#2563eb); /* 藍色預設漸層 */
+      box-shadow:0 0 10px rgba(37,99,235,0.35);
+      flex-shrink:0;
+      object-fit:cover;
+      background-size:cover;
+      background-position:center;
+    }
+
+    .brand-main{
+      font-size:19px;
+      font-weight:650;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      gap:6px
+    }
+    .brand-sub{font-size:13px;color:var(--text-soft)}
+
+    /* Modules 按鈕（topbar 左下角） */
+    .menu-button{
+      border-radius:999px;
+      border:1px solid #e5e7eb;
+      background:#eff6ff;
+      padding:10px 22px;
+      font-size:14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      color:#1d4ed8;
+      box-shadow:0 4px 10px rgba(129,140,248,.35);
+      transition:all .18s ease;
+    }
+    .menu-button:hover{
+      background:#dbeafe;
+      transform:translateY(-1px);
+      box-shadow:0 6px 16px rgba(129,140,248,.45);
+    }
+    .menu-icon{font-size:16px;}
+
+    .top-meta{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-size:11px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pill{
+      padding:5px 11px;
+      border-radius:999px;
+      border:1px solid #e5e7eb;
+      background:#f9fafb;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      transition:background .2s ease,border-color .2s ease,color .2s ease;
+    }
+    .pill-label{color:var(--text-soft)}
+    .pill-strong{color:var(--text);font-weight:500}
+
+    .pill.designer{
+      padding:6px 13px;
+      border-color:#dbeafe;
+      background:#eff6ff;
+    }
+    .pill-designer-strong{
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:.02em;
+      color:var(--text);
+    }
+
+    /* 整體 workspace：只剩右側內容 */
+    .workspace{
+      min-height:60vh;
+    }
+
+    .main{
+      flex:1;
+      min-width:0;
+    }
+
+    .section-head{
+      margin-bottom:10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .section-title{font-size:18px;font-weight:600;color:var(--text);margin:0}
+    .section-sub{font-size:var(--small-font);color:var(--text-soft);margin:2px 0 0}
+
+    /* iframe 區域 */
+    .iframe-wrap{
+      background:var(--card-bg);
+      border-radius:var(--radius-xl);
+      border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow-soft-sm);
+      overflow:hidden;
+      height:calc(100vh - 170px);
+    }
+    .iframe-wrap iframe{
+      width:100%;
+      height:100%;
+      min-height:0;
+      border:0;
+      display:block;
+      background:#111827;
+    }
+
+    /* Modules 展開面板（按鈕打開的功能列） */
+    .nav-panel{
+      position:absolute;
+      left:24px;
+      top:calc(24px + 72px); /* 大約在 topbar 下方 */
+      max-width:260px;
+      background:rgba(255,255,255,0.97);
+      border-radius:18px;
+      padding:10px 6px 10px;
+      box-shadow:var(--shadow-soft-md);
+      border:1px solid var(--border-subtle);
+      backdrop-filter:blur(12px);
+      z-index:10;
+      display:none;
+    }
+    .nav-panel.open{
+      display:block;
+    }
+
+    .nav-list{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .nav-item-btn{
+      width:100%;
+      border:none;
+      border-radius:999px;
+      padding:8px 10px;
+      background:transparent;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      font-size:13px;
+      color:var(--text-soft);
+      transition:background .15s ease,color .15s ease,transform .1s ease;
+      text-align:left;
+      white-space:nowrap;
+      overflow:hidden;
+    }
+    .nav-icon{
+      font-size:18px;
+      flex-shrink:0;
+    }
+    .nav-label{
+      flex:1;
+      text-overflow:ellipsis;
+      overflow:hidden;
+    }
+    .nav-item-btn:hover{
+      background:var(--accent-soft);
+      color:var(--accent);
+      transform:translateY(-1px);
+    }
+    .nav-item-btn.active{
+      background:var(--accent);
+      color:#fff;
+      box-shadow:0 4px 10px rgba(37,99,235,.35);
+    }
+
+    /* ==== 兩層子列表共用樣式 ==== */
+    .nav-group-schematic .nav-item-btn,
+    .nav-group-backup .nav-item-btn{
+      justify-content:space-between;
+    }
+    .nav-chevron{
+      font-size:14px;
+      opacity:.7;
+    }
+
+    .schematic-panel,
+    .backup-panel{
+      margin-top:4px;
+      margin-left:26px;
+      padding:8px 10px 10px;
+      background:rgba(249,250,251,0.98);
+      border-radius:14px;
+      border:1px solid var(--border-subtle);
+      box-shadow:0 8px 18px rgba(15,23,42,.04);
+      display:none;
+    }
+    .schematic-panel.open,
+    .backup-panel.open{
+      display:block;
+    }
+
+    .schematic-title,
+    .backup-title{
+      font-size:11px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--text-soft);
+      margin-bottom:6px;
+    }
+
+    .schematic-line-row,
+    .backup-line-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-bottom:6px;
+    }
+    .schematic-line-btn,
+    .backup-line-btn{
+      border-radius:999px;
+      border:1px solid transparent;
+      background:#eff6ff;
+      padding:4px 9px;
+      font-size:11px;
+      cursor:pointer;
+      color:#1d4ed8;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      transition:background .15s,border-color .15s,color .15s,transform .1s;
+    }
+    .schematic-line-btn:hover,
+    .backup-line-btn:hover{
+      background:#dbeafe;
+      transform:translateY(-1px);
+    }
+    .schematic-line-btn.active,
+    .backup-line-btn.active{
+      background:#1d4ed8;
+      border-color:#1d4ed8;
+      color:#fff;
+      box-shadow:0 3px 8px rgba(37,99,235,.4);
+    }
+
+    .schematic-sec-row,
+    .backup-sec-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .schematic-sec-btn,
+    .backup-sec-btn{
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:#f9fafb;
+      padding:4px 10px;
+      font-size:11px;
+      cursor:pointer;
+      color:var(--text-soft);
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      transition:background .15s,border-color .15s,color .15s,transform .1s;
+    }
+    .schematic-sec-btn span.code,
+    .backup-sec-btn span.code{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:11px;
+    }
+    .schematic-sec-btn:hover,
+    .backup-sec-btn:hover{
+      background:#fff;
+      border-color:var(--accent-soft);
+      color:var(--accent);
+      transform:translateY(-1px);
+    }
+    .schematic-hint,
+    .backup-hint{
+      margin-top:6px;
+      font-size:10px;
+      color:var(--text-soft);
+    }
+
+    @media (max-width:900px){
+      .page{
+        padding-top:16px;
+        padding-bottom:24px;
+      }
+
+      .topbar{
+        display:flex;
+        flex-direction:column;
+        align-items:flex-start;
+        gap:10px;
+        padding:14px 14px 18px;
+      }
+
+      /* 手機版：把 top-left 展開，裡面的東西當成 topbar 直列項目 */
+      .top-left{
+        display:contents;
+        min-height:0;        /* 原本的 min-height 取消 */
+      }
+
+      .brand-main{
+        font-size:17px;
+        letter-spacing:.10em;
+      }
+
+      .brand-sub{
+        font-size:12px;
+      }
+
+      .top-meta{
+        width:100%;
+        justify-content:flex-start;
+        gap:6px;
+        flex-wrap:wrap;
+        order:2;             /* 在品牌之後、Modules 之前 */
+      }
+
+      .top-meta .pill{
+        flex-shrink:0;
+      }
+
+      /* 手機版 Modules 按鈕：放在 topbar 最下面，佔滿一行 */
+      .menu-button{
+        order:3;             /* 整個 topbar 的最後一個 */
+        align-self:stretch;
+        justify-content:center;
+        text-align:center;
+        margin-top:4px;
+      }
+
+      .nav-panel{
+        position:relative;
+        left:0;
+        top:0;
+        width:100%;
+        max-width:none;
+        margin-top:8px;
+      }
+
+      .schematic-panel,
+      .backup-panel{
+        margin-left:0;
+      }
+
+      .iframe-wrap{
+        height:calc(100vh - 220px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div class="top-left">
+        <div class="brand-wrap">
+          <div class="mascot"></div>
+          <div>
+            <div class="brand-main">MAINTENANCE SMART</div>
+            <div class="brand-sub">Smarter maintenance, easier life.</div>
+          </div>
+        </div>
+        <button id="menuButton" class="menu-button" type="button" aria-expanded="false" aria-controls="navPanel">
+          <span class="menu-icon">☰</span>
+          <span class="menu-label">Modules</span>
+        </button>
+      </div>
+      <div class="top-meta">
+        <div class="pill designer">
+          <span class="pill-label">Designed by</span>
+          <span class="pill-designer-strong">Benjamin Lin</span>
+        </div>
+        <div class="pill">
+          <span class="pill-label">Modified Date</span>
+          <span class="pill-strong" id="modDate">Checking…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modules 功能列 -->
+    <nav class="nav-panel" id="navPanel" aria-label="Module navigation">
+      <ul class="nav-list">
+        <li>
+          <button
+            class="nav-item-btn active"
+            data-src="Home.html"
+            data-title="Home"
+            data-sub="Welcome to Maintenance Smart.">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
+          </button>
+        </li>
+
+        <li>
+          <button
+            class="nav-item-btn"
+            data-src="PC Manager.html"
+            data-title="PC Manager"
+            data-sub="BOPP1 computer asset list from inventory.csv.">
+            <span class="nav-icon">💻</span>
+            <span class="nav-label">PC Manager</span>
+          </button>
+        </li>
+
+        <!-- Line Schematic：兩層列表 -->
+        <li class="nav-group-schematic">
+          <button
+            class="nav-item-btn"
+            type="button"
+            data-role="schematic-parent"
+            data-title="Line Schematic"
+            data-sub="Select line (1~4) and section F12/F13/F16/F201.">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Line Schematic</span>
+            <span class="nav-chevron" aria-hidden="true">▾</span>
+          </button>
+
+          <div class="schematic-panel" id="schematicPanel" aria-label="Line schematic selector">
+            <div class="schematic-title">LINE</div>
+            <div class="schematic-line-row">
+              <button class="schematic-line-btn active" type="button" data-line="Line1">Line 1</button>
+              <button class="schematic-line-btn" type="button" data-line="Line2">Line 2</button>
+              <button class="schematic-line-btn" type="button" data-line="Line3">Line 3</button>
+              <button class="schematic-line-btn" type="button" data-line="Line4">Line 4</button>
+            </div>
+
+            <div class="schematic-title">SECTION</div>
+            <div class="schematic-sec-row">
+              <button class="schematic-sec-btn" type="button" data-section="F12" data-label="F12">
+                <span class="code">F12</span>
+              </button>
+              <button class="schematic-sec-btn" type="button" data-section="F13" data-label="F13">
+                <span class="code">F13</span>
+              </button>
+              <button class="schematic-sec-btn" type="button" data-section="F16" data-label="F16">
+                <span class="code">F16</span>
+              </button>
+              <button class="schematic-sec-btn" type="button" data-section="F201" data-label="F201">
+                <span class="code">F201</span>
+              </button>
+            </div>
+
+            <div class="schematic-hint">
+              Default file rule:
+              <code>Line-[lineNumber]-Schematic.html?sec=[section]</code>
+              (e.g. <code>Line-1-Schematic.html?sec=F13</code>)
+            </div>
+          </div>
+        </li>
+
+        <!-- Program Backup：兩層列表（保持你原本那版） -->
+        <li class="nav-group-backup">
+          <button
+            class="nav-item-btn"
+            type="button"
+            data-role="backup-parent"
+            data-title="Program Backup"
+            data-sub="Select line (Line 1~4 / Reclaim) and section to open backup.">
+            <span class="nav-icon">📁</span>
+            <span class="nav-label">Program Backup</span>
+            <span class="nav-chevron" aria-hidden="true">▾</span>
+          </button>
+
+          <div class="backup-panel" id="backupPanel" aria-label="Program backup selector">
+            <div class="backup-title">LINE</div>
+            <div class="backup-line-row">
+              <button class="backup-line-btn active" type="button" data-line="Line1">Line 1</button>
+              <button class="backup-line-btn" type="button" data-line="Line2">Line 2</button>
+              <button class="backup-line-btn" type="button" data-line="Line3">Line 3</button>
+              <button class="backup-line-btn" type="button" data-line="Line4">Line 4</button>
+              <button class="backup-line-btn" type="button" data-line="Reclaim">Reclaim</button>
+            </div>
+
+            <div class="backup-title">SECTION</div>
+            <div class="backup-sec-row">
+              <button class="backup-sec-btn" type="button" data-section="F12" data-label="F12">
+                <span class="code">F12</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="F13" data-label="F13">
+                <span class="code">F13</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="F16" data-label="F16">
+                <span class="code">F16</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="F42" data-label="F42">
+                <span class="code">F42</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="F55" data-label="F55">
+                <span class="code">F55</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="F201" data-label="F201">
+                <span class="code">F201</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="FlameTreater" data-label="Flame Treater">
+                <span class="code">Flame Treater</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="MainBlending" data-label="Main Blending">
+                <span class="code">Main Blending</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="MainLoading" data-label="Main Loading">
+                <span class="code">Main Loading</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="ScadaPC1PC2" data-label="Scada PC1 PC2">
+                <span class="code">Scada PC1 PC2</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="SoftalTreater" data-label="Softal Treater">
+                <span class="code">Softal Treater</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="TDOBruckpanel" data-label="TDO Bruckpanel">
+                <span class="code">TDO Bruckpanel</span>
+              </button>
+              <button class="backup-sec-btn" type="button" data-section="WinderCarrgeBruckpanel" data-label="Winder Carrge Bruckpanel">
+                <span class="code">Winder Carrge Bruckpanel</span>
+              </button>
+            </div>
+
+            <div class="backup-hint">
+              File naming rule (default): <code>Program-Backup-[LineKey]-[SectionKey].html</code>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <button
+            class="nav-item-btn"
+            data-src="Calibration-Portal.html"
+            data-title="Calibration SOP"
+            data-sub="Step-by-step calibration procedures.">
+            <span class="nav-icon">🧪</span>
+            <span class="nav-label">Calibration</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="workspace">
+      <main class="main">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title" id="moduleTitle">Home</h2>
+            <p class="section-sub" id="moduleSub">
+              Welcome to Maintenance Smart.
+            </p>
+          </div>
+        </div>
+
+        <div class="iframe-wrap">
+          <iframe id="mainFrame" title="Module view" src="Home.html"></iframe>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    /* ---------- Modified Date：用這個 HTML 檔最後修改時間 ---------- */
+    (function () {
+      function updateModDate() {
+        var el = document.getElementById('modDate');
+        if (!el) return;
+
+        var d = new Date(document.lastModified);
+        if (isNaN(d.getTime())) {
+          el.textContent = 'N/A';
+          return;
+        }
+
+        el.textContent = d.toLocaleString([], {
+          year:   'numeric',
+          month:  '2-digit',
+          day:    '2-digit',
+          hour:   '2-digit',
+          minute: '2-digit'
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateModDate);
+      } else {
+        updateModDate();
+      }
+    })();
+
+    // ---- 子頁面同步主頁 style ----
+    (function syncStyleToIframe(){
+      const frame = document.getElementById("mainFrame");
+
+      function applyStyleToFrame(){
+        if (!frame || !frame.contentDocument) return;
+        const style = document.documentElement.getAttribute("data-style") || "blue";
+        const frameHtml = frame.contentDocument.documentElement;
+        frameHtml.setAttribute("data-style", style);
+      }
+
+      if (frame){
+        frame.addEventListener("load", function(){
+          setTimeout(applyStyleToFrame, 30);
+        });
+      }
+
+      window._msSyncFrameStyle = applyStyleToFrame;
+    })();
+
+    // Modules 面板開關
+    (function(){
+      const menuBtn = document.getElementById('menuButton');
+      const panel = document.getElementById('navPanel');
+
+      function togglePanel(){
+        const isOpen = panel.classList.toggle('open');
+        menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      }
+
+      if (menuBtn && panel){
+        menuBtn.addEventListener('click', togglePanel);
+      }
+
+      // 點擊頁面其他地方就關閉（桌機用，比較乾淨）
+      document.addEventListener('click', (e)=>{
+        if (!panel.classList.contains('open')) return;
+        const insidePanel = panel.contains(e.target);
+        const insideBtn   = menuBtn.contains(e.target);
+        if (!insidePanel && !insideBtn){
+          panel.classList.remove('open');
+          menuBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    })();
+
+    // 切換模組 + Line Schematic / Program Backup 兩層選單
+    (function(){
+      const frame   = document.getElementById('mainFrame');
+      const titleEl = document.getElementById('moduleTitle');
+      const subEl   = document.getElementById('moduleSub');
+      const panel   = document.getElementById('navPanel');
+      const menuBtn = document.getElementById('menuButton');
+      const buttons = document.querySelectorAll('.nav-item-btn');
+
+      const schematicPanel   = document.getElementById('schematicPanel');
+      const schematicLineBtns= document.querySelectorAll('.schematic-line-btn');
+      const schematicSecBtns = document.querySelectorAll('.schematic-sec-btn');
+      let currentSchematicLine = 'Line1';
+
+      const backupPanel   = document.getElementById('backupPanel');
+      const backupLineBtns= document.querySelectorAll('.backup-line-btn');
+      const backupSecBtns = document.querySelectorAll('.backup-sec-btn');
+      let currentBackupLine = 'Line1';
+
+      function setModule(title, sub){
+        if (titleEl) titleEl.textContent = title;
+        if (subEl)   subEl.textContent   = sub;
+      }
+
+      function formatLineLabel(lineKey){
+        if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
+        return lineKey;
+      }
+
+     // Schematic 檔名規則：Line-1-Schematic.html?sec=F13
+      function buildSchematicFileName(lineKey, sectionKey){
+        const n = lineKey.replace('Line',''); // Line1 -> 1
+        return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
+        }
+
+
+      // Program Backup 檔名規則
+      function buildBackupFileName(lineKey, sectionKey){
+        return 'Program-Backup-' + lineKey + '-' + sectionKey + '.html';
+      }
+
+      // 預設主模組切換（Home / PC Manager / Calibration 等）
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const role = btn.dataset.role || '';
+
+          // Line Schematic parent：只展開 / 收合子列表
+          if (role === 'schematic-parent'){
+            if (!schematicPanel) return;
+            const isOpen = schematicPanel.classList.toggle('open');
+
+            // 取消其他一般模組的 active
+            buttons.forEach(b=>{
+              if (b !== btn && !b.dataset.role){
+                b.classList.remove('active');
+              }
+            });
+            btn.classList.add('active');
+
+            // 若開 schematic，把 backup 關掉
+            if (backupPanel) backupPanel.classList.remove('open');
+
+            setModule(
+              btn.dataset.title || 'Line Schematic',
+              btn.dataset.sub   || 'Select line and section.'
+            );
+            return;
+          }
+
+          // Program Backup parent：只展開 / 收合子列表
+          if (role === 'backup-parent'){
+            if (!backupPanel) return;
+            const isOpen = backupPanel.classList.toggle('open');
+
+            buttons.forEach(b=>{
+              if (b !== btn && !b.dataset.role){
+                b.classList.remove('active');
+              }
+            });
+            btn.classList.add('active');
+
+            // 若開 backup，把 schematic 關掉
+            if (schematicPanel) schematicPanel.classList.remove('open');
+
+            setModule(
+              btn.dataset.title || 'Program Backup',
+              btn.dataset.sub   || 'Select line and section to open backup.'
+            );
+            return;
+          }
+
+          // 其他一般按鈕：照舊
+          const src = btn.dataset.src;
+          if (!src) return;
+
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const title = btn.dataset.title || 'Module';
+          const sub   = btn.dataset.sub || '';
+          if (frame && src) frame.src = src;
+          setModule(title, sub);
+
+          if (panel && panel.classList.contains('open')){
+            panel.classList.remove('open');
+            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+          }
+
+          if (schematicPanel) schematicPanel.classList.remove('open');
+          if (backupPanel)    backupPanel.classList.remove('open');
+        });
+      });
+
+      // Line Schematic：Line 1~4
+      schematicLineBtns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const lineKey = btn.getAttribute('data-line') || 'Line1';
+          currentSchematicLine = lineKey;
+          schematicLineBtns.forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      // Line Schematic：Section F12/F13/F16/F201
+      schematicSecBtns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const sectionKey   = btn.getAttribute('data-section');
+          const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+          if (!sectionKey) return;
+
+          const file = buildSchematicFileName(currentSchematicLine, sectionKey);
+          if (frame){
+            frame.src = file;
+          }
+
+          const lineLabel = formatLineLabel(currentSchematicLine);
+          setModule(
+            'Line Schematic – ' + lineLabel + ' – ' + sectionLabel,
+            'Schematic file: ' + file
+          );
+
+          if (panel && panel.classList.contains('open')){
+            panel.classList.remove('open');
+            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+          }
+        });
+      });
+
+      // Program Backup：Line1~4 / Reclaim
+      backupLineBtns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const lineKey = btn.getAttribute('data-line') || 'Line1';
+          currentBackupLine = lineKey;
+          backupLineBtns.forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      // Program Backup：Section / System
+      backupSecBtns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const sectionKey   = btn.getAttribute('data-section');
+          const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+          if (!sectionKey) return;
+
+          const file = buildBackupFileName(currentBackupLine, sectionKey);
+          if (frame){
+            frame.src = file;
+          }
+
+          const lineLabel = formatLineLabel(currentBackupLine);
+          setModule(
+            'Program Backup – ' + lineLabel + ' – ' + sectionLabel,
+            'Backup page: ' + file
+          );
+
+          if (panel && panel.classList.contains('open')){
+            panel.classList.remove('open');
+            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+          }
+        });
+      });
+    })();
+
+    // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
+    (function(){
+      const STYLE_KEY = 'ms-style';
+      const root = document.documentElement;
+      const mascot = document.querySelector('.mascot');
+      const styles = ['blue', 'panther', 'hangyodon'];
+
+      const themeConfig = {
+        blue: {
+          bgImage: ''                  // 用預設 CSS 漸層
+        },
+        panther: {
+          bgImage: 'url("pinkpanther.png")'
+        },
+        hangyodon: {
+          bgImage: 'url("hangyodon.png")'
+        }
+      };
+
+      function applyStyle(style){
+        const s = themeConfig[style] ? style : 'blue';
+        root.setAttribute('data-style', s);
+        const cfg = themeConfig[s];
+
+        if (mascot){
+          // 有設定圖片就蓋掉，沒有就用預設漸層方塊
+          mascot.style.backgroundImage = cfg.bgImage || '';
+        }
+
+        localStorage.setItem(STYLE_KEY, s);
+
+        if (window._msSyncFrameStyle){
+          setTimeout(window._msSyncFrameStyle, 30);
+        }
+      }
+
+      function cycleStyle(){
+        const current = root.getAttribute('data-style') || 'blue';
+        const idx = styles.indexOf(current);
+        const next = styles[(idx + 1) % styles.length];
+        applyStyle(next);
+      }
+
+      const saved = localStorage.getItem(STYLE_KEY) || 'blue';
+      applyStyle(saved);
+
+      if (mascot){
+        mascot.style.cursor = 'pointer';
+        mascot.title = 'Click to change style';
+        mascot.addEventListener('click', cycleStyle);
+      }
+    })();
+  </script>
+</body>
+</html>
