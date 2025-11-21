@@ -215,12 +215,12 @@
       if (!allowedLines.includes(line)) line = '1';
       if (!allowedSecs.includes(sec))  sec  = 'F13';
 
-      // ===== 2. 組 PDF 路徑（放在根目錄） =====
-      const BASE = 'https://lg920731-collab.github.io/Maintenance-Smart/';
+      // ===== 2. 組 PDF 路徑（PDF 與這支 HTML 在同一個資料夾） =====
       const pdfFileName = `Line-${line}-${sec}-Schematic.pdf`;
-      const pdfUrl      = BASE + pdfFileName;
+      // 直接用相對路徑：./Line-1-F12-Schematic.pdf
+      const pdfUrl      = pdfFileName;
 
-      // pdf.js viewer 路徑（在根目錄 /pdfjs/web/viewer.html）
+      // pdf.js viewer 路徑（在 /pdfjs/web/viewer.html）
       const pdfjsViewerBase = 'pdfjs/web/viewer.html';
       const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrl)}#zoom=page-fit`;
 
@@ -245,7 +245,7 @@
       // 👉 isMobileOrTablet = iPhone / Android 手機 & 平板 / iPad
 
       if (isMobileOrTablet) {
-        // 手機 & iPad：只顯示一顆按鈕開 PDF
+        // 手機 & iPad：只顯示一顆按鈕開 PDF（用瀏覽器 / 系統內建 viewer）
         if (openNewTab) openNewTab.style.display = 'none';
         if (viewer) {
           viewer.innerHTML = `
