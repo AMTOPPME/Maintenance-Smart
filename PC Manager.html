@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Maintenance Smart | BOPP1 PC Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Apply theme & style from portal -->
+  <script>
+    (function () {
+      // light / dark
+      const storedTheme = localStorage.getItem('ms-theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+
+      // style: blue / panther / hangyodon
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --border-subtle: #e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text: #111827;
+      --text-soft: #6b7280;
+      --radius-xl: 16px;
+      --shadow-soft-sm: 0 8px 20px rgba(15,23,42,0.06);
+      --small-font: 13px;
+      --xsmall-font: 11px;
+    }
+
+    /* Dark mode */
+    html[data-theme="dark"] {
+      --bg: #020617;
+      --card-bg: #020617;
+      --border-subtle: #1f2937;
+      --accent: #60a5fa;
+      --accent-hover: #3b82f6;
+      --text: #e5e7eb;
+      --text-soft: #9ca3af;
+      --shadow-soft-sm: 0 8px 20px rgba(0,0,0,0.75);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 15px;
+      background:
+        radial-gradient(circle at top, rgba(129,140,248,0.14), transparent),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    /* style 背景：跟首頁一致 */
+    html[data-style="panther"] body {
+      background:
+        radial-gradient(circle at top, rgba(244,114,182,.28), transparent),
+        var(--bg);
+    }
+    html[data-style="hangyodon"] body {
+      background:
+        radial-gradient(circle at top, rgba(56,189,248,.35), transparent),
+        var(--bg);
+    }
+
+    /* Side characters */
+    .side-panther,
+    .side-hangyodon{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      width:360px;
+      opacity:.9;
+      z-index:1;
+      pointer-events:none;
+      user-select:none;
+      display:none;
+      transition:transform .25s ease, opacity .25s ease;
+    }
+    .side-panther.left{left:1.5%;transform:translateY(-50%) scaleX(1)}
+    .side-panther.right{right:1.5%;transform:translateY(-50%) scaleX(1)}
+    .side-hangyodon.left{left:1.5%;transform:translateY(-50%) scaleX(-1)}
+    .side-hangyodon.right{right:1.5%;transform:translateY(-50%) scaleX(-1)}
+
+    html[data-style="panther"] .side-panther{display:block;}
+    html[data-style="hangyodon"] .side-hangyodon{display:block;}
+
+    /* 手機 / 平板：只保留右邊大圖並置中 */
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{
+        display:none !important;
+      }
+
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block !important;
+        position:fixed !important;
+        left:50% !important;
+        right:auto !important;
+        top:50% !important;
+        transform:translate(-50%, -50%) !important;
+        width:260px;
+        opacity:0.9;
+        pointer-events:none;
+        z-index:1;
+      }
+    }
+
+    .page {
+      position:relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 32px;
+      z-index:2;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      box-shadow: var(--shadow-soft-sm);
+      margin-bottom: 14px;
+      transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .card-subtitle {
+      font-size: var(--small-font);
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    /* Filters header */
+    .filter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      gap: 8px;
+    }
+
+    .filter-header h2 { margin: 0; }
+
+    .filter-toggle-icon {
+      font-size: 16px;
+      color: var(--text-soft);
+      transition: transform 0.2s ease;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .filters-label {
+      font-size: var(--xsmall-font);
+      color: var(--text-soft);
+      margin-right: 2px;
+    }
+
+    .filters input,
+    .filters select {
+      font-size: var(--small-font);
+      padding: 7px 9px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: var(--text);
+      min-width: 150px;
+      transition: all 0.15s ease;
+    }
+
+    html[data-theme="dark"] .filters input,
+    html[data-theme="dark"] .filters select {
+      background:#020617;
+      border-color:#1f2937;
+      color:var(--text);
+    }
+
+    .filters input::placeholder { color: #9ca3af; }
+
+    .filters input:focus,
+    .filters select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.14);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 7px 13px;
+      font-size: var(--xsmall-font);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn:hover {
+      background: #d1d5db;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(148,163,253,0.35);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Collapsible */
+    .collapsible {
+      overflow: hidden;
+      max-height: 500px;
+      opacity: 1;
+      transition: max-height 0.3s ease, opacity 0.25s ease;
+    }
+    .collapsible.closed {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+      pointer-events: none;
+    }
+
+    /* Table */
+    .table-wrap {
+      margin-top: 4px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      overflow-x: auto;
+      background: #ffffff;
+      box-shadow: var(--shadow-soft-sm);
+    }
+
+    html[data-theme="dark"] .table-wrap {
+      background:#020617;
+      border-color:#1f2937;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--small-font);
+    }
+
+    thead { background: #f9fafb; }
+
+    html[data-theme="dark"] thead {
+      background:#020617;
+    }
+
+    th, td {
+      padding: 8px 9px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    html[data-theme="dark"] th,
+    html[data-theme="dark"] td {
+      border-bottom-color:#1f2937;
+    }
+
+    th {
+      font-size: var(--xsmall-font);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-soft);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      cursor: pointer;
+      user-select: none;
+      background: #f9fafb;
+    }
+
+    th[data-sort]:hover {
+      color: var(--accent);
+      background: #eef2ff;
+    }
+
+    tbody tr {
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    tbody tr:nth-child(even) { background: #ffffff; }
+    tbody tr:nth-child(odd)  { background: #fdfdfd; }
+
+    html[data-theme="dark"] tbody tr:nth-child(even),
+    html[data-theme="dark"] tbody tr:nth-child(odd) {
+      background:transparent;
+    }
+
+    tbody tr:hover {
+      background: #eff6ff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(148,163,253,0.25);
+    }
+
+    html[data-theme="dark"] tbody tr:hover {
+      background:rgba(37,99,235,.25);
+    }
+
+    td {
+      color: var(--text);
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status-using,
+    .status-spare,
+    .status-broken,
+    .status-test {
+      font-size: var(--xsmall-font);
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .status-using {
+      color: #166534;
+      background: #bbf7d0;
+      border: 1px solid #4ade80;
+    }
+    .status-spare {
+      color: #1d4ed8;
+      background: #dbeafe;
+      border: 1px solid #60a5fa;
+    }
+    .status-broken {
+      color: #92400e;
+      background: #fed7aa;
+      border: 1px solid #fb923c;
+    }
+    .status-test {
+      color: #6b21a8;
+      background: #ede9fe;
+      border: 1px solid #c4b5fd;
+    }
+
+    .note {
+      font-size: var(--xsmall-font);
+      color: var(--text-soft);
+    }
+
+    /* Print */
+    @media print {
+      body {
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .page {
+        max-width: 100%;
+        padding: 0;
+      }
+      .card {
+        box-shadow: none;
+        border-radius: 0;
+        margin: 0 0 8px 0;
+      }
+      .filters,
+      #reloadBtn,
+      #printBtn,
+      .filter-header,
+      .side-panther,
+      .side-hangyodon {
+        display: none !important;
+      }
+      .table-wrap {
+        box-shadow: none;
+        border-radius: 0;
+        border: 1px solid #000;
+      }
+      th, td {
+        border-color: #000 !important;
+        color: #000 !important;
+      }
+      .status-using,
+      .status-spare,
+      .status-broken,
+      .status-test {
+        border-color: #000 !important;
+        color: #000 !important;
+        background: #ffffff !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- side characters -->
+  <img src="pinkpanther1.png" alt="Pink Panther Left" class="side-panther left">
+  <img src="pinkpanther2.png" alt="Pink Panther Right" class="side-panther right">
+  <img src="hangyodon1.png" alt="Hangyodon Left" class="side-hangyodon left">
+  <img src="hangyodon2.png" alt="Hangyodon Right" class="side-hangyodon right">
+
+  <div class="page">
+    <!-- 給 JS 用的 hidden lastSync，畫面不顯示 -->
+    <span id="lastSync" style="display:none"></span>
+
+    <!-- Filters (collapsible) -->
+    <div class="card">
+      <div class="filter-header" onclick="toggleFilters()">
+        <h2>Filter conditions</h2>
+        <span id="toggleIcon" class="filter-toggle-icon">▲</span>
+      </div>
+      <div class="card-subtitle">
+        This page is read-only. To update data, edit the Excel file and export
+        <strong>inventory.csv</strong> to overwrite the existing file.
+      </div>
+
+      <div class="filters collapsible open" id="filtersBox">
+        <span class="filters-label">Filter:</span>
+        <input type="text" id="searchInput" placeholder="Search asset / computer / hostname">
+        <select id="statusFilter">
+          <option value="">All status</option>
+          <option value="using">Using</option>
+          <option value="spare">Spare</option>
+          <option value="broken">Broken</option>
+          <option value="test">Test</option>
+        </select>
+        <input type="text" id="deptFilter" placeholder="Department">
+        <button class="btn" id="reloadBtn">🔄 Reload CSV</button>
+        <button class="btn btn-primary" id="printBtn">🖨 Print list</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <h2>Computer equipment list</h2>
+      <div class="card-subtitle" id="countInfo">Total: 0 records</div>
+      <div class="table-wrap">
+        <table id="pcTable">
+          <thead>
+          <tr>
+            <th data-sort="asset_id">Asset ID</th>
+            <th data-sort="hostname">Hostname</th>
+            <th data-sort="computer">Computer</th>
+            <th data-sort="department">Department</th>
+            <th data-sort="location">Location</th>
+            <th data-sort="status">Status</th>
+            <th data-sort="spec">Spec</th>
+            <th data-sort="os">OS</th>
+            <th data-sort="owner">Owner</th>
+            <th data-sort="note">Note</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script>
+  let computers = [];
+  let currentSortKey = "asset_id";
+  let currentSortAsc = true;
+  let inventoryLowNotified = false;
+
+  const tbody = document.querySelector("#pcTable tbody");
+  const searchInput = document.getElementById("searchInput");
+  const statusFilter = document.getElementById("statusFilter");
+  const deptFilter = document.getElementById("deptFilter");
+  const reloadBtn = document.getElementById("reloadBtn");
+  const printBtn = document.getElementById("printBtn");
+  const lastSyncEl = document.getElementById("lastSync");
+  const countInfoEl = document.getElementById("countInfo");
+
+  async function loadCSV() {
+    try {
+      const res = await fetch("inventory.csv?" + Date.now());
+      if (!res.ok) throw new Error("CSV not found");
+      const text = await res.text();
+      computers = parseCSV(text);
+      updateLastSync();
+      renderTable();
+    } catch (e) {
+      console.error(e);
+      if (lastSyncEl) lastSyncEl.textContent = "Loading error (please check inventory.csv)";
+      tbody.innerHTML = "";
+      countInfoEl.textContent = "Total: 0 records";
+    }
+  }
+
+  function parseCSV(csvText) {
+    const lines = csvText.trim().split(/\r?\n/);
+    if (lines.length <= 1) return [];
+    const header = splitCSVLine(lines[0]).map(h => h.trim());
+    const data = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const cols = splitCSVLine(line);
+      const row = {};
+      header.forEach((key, idx) => {
+        row[key] = (cols[idx] || "").trim();
+      });
+      data.push(row);
+    }
+    return data;
+  }
+
+  function splitCSVLine(line) {
+    const result = [];
+    let cur = "";
+    let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') {
+        if (inQ && line[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQ = !inQ;
+        }
+      } else if (c === "," && !inQ) {
+        result.push(cur);
+        cur = "";
+      } else {
+        cur += c;
+      }
+    }
+    result.push(cur);
+    return result;
+  }
+
+  function updateLastSync() {
+    if (!computers.length) {
+      if (lastSyncEl) lastSyncEl.textContent = "no data";
+      return;
+    }
+    let latest = "0000-00-00";
+    computers.forEach(c => {
+      if (c.last_update && c.last_update > latest) latest = c.last_update;
+    });
+    if (lastSyncEl) {
+      lastSyncEl.textContent =
+        latest !== "0000-00-00" ? latest : "Managed by Excel";
+    }
+  }
+
+  function renderTable() {
+    const keyword = searchInput.value.trim().toLowerCase();
+    const fStatus = statusFilter.value.trim().toLowerCase();
+    const fDept = deptFilter.value.trim();
+
+    let data = [...computers];
+
+    data = data.filter(c => {
+      const cStatus = (c.status || "").toLowerCase();
+      if (fStatus && cStatus !== fStatus) return false;
+      if (fDept && c.department !== fDept) return false;
+      if (keyword) {
+        const text = (
+          (c.asset_id || "") +
+          (c.hostname || "") +
+          (c.computer || "") +
+          (c.department || "")
+        ).toLowerCase();
+        if (!text.includes(keyword)) return false;
+      }
+      return true;
+    });
+
+    data.sort((a, b) => {
+      const x = (a[currentSortKey] || "").toString();
+      const y = (b[currentSortKey] || "").toString();
+      if (x === y) return 0;
+      return currentSortAsc
+        ? x.localeCompare(y, "en")
+        : y.localeCompare(x, "en");
+    });
+
+    tbody.innerHTML = "";
+    data.forEach(c => {
+      const status = (c.status || "").toLowerCase();
+      const stClass =
+        status === "using" ? "status-using" :
+        status === "spare" ? "status-spare" :
+        status === "broken" ? "status-broken" :
+        status === "test" ? "status-test" :
+        "";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${c.asset_id || ""}</td>
+        <td>${c.hostname || ""}</td>
+        <td>${c.computer || ""}</td>
+        <td>${c.department || ""}</td>
+        <td>${c.location || ""}</td>
+        <td>${c.status ? `<span class="${stClass}">${c.status}</span>` : ""}</td>
+        <td>${c.spec || ""}</td>
+        <td>${c.os || ""}</td>
+        <td>${c.owner || ""}</td>
+        <td class="note">${c.note || ""}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    const totalCount = computers.length;
+    const usingCount = computers.filter(c =>
+      (c.status || "").toLowerCase() === "using"
+    ).length;
+    const spareCount = computers.filter(c =>
+      (c.status || "").toLowerCase() === "spare"
+    ).length;
+    const testCount = computers.filter(c =>
+      (c.status || "").toLowerCase() === "test"
+    ).length;
+
+    const filteredCount = data.length;
+
+    countInfoEl.textContent =
+      `Filter: ${filteredCount} / Total: ${totalCount} | Using: ${usingCount} | Spare: ${spareCount} | Test: ${testCount}`;
+
+    checkInventoryLow();
+  }
+
+  function checkInventoryLow() {
+    const spareCount = computers.filter(c =>
+      (c.status || "").toLowerCase() === "spare"
+    ).length;
+
+    if (spareCount <= 5) {
+      if (!inventoryLowNotified) {
+        alert(`Warning: only ${spareCount} spare computer(s) remain.`);
+        const recipients = "jwu@inteplastbopp.com;vhuang@inteplastbopp.com;mdeleon@inteplastbopp.com";
+        const subject = encodeURIComponent("Inventory is low");
+        const body = encodeURIComponent(
+          `There are too few computers; please increase the number.\n\nCurrent "spare" computers: ${spareCount}.`
+        );
+        window.location.href = `mailto:${recipients}?subject=${subject}&body=${body}`;
+        inventoryLowNotified = true;
+      }
+    } else {
+      inventoryLowNotified = false;
+    }
+  }
+
+  function toggleFilters() {
+    const box = document.getElementById("filtersBox");
+    const icon = document.getElementById("toggleIcon");
+    const isOpen = !box.classList.contains("closed");
+    if (isOpen) {
+      box.classList.add("closed");
+      icon.textContent = "▼";
+    } else {
+      box.classList.remove("closed");
+      icon.textContent = "▲";
+    }
+  }
+
+  searchInput.addEventListener("input", renderTable);
+  statusFilter.addEventListener("change", renderTable);
+  deptFilter.addEventListener("input", renderTable);
+  reloadBtn.addEventListener("click", loadCSV);
+  printBtn.addEventListener("click", () => window.print());
+
+  document.querySelectorAll("th[data-sort]").forEach(th => {
+    th.addEventListener("click", () => {
+      const key = th.getAttribute("data-sort");
+      if (currentSortKey === key) {
+        currentSortAsc = !currentSortAsc;
+      } else {
+        currentSortKey = key;
+        currentSortAsc = true;
+      }
+      renderTable();
+    });
+  });
+
+  loadCSV();
+</script>
+</body>
+</html>
