@@ -571,11 +571,11 @@
             </div>
             <div class="ls-tags">
               <div class="ls-label">TAGS LIST</div>
-              <a class="ls-tag-link" href="F13_PLC_Tags list.html" target="_blank" rel="noopener">
-                Open Tags List (PDF) ↗
-              </a>
+                <a class="ls-tag-link" href="#" id="tagsListLink">
+                  Open Tags List
+                </a>
+              </div>
             </div>
-          </div>
         </li>
 
         <!-- Program Backup：兩層列表（保持你原本那版） -->
@@ -935,6 +935,28 @@
             panel.classList.remove('open');
             if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
           }
+                // Tags list：載入到右側 iframe，不開新分頁
+      const tagsLink = document.getElementById('tagsListLink');
+      if (tagsLink) {
+        tagsLink.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          // 載入 Tags viewer 頁面（你這支檔名就是 F13_PLC_Tags list.html）
+          if (frame) {
+            frame.src = 'F13_PLC_Tags list.html';
+          }
+
+          // 上方標題改成 Tags List
+          setModule('Tags List', 'PLC / SCADA Tag Reference');
+
+          // 如果 Modules 面板是打開的，把它關掉（手機版會比較乾淨）
+          if (panel && panel.classList.contains('open')) {
+            panel.classList.remove('open');
+            if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
         });
       });
     })();
