@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Line Schematic | Maintenance Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 套用主題（blue / panther / hangyodon） -->
+  <script>
+    (function () {
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card-bg:#ffffff;
+      --border-subtle:#e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text: #111827;
+      --text-soft: #6b7280;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(129,140,248,0.12), transparent),
+        var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      -webkit-text-size-adjust: 100%;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    /* style 背景—與主頁同步 */
+    html[data-style="panther"] body{
+      background:
+        radial-gradient(circle at top,rgba(244,114,182,.28),transparent),
+        var(--bg);
+    }
+    html[data-style="hangyodon"] body{
+      background:
+        radial-gradient(circle at top,rgba(56,189,248,.35),transparent),
+        var(--bg);
+    }
+
+    /* 角色背景 */
+    .side-panther,
+    .side-hangyodon{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      width:320px;
+      opacity:.9;
+      z-index:1;
+      pointer-events:none;
+      user-select:none;
+      transition: transform .25s ease, opacity .25s ease;
+      display:none;
+    }
+
+    .side-panther.left{left:1.5%; transform:translateY(-50%) scaleX(1);}
+    .side-panther.right{right:1.5%; transform:translateY(-50%) scaleX(1);}
+
+    .side-hangyodon.left{left:1.5%; transform:translateY(-50%) scaleX(-1);}
+    .side-hangyodon.right{right:1.5%; transform:translateY(-50%) scaleX(-1);}
+
+    html[data-style="panther"] .side-panther{display:block;}
+    html[data-style="hangyodon"] .side-hangyodon{display:block;}
+
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{
+        display:none !important;
+      }
+
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block !important;
+        position:fixed !important;
+        left:50% !important;
+        right:auto !important;
+        top:50% !important;
+        transform:translate(-50%, -50%) !important;
+        width:260px;
+        opacity:.7;
+      }
+    }
+
+    /* Title */
+    h1 {
+      color: var(--accent);
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0 0 6px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin: 0 0 10px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Button */
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
+    }
+    .btn {
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(37,99,235,0.35);
+      background: #fff;
+      color: var(--accent);
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(37,99,235,0.12);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      display:inline-block;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(37,99,235,0.25);
+      border-color: var(--accent-hover);
+    }
+
+    /* PDF Viewer */
+    .viewer {
+      width: 100%;
+      max-width: 1100px;
+      height: calc(100dvh - 170px);
+      min-height: 380px;
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+      z-index: 2;
+    }
+    .viewer iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+    }
+
+    .fallback {
+      padding: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    @media (max-width: 480px) {
+      .viewer { height: calc(100dvh - 180px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 左右角色 -->
+  <img src="pinkpanther1.png" alt="" class="side-panther left">
+  <img src="pinkpanther2.png" alt="" class="side-panther right">
+
+  <img src="hangyodon1.png" alt="" class="side-hangyodon left">
+  <img src="hangyodon2.png" alt="" class="side-hangyodon right">
+
+  <h1 id="pageTitle">Line Schematic</h1>
+  <div class="subtitle" id="pageSub">Production Line – Wiring and PLC Diagram</div>
+
+  <div class="toolbar">
+    <a class="btn" id="openNewTab" href="#" rel="noopener">Open PDF in New Tab ↗</a>
+  </div>
+
+  <div class="viewer" id="viewer">
+    <!-- 電腦：pdf.js viewer；手機 / iPad：會被 JS 改成按鈕 -->
+    <iframe id="pdfFrame" title="PDF viewer"></iframe>
+  </div>
+
+  <script>
+    (function () {
+      // ===== 1. 解析 ?line=1&sec=F13 =====
+      const allowedLines = ['1','2','3','4'];
+      const allowedSecs  = ['F12','F13','F16','F201'];
+
+      const params = new URLSearchParams(window.location.search);
+      let line = params.get('line') || '1';
+      let sec  = (params.get('sec')  || 'F13').toUpperCase();
+
+      line = String(parseInt(line,10) || 1);
+      if (!allowedLines.includes(line)) line = '1';
+      if (!allowedSecs.includes(sec))  sec  = 'F13';
+
+      // ===== 2. 組 PDF 路徑（放在根目錄） =====
+      const BASE = 'https://lg920731-collab.github.io/Maintenance-Smart/';
+      const pdfFileName = `Line-${line}-${sec}-Schematic.pdf`;
+      const pdfUrl      = BASE + pdfFileName;
+
+      // pdf.js viewer 路徑（在根目錄 /pdfjs/web/viewer.html）
+      const pdfjsViewerBase = 'pdfjs/web/viewer.html';
+      const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrl)}#zoom=page-fit`;
+
+      const titleEl = document.getElementById('pageTitle');
+      const subEl   = document.getElementById('pageSub');
+      const viewer  = document.getElementById('viewer');
+      const frame   = document.getElementById('pdfFrame');
+      const openNewTab = document.getElementById('openNewTab');
+
+      // ===== 3. 更新標題 =====
+      if (titleEl){
+        titleEl.textContent = `Line ${line} Schematic – ${sec}`;
+      }
+      if (subEl){
+        subEl.textContent = `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
+      }
+
+      // ===== 4. 裝置偵測 =====
+      const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const isSmallScreen = window.innerWidth <= 1024;
+      const isMobileOrTablet = isTouch && isSmallScreen;
+      // 👉 isMobileOrTablet = iPhone / Android 手機 & 平板 / iPad
+
+      if (isMobileOrTablet) {
+        // 手機 & iPad：只顯示一顆按鈕開 PDF
+        if (openNewTab) openNewTab.style.display = 'none';
+        if (viewer) {
+          viewer.innerHTML = `
+            <div class="fallback">
+              Tap the button below to open PDF.<br><br>
+              <a class="btn" href="${pdfUrl}" target="_blank" rel="noopener">
+                Open PDF ↗
+              </a>
+            </div>`;
+        }
+        return;
+      }
+
+      // ===== 5. 桌機：內嵌 pdf.js viewer =====
+      if (frame) {
+        frame.src = viewerUrl;
+      }
+      if (openNewTab) {
+        openNewTab.href = viewerUrl;   // 在新分頁也是 pdf.js viewer
+      }
+    })();
+  </script>
+
+</body>
+</html>
