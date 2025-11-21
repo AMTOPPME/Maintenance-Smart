@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tags List | Maintenance Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 套用主題（blue / panther / hangyodon） -->
+  <script>
+    (function () {
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card-bg:#ffffff;
+      --border-subtle:#e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text: #111827;
+      --text-soft: #6b7280;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(129,140,248,0.12), transparent),
+        var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      -webkit-text-size-adjust: 100%;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    html[data-style="panther"] body{
+      background:
+        radial-gradient(circle at top,rgba(244,114,182,.28),transparent),
+        var(--bg);
+    }
+    html[data-style="hangyodon"] body{
+      background:
+        radial-gradient(circle at top,rgba(56,189,248,.35),transparent),
+        var(--bg);
+    }
+
+    h1 {
+      color: var(--accent);
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 4px 0;
+      text-align: center;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin: 0 0 12px 0;
+      text-align: center;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .btn {
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(37,99,235,0.35);
+      background: #fff;
+      color: var(--accent);
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(37,99,235,0.12);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      display:inline-block;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(37,99,235,0.25);
+      border-color: var(--accent-hover);
+    }
+
+    .viewer {
+      width: 100%;
+      max-width: 1100px;
+      height: calc(100dvh - 170px);
+      min-height: 380px;
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+    .viewer iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+    }
+
+    .fallback {
+      padding: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    @media (max-width: 480px) {
+      .viewer { height: calc(100dvh - 180px); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tags List</h1>
+  <div class="subtitle">PLC / SCADA Tag Reference</div>
+
+  <div class="toolbar">
+    <!-- 桌機版：開 pdf.js viewer 用 -->
+    <a class="btn" id="openNewTab" href="#" rel="noopener">Open in New Tab ↗</a>
+  </div>
+
+  <div class="viewer" id="viewer">
+    <iframe id="pdfFrame" title="Tags list viewer"></iframe>
+  </div>
+
+  <script>
+    (function () {
+      // ===== 1. 設定 Tags list PDF 檔名 =====
+      // TODO：這裡改成你的實際檔名
+      const pdfFileName = 'F13_PLC_Tags list.pdf';
+
+      // 和 Tags-list.html 在同一層
+      const pdfUrlDirect = pdfFileName;
+
+      // 從 pdfjs/web/viewer.html 的角度看，要回到根目錄再找 PDF
+      const pdfUrlForViewer = '../../' + pdfFileName;
+
+      // pdf.js viewer 路徑
+      const pdfjsViewerBase = 'pdfjs/web/viewer.html';
+      const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
+
+      const viewer  = document.getElementById('viewer');
+      const frame   = document.getElementById('pdfFrame');
+      const openNewTab = document.getElementById('openNewTab');
+
+      // ===== 2. 裝置偵測 =====
+      const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const isSmallScreen = window.innerWidth <= 1024;
+      const isMobileOrTablet = isTouch && isSmallScreen;
+
+      if (isMobileOrTablet) {
+        // 手機 / iPad：只顯示一顆按鈕開 PDF（用系統 / 瀏覽器 viewer）
+        if (openNewTab) openNewTab.style.display = 'none';
+        if (viewer) {
+          viewer.innerHTML = `
+            <div class="fallback">
+              Tap the button below to open Tags List PDF.<br><br>
+              <a class="btn" href="${pdfUrlDirect}" target="_blank" rel="noopener">
+                Open Tags List PDF ↗
+              </a>
+            </div>`;
+        }
+        return;
+      }
+
+      // ===== 3. 桌機：內嵌 pdf.js viewer =====
+      if (frame) {
+        frame.src = viewerUrl;
+      }
+      if (openNewTab) {
+        openNewTab.href = viewerUrl;
+      }
+    })();
+  </script>
+
+</body>
+</html>
