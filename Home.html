@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home | Maintenance Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 套用主頁 style（blue / panther / hangyodon） -->
+  <script>
+    (function () {
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
+
+  <style>
+    :root{
+      --bg:#f3f4f6;
+    }
+
+    /* 背景底色 */
+    html[data-style="panther"]{
+      --bg:#ffe4ec;
+    }
+    html[data-style="hangyodon"]{
+      --bg:#dbeafe;
+    }
+
+    /* ✨ 背景與 Line Schematic 一致：漸層 + 純色 */
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at top, rgba(129,140,248,0.12), transparent),
+        var(--bg);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      padding:0;
+      overflow:hidden;
+      position:relative;
+    }
+
+    html[data-style="panther"] body{
+      background:
+        radial-gradient(circle at top,rgba(244,114,182,0.28),transparent),
+        var(--bg);
+    }
+    html[data-style="hangyodon"] body{
+      background:
+        radial-gradient(circle at top,rgba(56,189,248,0.35),transparent),
+        var(--bg);
+    }
+
+    /* ✨ 左右角色（與 Line Schematic 相同） */
+    .side-panther,
+    .side-hangyodon{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      width:320px;
+      opacity:.9;
+      z-index:1;
+      pointer-events:none;
+      user-select:none;
+      display:none;
+      transition:opacity .25s ease, transform .25s ease;
+    }
+
+    /* Panther 左右 */
+    .side-panther.left{ left:1.5%; transform:translateY(-50%) scaleX(1); }
+    .side-panther.right{ right:1.5%; transform:translateY(-50%) scaleX(1); }
+
+    /* Hangyodon 左右 */
+    .side-hangyodon.left{ left:1.5%; transform:translateY(-50%) scaleX(-1); }
+    .side-hangyodon.right{ right:1.5%; transform:translateY(-50%) scaleX(-1); }
+
+    /* 啟動 style 對應角色 */
+    html[data-style="panther"] .side-panther{ display:block; }
+    html[data-style="hangyodon"] .side-hangyodon{ display:block; }
+
+    /* 手機版只留右邊，並置中放大 */
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{
+        display:none !important;
+      }
+
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block !important;
+        position:fixed !important;
+        left:50% !important;
+        right:auto !important;
+        top:50% !important;
+        transform:translate(-50%,-50%) !important;
+        width:260px;
+        opacity:.7;
+      }
+    }
+
+    /* Home 圖片 */
+    .home-image{
+      max-width:90%;
+      max-height:90%;
+      border-radius:18px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.15);
+      object-fit:contain;
+      position:relative;
+      z-index:2; /* 壓在角色上面 */
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- 🌟 角色背景（與 Schematic 同素材） -->
+  <img src="pinkpanther1.png" class="side-panther left" alt="">
+  <img src="pinkpanther2.png" class="side-panther right" alt="">
+  <img src="hangyodon1.png" class="side-hangyodon left" alt="">
+  <img src="hangyodon2.png" class="side-hangyodon right" alt="">
+
+  <!-- 🌟 你的 Home 首頁圖片 -->
+  <img src="home.jpg" alt="Home" class="home-image">
+
+</body>
+</html>
