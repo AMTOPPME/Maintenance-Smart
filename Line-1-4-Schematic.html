@@ -53,58 +53,55 @@
         radial-gradient(circle at top,rgba(56,189,248,.35),transparent),
         var(--bg);
     }
+
     /* Back to Top button base */
-#backToTop {
-  position: fixed;
-  bottom: 22px;
-  right: 22px;
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  border: none;
-  background: var(--accent);
-  color: #fff;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-  z-index: 9999;
-  display: none;
-  transition: all .25s ease;
-}
+    #backToTop {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      z-index: 9999;
+      display: none;
+      transition: all .25s ease;
+    }
 
-/* hover */
-#backToTop:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.30);
-}
+    #backToTop:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.30);
+    }
 
-/* === 主題變換版本 === */
+    /* 主題變換版本：panther / hangyodon 換成角色圖 */
+    html[data-style="panther"] #backToTop {
+      background: transparent;
+      background-image: url("pinkpanther2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
 
-/* panther → 使用粉紅角色圖片 */
-html[data-style="panther"] #backToTop {
-  background: transparent;
-  background-image: url("pinkpanther2.png");
-  background-size: 100% 100%;
-  background-position: center;
-  color: transparent;
-  border: none;
-}
+    html[data-style="hangyodon"] #backToTop {
+      background: transparent;
+      background-image: url("hangyodon2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
 
-/* hangyodon → 使用魚丁角色圖片 */
-html[data-style="hangyodon"] #backToTop {
-  background: transparent;
-  background-image: url("hangyodon2.png");
-  background-size: 100% 100%;
-  background-position: center;
-  color: transparent;
-  border: none;
-}
-
-    /* 角色背景 */
+    /* 角色背景（左右兩側） */
     .side-panther,
     .side-hangyodon{
       position:fixed;
@@ -250,99 +247,104 @@ html[data-style="hangyodon"] #backToTop {
     <!-- 電腦：pdf.js viewer；手機 / iPad：會被 JS 改成按鈕 -->
     <iframe id="pdfFrame" title="PDF viewer"></iframe>
   </div>
-<script>
-(function(){
-  const btn = document.getElementById('backToTop');
 
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 250) {
-      btn.style.display = 'flex';
-      btn.style.opacity = '1';
-    } else {
-      btn.style.opacity = '0';
-      btn.style.display = 'none';
-    }
-  });
+  <!-- 回到頂部按鈕 -->
+  <button id="backToTop" title="Back to Top">↑</button>
 
-  btn.addEventListener('click', () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  });
-})();
-</script>
-
+  <!-- Back to Top 行為 -->
   <script>
-  (function () {
-    const allowedLines = ['1','2','3','4'];
-    const allowedSecs  = ['F12','F13','F16','F201'];
+    (function(){
+      const btn = document.getElementById('backToTop');
+      if (!btn) return;
 
-    const params = new URLSearchParams(window.location.search);
-    let line = params.get('line') || '1';
-    let sec  = (params.get('sec')  || 'F13').toUpperCase();
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 250) {
+          btn.style.display = 'flex';
+          btn.style.opacity = '1';
+        } else {
+          btn.style.opacity = '0';
+          btn.style.display = 'none';
+        }
+      });
 
-    line = String(parseInt(line,10) || 1);
-    if (!allowedLines.includes(line)) line = '1';
-    if (!allowedSecs.includes(sec))  sec  = 'F13';
+      btn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    })();
+  </script>
 
-    // ===== PDF 檔名 =====
-    const pdfFileName = `Line-${line}-${sec}-Schematic.pdf`;
+  <!-- PDF + pdf.js viewer 邏輯 -->
+  <script>
+    (function () {
+      const allowedLines = ['1','2','3','4'];
+      const allowedSecs  = ['F12','F13','F16','F201'];
 
-    // 給「手機 / iPad 按鈕」用（從 Line-1-4-Schematic.html 看，是同一個資料夾）
-    const pdfUrlForDirect = pdfFileName;
+      const params = new URLSearchParams(window.location.search);
+      let line = params.get('line') || '1';
+      let sec  = (params.get('sec')  || 'F13').toUpperCase();
 
-    // 給「pdf.js viewer」用（從 /pdfjs/web/viewer.html 看，要走兩層回根目錄）
-    const pdfUrlForViewer = `../../${pdfFileName}`;
+      line = String(parseInt(line,10) || 1);
+      if (!allowedLines.includes(line)) line = '1';
+      if (!allowedSecs.includes(sec))  sec  = 'F13';
 
-    // pdf.js viewer 路徑
-    const pdfjsViewerBase = 'pdfjs/web/viewer.html';
-    const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
+      // ===== PDF 檔名 =====
+      const pdfFileName = `Line-${line}-${sec}-Schematic.pdf`;
 
-    const titleEl = document.getElementById('pageTitle');
-    const subEl   = document.getElementById('pageSub');
-    const viewer  = document.getElementById('viewer');
-    const frame   = document.getElementById('pdfFrame');
-    const openNewTab = document.getElementById('openNewTab');
+      // 給「手機 / iPad 按鈕」用
+      const pdfUrlForDirect = pdfFileName;
 
-    // ===== 更新標題 =====
-    if (titleEl){
-      titleEl.textContent = `Line ${line} Schematic – ${sec}`;
-    }
-    if (subEl){
-      subEl.textContent = `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
-    }
+      // 給「pdf.js viewer」用（從 /pdfjs/web/viewer.html 看，要走兩層回根目錄）
+      const pdfUrlForViewer = `../../${pdfFileName}`;
 
-    // ===== 裝置偵測 =====
-    const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    const isSmallScreen = window.innerWidth <= 1024;
-    const isMobileOrTablet = isTouch && isSmallScreen;
+      // pdf.js viewer 路徑
+      const pdfjsViewerBase = 'pdfjs/web/viewer.html';
+      const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
 
-    if (isMobileOrTablet) {
-      // 手機 / iPad：只顯示一顆按鈕，用瀏覽器開 PDF
-      if (openNewTab) openNewTab.style.display = 'none';
-      if (viewer) {
-        viewer.innerHTML = `
-          <div class="fallback">
-            Tap the button below to open PDF.<br><br>
-            <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
-              Open PDF ↗
-            </a>
-          </div>`;
+      const titleEl = document.getElementById('pageTitle');
+      const subEl   = document.getElementById('pageSub');
+      const viewer  = document.getElementById('viewer');
+      const frame   = document.getElementById('pdfFrame');
+      const openNewTab = document.getElementById('openNewTab');
+
+      // ===== 更新標題 =====
+      if (titleEl){
+        titleEl.textContent = `Line ${line} Schematic – ${sec}`;
       }
-      return;
-    }
+      if (subEl){
+        subEl.textContent = `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
+      }
 
-    // ===== 桌機：內嵌 pdf.js viewer =====
-    if (frame) {
-      frame.src = viewerUrl;
-    }
-    if (openNewTab) {
-      openNewTab.href = viewerUrl;
-    }
-  })();
-</script>
-<button id="backToTop" title="Back to Top">↑</button>
+      // ===== 裝置偵測 =====
+      const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const isSmallScreen = window.innerWidth <= 1024;
+      const isMobileOrTablet = isTouch && isSmallScreen;
 
+      if (isMobileOrTablet) {
+        // 手機 / iPad：只顯示一顆按鈕，用瀏覽器開 PDF
+        if (openNewTab) openNewTab.style.display = 'none';
+        if (viewer) {
+          viewer.innerHTML = `
+            <div class="fallback">
+              Tap the button below to open PDF.<br><br>
+              <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
+                Open PDF ↗
+              </a>
+            </div>`;
+        }
+        return;
+      }
+
+      // ===== 桌機：內嵌 pdf.js viewer =====
+      if (frame) {
+        frame.src = viewerUrl;
+      }
+      if (openNewTab) {
+        openNewTab.href = viewerUrl;
+      }
+    })();
+  </script>
 </body>
 </html>
