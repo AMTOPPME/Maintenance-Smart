@@ -785,12 +785,11 @@
         return lineKey;
       }
 
-     // Schematic 檔名規則：Line-1-Schematic.html?sec=F13
+      // Schematic 檔名規則：Line-1-4-Schematic.html?line=1&sec=F13
       function buildSchematicFileName(lineKey, sectionKey){
         const n = lineKey.replace('Line',''); // Line1 -> 1
         return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
-        }
-
+      }
 
       // Program Backup 檔名規則
       function buildBackupFileName(lineKey, sectionKey){
@@ -805,7 +804,7 @@
           // Line Schematic parent：只展開 / 收合子列表
           if (role === 'schematic-parent'){
             if (!schematicPanel) return;
-            const isOpen = schematicPanel.classList.toggle('open');
+            schematicPanel.classList.toggle('open');
 
             // 取消其他一般模組的 active
             buttons.forEach(b=>{
@@ -828,7 +827,7 @@
           // Program Backup parent：只展開 / 收合子列表
           if (role === 'backup-parent'){
             if (!backupPanel) return;
-            const isOpen = backupPanel.classList.toggle('open');
+            backupPanel.classList.toggle('open');
 
             buttons.forEach(b=>{
               if (b !== btn && !b.dataset.role){
@@ -935,13 +934,16 @@
             panel.classList.remove('open');
             if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
           }
-                // Tags list：載入到右側 iframe，不開新分頁
+        });
+      });
+
+      // 🔹 Tags list：載入到右側 iframe，不開新分頁
       const tagsLink = document.getElementById('tagsListLink');
       if (tagsLink) {
         tagsLink.addEventListener('click', function (e) {
           e.preventDefault();
 
-          // 載入 Tags viewer 頁面（你這支檔名就是 F13_PLC_Tags list.html）
+          // 載入 Tags viewer 頁面（F13_PLC_Tags list.html）
           if (frame) {
             frame.src = 'F13_PLC_Tags list.html';
           }
@@ -956,10 +958,8 @@
           }
         });
       }
-
-        });
-      });
     })();
+
 
     // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
     (function(){
