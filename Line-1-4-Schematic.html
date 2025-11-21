@@ -202,72 +202,74 @@
   </div>
 
   <script>
-    (function () {
-      // ===== 1. 解析 ?line=1&sec=F13 =====
-      const allowedLines = ['1','2','3','4'];
-      const allowedSecs  = ['F12','F13','F16','F201'];
+  (function () {
+    const allowedLines = ['1','2','3','4'];
+    const allowedSecs  = ['F12','F13','F16','F201'];
 
-      const params = new URLSearchParams(window.location.search);
-      let line = params.get('line') || '1';
-      let sec  = (params.get('sec')  || 'F13').toUpperCase();
+    const params = new URLSearchParams(window.location.search);
+    let line = params.get('line') || '1';
+    let sec  = (params.get('sec')  || 'F13').toUpperCase();
 
-      line = String(parseInt(line,10) || 1);
-      if (!allowedLines.includes(line)) line = '1';
-      if (!allowedSecs.includes(sec))  sec  = 'F13';
+    line = String(parseInt(line,10) || 1);
+    if (!allowedLines.includes(line)) line = '1';
+    if (!allowedSecs.includes(sec))  sec  = 'F13';
 
-      // ===== 2. 組 PDF 路徑（PDF 與這支 HTML 在同一個資料夾） =====
-      const pdfFileName = `Line-${line}-${sec}-Schematic.pdf`;
-      // 直接用相對路徑：./Line-1-F12-Schematic.pdf
-      const pdfUrl      = pdfFileName;
+    // ===== PDF 檔名 =====
+    const pdfFileName = `Line-${line}-${sec}-Schematic.pdf`;
 
-      // pdf.js viewer 路徑（在 /pdfjs/web/viewer.html）
-      const pdfjsViewerBase = 'pdfjs/web/viewer.html';
-      const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrl)}#zoom=page-fit`;
+    // 給「手機 / iPad 按鈕」用（從 Line-1-4-Schematic.html 看，是同一個資料夾）
+    const pdfUrlForDirect = pdfFileName;
 
-      const titleEl = document.getElementById('pageTitle');
-      const subEl   = document.getElementById('pageSub');
-      const viewer  = document.getElementById('viewer');
-      const frame   = document.getElementById('pdfFrame');
-      const openNewTab = document.getElementById('openNewTab');
+    // 給「pdf.js viewer」用（從 /pdfjs/web/viewer.html 看，要走兩層回根目錄）
+    const pdfUrlForViewer = `../../${pdfFileName}`;
 
-      // ===== 3. 更新標題 =====
-      if (titleEl){
-        titleEl.textContent = `Line ${line} Schematic – ${sec}`;
+    // pdf.js viewer 路徑
+    const pdfjsViewerBase = 'pdfjs/web/viewer.html';
+    const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
+
+    const titleEl = document.getElementById('pageTitle');
+    const subEl   = document.getElementById('pageSub');
+    const viewer  = document.getElementById('viewer');
+    const frame   = document.getElementById('pdfFrame');
+    const openNewTab = document.getElementById('openNewTab');
+
+    // ===== 更新標題 =====
+    if (titleEl){
+      titleEl.textContent = `Line ${line} Schematic – ${sec}`;
+    }
+    if (subEl){
+      subEl.textContent = `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
+    }
+
+    // ===== 裝置偵測 =====
+    const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const isSmallScreen = window.innerWidth <= 1024;
+    const isMobileOrTablet = isTouch && isSmallScreen;
+
+    if (isMobileOrTablet) {
+      // 手機 / iPad：只顯示一顆按鈕，用瀏覽器開 PDF
+      if (openNewTab) openNewTab.style.display = 'none';
+      if (viewer) {
+        viewer.innerHTML = `
+          <div class="fallback">
+            Tap the button below to open PDF.<br><br>
+            <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
+              Open PDF ↗
+            </a>
+          </div>`;
       }
-      if (subEl){
-        subEl.textContent = `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
-      }
+      return;
+    }
 
-      // ===== 4. 裝置偵測 =====
-      const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-      const isSmallScreen = window.innerWidth <= 1024;
-      const isMobileOrTablet = isTouch && isSmallScreen;
-      // 👉 isMobileOrTablet = iPhone / Android 手機 & 平板 / iPad
-
-      if (isMobileOrTablet) {
-        // 手機 & iPad：只顯示一顆按鈕開 PDF（用瀏覽器 / 系統內建 viewer）
-        if (openNewTab) openNewTab.style.display = 'none';
-        if (viewer) {
-          viewer.innerHTML = `
-            <div class="fallback">
-              Tap the button below to open PDF.<br><br>
-              <a class="btn" href="${pdfUrl}" target="_blank" rel="noopener">
-                Open PDF ↗
-              </a>
-            </div>`;
-        }
-        return;
-      }
-
-      // ===== 5. 桌機：內嵌 pdf.js viewer =====
-      if (frame) {
-        frame.src = viewerUrl;
-      }
-      if (openNewTab) {
-        openNewTab.href = viewerUrl;   // 在新分頁也是 pdf.js viewer
-      }
-    })();
-  </script>
+    // ===== 桌機：內嵌 pdf.js viewer =====
+    if (frame) {
+      frame.src = viewerUrl;
+    }
+    if (openNewTab) {
+      openNewTab.href = viewerUrl;
+    }
+  })();
+</script>
 
 </body>
 </html>
