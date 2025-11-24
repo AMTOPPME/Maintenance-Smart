@@ -194,44 +194,110 @@
       <!-- LINE -->
       <div class="section-label">LINE</div>
       <div class="pill-row" id="lineRow">
-        <!-- key 用於資料夾 / 檔名；label 是畫面上的字 -->
-        <button class="pill line-pill active"
-                data-line-key="Line1">Line 1</button>
-        <button class="pill line-pill"
-                data-line-key="Line2">Line 2</button>
-        <button class="pill line-pill"
-                data-line-key="Line3">Line 3</button>
-        <button class="pill line-pill"
-                data-line-key="Line4">Line 4</button>
-        <button class="pill line-pill"
-                data-line-key="Reclaim">Reclaim</button>
+        <button class="pill line-pill active" data-line-key="Line1">Line 1</button>
+        <button class="pill line-pill" data-line-key="Line2">Line 2</button>
+        <button class="pill line-pill" data-line-key="Line3">Line 3</button>
+        <button class="pill line-pill" data-line-key="Line4">Line 4</button>
+        <button class="pill line-pill" data-line-key="Reclaim">Reclaim</button>
       </div>
 
       <!-- SECTION -->
       <div class="section-label">SECTION</div>
       <div class="pill-row" id="sectionRow">
-        <!-- 內容由 JS 動態依照 Line 產生 -->
+        <!-- 依照選到的 LINE 由 JS 動態產生 -->
       </div>
 
       <div class="hint">
-        File naming rule (default):<br>
-        <code>Program-Backup-[LineKey]-[SectionKey].html</code><br>
-        Folder structure (default):<br>
-        <code>./Program Backup/[LineKey]/[SectionKey]/Program-Backup-[LineKey]-[SectionKey].html</code>
+        點選 LINE &amp; SECTION 會直接開啟對應的 Google Drive 備份檔案。<br>
+        若某個按鈕沒有設定網址，會跳出提示。
       </div>
     </div>
   </div>
 
   <script>
-    // === 設定區 ===
-    const ProgramBackupConfig = {
-      baseFolder: 'Program Backup',   // 資料夾名稱（與這支 html 同層）
-      fileExtension: '.html',         // 若備份是 PDF → 改成 '.pdf'
-      useSectionFolder: true,         // 若不要第二層 Section 資料夾 → 改 false
-      openInNewTab: true              // true: 新分頁開；false: 目前分頁
+    // =======================
+    //  1. 在這裡設定 Google Drive 連結
+    // =======================
+    //
+    // key 說明：
+    // Line1, Line2, Line3, Line4, Reclaim → 對應上面 LINE 的 data-line-key
+    // F12, FlameTreater, XRO1... → 對應 SECTION 的 data-section-key
+    //
+    // 把 'https://drive.google.com/...' 換成你自己的檔案分享網址即可。
+    // 沒有檔案的就先留空字串 '' 或乾脆刪掉那一行。
+
+    const BackupUrlMap = {
+      Line1: {
+        F12:  'https://drive.google.com/drive/folders/1ZsRJcq8JusU4yKmmGAX9XKunZJhOHziq',
+        F13:  'https://drive.google.com/...',
+        F16:  'https://drive.google.com/...',
+        F42:  'https://drive.google.com/...',
+        F55:  'https://drive.google.com/...',
+        F281: 'https://drive.google.com/...',
+        FlameTreater:  'https://drive.google.com/...',
+        MainBlending:  'https://drive.google.com/...',
+        MainLoading:   'https://drive.google.com/...',
+        ScadaPC1PC2:   'https://drive.google.com/...',
+        SoftalTreater: 'https://drive.google.com/...',
+        TDOBruckpanel: 'https://drive.google.com/...',
+        WinderCarrgeBruckpanel: 'https://drive.google.com/...'
+      },
+      Line2: {
+        F12:  'https://drive.google.com/...',
+        F13:  'https://drive.google.com/...',
+        F16:  'https://drive.google.com/...',
+        F42:  'https://drive.google.com/...',
+        F55:  'https://drive.google.com/...',
+        F281: 'https://drive.google.com/...',
+        FlameTreater:  'https://drive.google.com/...',
+        MainBlending:  'https://drive.google.com/...',
+        MainLoading:   'https://drive.google.com/...',
+        ScadaPC1PC2:   'https://drive.google.com/...',
+        SoftalTreater: 'https://drive.google.com/...',
+        TDOBruckpanel: 'https://drive.google.com/...',
+        WinderCarrgeBruckpanel: 'https://drive.google.com/...'
+      },
+      Line3: {
+        F12:  'https://drive.google.com/...',
+        F13:  'https://drive.google.com/...',
+        F16:  'https://drive.google.com/...',
+        F42:  'https://drive.google.com/...',
+        F55:  'https://drive.google.com/...',
+        F281: 'https://drive.google.com/...',
+        FlameTreater:  'https://drive.google.com/...',
+        MainBlending:  'https://drive.google.com/...',
+        MainLoading:   'https://drive.google.com/...',
+        ScadaPC1PC2:   'https://drive.google.com/...',
+        SoftalTreater: 'https://drive.google.com/...',
+        TDOBruckpanel: 'https://drive.google.com/...',
+        WinderCarrgeBruckpanel: 'https://drive.google.com/...'
+      },
+      Line4: {
+        F12:  'https://drive.google.com/...',
+        F13:  'https://drive.google.com/...',
+        F16:  'https://drive.google.com/...',
+        F42:  'https://drive.google.com/...',
+        F55:  'https://drive.google.com/...',
+        F281: 'https://drive.google.com/...',
+        FlameTreater:  'https://drive.google.com/...',
+        MainBlending:  'https://drive.google.com/...',
+        MainLoading:   'https://drive.google.com/...',
+        ScadaPC1PC2:   'https://drive.google.com/...',
+        SoftalTreater: 'https://drive.google.com/...',
+        TDOBruckpanel: 'https://drive.google.com/...',
+        WinderCarrgeBruckpanel: 'https://drive.google.com/...'
+      },
+      Reclaim: {
+        XRO1: 'https://drive.google.com/...',
+        XRO2: 'https://drive.google.com/...',
+        XRO3: 'https://drive.google.com/...'
+      }
     };
 
-    // Line1~4 共用的 section（你截圖那一串）
+    // =======================
+    //  2. Line 對應的 Section 列表
+    // =======================
+
     const defaultSections = [
       { key: 'F12',   label: 'F12' },
       { key: 'F13',   label: 'F13' },
@@ -249,7 +315,6 @@
         label: 'Winder Carrge Bruckpanel' }
     ];
 
-    // Reclaim 專用：XRO1 ~ XRO3
     const reclaimSections = [
       { key: 'XRO1', label: 'XRO1' },
       { key: 'XRO2', label: 'XRO2' },
@@ -257,32 +322,28 @@
     ];
 
     function getSectionsForLine(lineKey) {
-      if (lineKey === 'Reclaim') return reclaimSections;
-      return defaultSections;
+      return lineKey === 'Reclaim' ? reclaimSections : defaultSections;
     }
 
-    function buildBackupPath(lineKey, sectionKey) {
-      const base = encodeURIComponent(ProgramBackupConfig.baseFolder);
-      const fileName =
-        `Program-Backup-${lineKey}-${sectionKey}` +
-        ProgramBackupConfig.fileExtension;
-
-      if (ProgramBackupConfig.useSectionFolder) {
-        return `${base}/${encodeURIComponent(lineKey)}/` +
-               `${encodeURIComponent(sectionKey)}/${fileName}`;
-      } else {
-        return `${base}/${encodeURIComponent(lineKey)}/${fileName}`;
-      }
-    }
+    // =======================
+    //  3. 開啟備份檔的函式
+    // =======================
 
     function openBackup(lineKey, sectionKey) {
-      const path = buildBackupPath(lineKey, sectionKey);
-      if (ProgramBackupConfig.openInNewTab) {
-        window.open(path, '_blank');
-      } else {
-        window.location.href = path;
+      const lineMap = BackupUrlMap[lineKey] || {};
+      const url = lineMap[sectionKey];
+
+      if (!url) {
+        alert(`No backup URL configured for ${lineKey} / ${sectionKey}.`);
+        return;
       }
+
+      window.open(url, '_blank');
     }
+
+    // =======================
+    //  4. 初始化 UI
+    // =======================
 
     (function initProgramBackup() {
       const lineButtons = Array.from(
@@ -297,6 +358,7 @@
       function renderSections() {
         sectionRow.innerHTML = '';
         const sections = getSectionsForLine(currentLineKey);
+
         sections.forEach(sec => {
           const btn = document.createElement('button');
           btn.className = 'pill section-pill';
@@ -319,7 +381,7 @@
         });
       });
 
-      renderSections(); // 初始顯示 Line1 的 section
+      renderSections(); // 預設顯示 Line1 的 section
     })();
   </script>
 </body>
