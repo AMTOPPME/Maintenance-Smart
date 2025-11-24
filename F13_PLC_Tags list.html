@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tags List | Maintenance Smart</title>
+  <title>Line Schematic | Maintenance Smart</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- 套用主題（blue / panther / hangyodon） -->
@@ -42,7 +42,7 @@
       transition: background .25s ease, color .25s ease;
     }
 
-    /* style 背景跟主站同步 */
+    /* style 背景—與主頁同步 */
     html[data-style="panther"] body{
       background:
         radial-gradient(circle at top,rgba(244,114,182,.28),transparent),
@@ -54,7 +54,54 @@
         var(--bg);
     }
 
-    /* 角色背景（左右兩邊的圖） */
+    /* Back to Top button base */
+    #backToTop {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      z-index: 9999;
+      display: none;
+      transition: all .25s ease;
+    }
+
+    #backToTop:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.30);
+    }
+
+    /* 主題變換版本：panther / hangyodon 換成角色圖 */
+    html[data-style="panther"] #backToTop {
+      background: transparent;
+      background-image: url("pinkpanther2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
+    html[data-style="hangyodon"] #backToTop {
+      background: transparent;
+      background-image: url("hangyodon2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
+    /* 角色背景（左右兩側） */
     .side-panther,
     .side-hangyodon{
       position:fixed;
@@ -97,11 +144,12 @@
       }
     }
 
+    /* Title */
     h1 {
       color: var(--accent);
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 600;
-      margin: 0 0 4px 0;
+      margin: 0 0 6px 0;
       text-align: center;
       position: relative;
       z-index: 2;
@@ -109,12 +157,13 @@
     .subtitle {
       font-size: 13px;
       color: var(--text-soft);
-      margin: 0 0 12px 0;
+      margin: 0 0 10px 0;
       text-align: center;
       position: relative;
       z-index: 2;
     }
 
+    /* Button */
     .toolbar {
       display: flex;
       gap: 8px;
@@ -144,6 +193,7 @@
       border-color: var(--accent-hover);
     }
 
+    /* PDF Viewer */
     .viewer {
       width: 100%;
       max-width: 1100px;
@@ -175,78 +225,30 @@
     @media (max-width: 480px) {
       .viewer { height: calc(100dvh - 180px); }
     }
-
-    /* Back to Top button base */
-    #backToTop {
-      position: fixed;
-      bottom: 22px;
-      right: 22px;
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent);
-      color: #fff;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      z-index: 9999;
-      display: none;
-      transition: all .25s ease;
-    }
-
-    #backToTop:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.30);
-    }
-
-    /* panther → 使用粉紅角色圖片 */
-    html[data-style="panther"] #backToTop {
-      background: transparent;
-      background-image: url("pinkpanther2.png");
-      background-size: 100% 100%;
-      background-position: center;
-      color: transparent;
-      border: none;
-    }
-
-    /* hangyodon → 使用魚丁角色圖片 */
-    html[data-style="hangyodon"] #backToTop {
-      background: transparent;
-      background-image: url("hangyodon2.png");
-      background-size: 100% 100%;
-      background-position: center;
-      color: transparent;
-      border: none;
-    }
   </style>
 </head>
 <body>
 
-  <!-- 左右角色圖 -->
+  <!-- 左右角色 -->
   <img src="pinkpanther1.png" alt="" class="side-panther left">
   <img src="pinkpanther2.png" alt="" class="side-panther right">
 
   <img src="hangyodon1.png" alt="" class="side-hangyodon left">
   <img src="hangyodon2.png" alt="" class="side-hangyodon right">
 
-  <h1>Tags List</h1>
-  <div class="subtitle">PLC / SCADA Tag Reference</div>
+  <h1 id="pageTitle">Line Schematic</h1>
+  <div class="subtitle" id="pageSub">Production Line – Wiring and PLC Diagram</div>
 
   <div class="toolbar">
-    <!-- 桌機版：開 pdf.js viewer 用 -->
-    <a class="btn" id="openNewTab" href="#" rel="noopener">Open in New Tab ↗</a>
+    <a class="btn" id="openNewTab" href="#" rel="noopener">Open PDF in New Tab ↗</a>
   </div>
 
   <div class="viewer" id="viewer">
-    <iframe id="pdfFrame" title="Tags list viewer"></iframe>
+    <!-- 電腦：pdf.js viewer；手機 / iPad：會被 JS 改成按鈕 -->
+    <iframe id="pdfFrame" title="PDF viewer"></iframe>
   </div>
 
-  <!-- 🔼 Back to Top 按鈕（一定要在 script 前面，JS 才抓得到） -->
+  <!-- 回到頂部按鈕 -->
   <button id="backToTop" title="Back to Top">↑</button>
 
   <!-- Back to Top 行為 -->
@@ -256,7 +258,7 @@
       if (!btn) return;
 
       window.addEventListener('scroll', () => {
-        if (window.scrollY > 80) {   // 門檻調小一點，比較容易看到
+        if (window.scrollY > 250) {
           btn.style.display = 'flex';
           btn.style.opacity = '1';
         } else {
@@ -274,47 +276,68 @@
     })();
   </script>
 
-  <!-- PDF / pdf.js 載入邏輯 -->
+  <!-- PDF + pdf.js viewer 邏輯 -->
   <script>
     (function () {
-      // ===== 1. 設定 Tags list PDF 檔名 =====
-      const pdfFileName = 'F13_PLC_Tags list.pdf';
+      const allowedLines = ['1','2','3','4'];
+      const allowedSecs  = ['F12','F13','F16','F201'];
 
-      // 和 F13_PLC_Tags list.html 在同一層
-      const pdfUrlDirect = pdfFileName;
+      const params = new URLSearchParams(window.location.search);
+      let line = params.get('line') || '1';
+      let sec  = (params.get('sec')  || 'F13').toUpperCase();
 
-      // 從 pdfjs/web/viewer.html 的角度看，要回到根目錄再找 PDF
-      const pdfUrlForViewer = '../../' + pdfFileName;
+      line = String(parseInt(line,10) || 1);
+      if (!allowedLines.includes(line)) line = '1';
+      if (!allowedSecs.includes(sec))  sec  = 'F13';
+
+      // ===== PDF 檔名 =====
+      const pdfFileName = `Line-${line}-${sec}-Schematic.pdf`;
+
+      // 給「手機 / iPad 按鈕」用
+      const pdfUrlForDirect = pdfFileName;
+
+      // 給「pdf.js viewer」用（從 /pdfjs/web/viewer.html 看，要走兩層回根目錄）
+      const pdfUrlForViewer = `../../${pdfFileName}`;
 
       // pdf.js viewer 路徑
       const pdfjsViewerBase = 'pdfjs/web/viewer.html';
       const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
 
+      const titleEl = document.getElementById('pageTitle');
+      const subEl   = document.getElementById('pageSub');
       const viewer  = document.getElementById('viewer');
       const frame   = document.getElementById('pdfFrame');
       const openNewTab = document.getElementById('openNewTab');
 
-      // ===== 2. 裝置偵測 =====
+      // ===== 更新標題 =====
+      if (titleEl){
+        titleEl.textContent = `Line ${line} Schematic – ${sec}`;
+      }
+      if (subEl){
+        subEl.textContent = `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
+      }
+
+      // ===== 裝置偵測 =====
       const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
       const isSmallScreen = window.innerWidth <= 1024;
       const isMobileOrTablet = isTouch && isSmallScreen;
 
       if (isMobileOrTablet) {
-        // 手機 / iPad：只顯示一顆按鈕開 PDF（用系統 / 瀏覽器 viewer）
+        // 手機 / iPad：只顯示一顆按鈕，用瀏覽器開 PDF
         if (openNewTab) openNewTab.style.display = 'none';
         if (viewer) {
           viewer.innerHTML = `
             <div class="fallback">
-              Tap the button below to open Tags List PDF.<br><br>
-              <a class="btn" href="${pdfUrlDirect}" target="_blank" rel="noopener">
-                Open Tags List PDF ↗
+              Tap the button below to open PDF.<br><br>
+              <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
+                Open PDF ↗
               </a>
             </div>`;
         }
         return;
       }
 
-      // ===== 3. 桌機：內嵌 pdf.js viewer =====
+      // ===== 桌機：內嵌 pdf.js viewer =====
       if (frame) {
         frame.src = viewerUrl;
       }
