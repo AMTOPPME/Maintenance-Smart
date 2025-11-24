@@ -97,6 +97,54 @@
       }
     }
 
+    /* Back to Top button base */
+    #backToTop {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      z-index: 9999;
+      display: none;
+      transition: all .25s ease;
+    }
+
+    #backToTop:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.30);
+    }
+
+    /* panther → 使用粉紅角色圖片 */
+    html[data-style="panther"] #backToTop {
+      background: transparent;
+      background-image: url("pinkpanther2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
+    /* hangyodon → 使用魚丁角色圖片 */
+    html[data-style="hangyodon"] #backToTop {
+      background: transparent;
+      background-image: url("hangyodon2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
     h1 {
       color: var(--accent);
       font-size: 20px;
@@ -175,54 +223,6 @@
     @media (max-width: 480px) {
       .viewer { height: calc(100dvh - 180px); }
     }
-
-    /* Back to Top button base */
-    #backToTop {
-      position: fixed;
-      bottom: 22px;
-      right: 22px;
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent);
-      color: #fff;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      z-index: 9999;
-      display: none;
-      transition: all .25s ease;
-    }
-
-    #backToTop:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.30);
-    }
-
-    /* panther → 使用粉紅角色圖片 */
-    html[data-style="panther"] #backToTop {
-      background: transparent;
-      background-image: url("pinkpanther2.png");
-      background-size: 100% 100%;
-      background-position: center;
-      color: transparent;
-      border: none;
-    }
-
-    /* hangyodon → 使用魚丁角色圖片 */
-    html[data-style="hangyodon"] #backToTop {
-      background: transparent;
-      background-image: url("hangyodon2.png");
-      background-size: 100% 100%;
-      background-position: center;
-      color: transparent;
-      border: none;
-    }
   </style>
 </head>
 <body>
@@ -246,17 +246,17 @@
     <iframe id="pdfFrame" title="Tags list viewer"></iframe>
   </div>
 
-  <!-- 🔼 Back to Top 按鈕（一定要在 script 前面，JS 才抓得到） -->
+  <!-- 回到頂部按鈕 -->
   <button id="backToTop" title="Back to Top">↑</button>
 
-  <!-- Back to Top 行為 -->
+  <!-- Back to Top JS -->
   <script>
     (function(){
       const btn = document.getElementById('backToTop');
       if (!btn) return;
 
       window.addEventListener('scroll', () => {
-        if (window.scrollY > 80) {   // 門檻調小一點，比較容易看到
+        if (window.scrollY > 250) {
           btn.style.display = 'flex';
           btn.style.opacity = '1';
         } else {
@@ -274,7 +274,7 @@
     })();
   </script>
 
-  <!-- PDF / pdf.js 載入邏輯 -->
+  <!-- PDF viewer / pdf.js 切換 JS -->
   <script>
     (function () {
       // ===== 1. 設定 Tags list PDF 檔名 =====
