@@ -97,7 +97,7 @@
       }
     }
 
-    /* Back to Top button base */
+    /* Back to Top button */
     #backToTop {
       position: fixed;
       bottom: 22px;
@@ -116,8 +116,14 @@
       justify-content: center;
       box-shadow: 0 8px 20px rgba(0,0,0,0.25);
       z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .25s ease, box-shadow .25s ease;
+    }
+
+    #backToTop.visible {
       opacity: 1;
-      transition: all .25s ease;
+      pointer-events: auto;
     }
 
     #backToTop:hover {
@@ -195,7 +201,7 @@
     .viewer {
       width: 100%;
       max-width: 1100px;
-      height: calc(100dvh - 210px); /* 比 line schematic 再矮一點，保證有 scroll */
+      height: calc(100dvh - 170px);
       min-height: 380px;
       background: var(--card-bg);
       border-radius: 14px;
@@ -246,37 +252,75 @@
     <iframe id="pdfFrame" title="Tags list viewer"></iframe>
   </div>
 
-  <!-- 回到頂部按鈕（桌機一開始就會出現） -->
+  <!-- 回到頂部按鈕（主頁 + iframe 兩邊都控制） -->
   <button id="backToTop" title="Back to Top">↑</button>
 
-  <!-- Back to Top JS -->
+  <!-- Back to Top JS：監聽 window + iframe 兩邊的捲動 -->
   <script>
     (function(){
       const btn = document.getElementById('backToTop');
       if (!btn) return;
 
-      // 桌機 / 平板：一進頁面就顯示
-      if (window.innerWidth > 768) {
-        btn.style.display = 'flex';
+      const THRESHOLD = 250;
+
+      function updateVisibility(){
+        let show = window.scrollY > THRESHOLD;
+
+        const frame = document.getElementById('pdfFrame');
+        if (frame && frame.contentWindow) {
+          try {
+            const fy = frame.contentWindow.scrollY || frame.contentWindow.pageYOffset || 0;
+            if (fy > THRESHOLD) show = true;
+          } catch(e){
+            // 若跨網域就忽略 iframe 捲動
+          }
+        }
+
+        if (show){
+          btn.classList.add('visible');
+        } else {
+          btn.classList.remove('visible');
+        }
       }
 
-      // 若真的有捲動，就依捲動量控制顯示/隱藏
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 120) {
-          btn.style.display = 'flex';
-          btn.style.opacity = '1';
-        } else {
-          btn.style.opacity = '0.85';
-          btn.style.display = 'flex';
-        }
-      });
+      function scrollToTopAll(){
+        // 主畫面
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      btn.addEventListener('click', () => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
+        // iframe 裡的 pdf.js viewer
+        const frame = document.getElementById('pdfFrame');
+        if (frame && frame.contentWindow) {
+          try {
+            frame.contentWindow.scrollTo({ top: 0, behavior: 'smooth' });
+          } catch(e){
+            // 若跨網域就忽略
+          }
+        }
+      }
+
+      btn.addEventListener('click', scrollToTopAll);
+
+      // 監聽主畫面捲動
+      window.addEventListener('scroll', updateVisibility);
+
+      // 等 iframe 載入後，再監聽裡面的捲動
+      const frame = document.getElementById('pdfFrame');
+      if (frame) {
+        frame.addEventListener('load', function(){
+          try {
+            const cw = frame.contentWindow;
+            if (cw) {
+              cw.addEventListener('scroll', updateVisibility);
+            }
+          } catch(e){
+            // ignore
+          }
+          updateVisibility();
         });
-      });
+      }
+
+      // 初始判斷一次
+      updateVisibility();
     })();
   </script>
 
