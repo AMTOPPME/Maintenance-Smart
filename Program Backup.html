@@ -215,12 +215,9 @@
     </div>
   </div>
 
-  <script>
-    // =======================
-    //  1. 在這裡設定 Google Drive 連結
-    // =======================
-
-    const BackupUrlMap = {
+  <!-- 這裡只放 JS 部分，HTML 跟你前一版一樣，用這段 JS 換掉原本的 JS 即可 -->
+<script>
+   const BackupUrlMap = {
       Line1: {
         F12:  'https://drive.google.com/drive/folders/1v6Ceoo7Wh9aty0tDBdt8CkwoJedd-bbi',
         F13:  'https://drive.google.com/drive/folders/14i873c0LQENb_O_6vsGISQsxonO1BEDj',
@@ -288,122 +285,115 @@
       }
     };
 
-    // =======================
-    //  2. Line 對應的 Section 列表
-    // =======================
+  const defaultSections = [
+    { key: 'F12',   label: 'F12' },
+    { key: 'F13',   label: 'F13' },
+    { key: 'F16',   label: 'F16' },
+    { key: 'F42',   label: 'F42' },
+    { key: 'F55',   label: 'F55' },
+    { key: 'F281',  label: 'F281' },
+    { key: 'FlameTreater',   label: 'Flame Treater' },
+    { key: 'MainBlending',   label: 'Main Blending' },
+    { key: 'MainLoading',    label: 'Main Loading' },
+    { key: 'ScadaPC1PC2',    label: 'Scada PC1 PC2' },
+    { key: 'SoftalTreater',  label: 'Softal Treater' },
+    { key: 'TDOBruckpanel',  label: 'TDO Bruckpanel' },
+    { key: 'WinderCarrgeBruckpanel',
+      label: 'Winder Carrge Bruckpanel' }
+  ];
 
-    const defaultSections = [
-      { key: 'F12',   label: 'F12' },
-      { key: 'F13',   label: 'F13' },
-      { key: 'F16',   label: 'F16' },
-      { key: 'F42',   label: 'F42' },
-      { key: 'F55',   label: 'F55' },
-      { key: 'F281',  label: 'F281' },
-      { key: 'FlameTreater',   label: 'Flame Treater' },
-      { key: 'MainBlending',   label: 'Main Blending' },
-      { key: 'MainLoading',    label: 'Main Loading' },
-      { key: 'ScadaPC1PC2',    label: 'Scada PC1 PC2' },
-      { key: 'SoftalTreater',  label: 'Softal Treater' },
-      { key: 'TDOBruckpanel',  label: 'TDO Bruckpanel' },
-      { key: 'WinderCarrgeBruckpanel',
-        label: 'Winder Carrge Bruckpanel' }
-    ];
+  const reclaimSections = [
+    { key: 'XRO1', label: 'XRO1' },
+    { key: 'XRO2', label: 'XRO2' },
+    { key: 'XRO3', label: 'XRO3' }
+  ];
 
-    const reclaimSections = [
-      { key: 'XRO1', label: 'XRO1' },
-      { key: 'XRO2', label: 'XRO2' },
-      { key: 'XRO3', label: 'XRO3' }
-    ];
+  function getSectionsForLine(lineKey) {
+    return lineKey === 'Reclaim' ? reclaimSections : defaultSections;
+  }
 
-    function getSectionsForLine(lineKey) {
-      return lineKey === 'Reclaim' ? reclaimSections : defaultSections;
+  function getHashParams() {
+    const hash = window.location.hash ? window.location.hash.substring(1) : '';
+    const params = {};
+    if (!hash) return params;
+    hash.split('&').forEach(part => {
+      const [k, v] = part.split('=');
+      if (k && v) {
+        params[decodeURIComponent(k)] = decodeURIComponent(v);
+      }
+    });
+    return params;
+  }
+
+  function openBackup(lineKey, sectionKey) {
+    const lineMap = BackupUrlMap[lineKey] || {};
+    const url = lineMap[sectionKey];
+
+    if (!url) {
+      alert(`No backup URL configured for ${lineKey} / ${sectionKey}.`);
+      return;
     }
+    window.open(url, '_blank');
+  }
 
-    // 讀網址 hash 參數，例如 #line=Line1&section=F12
-    function getHashParams() {
-      const hash = window.location.hash ? window.location.hash.substring(1) : '';
-      const params = {};
-      if (!hash) return params;
-      hash.split('&').forEach(part => {
-        const [k, v] = part.split('=');
-        if (k && v) {
-          params[decodeURIComponent(k)] = decodeURIComponent(v);
+  (function initProgramBackup() {
+    const lineButtons = Array.from(
+      document.querySelectorAll('.line-pill')
+    );
+    const sectionRow = document.getElementById('sectionRow');
+
+    const hashParams = getHashParams();
+    let currentLineKey =
+      hashParams.line ||
+      lineButtons.find(b => b.classList.contains('active'))?.dataset.lineKey ||
+      'Line1';
+
+    function setActiveLineButton() {
+      lineButtons.forEach(b => {
+        if (b.dataset.lineKey === currentLineKey) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
         }
       });
-      return params;
     }
 
-    function openBackup(lineKey, sectionKey) {
-      const lineMap = BackupUrlMap[lineKey] || {};
-      const url = lineMap[sectionKey];
+    function renderSections() {
+      sectionRow.innerHTML = '';
+      const sections = getSectionsForLine(currentLineKey);
 
-      if (!url) {
-        alert(`No backup URL configured for ${lineKey} / ${sectionKey}.`);
-        return;
-      }
-      window.open(url, '_blank');
-    }
-
-    (function initProgramBackup() {
-      const lineButtons = Array.from(
-        document.querySelectorAll('.line-pill')
-      );
-      const sectionRow = document.getElementById('sectionRow');
-
-      const hashParams = getHashParams();
-      let currentLineKey =
-        hashParams.line ||
-        lineButtons.find(b => b.classList.contains('active'))?.dataset.lineKey ||
-        'Line1';
-
-      function setActiveLineButton() {
-        lineButtons.forEach(b => {
-          if (b.dataset.lineKey === currentLineKey) {
-            b.classList.add('active');
-          } else {
-            b.classList.remove('active');
-          }
-        });
-      }
-
-      function renderSections() {
-        sectionRow.innerHTML = '';
-        const sections = getSectionsForLine(currentLineKey);
-
-        sections.forEach(sec => {
-          const btn = document.createElement('button');
-          btn.className = 'pill section-pill';
-          btn.dataset.sectionKey = sec.key;
-          btn.textContent = sec.label;
-          btn.addEventListener('click', () => {
-            openBackup(currentLineKey, sec.key);
-          });
-          sectionRow.appendChild(btn);
-        });
-      }
-
-      // 切換 LINE
-      lineButtons.forEach(btn => {
+      sections.forEach(sec => {
+        const btn = document.createElement('button');
+        btn.className = 'pill section-pill';
+        btn.dataset.sectionKey = sec.key;
+        btn.textContent = sec.label;
         btn.addEventListener('click', () => {
-          currentLineKey = btn.dataset.lineKey;
-          setActiveLineButton();
-          renderSections();
+          openBackup(currentLineKey, sec.key);
         });
+        sectionRow.appendChild(btn);
       });
+    }
 
-      // 初始化畫面
-      setActiveLineButton();
-      renderSections();
+    // 切換 LINE
+    lineButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentLineKey = btn.dataset.lineKey;
+        setActiveLineButton();
+        renderSections();
+      });
+    });
 
-      // 如果網址有 section 參數，就自動開啟對應備份
-      if (hashParams.section) {
-        const secKey = hashParams.section;
-        // 延遲一下確保按鈕都建立好了
-        setTimeout(() => {
-          openBackup(currentLineKey, secKey);
-        }, 50);
-      }
-    })();
-  </script>
+    setActiveLineButton();
+    renderSections();
+
+    // 如果網址有 section 參數，就自動開啟對應備份
+    if (hashParams.section) {
+      const secKey = hashParams.section;
+      setTimeout(() => {
+        openBackup(currentLineKey, secKey);
+      }, 50);
+    }
+  })();
+</script>
 </body>
 </html>
