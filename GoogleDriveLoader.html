@@ -5,6 +5,13 @@
 <title>Opening Google Drive…</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+  :root{
+    --card-bg:#ffffff;
+    --border:#e5e7eb;
+    --text:#111827;
+    --text-soft:#6b7280;
+  }
+
   body {
     margin:0;
     font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
@@ -13,17 +20,17 @@
     justify-content:center;
     align-items:center;
     height:100vh;
-    color:#111827;
+    color:var(--text);
   }
 
   .card {
-    background:white;
+    background:var(--card-bg);
     border-radius:20px;
     padding:28px 26px;
     max-width:320px;
     width:92%;
-    box-shadow:0 12px 32px rgba(0,0,0,.15);
-    border:1px solid #e5e7eb;
+    box-shadow:0 12px 32px rgba(15,23,42,.15);
+    border:1px solid var(--border);
     text-align:center;
   }
 
@@ -49,7 +56,7 @@
 
   .desc {
     font-size:13px;
-    color:#6b7280;
+    color:var(--text-soft);
     margin-bottom:14px;
     line-height:1.4;
   }
@@ -57,6 +64,21 @@
   .small {
     font-size:11px;
     color:#9ca3af;
+    margin-bottom:10px;
+  }
+
+  .btn-open {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px 16px;
+    border-radius:999px;
+    border:1px solid #2563eb;
+    background:#2563eb;
+    color:white;
+    font-size:13px;
+    text-decoration:none;
+    cursor:pointer;
   }
 </style>
 </head>
@@ -66,7 +88,10 @@
   <div class="loader"></div>
   <div class="title" id="title">Opening…</div>
   <div class="desc" id="desc">Loading Google Drive…</div>
-  <div class="small">File will open in a new tab.</div>
+  <div class="small">If nothing happens, tap the button below.</div>
+  <a id="openBtn" class="btn-open" href="#" target="_blank" rel="noopener">
+    Open in Google Drive
+  </a>
 </div>
 
 <script>
@@ -78,16 +103,37 @@
 
   // 更新顯示
   if (line && section) {
+    const niceLine = line.startsWith("Line") ? line.replace("Line","Line ") : line;
     document.getElementById("title").textContent =
-      `Line ${line.replace("Line","")} – ${section}`;
+      niceLine + " – " + section;
     document.getElementById("desc").textContent =
-      "Opening backup file on Google Drive…";
+      "Opening backup on Google Drive…";
   }
 
-  // 自動開新分頁
+  // 按鈕 href
+  const btn = document.getElementById("openBtn");
+  if (url && btn) {
+    btn.href = url;
+  }
+
+  // 自動開啟：桌機開新分頁 / 手機直接導向整個視窗
   if (url) {
     setTimeout(() => {
-      window.open(url, "_blank", "noopener");
+      const isSmall = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      try {
+        if (isSmall || isMobileUA) {
+          // 手機：直接把整個 tab 導到 Google Drive（不走 popup）
+          window.top.location.href = url;
+        } else {
+          // 桌機：開新分頁
+          window.open(url, "_blank", "noopener");
+        }
+      } catch (e) {
+        // 如果被擋，至少按鈕可以用
+        console.log('Auto open blocked:', e);
+      }
     }, 600);
   }
 </script>
