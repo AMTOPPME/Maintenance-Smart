@@ -380,6 +380,60 @@
       color: var(--text-soft);
     }
 
+    /* Back to Top button */
+    #backToTop {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .25s ease, box-shadow .25s ease;
+    }
+
+    #backToTop.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #backToTop:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.30);
+    }
+
+    /* panther → 使用粉紅角色圖片 */
+    html[data-style="panther"] #backToTop {
+      background: transparent;
+      background-image: url("pinkpanther2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
+    /* hangyodon → 使用魚丁角色圖片 */
+    html[data-style="hangyodon"] #backToTop {
+      background: transparent;
+      background-image: url("hangyodon2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
     /* Print */
     @media print {
       body {
@@ -401,7 +455,8 @@
       #printBtn,
       .filter-header,
       .side-panther,
-      .side-hangyodon {
+      .side-hangyodon,
+      #backToTop {
         display: none !important;
       }
       .table-wrap {
@@ -488,6 +543,40 @@
       </div>
     </div>
   </div>
+
+  <!-- Back to Top button -->
+  <button id="backToTop" title="Back to Top">↑</button>
+
+<script>
+  // Back to Top：滾動超過一定高度才顯示
+  (function(){
+    const btn = document.getElementById('backToTop');
+    if (!btn) return;
+
+    const THRESHOLD = 250;
+
+    function updateVisibility() {
+      if (window.scrollY > THRESHOLD) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    }
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    window.addEventListener('scroll', updateVisibility);
+    btn.addEventListener('click', scrollToTop);
+
+    // 初始化判斷一次
+    updateVisibility();
+  })();
+</script>
 
 <script>
   let computers = [];
