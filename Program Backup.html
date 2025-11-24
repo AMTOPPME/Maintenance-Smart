@@ -5,7 +5,7 @@
   <title>Maintenance Smart | Program Backup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- 套用主 Portal 的 theme / style -->
+  <!-- 套用 Portal 的 theme / style -->
   <script>
     (function () {
       const storedTheme = localStorage.getItem('ms-theme');
@@ -48,7 +48,6 @@
       --shadow-soft-md: 0 18px 46px rgba(15, 23, 42, 0.6);
     }
 
-    /* style: panther / hangyodon 可以再自己調整顏色 */
     html[data-style="panther"] {
       --accent: #111827;
       --accent-hover: #020617;
@@ -61,9 +60,7 @@
       --accent-soft: #e0f2fe;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -170,11 +167,6 @@
       box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
     }
 
-    .pill.section-pill.disabled {
-      opacity: 0.45;
-      cursor: default;
-    }
-
     .hint {
       margin-top: 8px;
       font-size: 10px;
@@ -183,12 +175,8 @@
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 16px 8px;
-      }
-      .card {
-        max-width: 360px;
-      }
+      body { padding: 16px 8px; }
+      .card { max-width: 360px; }
     }
   </style>
 </head>
@@ -206,64 +194,93 @@
       <!-- LINE -->
       <div class="section-label">LINE</div>
       <div class="pill-row" id="lineRow">
-        <button class="pill line-pill active" data-line-key="Line1">Line 1</button>
-        <button class="pill line-pill" data-line-key="Line2">Line 2</button>
-        <button class="pill line-pill" data-line-key="Line3">Line 3</button>
-        <button class="pill line-pill" data-line-key="Line4">Line 4</button>
-        <button class="pill line-pill" data-line-key="Reclaim">Reclaim</button>
+        <!-- key 用於資料夾 / 檔名；label 是畫面上的字 -->
+        <button class="pill line-pill active"
+                data-line-key="Line1">Line 1</button>
+        <button class="pill line-pill"
+                data-line-key="Line2">Line 2</button>
+        <button class="pill line-pill"
+                data-line-key="Line3">Line 3</button>
+        <button class="pill line-pill"
+                data-line-key="Line4">Line 4</button>
+        <button class="pill line-pill"
+                data-line-key="Reclaim">Reclaim</button>
       </div>
 
       <!-- SECTION -->
       <div class="section-label">SECTION</div>
       <div class="pill-row" id="sectionRow">
-        <!-- 簡單照你截圖上的順序，如果之後要加減直接改這裡就好 -->
-        <button class="pill section-pill" data-section-key="F12">F12</button>
-        <button class="pill section-pill" data-section-key="F13">F13</button>
-        <button class="pill section-pill" data-section-key="F16">F16</button>
-        <button class="pill section-pill" data-section-key="F42">F42</button>
-        <button class="pill section-pill" data-section-key="F55">F55</button>
-        <button class="pill section-pill" data-section-key="F281">F281</button>
-        <button class="pill section-pill" data-section-key="FlameTreater">Flame Treater</button>
-        <button class="pill section-pill" data-section-key="MainBlending">Main Blending</button>
-        <button class="pill section-pill" data-section-key="MainLoading">Main Loading</button>
-        <button class="pill section-pill" data-section-key="ScadaPC1PC2">Scada PC1 PC2</button>
-        <button class="pill section-pill" data-section-key="SoftalTreater">Softal Treater</button>
-        <button class="pill section-pill" data-section-key="TDOBruckpanel">TDO Bruckpanel</button>
-        <button class="pill section-pill" data-section-key="WinderCarrgeBruckpanel">
-          Winder Carrge Bruckpanel
-        </button>
+        <!-- 內容由 JS 動態依照 Line 產生 -->
       </div>
 
       <div class="hint">
         File naming rule (default):<br>
         <code>Program-Backup-[LineKey]-[SectionKey].html</code><br>
         Folder structure (default):<br>
-        <code>./[LineKey]/[SectionKey]/Program-Backup-[LineKey]-[SectionKey].html</code>
+        <code>./Program Backup/[LineKey]/[SectionKey]/Program-Backup-[LineKey]-[SectionKey].html</code>
       </div>
     </div>
   </div>
 
   <script>
-    // === 設定區: 如果你的結構不同，可以只改這一段 ===
+    // === 設定區 ===
     const ProgramBackupConfig = {
-      fileExtension: '.html',   // 如果你備份是 .pdf 就改成 '.pdf'
-      useSectionFolder: true,   // 如果不想要第二層 F12 folder 就設成 false
-      openInNewTab: true        // true: 開新分頁；false: 目前分頁
+      baseFolder: 'Program Backup',   // 資料夾名稱（與這支 html 同層）
+      fileExtension: '.html',         // 若備份是 PDF → 改成 '.pdf'
+      useSectionFolder: true,         // 若不要第二層 Section 資料夾 → 改 false
+      openInNewTab: true              // true: 新分頁開；false: 目前分頁
     };
 
+    // Line1~4 共用的 section（你截圖那一串）
+    const defaultSections = [
+      { key: 'F12',   label: 'F12' },
+      { key: 'F13',   label: 'F13' },
+      { key: 'F16',   label: 'F16' },
+      { key: 'F42',   label: 'F42' },
+      { key: 'F55',   label: 'F55' },
+      { key: 'F281',  label: 'F281' },
+      { key: 'FlameTreater',   label: 'Flame Treater' },
+      { key: 'MainBlending',   label: 'Main Blending' },
+      { key: 'MainLoading',    label: 'Main Loading' },
+      { key: 'ScadaPC1PC2',    label: 'Scada PC1 PC2' },
+      { key: 'SoftalTreater',  label: 'Softal Treater' },
+      { key: 'TDOBruckpanel',  label: 'TDO Bruckpanel' },
+      { key: 'WinderCarrgeBruckpanel',
+        label: 'Winder Carrge Bruckpanel' }
+    ];
+
+    // Reclaim 專用：XRO1 ~ XRO3
+    const reclaimSections = [
+      { key: 'XRO1', label: 'XRO1' },
+      { key: 'XRO2', label: 'XRO2' },
+      { key: 'XRO3', label: 'XRO3' }
+    ];
+
+    function getSectionsForLine(lineKey) {
+      if (lineKey === 'Reclaim') return reclaimSections;
+      return defaultSections;
+    }
+
     function buildBackupPath(lineKey, sectionKey) {
-      const fileName = `Program-Backup-${lineKey}-${sectionKey}${ProgramBackupConfig.fileExtension}`;
+      const base = encodeURIComponent(ProgramBackupConfig.baseFolder);
+      const fileName =
+        `Program-Backup-${lineKey}-${sectionKey}` +
+        ProgramBackupConfig.fileExtension;
 
       if (ProgramBackupConfig.useSectionFolder) {
-        return (
-          encodeURIComponent(lineKey) +
-          '/' +
-          encodeURIComponent(sectionKey) +
-          '/' +
-          fileName
-        );
+        return `${base}/${encodeURIComponent(lineKey)}/` +
+               `${encodeURIComponent(sectionKey)}/${fileName}`;
       } else {
-        return encodeURIComponent(lineKey) + '/' + fileName;
+        return `${base}/${encodeURIComponent(lineKey)}/${fileName}`;
+      }
+    }
+
+    function openBackup(lineKey, sectionKey) {
+      const path = buildBackupPath(lineKey, sectionKey);
+      if (ProgramBackupConfig.openInNewTab) {
+        window.open(path, '_blank');
+      } else {
+        window.location.href = path;
       }
     }
 
@@ -271,13 +288,26 @@
       const lineButtons = Array.from(
         document.querySelectorAll('.line-pill')
       );
-      const sectionButtons = Array.from(
-        document.querySelectorAll('.section-pill')
-      );
+      const sectionRow = document.getElementById('sectionRow');
 
       let currentLineKey =
-        lineButtons.find(btn => btn.classList.contains('active'))
-          ?.dataset.lineKey || 'Line1';
+        lineButtons.find(b => b.classList.contains('active'))
+        ?.dataset.lineKey || 'Line1';
+
+      function renderSections() {
+        sectionRow.innerHTML = '';
+        const sections = getSectionsForLine(currentLineKey);
+        sections.forEach(sec => {
+          const btn = document.createElement('button');
+          btn.className = 'pill section-pill';
+          btn.dataset.sectionKey = sec.key;
+          btn.textContent = sec.label;
+          btn.addEventListener('click', () => {
+            openBackup(currentLineKey, sec.key);
+          });
+          sectionRow.appendChild(btn);
+        });
+      }
 
       // 切換 LINE
       lineButtons.forEach(btn => {
@@ -285,23 +315,11 @@
           lineButtons.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           currentLineKey = btn.dataset.lineKey;
+          renderSections();
         });
       });
 
-      // 點 SECTION 直接開對應檔案
-      sectionButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          if (btn.classList.contains('disabled')) return;
-          const sectionKey = btn.dataset.sectionKey;
-          const path = buildBackupPath(currentLineKey, sectionKey);
-
-          if (ProgramBackupConfig.openInNewTab) {
-            window.open(path, '_blank');
-          } else {
-            window.location.href = path;
-          }
-        });
-      });
+      renderSections(); // 初始顯示 Line1 的 section
     })();
   </script>
 </body>
