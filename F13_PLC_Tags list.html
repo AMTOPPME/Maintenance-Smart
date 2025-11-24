@@ -252,26 +252,31 @@
   <!-- Back to Top JS -->
   <script>
     (function(){
-      const btn = document.getElementById('backToTop');
-      if (!btn) return;
+  const btn = document.getElementById('backToTop');
+  if (!btn) return;
 
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 250) {
-          btn.style.display = 'flex';
-          btn.style.opacity = '1';
-        } else {
-          btn.style.opacity = '0';
-          btn.style.display = 'none';
-        }
-      });
+  // 桌機 → 永遠顯示
+  if (window.innerWidth > 1024) {
+    btn.style.display = 'flex';
+  }
 
-      btn.addEventListener('click', () => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      });
-    })();
+  // 手机 / iPad → 保持原本邏輯
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      btn.style.display = 'flex';
+    } else if (window.innerWidth <= 1024) {
+      btn.style.display = 'none';
+    }
+  });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+})();
+
   </script>
 
   <!-- PDF viewer / pdf.js 切換 JS -->
