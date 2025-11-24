@@ -792,10 +792,14 @@
         return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
       }
 
-      // Program Backup 檔名規則
-      function buildBackupFileName(lineKey, sectionKey){
-        return 'Program-Backup-' + lineKey + '-' + sectionKey + '.html';
+      // Program Backup 入口：嵌入 Program Backup.html + hash 參數
+      function buildProgramBackupEntryUrl(lineKey, sectionKey){
+        const base = 'Program%20Backup.html'; // 同一層的 Program Backup.html
+        const params = '#line=' + encodeURIComponent(lineKey)
+                    + '&section=' + encodeURIComponent(sectionKey);
+        return base + params;
       }
+
 
       // 預設主模組切換（Home / PC Manager / Calibration 等）
       buttons.forEach(btn => {
