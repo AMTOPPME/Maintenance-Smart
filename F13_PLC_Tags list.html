@@ -252,10 +252,10 @@
     <iframe id="pdfFrame" title="Tags list viewer"></iframe>
   </div>
 
-  <!-- 回到頂部按鈕（主頁 + iframe 兩邊都控制） -->
+  <!-- 回到頂部按鈕 -->
   <button id="backToTop" title="Back to Top">↑</button>
 
-  <!-- Back to Top JS：監聽 window + iframe 兩邊的捲動 -->
+  <!-- Back to Top：同時控制外面 + pdf.js viewerContainer -->
   <script>
     (function(){
       const btn = document.getElementById('backToTop');
@@ -263,56 +263,56 @@
 
       const THRESHOLD = 250;
 
-      function updateVisibility(){
-        let show = window.scrollY > THRESHOLD;
-
+      function getViewerContainer() {
         const frame = document.getElementById('pdfFrame');
-        if (frame && frame.contentWindow) {
-          try {
-            const fy = frame.contentWindow.scrollY || frame.contentWindow.pageYOffset || 0;
-            if (fy > THRESHOLD) show = true;
-          } catch(e){
-            // 若跨網域就忽略 iframe 捲動
-          }
+        if (!frame || !frame.contentDocument) return null;
+        try {
+          return frame.contentDocument.getElementById('viewerContainer');
+        } catch(e) {
+          return null;
+        }
+      }
+
+      function updateVisibility() {
+        let scrollVal = window.scrollY || document.documentElement.scrollTop || 0;
+        const vc = getViewerContainer();
+        if (vc) {
+          scrollVal = Math.max(scrollVal, vc.scrollTop || 0);
         }
 
-        if (show){
+        if (scrollVal > THRESHOLD) {
           btn.classList.add('visible');
         } else {
           btn.classList.remove('visible');
         }
       }
 
-      function scrollToTopAll(){
-        // 主畫面
+      function scrollToTopAll() {
+        // 外層頁面
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // iframe 裡的 pdf.js viewer
-        const frame = document.getElementById('pdfFrame');
-        if (frame && frame.contentWindow) {
-          try {
-            frame.contentWindow.scrollTo({ top: 0, behavior: 'smooth' });
-          } catch(e){
-            // 若跨網域就忽略
-          }
+        // pdf.js viewer 裡面的捲動容器
+        const vc = getViewerContainer();
+        if (vc) {
+          vc.scrollTo({ top: 0, behavior: 'smooth' });
         }
       }
 
       btn.addEventListener('click', scrollToTopAll);
 
-      // 監聽主畫面捲動
+      // 監聽外層捲動
       window.addEventListener('scroll', updateVisibility);
 
-      // 等 iframe 載入後，再監聽裡面的捲動
+      // iframe 載入後，監聽 viewerContainer 的捲動
       const frame = document.getElementById('pdfFrame');
       if (frame) {
         frame.addEventListener('load', function(){
           try {
-            const cw = frame.contentWindow;
-            if (cw) {
-              cw.addEventListener('scroll', updateVisibility);
+            const vc = getViewerContainer();
+            if (vc) {
+              vc.addEventListener('scroll', updateVisibility);
             }
-          } catch(e){
+          } catch(e) {
             // ignore
           }
           updateVisibility();
@@ -330,7 +330,7 @@
       // ===== 1. 設定 Tags list PDF 檔名 =====
       const pdfFileName = 'F13_PLC_Tags list.pdf';
 
-      // 和 F13_PLC_Tags list.html 在同一層
+      // 和 F13_PLC_Tags list.pdf 在同一層
       const pdfUrlDirect = pdfFileName;
 
       // 從 pdfjs/web/viewer.html 的角度看，要回到根目錄再找 PDF
