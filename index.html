@@ -654,10 +654,10 @@
           <button
             class="nav-item-btn"
             data-src="Calibration-Portal.html"
-            data-title="Calibration SOP"
-            data-sub="Step-by-step calibration procedures.">
-            <span class="nav-icon">🧪</span>
-            <span class="nav-label">Calibration</span>
+            data-title="Maintenance SOP"
+            data-sub="Step-by-step maintenance procedures.">
+            <span class="nav-icon">🔧</span>
+            <span class="nav-label">Maintenance</span>
           </button>
         </li>
       </ul>
@@ -860,7 +860,7 @@
         return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
       }
 
-      // 預設主模組切換（Home / PC Manager / Calibration 等）
+      // 預設主模組切換（Home / PC Manager / Maintenance 等）
       buttons.forEach(btn => {
         btn.addEventListener('click', () => {
           const role = btn.dataset.role || '';
