@@ -918,29 +918,32 @@
       });
 
       // Program Backup：Section / System
-      backupSecBtns.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const sectionKey   = btn.getAttribute('data-section');
-          const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-          if (!sectionKey) return;
+backupSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const sectionKey   = btn.getAttribute('data-section');
+    const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+    if (!sectionKey) return;
 
-          const file = buildBackupFileName(currentBackupLine, sectionKey);
-          if (frame){
-            frame.src = file;
-          }
+    // ⬇️ 透過 Program Backup.html + hash 參數嵌入
+    const url = buildProgramBackupEntryUrl(currentBackupLine, sectionKey);
+    if (frame){
+      frame.src = url;
+    }
 
-          const lineLabel = formatLineLabel(currentBackupLine);
-          setModule(
-            'Program Backup – ' + lineLabel + ' – ' + sectionLabel,
-            'Backup page: ' + file
-          );
+    const lineLabel = formatLineLabel(currentBackupLine);
+    setModule(
+      'Program Backup – ' + lineLabel + ' – ' + sectionLabel,
+      'Backup via Program Backup.html (line=' + currentBackupLine +
+      ', section=' + sectionKey + ')'
+    );
 
-          if (panel && panel.classList.contains('open')){
-            panel.classList.remove('open');
-            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-          }
-        });
-      });
+    if (panel && panel.classList.contains('open')){
+      panel.classList.remove('open');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+    }
+  });
+});
+
 
       // 🔹 Tags list：載入到右側 iframe，不開新分頁
       const tagsLink = document.getElementById('tagsListLink');
