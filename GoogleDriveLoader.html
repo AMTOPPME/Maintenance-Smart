@@ -1,9 +1,19 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Opening Google Drive…</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- 套用主題（blue / panther / hangyodon） -->
+<script>
+  (function () {
+    const style = localStorage.getItem('ms-style') || 'blue';
+    document.documentElement.setAttribute('data-style', style);
+  })();
+</script>
+
 <style>
   :root{
     --bg:#f3f4f6;
@@ -14,7 +24,7 @@
     --text-soft:#6b7280;
   }
 
-  /* 跟 Portal 一樣的主題色切換 */
+  /* style 背景—與主頁同步 */
   html[data-style="panther"]{
     --bg:#ffe4ec;
     --card-bg:#ffffff;
@@ -26,15 +36,78 @@
     --accent:#0ea5e9;
   }
 
+  *{box-sizing:border-box;}
+
   body {
     margin:0;
     font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-    background:var(--bg);
+    background:
+      radial-gradient(circle at top, rgba(129,140,248,0.12), transparent),
+      var(--bg);
+    color:var(--text);
+    min-height:100dvh;
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
-    color:var(--text);
+    padding:16px;
+    -webkit-text-size-adjust:100%;
+    transition:background .25s ease,color .25s ease;
+    position:relative;
+    overflow:hidden;
+  }
+
+  html[data-style="panther"] body{
+    background:
+      radial-gradient(circle at top,rgba(244,114,182,.28),transparent),
+      var(--bg);
+  }
+  html[data-style="hangyodon"] body{
+    background:
+      radial-gradient(circle at top,rgba(56,189,248,.35),transparent),
+      var(--bg);
+  }
+
+  /* 角色背景（左右兩側大圖） */
+  .side-panther,
+  .side-hangyodon{
+    position:fixed;
+    top:50%;
+    transform:translateY(-50%);
+    width:320px;
+    opacity:.9;
+    z-index:1;
+    pointer-events:none;
+    user-select:none;
+    transition: transform .25s ease, opacity .25s ease;
+    display:none;
+  }
+
+  .side-panther.left{left:1.5%; transform:translateY(-50%) scaleX(1);}
+  .side-panther.right{right:1.5%; transform:translateY(-50%) scaleX(1);}
+
+  .side-hangyodon.left{left:1.5%; transform:translateY(-50%) scaleX(-1);}
+  .side-hangyodon.right{right:1.5%; transform:translateY(-50%) scaleX(-1);}
+
+  html[data-style="panther"] .side-panther{display:block;}
+  html[data-style="hangyodon"] .side-hangyodon{display:block;}
+
+  @media (max-width: 900px){
+    html[data-style="panther"] .side-panther.left,
+    html[data-style="hangyodon"] .side-hangyodon.left{
+      display:none !important;
+    }
+
+    html[data-style="panther"] .side-panther.right,
+    html[data-style="hangyodon"] .side-hangyodon.right{
+      display:block !important;
+      position:fixed !important;
+      left:50% !important;
+      right:auto !important;
+      top:50% !important;
+      transform:translate(-50%, -50%) !important;
+      width:260px;
+      opacity:.7;
+    }
   }
 
   .card {
@@ -48,6 +121,7 @@
     text-align:center;
     position:relative;
     overflow:hidden;
+    z-index:2; /* 蓋在側邊圖上 */
   }
 
   /* 左上小 mascot，跟 Portal 風格一樣 */
@@ -73,7 +147,7 @@
     flex-shrink:0;
   }
 
-  /* panther / hangyodon 圖片（檔案放同一資料夾） */
+  /* panther / hangyodon 圖片（檔案與本頁同資料夾） */
   html[data-style="panther"] .mascot{
     background-image:url("pinkpanther.png");
     box-shadow:0 0 8px rgba(148,27,80,0.45);
@@ -149,30 +223,36 @@
 </head>
 <body>
 
-<div class="card">
-  <div class="mascot-wrap">
-    <div class="mascot"></div>
-    <div class="brand-text">MS Backup</div>
+  <!-- 左右角色（跟 Line Schematic 一樣） -->
+  <img src="pinkpanther1.png"   alt="" class="side-panther left">
+  <img src="pinkpanther2.png"   alt="" class="side-panther right">
+  <img src="hangyodon1.png"     alt="" class="side-hangyodon left">
+  <img src="hangyodon2.png"     alt="" class="side-hangyodon right">
+
+  <div class="card">
+    <div class="mascot-wrap">
+      <div class="mascot"></div>
+      <div class="brand-text">MS Backup</div>
+    </div>
+
+    <div class="loader"></div>
+    <div class="title" id="title">Opening…</div>
+    <div class="desc" id="desc">Loading Google Drive…</div>
+    <div class="small">If nothing happens, tap the button below.</div>
+    <a id="openBtn" class="btn-open" href="#" target="_blank" rel="noopener">
+      <span class="icon">📂</span>
+      <span>Open in Google Drive</span>
+    </a>
   </div>
 
-  <div class="loader"></div>
-  <div class="title" id="title">Opening…</div>
-  <div class="desc" id="desc">Loading Google Drive…</div>
-  <div class="small">If nothing happens, tap the button below.</div>
-  <a id="openBtn" class="btn-open" href="#" target="_blank" rel="noopener">
-    <span class="icon">📂</span>
-    <span>Open in Google Drive</span>
-  </a>
-</div>
-
 <script>
-  // 取得網址參數
-  const params = new URLSearchParams(location.search);
-  const line = params.get("line");
+  // 取得網址參數 ?line=Line2&section=SoftalTreater&url=...
+  const params  = new URLSearchParams(location.search);
+  const line    = params.get("line");
   const section = params.get("section");
-  const url = params.get("url");
+  const url     = params.get("url");
 
-  // 更新顯示
+  // 更新顯示文字
   if (line && section) {
     const niceLine = line.startsWith("Line") ? line.replace("Line","Line ") : line;
     document.getElementById("title").textContent =
@@ -190,12 +270,12 @@
   // 自動開啟：桌機開新分頁 / 手機直接導向整個視窗
   if (url) {
     setTimeout(() => {
-      const isSmall = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      const isSmall   = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
       const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
       try {
         if (isSmall || isMobileUA) {
-          // 手機：直接把整個 tab 導到 Google Drive（不走 popup）
+          // 手機/平板：整個 tab 導到 Google Drive
           window.top.location.href = url;
         } else {
           // 桌機：開新分頁
@@ -210,3 +290,4 @@
 
 </body>
 </html>
+```
