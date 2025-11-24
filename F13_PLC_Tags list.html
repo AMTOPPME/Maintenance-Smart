@@ -116,7 +116,7 @@
       justify-content: center;
       box-shadow: 0 8px 20px rgba(0,0,0,0.25);
       z-index: 9999;
-      display: none;
+      opacity: 1;
       transition: all .25s ease;
     }
 
@@ -195,7 +195,7 @@
     .viewer {
       width: 100%;
       max-width: 1100px;
-      height: calc(100dvh - 170px);
+      height: calc(100dvh - 210px); /* 比 line schematic 再矮一點，保證有 scroll */
       min-height: 380px;
       background: var(--card-bg);
       border-radius: 14px;
@@ -246,37 +246,38 @@
     <iframe id="pdfFrame" title="Tags list viewer"></iframe>
   </div>
 
-  <!-- 回到頂部按鈕 -->
+  <!-- 回到頂部按鈕（桌機一開始就會出現） -->
   <button id="backToTop" title="Back to Top">↑</button>
 
   <!-- Back to Top JS -->
   <script>
     (function(){
-  const btn = document.getElementById('backToTop');
-  if (!btn) return;
+      const btn = document.getElementById('backToTop');
+      if (!btn) return;
 
-  // 桌機 → 永遠顯示
-  if (window.innerWidth > 1024) {
-    btn.style.display = 'flex';
-  }
+      // 桌機 / 平板：一進頁面就顯示
+      if (window.innerWidth > 768) {
+        btn.style.display = 'flex';
+      }
 
-  // 手机 / iPad → 保持原本邏輯
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      btn.style.display = 'flex';
-    } else if (window.innerWidth <= 1024) {
-      btn.style.display = 'none';
-    }
-  });
+      // 若真的有捲動，就依捲動量控制顯示/隱藏
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 120) {
+          btn.style.display = 'flex';
+          btn.style.opacity = '1';
+        } else {
+          btn.style.opacity = '0.85';
+          btn.style.display = 'flex';
+        }
+      });
 
-  btn.addEventListener('click', () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  });
-})();
-
+      btn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    })();
   </script>
 
   <!-- PDF viewer / pdf.js 切換 JS -->
