@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Maintenance Smart | Program Backup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 套用主 Portal 的 theme / style -->
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('ms-theme');
+      const prefersDark = window.matchMedia &&
+                          window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --border-subtle: #e5e7eb;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-hover: #1d4ed8;
+      --text: #111827;
+      --text-soft: #6b7280;
+      --radius-xl: 18px;
+      --shadow-soft-md: 0 16px 40px rgba(15, 23, 42, 0.09);
+      --small-font: 13px;
+      --xsmall-font: 11px;
+    }
+
+    /* Dark mode */
+    html[data-theme="dark"] {
+      --bg: #020617;
+      --card-bg: #020617;
+      --border-subtle: #1f2937;
+      --accent: #3b82f6;
+      --accent-soft: #0b1120;
+      --accent-hover: #60a5fa;
+      --text: #e5e7eb;
+      --text-soft: #9ca3af;
+      --shadow-soft-md: 0 18px 46px rgba(15, 23, 42, 0.6);
+    }
+
+    /* style: panther / hangyodon 可以再自己調整顏色 */
+    html[data-style="panther"] {
+      --accent: #111827;
+      --accent-hover: #020617;
+      --accent-soft: #e5e7eb;
+    }
+
+    html[data-style="hangyodon"] {
+      --accent: #0ea5e9;
+      --accent-hover: #0284c7;
+      --accent-soft: #e0f2fe;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 12px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 320px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft-md);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--accent);
+      color: #f9fafb;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .card-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .folder-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .dropdown-icon {
+      font-size: 10px;
+      opacity: 0.9;
+    }
+
+    .card-body {
+      padding: 14px 14px 16px;
+      font-size: var(--small-font);
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-soft);
+      margin-bottom: 6px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      padding: 4px 10px;
+      font-size: var(--xsmall-font);
+      color: var(--text-soft);
+      background: #f9fafb;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease,
+                  border-color 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+
+    html[data-theme="dark"] .pill {
+      background: #020617;
+    }
+
+    .pill:hover {
+      background: var(--accent-soft);
+      color: var(--accent-hover);
+      border-color: var(--accent-soft);
+    }
+
+    .pill.line-pill.active {
+      background: var(--accent);
+      border-color: var(--accent-hover);
+      color: #f9fafb;
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
+    }
+
+    .pill.section-pill.disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 10px;
+      color: var(--text-soft);
+      line-height: 1.4;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px 8px;
+      }
+      .card {
+        max-width: 360px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="folder-icon">📁</div>
+        <span>Program Backup</span>
+      </div>
+      <span class="dropdown-icon">▾</span>
+    </div>
+
+    <div class="card-body">
+      <!-- LINE -->
+      <div class="section-label">LINE</div>
+      <div class="pill-row" id="lineRow">
+        <button class="pill line-pill active" data-line-key="Line1">Line 1</button>
+        <button class="pill line-pill" data-line-key="Line2">Line 2</button>
+        <button class="pill line-pill" data-line-key="Line3">Line 3</button>
+        <button class="pill line-pill" data-line-key="Line4">Line 4</button>
+        <button class="pill line-pill" data-line-key="Reclaim">Reclaim</button>
+      </div>
+
+      <!-- SECTION -->
+      <div class="section-label">SECTION</div>
+      <div class="pill-row" id="sectionRow">
+        <!-- 簡單照你截圖上的順序，如果之後要加減直接改這裡就好 -->
+        <button class="pill section-pill" data-section-key="F12">F12</button>
+        <button class="pill section-pill" data-section-key="F13">F13</button>
+        <button class="pill section-pill" data-section-key="F16">F16</button>
+        <button class="pill section-pill" data-section-key="F42">F42</button>
+        <button class="pill section-pill" data-section-key="F55">F55</button>
+        <button class="pill section-pill" data-section-key="F281">F281</button>
+        <button class="pill section-pill" data-section-key="FlameTreater">Flame Treater</button>
+        <button class="pill section-pill" data-section-key="MainBlending">Main Blending</button>
+        <button class="pill section-pill" data-section-key="MainLoading">Main Loading</button>
+        <button class="pill section-pill" data-section-key="ScadaPC1PC2">Scada PC1 PC2</button>
+        <button class="pill section-pill" data-section-key="SoftalTreater">Softal Treater</button>
+        <button class="pill section-pill" data-section-key="TDOBruckpanel">TDO Bruckpanel</button>
+        <button class="pill section-pill" data-section-key="WinderCarrgeBruckpanel">
+          Winder Carrge Bruckpanel
+        </button>
+      </div>
+
+      <div class="hint">
+        File naming rule (default):<br>
+        <code>Program-Backup-[LineKey]-[SectionKey].html</code><br>
+        Folder structure (default):<br>
+        <code>./[LineKey]/[SectionKey]/Program-Backup-[LineKey]-[SectionKey].html</code>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === 設定區: 如果你的結構不同，可以只改這一段 ===
+    const ProgramBackupConfig = {
+      fileExtension: '.html',   // 如果你備份是 .pdf 就改成 '.pdf'
+      useSectionFolder: true,   // 如果不想要第二層 F12 folder 就設成 false
+      openInNewTab: true        // true: 開新分頁；false: 目前分頁
+    };
+
+    function buildBackupPath(lineKey, sectionKey) {
+      const fileName = `Program-Backup-${lineKey}-${sectionKey}${ProgramBackupConfig.fileExtension}`;
+
+      if (ProgramBackupConfig.useSectionFolder) {
+        return (
+          encodeURIComponent(lineKey) +
+          '/' +
+          encodeURIComponent(sectionKey) +
+          '/' +
+          fileName
+        );
+      } else {
+        return encodeURIComponent(lineKey) + '/' + fileName;
+      }
+    }
+
+    (function initProgramBackup() {
+      const lineButtons = Array.from(
+        document.querySelectorAll('.line-pill')
+      );
+      const sectionButtons = Array.from(
+        document.querySelectorAll('.section-pill')
+      );
+
+      let currentLineKey =
+        lineButtons.find(btn => btn.classList.contains('active'))
+          ?.dataset.lineKey || 'Line1';
+
+      // 切換 LINE
+      lineButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          lineButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentLineKey = btn.dataset.lineKey;
+        });
+      });
+
+      // 點 SECTION 直接開對應檔案
+      sectionButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (btn.classList.contains('disabled')) return;
+          const sectionKey = btn.dataset.sectionKey;
+          const path = buildBackupPath(currentLineKey, sectionKey);
+
+          if (ProgramBackupConfig.openInNewTab) {
+            window.open(path, '_blank');
+          } else {
+            window.location.href = path;
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
