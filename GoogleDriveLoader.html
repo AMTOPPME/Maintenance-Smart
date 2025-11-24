@@ -6,16 +6,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   :root{
+    --bg:#f3f4f6;
     --card-bg:#ffffff;
     --border:#e5e7eb;
+    --accent:#2563eb;
     --text:#111827;
     --text-soft:#6b7280;
+  }
+
+  /* 跟 Portal 一樣的主題色切換 */
+  html[data-style="panther"]{
+    --bg:#ffe4ec;
+    --card-bg:#ffffff;
+    --accent:#111827;
+  }
+  html[data-style="hangyodon"]{
+    --bg:#dbeafe;
+    --card-bg:#ffffff;
+    --accent:#0ea5e9;
   }
 
   body {
     margin:0;
     font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-    background:#f3f4f6;
+    background:var(--bg);
     display:flex;
     justify-content:center;
     align-items:center;
@@ -26,12 +40,51 @@
   .card {
     background:var(--card-bg);
     border-radius:20px;
-    padding:28px 26px;
+    padding:24px 22px 26px;
     max-width:320px;
     width:92%;
     box-shadow:0 12px 32px rgba(15,23,42,.15);
     border:1px solid var(--border);
     text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* 左上小 mascot，跟 Portal 風格一樣 */
+  .mascot-wrap{
+    position:absolute;
+    top:12px;
+    left:12px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:11px;
+    color:var(--text-soft);
+  }
+
+  .mascot{
+    width:22px;
+    height:22px;
+    border-radius:8px;
+    background:radial-gradient(circle at 30% 0,#bfdbfe,#2563eb);
+    box-shadow:0 0 8px rgba(37,99,235,0.35);
+    background-size:cover;
+    background-position:center;
+    flex-shrink:0;
+  }
+
+  /* panther / hangyodon 圖片（檔案放同一資料夾） */
+  html[data-style="panther"] .mascot{
+    background-image:url("pinkpanther.png");
+    box-shadow:0 0 8px rgba(148,27,80,0.45);
+  }
+  html[data-style="hangyodon"] .mascot{
+    background-image:url("hangyodon.png");
+    box-shadow:0 0 8px rgba(14,165,233,0.45);
+  }
+
+  .brand-text{
+    display:none;
   }
 
   .loader {
@@ -39,8 +92,8 @@
     height:42px;
     border-radius:50%;
     border:4px solid #dbeafe;
-    border-top-color:#2563eb;
-    margin:0 auto 16px;
+    border-top-color:var(--accent);
+    margin:12px auto 16px;
     animation:spin .7s linear infinite;
   }
 
@@ -57,14 +110,14 @@
   .desc {
     font-size:13px;
     color:var(--text-soft);
-    margin-bottom:14px;
+    margin-bottom:10px;
     line-height:1.4;
   }
 
   .small {
     font-size:11px;
     color:#9ca3af;
-    margin-bottom:10px;
+    margin-bottom:12px;
   }
 
   .btn-open {
@@ -73,24 +126,42 @@
     justify-content:center;
     padding:8px 16px;
     border-radius:999px;
-    border:1px solid #2563eb;
-    background:#2563eb;
+    border:1px solid var(--accent);
+    background:var(--accent);
     color:white;
     font-size:13px;
     text-decoration:none;
     cursor:pointer;
+    gap:6px;
+  }
+
+  .btn-open span.icon{
+    font-size:14px;
+  }
+
+  @media (max-width:480px){
+    .card{
+      max-width:340px;
+      width:94%;
+    }
   }
 </style>
 </head>
 <body>
 
 <div class="card">
+  <div class="mascot-wrap">
+    <div class="mascot"></div>
+    <div class="brand-text">MS Backup</div>
+  </div>
+
   <div class="loader"></div>
   <div class="title" id="title">Opening…</div>
   <div class="desc" id="desc">Loading Google Drive…</div>
   <div class="small">If nothing happens, tap the button below.</div>
   <a id="openBtn" class="btn-open" href="#" target="_blank" rel="noopener">
-    Open in Google Drive
+    <span class="icon">📂</span>
+    <span>Open in Google Drive</span>
   </a>
 </div>
 
@@ -131,7 +202,6 @@
           window.open(url, "_blank", "noopener");
         }
       } catch (e) {
-        // 如果被擋，至少按鈕可以用
         console.log('Auto open blocked:', e);
       }
     }, 600);
