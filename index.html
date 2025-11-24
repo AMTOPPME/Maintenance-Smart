@@ -368,7 +368,8 @@
       font-size:10px;
       color:var(--text-soft);
     }
-        /* Line Schematic → Tags list 區塊 */
+
+    /* Line Schematic → Tags list 區塊 */
     .ls-tags{
       margin-top:6px;
       padding-top:6px;
@@ -401,7 +402,6 @@
       border-color:var(--accent-hover);
       transform:translateY(-1px);
     }
-
 
     @media (max-width:900px){
       .page{
@@ -571,14 +571,14 @@
             </div>
             <div class="ls-tags">
               <div class="ls-label">TAGS LIST</div>
-                <a class="ls-tag-link" href="#" id="tagsListLink">
-                  Open Tags List
-                </a>
-              </div>
+              <a class="ls-tag-link" href="#" id="tagsListLink">
+                Open Tags List
+              </a>
             </div>
+          </div>
         </li>
 
-        <!-- Program Backup：兩層列表（保持你原本那版） -->
+        <!-- Program Backup：兩層列表 -->
         <li class="nav-group-backup">
           <button
             class="nav-item-btn"
@@ -645,8 +645,7 @@
             </div>
 
             <div class="backup-hint">
-              View rule: <code>Program&nbsp;Backup.html#line=[LineKey]&amp;section=[SectionKey]</code>
-              (embedded in iframe)
+              Open backups from Google Drive (Line / Section → URL).
             </div>
           </div>
         </li>
@@ -776,6 +775,75 @@
       const backupSecBtns = document.querySelectorAll('.backup-sec-btn');
       let currentBackupLine = 'Line1';
 
+      // 🔹 Program Backup → Google Drive URL 對應表
+      const BackupUrlMap = {
+        Line1: {
+          F12:  'https://drive.google.com/drive/folders/1v6Ceoo7Wh9aty0tDBdt8CkwoJedd-bbi?usp=sharing',
+          F13:  'https://drive.google.com/drive/folders/14i873c0LQENb_O_6vsGISQsxonO1BEDj?usp=sharing',
+          F16:  'https://drive.google.com/drive/folders/12fY1QcORExwPcFH_GVZhM8FcTimul-jU?usp=sharing',
+          F42:  'https://drive.google.com/drive/folders/12EhLZW0etEC2eX3t1QPSlOQI86v3YBJh?usp=sharing',
+          F55:  'https://drive.google.com/drive/folders/1hNL663CCzPXi6uChKaXEVf3yc6VpBST8?usp=sharing',
+          F201: 'https://drive.google.com/drive/folders/19fiHd3JljzATXPGSb944Ob8O0C-6qGWD?usp=sharing',
+          FlameTreater:  'https://drive.google.com/...',
+          MainBlending:  'https://drive.google.com/...',
+          MainLoading:   'https://drive.google.com/...',
+          ScadaPC1PC2:   'https://drive.google.com/...',
+          SoftalTreater: 'https://drive.google.com/...',
+          TDOBruckpanel: 'https://drive.google.com/...',
+          WinderCarrgeBruckpanel: 'https://drive.google.com/...'
+        },
+        Line2: {
+          F12:  'https://drive.google.com/drive/folders/1v6Ceoo7Wh9aty0tDBdt8CkwoJedd-bbi',
+          F13:  'https://drive.google.com/...',
+          F16:  'https://drive.google.com/...',
+          F42:  'https://drive.google.com/...',
+          F55:  'https://drive.google.com/...',
+          F201: 'https://drive.google.com/...',
+          FlameTreater:  'https://drive.google.com/...',
+          MainBlending:  'https://drive.google.com/...',
+          MainLoading:   'https://drive.google.com/...',
+          ScadaPC1PC2:   'https://drive.google.com/...',
+          SoftalTreater: 'https://drive.google.com/...',
+          TDOBruckpanel: 'https://drive.google.com/...',
+          WinderCarrgeBruckpanel: 'https://drive.google.com/...'
+        },
+        Line3: {
+          F12:  'https://drive.google.com/drive/folders/1v6Ceoo7Wh9aty0tDBdt8CkwoJedd-bbi',
+          F13:  'https://drive.google.com/...',
+          F16:  'https://drive.google.com/...',
+          F42:  'https://drive.google.com/...',
+          F55:  'https://drive.google.com/...',
+          F201: 'https://drive.google.com/...',
+          FlameTreater:  'https://drive.google.com/...',
+          MainBlending:  'https://drive.google.com/...',
+          MainLoading:   'https://drive.google.com/...',
+          ScadaPC1PC2:   'https://drive.google.com/...',
+          SoftalTreater: 'https://drive.google.com/...',
+          TDOBruckpanel: 'https://drive.google.com/...',
+          WinderCarrgeBruckpanel: 'https://drive.google.com/...'
+        },
+        Line4: {
+          F12:  'https://drive.google.com/drive/folders/1v6Ceoo7Wh9aty0tDBdt8CkwoJedd-bbi',
+          F13:  'https://drive.google.com/...',
+          F16:  'https://drive.google.com/...',
+          F42:  'https://drive.google.com/...',
+          F55:  'https://drive.google.com/...',
+          F201: 'https://drive.google.com/...',
+          FlameTreater:  'https://drive.google.com/...',
+          MainBlending:  'https://drive.google.com/...',
+          MainLoading:   'https://drive.google.com/...',
+          ScadaPC1PC2:   'https://drive.google.com/...',
+          SoftalTreater: 'https://drive.google.com/...',
+          TDOBruckpanel: 'https://drive.google.com/...',
+          WinderCarrgeBruckpanel: 'https://drive.google.com/...'
+        },
+        Reclaim: {
+          XRO1: 'https://drive.google.com/...',
+          XRO2: 'https://drive.google.com/...',
+          XRO3: 'https://drive.google.com/...'
+        }
+      };
+
       function setModule(title, sub){
         if (titleEl) titleEl.textContent = title;
         if (subEl)   subEl.textContent   = sub;
@@ -791,15 +859,6 @@
         const n = lineKey.replace('Line',''); // Line1 -> 1
         return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
       }
-
-      // Program Backup 入口：嵌入 Program Backup.html + hash 參數
-      function buildProgramBackupEntryUrl(lineKey, sectionKey){
-        const base = 'Program%20Backup.html'; // 同一層的 Program Backup.html
-        const params = '#line=' + encodeURIComponent(lineKey)
-                    + '&section=' + encodeURIComponent(sectionKey);
-        return base + params;
-      }
-
 
       // 預設主模組切換（Home / PC Manager / Calibration 等）
       buttons.forEach(btn => {
@@ -917,33 +976,44 @@
         });
       });
 
-      // Program Backup：Section / System
-backupSecBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const sectionKey   = btn.getAttribute('data-section');
-    const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-    if (!sectionKey) return;
+      // Program Backup：Section / System → 偽 iframe + 實際開 Google Drive
+      backupSecBtns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const sectionKey   = btn.getAttribute('data-section');
+          const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+          if (!sectionKey) return;
 
-    // ⬇️ 透過 Program Backup.html + hash 參數嵌入
-    const url = buildProgramBackupEntryUrl(currentBackupLine, sectionKey);
-    if (frame){
-      frame.src = url;
-    }
+          const lineMap = BackupUrlMap[currentBackupLine] || {};
+          const driveUrl = lineMap[sectionKey];
 
-    const lineLabel = formatLineLabel(currentBackupLine);
-    setModule(
-      'Program Backup – ' + lineLabel + ' – ' + sectionLabel,
-      'Backup via Program Backup.html (line=' + currentBackupLine +
-      ', section=' + sectionKey + ')'
-    );
+          if (!driveUrl) {
+            alert('No backup URL for ' + currentBackupLine + ' / ' + sectionKey);
+            return;
+          }
 
-    if (panel && panel.classList.contains('open')){
-      panel.classList.remove('open');
-      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-    }
-  });
-});
+          // 右側 iframe 載入 GoogleDriveLoader.html（偽 iframe）
+          const loaderUrl =
+            'GoogleDriveLoader.html'
+            + '?line=' + encodeURIComponent(currentBackupLine)
+            + '&section=' + encodeURIComponent(sectionKey)
+            + '&url=' + encodeURIComponent(driveUrl);
 
+          if (frame) {
+            frame.src = loaderUrl;
+          }
+
+          const lineLabel = formatLineLabel(currentBackupLine);
+          setModule(
+            'Program Backup – ' + lineLabel + ' – ' + sectionLabel,
+            'Opening Google Drive backup…'
+          );
+
+          if (panel && panel.classList.contains('open')){
+            panel.classList.remove('open');
+            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+          }
+        });
+      });
 
       // 🔹 Tags list：載入到右側 iframe，不開新分頁
       const tagsLink = document.getElementById('tagsListLink');
@@ -967,7 +1037,6 @@ backupSecBtns.forEach(btn=>{
         });
       }
     })();
-
 
     // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
     (function(){
