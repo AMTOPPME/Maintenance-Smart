@@ -209,7 +209,8 @@
 
       <div class="hint">
         點選 LINE &amp; SECTION 會直接開啟對應的 Google Drive 備份檔案。<br>
-        若某個按鈕沒有設定網址，會跳出提示。
+        若某個按鈕沒有設定網址，會跳出提示。<br>
+        支援網址參數：<code>#line=Line1&amp;section=F12</code>
       </div>
     </div>
   </div>
@@ -218,13 +219,6 @@
     // =======================
     //  1. 在這裡設定 Google Drive 連結
     // =======================
-    //
-    // key 說明：
-    // Line1, Line2, Line3, Line4, Reclaim → 對應上面 LINE 的 data-line-key
-    // F12, FlameTreater, XRO1... → 對應 SECTION 的 data-section-key
-    //
-    // 把 'https://drive.google.com/...' 換成你自己的檔案分享網址即可。
-    // 沒有檔案的就先留空字串 '' 或乾脆刪掉那一行。
 
     const BackupUrlMap = {
       Line1: {
@@ -325,9 +319,19 @@
       return lineKey === 'Reclaim' ? reclaimSections : defaultSections;
     }
 
-    // =======================
-    //  3. 開啟備份檔的函式
-    // =======================
+    // 讀網址 hash 參數，例如 #line=Line1&section=F12
+    function getHashParams() {
+      const hash = window.location.hash ? window.location.hash.substring(1) : '';
+      const params = {};
+      if (!hash) return params;
+      hash.split('&').forEach(part => {
+        const [k, v] = part.split('=');
+        if (k && v) {
+          params[decodeURIComponent(k)] = decodeURIComponent(v);
+        }
+      });
+      return params;
+    }
 
     function openBackup(lineKey, sectionKey) {
       const lineMap = BackupUrlMap[lineKey] || {};
@@ -337,13 +341,8 @@
         alert(`No backup URL configured for ${lineKey} / ${sectionKey}.`);
         return;
       }
-
       window.open(url, '_blank');
     }
-
-    // =======================
-    //  4. 初始化 UI
-    // =======================
 
     (function initProgramBackup() {
       const lineButtons = Array.from(
@@ -351,9 +350,21 @@
       );
       const sectionRow = document.getElementById('sectionRow');
 
+      const hashParams = getHashParams();
       let currentLineKey =
-        lineButtons.find(b => b.classList.contains('active'))
-        ?.dataset.lineKey || 'Line1';
+        hashParams.line ||
+        lineButtons.find(b => b.classList.contains('active'))?.dataset.lineKey ||
+        'Line1';
+
+      function setActiveLineButton() {
+        lineButtons.forEach(b => {
+          if (b.dataset.lineKey === currentLineKey) {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+      }
 
       function renderSections() {
         sectionRow.innerHTML = '';
@@ -374,14 +385,24 @@
       // 切換 LINE
       lineButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-          lineButtons.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
           currentLineKey = btn.dataset.lineKey;
+          setActiveLineButton();
           renderSections();
         });
       });
 
-      renderSections(); // 預設顯示 Line1 的 section
+      // 初始化畫面
+      setActiveLineButton();
+      renderSections();
+
+      // 如果網址有 section 參數，就自動開啟對應備份
+      if (hashParams.section) {
+        const secKey = hashParams.section;
+        // 延遲一下確保按鈕都建立好了
+        setTimeout(() => {
+          openBackup(currentLineKey, secKey);
+        }, 50);
+      }
     })();
   </script>
 </body>
