@@ -1096,41 +1096,49 @@
         });
       });
 
-      // 🔹 Maintenance：直接在 iframe 開 PDF
-      maintenanceSecBtns.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const key   = btn.getAttribute('data-pdf-key');
-          const label = btn.getAttribute('data-label') || key || '';
-          if (!key) return;
+      // 🔹 Maintenance：用 pdf.js viewer 在 iframe 開 PDF
+maintenanceSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key   = btn.getAttribute('data-pdf-key');
+    const label = btn.getAttribute('data-label') || key || '';
+    if (!key) return;
 
-          const pdfPath = MaintenancePdfMap[key];
-          if (!pdfPath){
-            alert('No PDF file mapped for: ' + key);
-            return;
-          }
+    const pdfPath = MaintenancePdfMap[key];
+    if (!pdfPath){
+      alert('No PDF file mapped for: ' + key);
+      return;
+    }
 
-          // 載入 PDF 到右側 iframe
-          if (frame){
-            frame.src = pdfPath;
-          }
+    // 用 pdf.js viewer 包裝後的 URL
+    // 假設你的 pdf.js viewer 檔名叫 PDFViewer.html
+    const viewerUrl =
+      'PDFViewer.html'
+      + '?file='  + encodeURIComponent(pdfPath)
+      + '&title=' + encodeURIComponent(label);
 
-          // 標題改成 Maintenance – xxx
-          setModule(
-            'Maintenance – ' + label,
-            pdfPath
-          );
+    // 載入 pdf.js viewer 到右側 iframe
+    if (frame){
+      frame.src = viewerUrl;
+    }
 
-          // 按過的高亮
-          maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
+    // 標題改成 Maintenance – xxx
+    setModule(
+      'Maintenance – ' + label,
+      'PDF: ' + pdfPath
+    );
 
-          // 收起 Modules 面板（手機使用體驗）
-          if (panel && panel.classList.contains('open')){
-            panel.classList.remove('open');
-            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-          }
-        });
-      });
+    // 按過的高亮
+    maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // 收起 Modules 面板（手機使用體驗）
+    if (panel && panel.classList.contains('open')){
+      panel.classList.remove('open');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+    }
+  });
+});
+
 
       // 🔹 Tags list：載入到右側 iframe，不開新分頁
       const tagsLink = document.getElementById('tagsListLink');
