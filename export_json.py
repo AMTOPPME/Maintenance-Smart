@@ -22,24 +22,65 @@ def load_logs(json_path: Path) -> pd.DataFrame:
 
     df = pd.DataFrame(data)
 
-    # Basic column checks & conversions
+    # ====== 日期欄位（支援 date / Date）======
     if "date" not in df.columns:
-        raise ValueError("Missing 'date' field in JSON records")
+        if "Date" in df.columns:
+            df["date"] = df["Date"]
+        else:
+            raise ValueError(
+                "Missing 'date' field in JSON records (also can't find 'Date'). "
+                f"Available columns: {list(df.columns)}"
+            )
 
-    df["date"] = pd.to_datetime(df["date"])
+    df["date"] = pd.to_datetime(df["date"], errors="coerce")
     df["month"] = df["date"].dt.to_period("M").astype(str)
 
+    # ====== Downtime 欄位（支援 downtime / downtime_min）======
     if "downtime" in df.columns:
-        df["downtime"] = pd.to_numeric(df["downtime"], errors="coerce").fillna(0)
+        pass
+    elif "downtime_min" in df.columns:
+        df["downtime"] = df["downtime_min"]
     else:
         df["downtime"] = 0
 
-    # Fill missing text fields with empty string to avoid NaN
-    for col in ["line", "section", "equipment", "category", "rootcause", "action"]:
+    df["downtime"] = pd.to_numeric(df["downtime"], errors="coerce").fillna(0)
+
+    # ====== 文字欄位對應 ======
+    # 你前端現在存的是：
+    #   asset_id, root_cause, action_taken
+    # 老的 Python 報表想要：
+    #   equipment, rootcause, action
+    col_map = {
+        "equipment": ["asset_id"],
+        "rootcause": ["root_cause"],
+        "action": ["action_taken"],
+    }
+
+    # line / section / category 直接用原本名稱
+    base_text_cols = ["line", "section", "category"]
+
+    for col in base_text_cols:
         if col not in df.columns:
             df[col] = ""
         else:
             df[col] = df[col].fillna("")
+
+    # 做欄位 mapping
+    for target_col, candidates in col_map.items():
+        if target_col in df.columns:
+            df[target_col] = df[target_col].fillna("")
+            continue
+
+        src_col = None
+        for c in candidates:
+            if c in df.columns:
+                src_col = c
+                break
+
+        if src_col is not None:
+            df[target_col] = df[src_col].fillna("")
+        else:
+            df[target_col] = ""
 
     return df
 
