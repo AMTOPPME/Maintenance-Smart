@@ -262,7 +262,8 @@
 
     /* ==== 兩層子列表共用樣式 ==== */
     .nav-group-schematic .nav-item-btn,
-    .nav-group-backup .nav-item-btn{
+    .nav-group-backup .nav-item-btn,
+    .nav-group-maintenance .nav-item-btn{
       justify-content:space-between;
     }
     .nav-chevron{
@@ -271,7 +272,8 @@
     }
 
     .schematic-panel,
-    .backup-panel{
+    .backup-panel,
+    .maintenance-panel{
       margin-top:4px;
       margin-left:26px;
       padding:8px 10px 10px;
@@ -282,12 +284,14 @@
       display:none;
     }
     .schematic-panel.open,
-    .backup-panel.open{
+    .backup-panel.open,
+    .maintenance-panel.open{
       display:block;
     }
 
     .schematic-title,
-    .backup-title{
+    .backup-title,
+    .maintenance-title{
       font-size:11px;
       font-weight:600;
       text-transform:uppercase;
@@ -331,13 +335,15 @@
     }
 
     .schematic-sec-row,
-    .backup-sec-row{
+    .backup-sec-row,
+    .maintenance-sec-row{
       display:flex;
       flex-wrap:wrap;
       gap:6px;
     }
     .schematic-sec-btn,
-    .backup-sec-btn{
+    .backup-sec-btn,
+    .maintenance-sec-btn{
       border-radius:999px;
       border:1px solid var(--border-subtle);
       background:#f9fafb;
@@ -351,17 +357,26 @@
       transition:background .15s,border-color .15s,color .15s,transform .1s;
     }
     .schematic-sec-btn span.code,
-    .backup-sec-btn span.code{
+    .backup-sec-btn span.code,
+    .maintenance-sec-btn span.code{
       font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size:11px;
     }
     .schematic-sec-btn:hover,
-    .backup-sec-btn:hover{
+    .backup-sec-btn:hover,
+    .maintenance-sec-btn:hover{
       background:#fff;
       border-color:var(--accent-soft);
       color:var(--accent);
       transform:translateY(-1px);
     }
+    .maintenance-sec-btn.active{
+      background:#1d4ed8;
+      border-color:#1d4ed8;
+      color:#fff;
+      box-shadow:0 3px 8px rgba(37,99,235,.4);
+    }
+
     .schematic-hint,
     .backup-hint{
       margin-top:6px;
@@ -463,7 +478,8 @@
       }
 
       .schematic-panel,
-      .backup-panel{
+      .backup-panel,
+      .maintenance-panel{
         margin-left:0;
       }
 
@@ -650,15 +666,39 @@
           </div>
         </li>
 
-        <li>
+        <!-- Maintenance：可展開子列表，直接打開 PDF -->
+        <li class="nav-group-maintenance">
           <button
             class="nav-item-btn"
-            data-src="Calibration-Portal.html"
-            data-title="Maintenance SOP"
-            data-sub="Step-by-step maintenance procedures.">
+            type="button"
+            data-role="maintenance-parent"
+            data-title="Maintenance"
+            data-sub="Open maintenance SOP PDFs.">
             <span class="nav-icon">🔧</span>
             <span class="nav-label">Maintenance</span>
+            <span class="nav-chevron" aria-hidden="true">▾</span>
           </button>
+
+          <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
+            <div class="maintenance-title">PDF</div>
+            <div class="maintenance-sec-row">
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="SiemensS7"
+                data-label="Siemens S7 Procedures">
+                <span class="code">Siemens S7 Procedures</span>
+              </button>
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="ABPLCPlan"
+                data-label="AB PLC Plan">
+                <span class="code">AB PLC Plan</span>
+              </button>
+              <!-- 之後有新的 PDF 可以照這樣再加按鈕 -->
+            </div>
+          </div>
         </li>
       </ul>
     </nav>
@@ -756,7 +796,7 @@
       });
     })();
 
-    // 切換模組 + Line Schematic / Program Backup 兩層選單
+    // 切換模組 + Line Schematic / Program Backup / Maintenance 兩層選單
     (function(){
       const frame   = document.getElementById('mainFrame');
       const titleEl = document.getElementById('moduleTitle');
@@ -774,6 +814,9 @@
       const backupLineBtns= document.querySelectorAll('.backup-line-btn');
       const backupSecBtns = document.querySelectorAll('.backup-sec-btn');
       let currentBackupLine = 'Line1';
+
+      const maintenancePanel = document.getElementById('maintenancePanel');
+      const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
 
       // 🔹 Program Backup → Google Drive URL 對應表
       const BackupUrlMap = {
@@ -844,6 +887,12 @@
         }
       };
 
+      // 🔹 Maintenance → PDF 檔名對應表（路徑可依實際情況調整）
+      const MaintenancePdfMap = {
+        SiemensS7: 'Siemens S7 Procedures.pdf',
+        ABPLCPlan: 'AB PLC Plan.pdf'
+      };
+
       function setModule(title, sub){
         if (titleEl) titleEl.textContent = title;
         if (subEl)   subEl.textContent   = sub;
@@ -860,7 +909,7 @@
         return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
       }
 
-      // 預設主模組切換（Home / PC Manager / Maintenance 等）
+      // 預設主模組切換（Home / PC Manager 等）
       buttons.forEach(btn => {
         btn.addEventListener('click', () => {
           const role = btn.dataset.role || '';
@@ -868,7 +917,7 @@
           // Line Schematic parent：只展開 / 收合子列表
           if (role === 'schematic-parent'){
             if (!schematicPanel) return;
-            schematicPanel.classList.toggle('open');
+            const isOpen = schematicPanel.classList.toggle('open');
 
             // 取消其他一般模組的 active
             buttons.forEach(b=>{
@@ -878,8 +927,11 @@
             });
             btn.classList.add('active');
 
-            // 若開 schematic，把 backup 關掉
-            if (backupPanel) backupPanel.classList.remove('open');
+            // 若開 schematic，把其他 panel 關掉
+            if (isOpen){
+              if (backupPanel) backupPanel.classList.remove('open');
+              if (maintenancePanel) maintenancePanel.classList.remove('open');
+            }
 
             setModule(
               btn.dataset.title || 'Line Schematic',
@@ -891,7 +943,7 @@
           // Program Backup parent：只展開 / 收合子列表
           if (role === 'backup-parent'){
             if (!backupPanel) return;
-            backupPanel.classList.toggle('open');
+            const isOpen = backupPanel.classList.toggle('open');
 
             buttons.forEach(b=>{
               if (b !== btn && !b.dataset.role){
@@ -900,12 +952,40 @@
             });
             btn.classList.add('active');
 
-            // 若開 backup，把 schematic 關掉
-            if (schematicPanel) schematicPanel.classList.remove('open');
+            // 若開 backup，把其他 panel 關掉
+            if (isOpen){
+              if (schematicPanel) schematicPanel.classList.remove('open');
+              if (maintenancePanel) maintenancePanel.classList.remove('open');
+            }
 
             setModule(
               btn.dataset.title || 'Program Backup',
               btn.dataset.sub   || 'Select line and section to open backup.'
+            );
+            return;
+          }
+
+          // Maintenance parent：只展開 / 收合 Maintenance PDF 子列表
+          if (role === 'maintenance-parent'){
+            if (!maintenancePanel) return;
+            const isOpen = maintenancePanel.classList.toggle('open');
+
+            buttons.forEach(b=>{
+              if (b !== btn && !b.dataset.role){
+                b.classList.remove('active');
+              }
+            });
+            btn.classList.add('active');
+
+            // 若開 maintenance，把其他 panel 關掉
+            if (isOpen){
+              if (schematicPanel) schematicPanel.classList.remove('open');
+              if (backupPanel)    backupPanel.classList.remove('open');
+            }
+
+            setModule(
+              btn.dataset.title || 'Maintenance',
+              btn.dataset.sub   || 'Open maintenance SOP PDFs.'
             );
             return;
           }
@@ -926,8 +1006,9 @@
             if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
           }
 
-          if (schematicPanel) schematicPanel.classList.remove('open');
-          if (backupPanel)    backupPanel.classList.remove('open');
+          if (schematicPanel)  schematicPanel.classList.remove('open');
+          if (backupPanel)     backupPanel.classList.remove('open');
+          if (maintenancePanel)maintenancePanel.classList.remove('open');
         });
       });
 
@@ -1008,6 +1089,42 @@
             'Opening Google Drive backup…'
           );
 
+          if (panel && panel.classList.contains('open')){
+            panel.classList.remove('open');
+            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+          }
+        });
+      });
+
+      // 🔹 Maintenance：直接在 iframe 開 PDF
+      maintenanceSecBtns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const key   = btn.getAttribute('data-pdf-key');
+          const label = btn.getAttribute('data-label') || key || '';
+          if (!key) return;
+
+          const pdfPath = MaintenancePdfMap[key];
+          if (!pdfPath){
+            alert('No PDF file mapped for: ' + key);
+            return;
+          }
+
+          // 載入 PDF 到右側 iframe
+          if (frame){
+            frame.src = pdfPath;
+          }
+
+          // 標題改成 Maintenance – xxx
+          setModule(
+            'Maintenance – ' + label,
+            pdfPath
+          );
+
+          // 按過的高亮
+          maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+
+          // 收起 Modules 面板（手機使用體驗）
           if (panel && panel.classList.contains('open')){
             panel.classList.remove('open');
             if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
