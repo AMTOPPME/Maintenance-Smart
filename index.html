@@ -818,10 +818,6 @@
       const maintenancePanel = document.getElementById('maintenancePanel');
       const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
 
-      // ✅ 共用 pdf.js viewer（請改成你 Line-1-4 Schematic 用的那個路徑）
-      // 例如：const PDFJS_VIEWER = 'pdfjs/web/viewer.html';
-      const PDFJS_VIEWER = 'pdfjs/web/viewer.html';
-      const PDFJS_VIEWER_HASH = '#zoom=page-width'; // 可依需要調整
 
       // 🔹 Program Backup → Google Drive URL 對應表
       const BackupUrlMap = {
@@ -891,12 +887,7 @@
           XRO3: 'https://drive.google.com/drive/folders/1g8cdW0StRIGv2fHt_iQnUOagFejsIrlP?usp=sharing'
         }
       };
-
-      // 🔹 Maintenance → PDF 檔名對應表（路徑可依實際情況調整）
-      const MaintenancePdfMap = {
-        SiemensS7: 'Siemens S7 Procedures.pdf',
-        ABPLCPlan: 'AB PLC Plan.pdf'
-      };
+     
 
       function setModule(title, sub){
         if (titleEl) titleEl.textContent = title;
@@ -1100,44 +1091,39 @@
           }
         });
       });
+      
+// 🔹 Maintenance：改成開 Maintenance.html（裡面再用 pdf.js）
+maintenanceSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
+    const label = btn.getAttribute('data-label') || key || '';
+    if (!key) return;
 
-      // 🔹 Maintenance：用「同一顆 pdf.js viewer」在 iframe 開 PDF
-      maintenanceSecBtns.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const key   = btn.getAttribute('data-pdf-key');
-          const label = btn.getAttribute('data-label') || key || '';
-          if (!key) return;
+    // Portal 右側 iframe 載入 Maintenance.html
+    const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
 
-          const pdfPath = MaintenancePdfMap[key];
-          if (!pdfPath){
-            alert('No PDF file mapped for: ' + key);
-            return;
-          }
+    if (frame){
+      frame.src = viewerUrl;
+    }
 
-          // 用官方 pdf.js viewer（跟 Line-1-4 schematic 一樣）
-          const viewerUrl =
-            PDFJS_VIEWER
-            + '?file=' + encodeURIComponent(pdfPath)
-            + PDFJS_VIEWER_HASH;
+    // 上面標題顯示
+    setModule(
+      'Maintenance – ' + label,
+      'PDF: ' + label
+    );
 
-          if (frame){
-            frame.src = viewerUrl;
-          }
+    // 按過的高亮
+    maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
 
-          setModule(
-            'Maintenance – ' + label,
-            'PDF: ' + pdfPath
-          );
+    // 收起 Modules 面板（手機使用體驗）
+    if (panel && panel.classList.contains('open')){
+      panel.classList.remove('open');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+    }
+  });
+});
 
-          maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-
-          if (panel && panel.classList.contains('open')){
-            panel.classList.remove('open');
-            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-          }
-        });
-      });
 
       // 🔹 Tags list：載入到右側 iframe，不開新分頁
       const tagsLink = document.getElementById('tagsListLink');
