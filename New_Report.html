@@ -150,7 +150,7 @@
     }
 
     /* Form layout */
-    .saveRecord(){
+    .form-row{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
@@ -369,34 +369,39 @@
         </div>
       </div>
 
-     <div class="form-row">
-  <div>
-    <label for="sectionInput">Section</label>
-    <select id="sectionInput">
-      ...
-    </select>
-  </div>
-  <div>
-    <label for="equipInput">Asset ID (PC-xxx)</label>
-    <input
-      type="text"
-      id="equipInput"
-      placeholder="e.g. PC-001, PC-023, PC-120">
-  </div>
-</div>
-<div class="form-row">
-  <div>
-    <label for="locFromInput">Location From</label>
-    <input type="text" id="locFromInput" placeholder="e.g. Line 2 MCC">
-  </div>
-  <div>
-    <label for="locToInput">Location To</label>
-    <input type="text" id="locToInput" placeholder="e.g. Line 2 control room">
-  </div>
-</div>
+      <div class="form-row">
+        <div>
+          <label for="sectionInput">Section</label>
+          <select id="sectionInput">
+            <option value="">Select…</option>
+            <option value="MCC">MCC</option>
+            <option value="Control Room">Control Room</option>
+            <option value="Field">Field</option>
+            <option value="Server Room">Server Room</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="equipInput">Asset ID (PC-xxx)</label>
+          <input
+            type="text"
+            id="equipInput"
+            placeholder="e.g. PC-001, PC-023, PC-120">
+        </div>
+      </div>
 
+      <div class="form-row">
+        <div>
+          <label for="locFromInput">Location From</label>
+          <input type="text" id="locFromInput" placeholder="e.g. Line 2 MCC">
+        </div>
+        <div>
+          <label for="locToInput">Location To</label>
+          <input type="text" id="locToInput" placeholder="e.g. Line 2 control room">
+        </div>
+      </div>
 
-      <div class="saveRecord()">
+      <div class="form-row">
         <div>
           <label for="catInput">Category</label>
           <select id="catInput">
@@ -414,14 +419,14 @@
         </div>
       </div>
 
-      <div class="saveRecord()">
+      <div class="form-row">
         <div>
           <label for="rootInput">Root cause</label>
           <textarea id="rootInput" placeholder="Describe what caused the failure…"></textarea>
         </div>
       </div>
 
-      <div class="saveRecord()">
+      <div class="form-row">
         <div>
           <label for="actionInput">Action taken</label>
           <textarea id="actionInput" placeholder="Describe what you did to fix the issue…"></textarea>
@@ -490,99 +495,82 @@
         input.value = today;
       }
     }
+
     function normalizeAssetId(input) {
-  if (!input) return "";
+      if (!input) return "";
 
-  // 全部轉大寫 & 去掉前後空白
-  let v = input.trim().toUpperCase();
+      // 全部轉大寫 & 去掉前後空白
+      let v = input.trim().toUpperCase();
 
-  // ① 已經是 PC-001 這種 → 直接用
-  if (/^PC-\d{3}$/.test(v)) return v;
+      // 已經是 PC-001 這種 → 直接用
+      if (/^PC-\d{3}$/.test(v)) return v;
 
-  // ② 其他寫法：PC001 / PC 1 / pc1 / 001 / 1 ...
-  // 去掉開頭的 "PC" / "pc" 之類，再只留下數字
-  v = input.trim().toUpperCase();
-  v = v.replace(/^PC/i, "").replace(/[^0-9]/g, "");
+      // 其他寫法：PC001 / PC 1 / pc1 / 001 / 1 ...
+      v = input.trim().toUpperCase();
+      v = v.replace(/^PC/i, "").replace(/[^0-9]/g, "");
 
-  if (!v) return "";
+      if (!v) return "";
 
-  const num = parseInt(v, 10);
-  if (!Number.isFinite(num) || num < 1 || num > 999) {
-    // 超出範圍就視為不合法
-    return "";
-  }
+      const num = parseInt(v, 10);
+      if (!Number.isFinite(num) || num < 1 || num > 999) {
+        return "";
+      }
 
-  // 補成三位數：1 → 001
-  return "PC-" + String(num).padStart(3, "0");
-}
+      return "PC-" + String(num).padStart(3, "0");
+    }
 
     function saveRecord(){
-  const date      = document.getElementById('dateInput').value;
-  const line      = document.getElementById('lineInput').value;
-  const section   = document.getElementById('sectionInput').value;
+      const date      = document.getElementById('dateInput').value;
+      const line      = document.getElementById('lineInput').value;
+      const section   = document.getElementById('sectionInput').value;
 
-  const equipInputEl = document.getElementById('equipInput');
-  const rawEquip     = equipInputEl.value;
-  const assetId      = normalizeAssetId(rawEquip);   // ⬅ 轉成 PC-xxx
+      const equipInputEl = document.getElementById('equipInput');
+      const rawEquip     = equipInputEl.value;
+      const assetId      = normalizeAssetId(rawEquip);   // 轉成 PC-xxx
 
-  const category  = document.getElementById('catInput').value;
-  const downtime  = Number(document.getElementById('downInput').value || 0);
-  const rootcause = document.getElementById('rootInput').value.trim();
-  const action    = document.getElementById('actionInput').value.trim();
-  const loc_from = document.getElementById('locFromInput').value.trim();
-  const loc_to   = document.getElementById('locToInput').value.trim();
+      const category  = document.getElementById('catInput').value;
+      const downtime  = Number(document.getElementById('downInput').value || 0);
+      const rootcause = document.getElementById('rootInput').value.trim();
+      const action    = document.getElementById('actionInput').value.trim();
+      const loc_from  = document.getElementById('locFromInput').value.trim();
+      const loc_to    = document.getElementById('locToInput').value.trim();
 
-  // 沒填日期或 Asset ID 格式不正確
-  if (!date || !assetId){
-    updateStatus(
-      'Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).'
-    );
-    return;
-  }
+      // 沒填日期或 Asset ID 格式不正確
+      if (!date || !assetId){
+        updateStatus(
+          'Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).'
+        );
+        return;
+      }
 
-  // 把格式化好的字串回寫到輸入框，讓畫面也看到 PC-0xx
-  equipInputEl.value = assetId;
+      // 把格式化好的字串回寫到輸入框，讓畫面也看到 PC-0xx
+      equipInputEl.value = assetId;
 
-  const record = {
-    Date: date,
-    line,
-    section,
-    asset_id: assetId,
-    category,
-    downtime_min: downtime,
-    root_cause: rootcause,
-    action_taken: action,
-    location_from: loc_from,
-    location_to: loc_to,
-    timestamp: new Date().toISOString(),
-    id: crypto.randomUUID()
-  };
-
-
-  const logs = loadRecords();
-  logs.push(record);
-  saveRecords(logs);
-
-  // 清掉其他欄位（Asset ID 我會留著，方便連續記同一台）
-  // 如果你想提交後也清空 Asset ID，就把下一行註解掉
-  // equipInputEl.value = '';
-
-  document.getElementById('downInput').value = '';
-  document.getElementById('rootInput').value = '';
-  document.getElementById('actionInput').value = '';
-
-  updateStatus('Record saved locally.');
-}
-
+      const record = {
+        Date: date,
+        line,
+        section,
+        asset_id: assetId,
+        category,
+        downtime_min: downtime,
+        root_cause: rootcause,
+        action_taken: action,
+        location_from: loc_from,
+        location_to: loc_to,
+        timestamp: new Date().toISOString(),
+        id: crypto.randomUUID()
+      };
 
       const logs = loadRecords();
       logs.push(record);
       saveRecords(logs);
 
-      document.getElementById('equipInput').value = '';
+      // 清掉其他欄位（Asset ID 留著，方便連續記錄同一台）
       document.getElementById('downInput').value = '';
       document.getElementById('rootInput').value = '';
       document.getElementById('actionInput').value = '';
+      document.getElementById('locFromInput').value = '';
+      document.getElementById('locToInput').value = '';
 
       updateStatus('Record saved locally.');
     }
