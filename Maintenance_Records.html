@@ -1,196 +1,1053 @@
-import json
-import pandas as pd
-from pathlib import Path
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Maintenance Smart | Maintenance Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-# === 設定區 ===
-# 1. 將 Download 下來的 maintenance_logs.json 放在跟這支程式同一個資料夾
-JSON_FILE = Path("maintenance_logs.json")
-# 2. 輸出的 Excel 報表名稱
-OUTPUT_FILE = Path("Maintenance_Report_From_JSON.xlsx")
+  <!-- Apply theme & style from portal -->
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('ms-theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
 
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
 
-def load_logs(json_path: Path) -> pd.DataFrame:
-    """Load maintenance logs from JSON file into a standardized DataFrame."""
-    if not json_path.exists():
-        raise FileNotFoundError(f"JSON file not found: {json_path}")
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --border-subtle: #e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text: #111827;
+      --text-soft: #6b7280;
+      --radius-xl: 16px;
+      --shadow-soft-sm: 0 8px 20px rgba(15,23,42,0.06);
+      --small-font: 13px;
+      --xsmall-font: 11px;
+    }
 
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    html[data-theme="dark"] {
+      --bg: #020617;
+      --card-bg: #020617;
+      --border-subtle: #1f2937;
+      --accent: #60a5fa;
+      --accent-hover: #3b82f6;
+      --text: #e5e7eb;
+      --text-soft: #9ca3af;
+      --shadow-soft-sm: 0 8px 20px rgba(0,0,0,0.75);
+    }
 
-    if not isinstance(data, list):
-        raise ValueError("JSON format error: root should be a list of records")
+    * { box-sizing: border-box; }
 
-    df = pd.DataFrame(data)
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 15px;
+      background:
+        radial-gradient(circle at top, rgba(129,140,248,0.14), transparent),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
+      transition: background .25s ease, color .25s ease;
+    }
 
-    # ---- 日期欄位：支援 Date / date，統一成 Date ----
-    if "Date" in df.columns:
-        date_col = "Date"
-    elif "date" in df.columns:
-        date_col = "date"
-    else:
-        raise ValueError("Missing 'Date' or 'date' field in JSON records")
+    html[data-style="panther"] body {
+      background:
+        radial-gradient(circle at top, rgba(244,114,182,.28), transparent),
+        var(--bg);
+    }
+    html[data-style="hangyodon"] body {
+      background:
+        radial-gradient(circle at top, rgba(56,189,248,.35), transparent),
+        var(--bg);
+    }
 
-    df["Date"] = pd.to_datetime(df[date_col])
-    df["month"] = df["Date"].dt.to_period("M").astype(str)
+    .side-panther,
+    .side-hangyodon{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      width:360px;
+      opacity:.9;
+      z-index:1;
+      pointer-events:none;
+      user-select:none;
+      display:none;
+      transition:transform .25s ease, opacity .25s ease;
+    }
+    .side-panther.left{left:1.5%;transform:translateY(-50%) scaleX(1)}
+    .side-panther.right{right:1.5%;transform:translateY(-50%) scaleX(1)}
+    .side-hangyodon.left{left:1.5%;transform:translateY(-50%) scaleX(-1)}
+    .side-hangyodon.right{right:1.5%;transform:translateY(-50%) scaleX(-1)}
 
-    # ---- Downtime 欄位：支援 downtime_min / downtime，統一成 downtime_min ----
-    if "downtime_min" in df.columns:
-        dt_col = "downtime_min"
-    elif "downtime" in df.columns:
-        dt_col = "downtime"
-    else:
-        dt_col = None
+    html[data-style="panther"] .side-panther{display:block;}
+    html[data-style="hangyodon"] .side-hangyodon{display:block;}
 
-    if dt_col:
-        df["downtime_min"] = pd.to_numeric(df[dt_col], errors="coerce").fillna(0)
-    else:
-        df["downtime_min"] = 0
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{
+        display:none !important;
+      }
 
-    # ---- 文字欄位：有新欄位就用新欄位，沒有就 fallback 到舊欄位 ----
-    def pick(col_new: str, col_old: str | None = None) -> pd.Series:
-        if col_new in df.columns:
-            s = df[col_new]
-        elif col_old and col_old in df.columns:
-            s = df[col_old]
-        else:
-            s = ""
-        return s.fillna("")
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block !important;
+        position:fixed !important;
+        left:50% !important;
+        right:auto !important;
+        top:50% !important;
+        transform:translate(-50%, -50%) !important;
+        width:260px;
+        opacity:0.9;
+        pointer-events:none;
+        z-index:1;
+      }
+    }
 
-    df["line"] = pick("line", "line")
-    df["section"] = pick("section", "section")
-    df["asset_id"] = pick("asset_id", "equipment")         # 新 asset_id，舊 equipment
-    df["category"] = pick("category", "category")
-    df["root_cause"] = pick("root_cause", "rootcause")
-    df["action_taken"] = pick("action_taken", "action")
-    df["location_from"] = pick("location_from")
-    df["location_to"] = pick("location_to")
-    df["timestamp"] = pick("timestamp")
-    df["id"] = pick("id")
+    .page {
+      position:relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 32px;
+      z-index:2;
+    }
 
-    return df
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      box-shadow: var(--shadow-soft-sm);
+      margin-bottom: 14px;
+      transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
 
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+    }
 
-def build_summary(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
-    """Build multiple summary tables from the raw logs."""
-    summary: dict[str, pd.DataFrame] = {}
+    .card-subtitle {
+      font-size: var(--small-font);
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
 
-    # 1. Count by Line
-    by_line_count = (
-        df.groupby("line")
-        .size()
-        .reset_index(name="Count")
-        .sort_values("Count", ascending=False)
-    )
-    summary["01_ByLine_Count"] = by_line_count
+    .summary-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:#f9fafb;
+      font-size:var(--xsmall-font);
+      color:var(--text-soft);
+    }
+    .summary-chip strong{
+      color:var(--text);
+      font-weight:600;
+    }
 
-    # 2. Downtime by Line
-    by_line_dt = (
-        df.groupby("line")["downtime_min"]
-        .sum()
-        .reset_index(name="TotalDowntimeMin")
-        .sort_values("TotalDowntimeMin", ascending=False)
-    )
-    summary["02_ByLine_DowntimeMin"] = by_line_dt
+    .header-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:8px;
+    }
 
-    # 3. Monthly downtime
-    by_month_dt = (
-        df.groupby("month")["downtime_min"]
-        .sum()
-        .reset_index(name="TotalDowntimeMin")
-        .sort_values("month")
-    )
-    summary["03_ByMonth_DowntimeMin"] = by_month_dt
+    /* Filters */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
 
-    # 4. Category stats
-    by_cat = (
-        df.groupby("category")["downtime_min"]
-        .agg(
-            Count="size",
-            TotalDowntimeMin="sum",
-            AvgDowntimeMin="mean"
-        )
-        .reset_index()
-        .sort_values("TotalDowntimeMin", ascending=False)
-    )
-    summary["04_ByCategory"] = by_cat
+    .filters-label {
+      font-size: var(--xsmall-font);
+      color: var(--text-soft);
+      margin-right: 2px;
+    }
 
-    # 5. Top 20 Asset IDs by count
-    by_asset_count = (
-        df.groupby("asset_id")
-        .size()
-        .reset_index(name="Count")
-        .sort_values("Count", ascending=False)
-        .head(20)
-    )
-    summary["05_TopAssetID_Count"] = by_asset_count
+    .filters input,
+    .filters select {
+      font-size: var(--small-font);
+      padding: 7px 9px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: var(--text);
+      min-width: 150px;
+      transition: all 0.15s ease;
+    }
 
-    # 6. Top 20 Asset IDs by downtime
-    by_asset_dt = (
-        df.groupby("asset_id")["downtime_min"]
-        .sum()
-        .reset_index(name="TotalDowntimeMin")
-        .sort_values("TotalDowntimeMin", ascending=False)
-        .head(20)
-    )
-    summary["06_TopAssetID_DowntimeMin"] = by_asset_dt
+    html[data-theme="dark"] .filters input,
+    html[data-theme="dark"] .filters select {
+      background:#020617;
+      border-color:#1f2937;
+      color:var(--text);
+    }
 
-    # 7. Raw data (sorted) － 用比較好看的欄位名稱輸出
-    raw_cols = [
-        "Date",
-        "line",
-        "section",
-        "asset_id",
-        "category",
-        "downtime_min",
-        "root_cause",
-        "action_taken",
-        "location_from",
-        "location_to",
-        "timestamp",
-        "id",
-    ]
-    raw = df[raw_cols].sort_values("Date").rename(
-        columns={
-            "line": "Line",
-            "section": "Section",
-            "asset_id": "Asset ID",
-            "category": "Category",
-            "downtime_min": "Downtime (min)",
-            "root_cause": "Root cause",
-            "action_taken": "Action taken",
-            "location_from": "Location from",
-            "location_to": "Location to",
-            "timestamp": "Timestamp",
-            "id": "ID",
+    .filters input::placeholder { color: #9ca3af; }
+
+    .filters input:focus,
+    .filters select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.14);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 7px 13px;
+      font-size: var(--xsmall-font);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      background: #e5e7eb;
+      color: #111827;
+      font-weight:600;
+    }
+
+    .btn:hover {
+      background: #d1d5db;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(148,163,253,0.35);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .table-wrap {
+      margin-top: 4px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      overflow-x: auto;
+      background: #ffffff;
+      box-shadow: var(--shadow-soft-sm);
+    }
+    html[data-theme="dark"] .table-wrap {
+      background:#020617;
+      border-color:#1f2937;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--small-font);
+    }
+
+    thead { background: #f9fafb; }
+    html[data-theme="dark"] thead { background:#020617; }
+
+    th, td {
+      padding: 8px 9px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    html[data-theme="dark"] th,
+    html[data-theme="dark"] td{
+      border-bottom-color:#1f2937;
+    }
+
+    th {
+      font-size: var(--xsmall-font);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-soft);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th.sortable:hover {
+      color: var(--accent);
+      background: #eef2ff;
+    }
+
+    th .sort-indicator{
+      font-size:10px;
+      margin-left:4px;
+      opacity:.6;
+    }
+
+    tbody tr{
+      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+    tbody tr:nth-child(even){background:#ffffff;}
+    tbody tr:nth-child(odd){background:#fdfdfd;}
+    html[data-theme="dark"] tbody tr:nth-child(even),
+    html[data-theme="dark"] tbody tr:nth-child(odd){background:transparent;}
+    tbody tr:hover{
+      background:#eff6ff;
+      transform:translateY(-1px);
+      box-shadow:0 4px 10px rgba(148,163,253,0.25);
+    }
+    html[data-theme="dark"] tbody tr:hover{
+      background:rgba(37,99,235,.25);
+    }
+
+    td{
+      max-width:260px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:var(--text);
+      vertical-align:top;
+    }
+
+    .tag-line{
+      font-size:var(--xsmall-font);
+      color:#2563eb;
+      font-weight:600;
+      margin-bottom:2px;
+    }
+    .text-small{
+      font-size:var(--xsmall-font);
+      color:var(--text-soft);
+    }
+    .equip{
+      font-weight:600;
+    }
+
+    .pill-cat{
+      display:inline-flex;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:var(--xsmall-font);
+      background:#eef2ff;
+      color:#3730a3;
+    }
+
+    .btn-ghost{
+      border:none;
+      border-radius:999px;
+      padding:4px 8px;
+      font-size:10px;
+      cursor:pointer;
+      background:#e5e7eb;
+      color:#374151;
+      margin-right:4px;
+      transition:background .15s, transform .05s;
+    }
+    .btn-ghost:hover{
+      background:#d1d5db;
+      transform:translateY(-1px);
+    }
+    .btn-danger{
+      background:#fee2e2;
+      color:#b91c1c;
+    }
+    .btn-danger:hover{
+      background:#fecaca;
+    }
+
+    .empty{
+      padding:30px 16px;
+      text-align:center;
+      font-size:var(--small-font);
+      color:var(--text-soft);
+    }
+
+    /* Modal */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.35);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:20;
+    }
+    .modal-backdrop.open{display:flex;}
+    .modal{
+      background:var(--card-bg);
+      border-radius:18px;
+      padding:16px 18px 14px;
+      border:1px solid var(--border-subtle);
+      box-shadow:0 20px 45px rgba(15,23,42,.35);
+      width:100%;
+      max-width:460px;
+    }
+    .modal-title{
+      margin:0 0 4px;
+      font-size:16px;
+      font-weight:650;
+    }
+    .modal-sub{
+      margin:0 0 10px;
+      font-size:var(--xsmall-font);
+      color:var(--text-soft);
+    }
+    .modal-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .modal-row > div{flex:1;}
+    .modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      margin-top:8px;
+    }
+
+    @media (max-width: 900px){
+      .table-wrap{border-radius:14px;overflow-x:auto;}
+      table{min-width:1000px;}
+    }
+
+    /* Back to top */
+    #backToTop {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .25s ease, box-shadow .25s ease;
+    }
+    #backToTop.visible{opacity:1;pointer-events:auto;}
+    #backToTop:hover{
+      transform:translateY(-4px);
+      box-shadow:0 10px 28px rgba(0,0,0,0.30);
+    }
+    html[data-style="panther"] #backToTop{
+      background:transparent;
+      background-image:url("pinkpanther2.png");
+      background-size:100% 100%;
+      background-position:center;
+      color:transparent;
+      border:none;
+    }
+    html[data-style="hangyodon"] #backToTop{
+      background:transparent;
+      background-image:url("hangyodon2.png");
+      background-size:100% 100%;
+      background-position:center;
+      color:transparent;
+      border:none;
+    }
+
+    @media print{
+      body{
+        background:#ffffff !important;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+      }
+      .side-panther,
+      .side-hangyodon,
+      #backToTop{
+        display:none !important;
+      }
+      .page{
+        max-width:100%;
+        padding:0;
+      }
+      .card{
+        box-shadow:none;
+        border-radius:0;
+        margin:0 0 8px;
+      }
+      .table-wrap{
+        box-shadow:none;
+        border-radius:0;
+        border:1px solid #000;
+      }
+      th,td{
+        border-color:#000 !important;
+        color:#000 !important;
+      }
+      .pill-cat{
+        border:1px solid #000 !important;
+        background:#fff !important;
+        color:#000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- side characters -->
+  <img src="pinkpanther1.png" alt="Pink Panther Left" class="side-panther left">
+  <img src="pinkpanther2.png" alt="Pink Panther Right" class="side-panther right">
+  <img src="hangyodon1.png" alt="Hangyodon Left" class="side-hangyodon left">
+  <img src="hangyodon2.png" alt="Hangyodon Right" class="side-hangyodon right">
+
+  <div class="page">
+    <div class="card">
+      <div class="header-row">
+        <div>
+          <h2>Maintenance records</h2>
+          <div class="card-subtitle">
+            Logs loaded from <strong>ms-maintenance-logs</strong> in this browser.
+            Use <em>Maintenance Report</em> to add new records.
+          </div>
+        </div>
+        <div class="summary-chip">
+          Total: <strong id="sumTotal">0</strong> · This month: <strong id="sumMonth">0</strong>
+        </div>
+      </div>
+
+      <div class="filters">
+        <span class="filters-label">Filter:</span>
+        <input id="searchInput" type="search" placeholder="Search asset ID / root cause / action / location">
+        <select id="lineFilter">
+          <option value="">All lines</option>
+          <option value="Line1">Line 1</option>
+          <option value="Line2">Line 2</option>
+          <option value="Line3">Line 3</option>
+          <option value="Line4">Line 4</option>
+          <option value="Reclaim">Reclaim</option>
+        </select>
+        <select id="sectionFilter">
+          <option value="">All sections</option>
+          <option value="F12">F12</option>
+          <option value="F13">F13</option>
+          <option value="F16">F16</option>
+          <option value="F201">F201</option>
+          <option value="F42">F42</option>
+          <option value="F55">F55</option>
+        </select>
+        <select id="categoryFilter">
+          <option value="">All categories</option>
+          <option>Electrical</option>
+          <option>Mechanical</option>
+          <option>Instrument</option>
+          <option>Network</option>
+          <option>Software</option>
+          <option>Other</option>
+        </select>
+        <button class="btn" id="btnClearFilters">Clear filters</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Record list</h2>
+      <div class="card-subtitle">
+        Click column headers to sort. Use Edit / Delete to update the local log.
+      </div>
+      <div class="table-wrap">
+        <div class="empty" id="emptyState">
+          No maintenance records found. Create records in <strong>Maintenance Report</strong> first.
+        </div>
+        <table id="recordsTable" style="display:none;">
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="Date">Date<span class="sort-indicator"></span></th>
+              <th class="sortable" data-sort="line">Line / Section<span class="sort-indicator"></span></th>
+              <th class="sortable" data-sort="asset_id">Asset ID<span class="sort-indicator"></span></th>
+              <th class="sortable" data-sort="category">Category<span class="sort-indicator"></span></th>
+              <th class="sortable" data-sort="downtime_min">Downtime (min)<span class="sort-indicator"></span></th>
+              <th>Location</th>
+              <th>Root cause / Action</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recordsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit modal -->
+  <div class="modal-backdrop" id="editBackdrop">
+    <div class="modal">
+      <h2 class="modal-title">Edit record</h2>
+      <p class="modal-sub">Update the selected maintenance record and save changes.</p>
+
+      <div class="modal-row">
+        <div>
+          <label for="editDate">Date</label>
+          <input id="editDate" type="date">
+        </div>
+        <div>
+          <label for="editLine">Line</label>
+          <select id="editLine">
+            <option value="Line1">Line 1</option>
+            <option value="Line2">Line 2</option>
+            <option value="Line3">Line 3</option>
+            <option value="Line4">Line 4</option>
+            <option value="Reclaim">Reclaim</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-row" style="margin-top:8px;">
+        <div>
+          <label for="editSection">Section</label>
+          <select id="editSection">
+            <option value="F12">F12</option>
+            <option value="F13">F13</option>
+            <option value="F16">F16</option>
+            <option value="F201">F201</option>
+            <option value="F42">F42</option>
+            <option value="F55">F55</option>
+          </select>
+        </div>
+        <div>
+          <label for="editCategory">Category</label>
+          <select id="editCategory">
+            <option>Electrical</option>
+            <option>Mechanical</option>
+            <option>Instrument</option>
+            <option>Network</option>
+            <option>Software</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:8px;">
+        <label for="editAssetId">Asset ID</label>
+        <input id="editAssetId" type="text" placeholder="PC-001 ~ PC-999">
+      </div>
+
+      <div class="modal-row" style="margin-top:8px;">
+        <div>
+          <label for="editLocFrom">Location from</label>
+          <input id="editLocFrom" type="text" placeholder="e.g. Line 2 MCC">
+        </div>
+        <div>
+          <label for="editLocTo">Location to</label>
+          <input id="editLocTo" type="text" placeholder="e.g. Line 2 control room">
+        </div>
+      </div>
+
+      <div style="margin-top:8px;">
+        <label for="editRoot">Root cause</label>
+        <textarea id="editRoot" rows="3"></textarea>
+      </div>
+
+      <div style="margin-top:8px;">
+        <label for="editAction">Action taken</label>
+        <textarea id="editAction" rows="3"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn" type="button" id="btnCancelEdit">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btnSaveEdit">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back to Top -->
+  <button id="backToTop" title="Back to Top">↑</button>
+
+  <script>
+    // Back to top
+    (function(){
+      const btn = document.getElementById('backToTop');
+      if (!btn) return;
+      const THRESHOLD = 250;
+      function updateVisibility(){
+        if (window.scrollY > THRESHOLD) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+      }
+      function scrollToTop(){
+        window.scrollTo({top:0, behavior:'smooth'});
+      }
+      window.addEventListener('scroll', updateVisibility);
+      btn.addEventListener('click', scrollToTop);
+      updateVisibility();
+    })();
+  </script>
+
+  <script>
+    const STORAGE_KEY = 'ms-maintenance-logs';
+
+    let records = [];
+    let filtered = [];
+    let sortKey = 'Date';
+    let sortDir = 'desc';
+    let editingId = null;
+
+    // 將舊/新格式的紀錄統一成標準欄位
+    function normalizeRecord(rec, idx){
+      // 日期：Date / date
+      const dateVal = rec.Date || rec.date || '';
+
+      // 資產 ID：asset_id / equipment
+      const assetId = rec.asset_id || rec.equipment || '';
+
+      // 故障時間：downtime_min / downtime
+      let dt = 0;
+      if (rec.downtime_min != null) dt = rec.downtime_min;
+      else if (rec.downtime != null) dt = rec.downtime;
+
+      // Root cause / Action
+      const root = rec.root_cause || rec.rootcause || '';
+      const act  = rec.action_taken || rec.action || '';
+
+      const line = rec.line || '';
+      const section = rec.section || '';
+      const cat  = rec.category || '';
+      const locFrom = rec.location_from || '';
+      const locTo   = rec.location_to || '';
+      const ts   = rec.timestamp || '';
+
+      let id = rec.id;
+      if (!id){
+        if (window.crypto && crypto.randomUUID){
+          id = crypto.randomUUID();
+        }else{
+          id = 'rec_' + Date.now() + '_' + idx;
         }
-    )
-    summary["99_Raw_Logs"] = raw
+      }
 
-    return summary
+      return {
+        Date: dateVal,
+        line: line,
+        section: section,
+        asset_id: assetId,
+        category: cat,
+        downtime_min: Number(dt) || 0,
+        root_cause: root,
+        action_taken: act,
+        location_from: locFrom,
+        location_to: locTo,
+        timestamp: ts,
+        id: id
+      };
+    }
 
+    function loadRecords(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY) || '[]';
+        const arr = JSON.parse(raw);
+        if (!Array.isArray(arr)) return [];
 
-def export_to_excel(tables: dict[str, pd.DataFrame], output_path: Path) -> None:
-    """Write all summary tables into one Excel workbook."""
-    with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
-        for sheet_name, table in tables.items():
-            safe_name = sheet_name[:31]  # Excel sheet name limit
-            table.to_excel(writer, sheet_name=safe_name, index=False)
+        const normalized = arr.map((rec, idx)=> normalizeRecord(rec, idx));
 
-    print(f"Report exported to: {output_path.resolve()}")
+        // 回寫成標準欄位，之後就都用新版欄位
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+        return normalized;
+      }catch(e){
+        console.error(e);
+        return [];
+      }
+    }
 
+    function saveRecords(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
 
-def main():
-    print(f"Loading JSON logs from: {JSON_FILE}")
-    df = load_logs(JSON_FILE)
-    print(f"Loaded {len(df)} records.")
+    function applyFilters(){
+      const q  = document.getElementById('searchInput').value.trim().toLowerCase();
+      const lf = document.getElementById('lineFilter').value;
+      const sf = document.getElementById('sectionFilter').value;
+      const cf = document.getElementById('categoryFilter').value;
 
-    print("Building summary tables...")
-    summary_tables = build_summary(df)
+      filtered = records.filter(r=>{
+        if (lf && r.line !== lf) return false;
+        if (sf && r.section !== sf) return false;
+        if (cf && r.category !== cf) return false;
 
-    print("Exporting Excel report...")
-    export_to_excel(summary_tables, OUTPUT_FILE)
-    print("Done ✅")
+        if (q){
+          const hay = (
+            (r.asset_id||'')+' '+
+            (r.root_cause||'')+' '+
+            (r.action_taken||'')+' '+
+            (r.location_from||'')+' '+
+            (r.location_to||'')
+          ).toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
 
+      sortFiltered();
+      renderTable();
+      updateSummary();
+    }
 
-if __name__ == "__main__":
-    main()
+    function sortFiltered(){
+      filtered.sort((a,b)=>{
+        let va = a[sortKey];
+        let vb = b[sortKey];
+
+        if (sortKey === 'Date'){
+          va = new Date(a.Date || a.date || 0).getTime();
+          vb = new Date(b.Date || b.date || 0).getTime();
+        } else if (sortKey === 'downtime_min'){
+          va = Number(a.downtime_min || a.downtime || 0);
+          vb = Number(b.downtime_min || b.downtime || 0);
+        } else {
+          if (typeof va === 'string') va = va.toLowerCase();
+          if (typeof vb === 'string') vb = vb.toLowerCase();
+        }
+
+        if (va < vb) return sortDir === 'asc' ? -1 : 1;
+        if (va > vb) return sortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      document.querySelectorAll('th.sortable').forEach(th=>{
+        const key = th.dataset.sort;
+        const span = th.querySelector('.sort-indicator');
+        if (!span) return;
+        if (key === sortKey){
+          span.textContent = sortDir === 'asc' ? '▲' : '▼';
+        }else{
+          span.textContent = '';
+        }
+      });
+    }
+
+    function formatDate(s){
+      if (!s) return '';
+      const d = new Date(s);
+      if (isNaN(d.getTime())) return s;
+      return d.toLocaleDateString();
+    }
+
+    function renderTable(){
+      const tbody = document.getElementById('recordsBody');
+      const table = document.getElementById('recordsTable');
+      const empty = document.getElementById('emptyState');
+
+      tbody.innerHTML = '';
+
+      if (!filtered.length){
+        table.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+      table.style.display = 'table';
+      empty.style.display = 'none';
+
+      filtered.forEach(rec=>{
+        const tr = document.createElement('tr');
+        tr.dataset.id = rec.id;
+
+        // Date
+        const tdDate = document.createElement('td');
+        tdDate.className = 'text-small';
+        tdDate.textContent = formatDate(rec.Date);
+        tr.appendChild(tdDate);
+
+        // Line / Section
+        const tdLS = document.createElement('td');
+        const divLine = document.createElement('div');
+        divLine.className = 'tag-line';
+        divLine.textContent = rec.line || '';
+        const divSec = document.createElement('div');
+        divSec.className = 'text-small';
+        divSec.textContent = rec.section || '';
+        tdLS.appendChild(divLine);
+        tdLS.appendChild(divSec);
+        tr.appendChild(tdLS);
+
+        // Asset ID
+        const tdEquip = document.createElement('td');
+        tdEquip.className = 'equip';
+        tdEquip.textContent = rec.asset_id || '';
+        tr.appendChild(tdEquip);
+
+        // Category
+        const tdCat = document.createElement('td');
+        const spanCat = document.createElement('span');
+        spanCat.className = 'pill-cat';
+        spanCat.textContent = rec.category || '';
+        tdCat.appendChild(spanCat);
+        tr.appendChild(tdCat);
+
+        // Downtime
+        const tdDown = document.createElement('td');
+        tdDown.className = 'text-small';
+        tdDown.textContent = Number(rec.downtime_min||0);
+        tr.appendChild(tdDown);
+
+        // Location from / to
+        const tdLoc = document.createElement('td');
+        tdLoc.className = 'text-small';
+        const lf = document.createElement('div');
+        lf.innerHTML = '<strong>From:</strong> ' + (rec.location_from || '');
+        const lt = document.createElement('div');
+        lt.innerHTML = '<strong>To:</strong> ' + (rec.location_to || '');
+        tdLoc.appendChild(lf);
+        tdLoc.appendChild(lt);
+        tr.appendChild(tdLoc);
+
+        // Root cause / Action
+        const tdDesc = document.createElement('td');
+        tdDesc.className = 'text-small';
+        const d1 = document.createElement('div');
+        d1.innerHTML = '<strong>Root:</strong> ' + (rec.root_cause||'');
+        const d2 = document.createElement('div');
+        d2.innerHTML = '<strong>Action:</strong> ' + (rec.action_taken||'');
+        tdDesc.appendChild(d1);
+        tdDesc.appendChild(d2);
+        tr.appendChild(tdDesc);
+
+        // Actions
+        const tdAct = document.createElement('td');
+        const btnE = document.createElement('button');
+        btnE.className = 'btn-ghost';
+        btnE.textContent = 'Edit';
+        btnE.addEventListener('click', ()=>openEdit(rec.id));
+        const btnD = document.createElement('button');
+        btnD.className = 'btn-ghost btn-danger';
+        btnD.textContent = 'Delete';
+        btnD.addEventListener('click', ()=>deleteRecord(rec.id));
+        tdAct.appendChild(btnE);
+        tdAct.appendChild(btnD);
+        tr.appendChild(tdAct);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateSummary(){
+      const totalEl = document.getElementById('sumTotal');
+      const monthEl = document.getElementById('sumMonth');
+      totalEl.textContent = records.length;
+
+      const now = new Date();
+      const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+      let cnt = 0;
+      records.forEach(r=>{
+        if (!r.Date) return;
+        const d = new Date(r.Date);
+        if (isNaN(d.getTime())) return;
+        const m = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+        if (m === ym) cnt++;
+      });
+      monthEl.textContent = cnt;
+    }
+
+    function clearFilters(){
+      document.getElementById('searchInput').value = '';
+      document.getElementById('lineFilter').value = '';
+      document.getElementById('sectionFilter').value = '';
+      document.getElementById('categoryFilter').value = '';
+      applyFilters();
+    }
+
+    function deleteRecord(id){
+      if (!confirm('Delete this record? This cannot be undone.')) return;
+      records = records.filter(r=>r.id !== id);
+      saveRecords();
+      applyFilters();
+    }
+
+    function openEdit(id){
+      const rec = records.find(r=>r.id === id);
+      if (!rec) return;
+      editingId = id;
+
+      document.getElementById('editDate').value = rec.Date ? String(rec.Date).slice(0,10) : '';
+      document.getElementById('editLine').value = rec.line || 'Line1';
+      document.getElementById('editSection').value = rec.section || 'F12';
+      document.getElementById('editCategory').value = rec.category || 'Other';
+      document.getElementById('editAssetId').value = rec.asset_id || '';
+      document.getElementById('editLocFrom').value = rec.location_from || '';
+      document.getElementById('editLocTo').value = rec.location_to || '';
+      document.getElementById('editRoot').value = rec.root_cause || '';
+      document.getElementById('editAction').value = rec.action_taken || '';
+
+      document.getElementById('editBackdrop').classList.add('open');
+    }
+
+    function closeEdit(){
+      editingId = null;
+      document.getElementById('editBackdrop').classList.remove('open');
+    }
+
+    function saveEdit(){
+      if (!editingId) return;
+      const idx = records.findIndex(r=>r.id === editingId);
+      if (idx === -1) return;
+
+      const rec = records[idx];
+      rec.Date          = document.getElementById('editDate').value || rec.Date;
+      rec.line          = document.getElementById('editLine').value;
+      rec.section       = document.getElementById('editSection').value;
+      rec.category      = document.getElementById('editCategory').value;
+      rec.asset_id      = document.getElementById('editAssetId').value.trim();
+      rec.location_from = document.getElementById('editLocFrom').value.trim();
+      rec.location_to   = document.getElementById('editLocTo').value.trim();
+      rec.root_cause    = document.getElementById('editRoot').value.trim();
+      rec.action_taken  = document.getElementById('editAction').value.trim();
+
+      records[idx] = rec;
+      saveRecords();
+      applyFilters();
+      closeEdit();
+    }
+
+    // init
+    (function init(){
+      records = loadRecords();
+      filtered = [...records];
+
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('lineFilter').addEventListener('change', applyFilters);
+      document.getElementById('sectionFilter').addEventListener('change', applyFilters);
+      document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+      document.getElementById('btnClearFilters').addEventListener('click', clearFilters);
+
+      document.querySelectorAll('th.sortable').forEach(th=>{
+        th.addEventListener('click', ()=>{
+          const key = th.dataset.sort;
+          if (sortKey === key){
+            sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+          }else{
+            sortKey = key;
+            sortDir = key === 'Date' ? 'desc' : 'asc';
+          }
+          sortFiltered();
+          renderTable();
+        });
+      });
+
+      document.getElementById('btnCancelEdit').addEventListener('click', closeEdit);
+      document.getElementById('btnSaveEdit').addEventListener('click', saveEdit);
+      document.getElementById('editBackdrop').addEventListener('click',(e)=>{
+        if (e.target.id === 'editBackdrop') closeEdit();
+      });
+
+      applyFilters();
+    })();
+  </script>
+</body>
+</html>
