@@ -10,7 +10,7 @@ OUTPUT_FILE = Path("Maintenance_Report_From_JSON.xlsx")
 
 
 def load_logs(json_path: Path) -> pd.DataFrame:
-    """Load maintenance logs from JSON file into a DataFrame."""
+    """Load maintenance logs from JSON file into a standardized DataFrame."""
     if not json_path.exists():
         raise FileNotFoundError(f"JSON file not found: {json_path}")
 
@@ -22,24 +22,50 @@ def load_logs(json_path: Path) -> pd.DataFrame:
 
     df = pd.DataFrame(data)
 
-    # Basic column checks & conversions
-    if "date" not in df.columns:
-        raise ValueError("Missing 'date' field in JSON records")
-
-    df["date"] = pd.to_datetime(df["date"])
-    df["month"] = df["date"].dt.to_period("M").astype(str)
-
-    if "downtime" in df.columns:
-        df["downtime"] = pd.to_numeric(df["downtime"], errors="coerce").fillna(0)
+    # ---- 日期欄位：支援 Date / date，統一成 Date ----
+    if "Date" in df.columns:
+        date_col = "Date"
+    elif "date" in df.columns:
+        date_col = "date"
     else:
-        df["downtime"] = 0
+        raise ValueError("Missing 'Date' or 'date' field in JSON records")
 
-    # Fill missing text fields with empty string to avoid NaN
-    for col in ["line", "section", "equipment", "category", "rootcause", "action"]:
-        if col not in df.columns:
-            df[col] = ""
+    df["Date"] = pd.to_datetime(df[date_col])
+    df["month"] = df["Date"].dt.to_period("M").astype(str)
+
+    # ---- Downtime 欄位：支援 downtime_min / downtime，統一成 downtime_min ----
+    if "downtime_min" in df.columns:
+        dt_col = "downtime_min"
+    elif "downtime" in df.columns:
+        dt_col = "downtime"
+    else:
+        dt_col = None
+
+    if dt_col:
+        df["downtime_min"] = pd.to_numeric(df[dt_col], errors="coerce").fillna(0)
+    else:
+        df["downtime_min"] = 0
+
+    # ---- 文字欄位：有新欄位就用新欄位，沒有就 fallback 到舊欄位 ----
+    def pick(col_new: str, col_old: str | None = None) -> pd.Series:
+        if col_new in df.columns:
+            s = df[col_new]
+        elif col_old and col_old in df.columns:
+            s = df[col_old]
         else:
-            df[col] = df[col].fillna("")
+            s = ""
+        return s.fillna("")
+
+    df["line"] = pick("line", "line")
+    df["section"] = pick("section", "section")
+    df["asset_id"] = pick("asset_id", "equipment")         # 新 asset_id，舊 equipment
+    df["category"] = pick("category", "category")
+    df["root_cause"] = pick("root_cause", "rootcause")
+    df["action_taken"] = pick("action_taken", "action")
+    df["location_from"] = pick("location_from")
+    df["location_to"] = pick("location_to")
+    df["timestamp"] = pick("timestamp")
+    df["id"] = pick("id")
 
     return df
 
@@ -59,7 +85,7 @@ def build_summary(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
 
     # 2. Downtime by Line
     by_line_dt = (
-        df.groupby("line")["downtime"]
+        df.groupby("line")["downtime_min"]
         .sum()
         .reset_index(name="TotalDowntimeMin")
         .sort_values("TotalDowntimeMin", ascending=False)
@@ -68,7 +94,7 @@ def build_summary(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
 
     # 3. Monthly downtime
     by_month_dt = (
-        df.groupby("month")["downtime"]
+        df.groupby("month")["downtime_min"]
         .sum()
         .reset_index(name="TotalDowntimeMin")
         .sort_values("month")
@@ -77,7 +103,7 @@ def build_summary(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
 
     # 4. Category stats
     by_cat = (
-        df.groupby("category")["downtime"]
+        df.groupby("category")["downtime_min"]
         .agg(
             Count="size",
             TotalDowntimeMin="sum",
@@ -88,28 +114,57 @@ def build_summary(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
     )
     summary["04_ByCategory"] = by_cat
 
-    # 5. Top 20 equipments by count
-    by_equipment_count = (
-        df.groupby("equipment")
+    # 5. Top 20 Asset IDs by count
+    by_asset_count = (
+        df.groupby("asset_id")
         .size()
         .reset_index(name="Count")
         .sort_values("Count", ascending=False)
         .head(20)
     )
-    summary["05_TopEquipment_Count"] = by_equipment_count
+    summary["05_TopAssetID_Count"] = by_asset_count
 
-    # 6. Top 20 equipments by downtime
-    by_equipment_dt = (
-        df.groupby("equipment")["downtime"]
+    # 6. Top 20 Asset IDs by downtime
+    by_asset_dt = (
+        df.groupby("asset_id")["downtime_min"]
         .sum()
         .reset_index(name="TotalDowntimeMin")
         .sort_values("TotalDowntimeMin", ascending=False)
         .head(20)
     )
-    summary["06_TopEquipment_DowntimeMin"] = by_equipment_dt
+    summary["06_TopAssetID_DowntimeMin"] = by_asset_dt
 
-    # 7. Raw data (sorted)
-    summary["99_Raw_Logs"] = df.sort_values("date")
+    # 7. Raw data (sorted) － 用比較好看的欄位名稱輸出
+    raw_cols = [
+        "Date",
+        "line",
+        "section",
+        "asset_id",
+        "category",
+        "downtime_min",
+        "root_cause",
+        "action_taken",
+        "location_from",
+        "location_to",
+        "timestamp",
+        "id",
+    ]
+    raw = df[raw_cols].sort_values("Date").rename(
+        columns={
+            "line": "Line",
+            "section": "Section",
+            "asset_id": "Asset ID",
+            "category": "Category",
+            "downtime_min": "Downtime (min)",
+            "root_cause": "Root cause",
+            "action_taken": "Action taken",
+            "location_from": "Location from",
+            "location_to": "Location to",
+            "timestamp": "Timestamp",
+            "id": "ID",
+        }
+    )
+    summary["99_Raw_Logs"] = raw
 
     return summary
 
