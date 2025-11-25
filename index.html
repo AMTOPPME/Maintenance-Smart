@@ -209,6 +209,8 @@
       backdrop-filter:blur(12px);
       z-index:10;
       display:none;
+      max-height: 70vh;
+      overflow-y: auto;
     }
     .nav-panel.open{
       display:block;
@@ -721,472 +723,465 @@
     </div>
   </div>
 
-  <script>
-    /* ---------- Modified Date：用這個 HTML 檔最後修改時間 ---------- */
-    (function () {
-      function updateModDate() {
-        var el = document.getElementById('modDate');
-        if (!el) return;
+<script>
+  /* ---------- Modified Date：用這個 HTML 檔最後修改時間 ---------- */
+  (function () {
+    function updateModDate() {
+      var el = document.getElementById('modDate');
+      if (!el) return;
 
-        var d = new Date(document.lastModified);
-        if (isNaN(d.getTime())) {
-          el.textContent = 'N/A';
+      var d = new Date(document.lastModified);
+      if (isNaN(d.getTime())) {
+        el.textContent = 'N/A';
+        return;
+      }
+
+      el.textContent = d.toLocaleString([], {
+        year:   'numeric',
+        month:  '2-digit',
+        day:    '2-digit',
+        hour:   '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', updateModDate);
+    } else {
+      updateModDate();
+    }
+  })();
+
+  // ---- 子頁面同步主頁 style ----
+  (function syncStyleToIframe(){
+    const frame = document.getElementById("mainFrame");
+
+    function applyStyleToFrame(){
+      if (!frame || !frame.contentDocument) return;
+      const style = document.documentElement.getAttribute("data-style") || "blue";
+      const frameHtml = frame.contentDocument.documentElement;
+      frameHtml.setAttribute("data-style", style);
+    }
+
+    if (frame){
+      frame.addEventListener("load", function(){
+        setTimeout(applyStyleToFrame, 30);
+      });
+    }
+
+    window._msSyncFrameStyle = applyStyleToFrame;
+  })();
+
+  // Modules 面板開關
+  (function(){
+    const menuBtn = document.getElementById('menuButton');
+    const panel = document.getElementById('navPanel');
+
+    function togglePanel(){
+      const isOpen = panel.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    if (menuBtn && panel){
+      menuBtn.addEventListener('click', togglePanel);
+    }
+
+    // 點擊頁面其他地方就關閉（桌機用，比較乾淨）
+    document.addEventListener('click', (e)=>{
+      if (!panel.classList.contains('open')) return;
+      const insidePanel = panel.contains(e.target);
+      const insideBtn   = menuBtn.contains(e.target);
+      if (!insidePanel && !insideBtn){
+        panel.classList.remove('open');
+        menuBtn.setAttribute('aria-expanded','false');
+      }
+    });
+  })();
+
+  // 切換模組 + Line Schematic / Program Backup / Maintenance 兩層選單
+  (function(){
+    const frame   = document.getElementById('mainFrame');
+    const titleEl = document.getElementById('moduleTitle');
+    const subEl   = document.getElementById('moduleSub');
+    const panel   = document.getElementById('navPanel');
+    const menuBtn = document.getElementById('menuButton');
+    const buttons = document.querySelectorAll('.nav-item-btn');
+
+    const schematicPanel   = document.getElementById('schematicPanel');
+    const schematicLineBtns= document.querySelectorAll('.schematic-line-btn');
+    const schematicSecBtns = document.querySelectorAll('.schematic-sec-btn');
+    let currentSchematicLine = 'Line1';
+
+    const backupPanel   = document.getElementById('backupPanel');
+    const backupLineBtns= document.querySelectorAll('.backup-line-btn');
+    const backupSecBtns = document.querySelectorAll('.backup-sec-btn');
+    let currentBackupLine = 'Line1';
+
+    const maintenancePanel = document.getElementById('maintenancePanel');
+    const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
+
+    // 🔹 共用 helper：active + 收起所有 sub panel
+    function activateNav(btn){
+      buttons.forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    function closeAllSubPanels(){
+      if (schematicPanel)   schematicPanel.classList.remove('open');
+      if (backupPanel)      backupPanel.classList.remove('open');
+      if (maintenancePanel) maintenancePanel.classList.remove('open');
+    }
+
+    // 🔹 Program Backup → Google Drive URL 對應表
+    const BackupUrlMap = {
+      Line1: {
+        F12:  'https://drive.google.com/drive/folders/1v6Ceoo7Wh9aty0tDBdt8CkwoJedd-bbi?usp=sharing',
+        F13:  'https://drive.google.com/drive/folders/14i873c0LQENb_O_6vsGISQsxonO1BEDj?usp=sharing',
+        F16:  'https://drive.google.com/drive/folders/12fY1QcORExwPcFH_GVZhM8FcTimul-jU?usp=sharing',
+        F42:  'https://drive.google.com/drive/folders/12EhLZW0etEC2eX3t1QPSlOQI86v3YBJh?usp=sharing',
+        F55:  'https://drive.google.com/drive/folders/1hNL663CCzPXi6uChKaXEVf3yc6VpBST8?usp=sharing',
+        F201: 'https://drive.google.com/drive/folders/19fiHd3JljzATXPGSb944Ob8O0C-6qGWD?usp=sharing',
+        FlameTreater:  'https://drive.google.com/drive/folders/1SNnpyf1PDYRcZAoSDNYBmPTchnuvSYmR?usp=sharing',
+        MainBlending:  'https://drive.google.com/drive/folders/1VAsJrBLZshXFI_6HzhCIL9SjqbGqP7E2?usp=sharing',
+        MainLoading:   'https://drive.google.com/drive/folders/1ppVLuY4cHoSJq12iq9_cEPDWaoR6VUei?usp=sharing',
+        ScadaPC1PC2:   'https://drive.google.com/drive/folders/1Lp0bYwOoRJnCxE1WcPonfHgVf5RSH6u5?usp=sharing',
+        SoftalTreater: 'https://drive.google.com/drive/folders/1qEx6-8WRo4QEKsjO5wmtHlPoPfTN5HR9?usp=sharing',
+        TDOBruckpanel: 'https://drive.google.com/drive/folders/1mlAJeh3JdacXibpfr9NBGspvtNSpoxcZ?usp=sharing',
+        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1xqzHfOX-2xa5iCWIigus_ZtSfPK37pnP?usp=sharing'
+      },
+      Line2: {
+        F12:  'https://drive.google.com/drive/folders/1MOg8It7DghhjMPjUdPTeyjbts-K7RCj3?usp=sharing',
+        F13:  'https://drive.google.com/drive/folders/1cw7rWWhM-h1Q_fNGW5l6IzNWttKb91mS?usp=sharing',
+        F16:  'https://drive.google.com/drive/folders/1rjGW78fMciI3ZhbjT_JU5PhRj79BHNJj?usp=sharing',
+        F42:  'https://drive.google.com/drive/folders/1OttyO_Uk4rQisi_M8UwYHe7ZgGzErf5r?usp=sharing',
+        F55:  'https://drive.google.com/drive/folders/1I8XypN9MpQuxRWKMiZi612gc9iL6w5Ds?usp=sharing',
+        F201: 'https://drive.google.com/drive/folders/1bK9TyVJYjDO4CQXpAJgpQpLyNAKw6w54?usp=sharing',
+        FlameTreater:  'https://drive.google.com/drive/folders/1S9Mzbx7r46z0GAk7h7R5YD0TCSG8gQWk?usp=sharing',
+        MainBlending:  'https://drive.google.com/drive/folders/1KywwO5cSHbrM9GhllLpIg-1NQZ2krp6H?usp=sharing',
+        MainLoading:   'https://drive.google.com/drive/folders/1aCY1gUZyfNaVAzFaU43cvv5V3MZUmxe7?usp=sharing',
+        ScadaPC3PC4:   'https://drive.google.com/drive/folders/1QVcuAic2-Ga2s5Pb_RdWOjrpsEIxoSYA?usp=sharing',
+        SoftalTreater: 'https://drive.google.com/drive/folders/1IxbErY8lF8IpV97Y6HtL2STe99dpFHVR?usp=sharing',
+        TDOBruckpanel: 'https://drive.google.com/drive/folders/1FbXqingTcAdaIa7pj3fIBhseShuHQ1rs?usp=sharing',
+        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1_yZfO4H7qoHHL6D8E9x0I6Z_fjpp4l7q?usp=sharing'
+      },
+      Line3: {
+        F12:  'https://drive.google.com/drive/folders/1J1FDGMU1oSsFXBQYwYNQnsnETmgMqzIF?usp=sharing',
+        F13:  'https://drive.google.com/drive/folders/1AuHXv1zkGWq1alUudBpqtTKL5afj3dww?usp=sharing',
+        F16:  'https://drive.google.com/drive/folders/1EI3PvRbv-iIGRb-sX1sqMjBAataaxpkO?usp=sharing',
+        F42:  'https://drive.google.com/drive/folders/1XRi0Tw6f2oq_x_d4QNcslHp-jZ__OVH_?usp=sharing',
+        F55:  'https://drive.google.com/drive/folders/1Qj0sMFX8r4Ma6mdZOfUwN1idFUj3N_M1?usp=sharing',
+        F201: 'https://drive.google.com/drive/folders/1KgV_VN0XlqmdnIM5vbPifdiPMWYpvWmc?usp=sharing',
+        FlameTreater:  'https://drive.google.com/drive/folders/1kybXlTN449z2TGa55acsASTntk1oMMRt?usp=sharing',
+        MainBlending:  'https://drive.google.com/drive/folders/1HO4VvGrlizBuxDQt2-aHLgGe7HTxBFjR?usp=sharing',
+        MainLoading:   'https://drive.google.com/drive/folders/1i-7ih-rfeHT5snZLu5oId6sT2BG9xj52?usp=sharing',
+        ScadaPC5PC6:   'https://drive.google.com/drive/folders/1CeaMxupbXTmQ4GZbuogEIAjBB6uCLnAb?usp=sharing',
+        SoftalTreater: 'https://drive.google.com/drive/folders/18S8v2Xh4xJZyiHm_9uwMm6-k39xa-Db_?usp=sharing',
+        TDOBruckpanel: 'https://drive.google.com/drive/folders/1RwLyQ-6CYFMbqiTbQnXvllQCx18BkSua?usp=sharing',
+        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1qSb8IUbyskgrQt8jj8i_FVgbSaqTMyw8?usp=sharing'
+      },
+      Line4: {
+        F12:  'https://drive.google.com/drive/folders/1jr7GiTRAq-x5jU4_xJS0Mm8jFJ_pjviL?usp=sharing',
+        F13:  'https://drive.google.com/drive/folders/1KxYwuqPNMjR4Yx1hez1XKDAmJ75O6ms7?usp=sharing',
+        F16:  'https://drive.google.com/drive/folders/1TucxT8luoPl3bt-ZB-V_-jGyAjVEYBiV?usp=sharing',
+        F42:  'https://drive.google.com/drive/folders/1GhbC4C6VbbnRivOC7nLqyx3MHxrVojpl?usp=sharing',
+        F55:  'https://drive.google.com/drive/folders/1DZ2cwLgLjWbtq3UDzbIqWQPOkwc5B2tV?usp=sharing',
+        F201: 'https://drive.google.com/drive/folders/12AtVUT5m6b4tYhNDuTyHTQG7bqkQsC-K?usp=sharing',
+        FlameTreater:  'https://drive.google.com/drive/folders/1tJa6cidGd_jnyQFv4tAWsdb-GQeVtsFF?usp=sharing',
+        MainBlending:  'https://drive.google.com/drive/folders/1JKBYVve6DpdDXW4GXjx0ccMLU9TEj-Fw?usp=sharing',
+        MainLoading:   'https://drive.google.com/drive/folders/1bIcOGqr9r-xRwEQf6GXb_n-p4KeX7u7_?usp=sharing',
+        ScadaPC7PC8:   'https://drive.google.com/drive/folders/1gCwSkxVAg-64tlLRMHvDhNWgoQYmKRTK?usp=sharing',
+        SoftalTreater: 'https://drive.google.com/drive/folders/14WMNIQ3TwQ_e0DaSDZ2MS9yrZKIKfuNX?usp=sharing',
+        TDOBruckpanel: 'https://drive.google.com/drive/folders/1vevMWNfXb_RZq1ur8_avkUe9xamveNvz?usp=sharing',
+        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1imnJYm7Zq4eOFPpECu21_NtoKKLOdpjG?usp=sharing'
+      },
+      Reclaim: {
+        XRO1: 'https://drive.google.com/drive/folders/16UrOueEYpUX0sCJy9ofQnchOHuRd00KI?usp=sharing',
+        XRO2: 'https://drive.google.com/drive/folders/1tZQuk9hzqUrxxf1H3rjti5KxP1bj9iSy?usp=sharing',
+        XRO3: 'https://drive.google.com/drive/folders/1g8cdW0StRIGv2fHt_iQnUOagFejsIrlP?usp=sharing'
+      }
+    };
+   
+
+    function setModule(title, sub){
+      if (titleEl) titleEl.textContent = title;
+      if (subEl)   subEl.textContent   = sub;
+    }
+
+    function formatLineLabel(lineKey){
+      if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
+      return lineKey;
+    }
+
+    // Schematic 檔名規則：Line-1-4-Schematic.html?line=1&sec=F13
+    function buildSchematicFileName(lineKey, sectionKey){
+      const n = lineKey.replace('Line',''); // Line1 -> 1
+      return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
+    }
+
+    // 預設主模組切換（Home / PC Manager 等）
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const role = btn.dataset.role || '';
+
+        // Line Schematic parent
+        if (role === 'schematic-parent'){
+          if (!schematicPanel) return;
+          const wasOpen = schematicPanel.classList.contains('open');
+
+          activateNav(btn);
+          closeAllSubPanels();
+
+          if (!wasOpen) {
+            schematicPanel.classList.add('open');
+          }
+
+          setModule(
+            btn.dataset.title || 'Line Schematic',
+            btn.dataset.sub   || 'Select line and section.'
+          );
           return;
         }
 
-        el.textContent = d.toLocaleString([], {
-          year:   'numeric',
-          month:  '2-digit',
-          day:    '2-digit',
-          hour:   '2-digit',
-          minute: '2-digit'
-        });
-      }
+        // Program Backup parent
+        if (role === 'backup-parent'){
+          if (!backupPanel) return;
+          const wasOpen = backupPanel.classList.contains('open');
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateModDate);
-      } else {
-        updateModDate();
-      }
-    })();
+          activateNav(btn);
+          closeAllSubPanels();
 
-    // ---- 子頁面同步主頁 style ----
-    (function syncStyleToIframe(){
-      const frame = document.getElementById("mainFrame");
+          if (!wasOpen) {
+            backupPanel.classList.add('open');
+          }
 
-      function applyStyleToFrame(){
-        if (!frame || !frame.contentDocument) return;
-        const style = document.documentElement.getAttribute("data-style") || "blue";
-        const frameHtml = frame.contentDocument.documentElement;
-        frameHtml.setAttribute("data-style", style);
-      }
+          setModule(
+            btn.dataset.title || 'Program Backup',
+            btn.dataset.sub   || 'Select line and section to open backup.'
+          );
+          return;
+        }
 
-      if (frame){
-        frame.addEventListener("load", function(){
-          setTimeout(applyStyleToFrame, 30);
-        });
-      }
+        // Maintenance parent
+        if (role === 'maintenance-parent'){
+          if (!maintenancePanel) return;
+          const wasOpen = maintenancePanel.classList.contains('open');
 
-      window._msSyncFrameStyle = applyStyleToFrame;
-    })();
+          activateNav(btn);
+          closeAllSubPanels();
 
-    // Modules 面板開關
-    (function(){
-      const menuBtn = document.getElementById('menuButton');
-      const panel = document.getElementById('navPanel');
+          if (!wasOpen) {
+            maintenancePanel.classList.add('open');
+          }
 
-      function togglePanel(){
-        const isOpen = panel.classList.toggle('open');
-        menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      }
+          setModule(
+            btn.dataset.title || 'Maintenance',
+            btn.dataset.sub   || 'Open maintenance SOP PDFs.'
+          );
+          return;
+        }
 
-      if (menuBtn && panel){
-        menuBtn.addEventListener('click', togglePanel);
-      }
+        // 其他一般按鈕：Home / PC Manager
+        const src = btn.dataset.src;
+        if (!src) return;
 
-      // 點擊頁面其他地方就關閉（桌機用，比較乾淨）
-      document.addEventListener('click', (e)=>{
-        if (!panel.classList.contains('open')) return;
-        const insidePanel = panel.contains(e.target);
-        const insideBtn   = menuBtn.contains(e.target);
-        if (!insidePanel && !insideBtn){
+        activateNav(btn);
+
+        const title = btn.dataset.title || 'Module';
+        const sub   = btn.dataset.sub || '';
+        if (frame && src) frame.src = src;
+        setModule(title, sub);
+
+        if (panel && panel.classList.contains('open')){
           panel.classList.remove('open');
-          menuBtn.setAttribute('aria-expanded','false');
-        }
-      });
-    })();
-
-    // 切換模組 + Line Schematic / Program Backup / Maintenance 兩層選單
-    (function(){
-      const frame   = document.getElementById('mainFrame');
-      const titleEl = document.getElementById('moduleTitle');
-      const subEl   = document.getElementById('moduleSub');
-      const panel   = document.getElementById('navPanel');
-      const menuBtn = document.getElementById('menuButton');
-      const buttons = document.querySelectorAll('.nav-item-btn');
-
-      const schematicPanel   = document.getElementById('schematicPanel');
-      const schematicLineBtns= document.querySelectorAll('.schematic-line-btn');
-      const schematicSecBtns = document.querySelectorAll('.schematic-sec-btn');
-      let currentSchematicLine = 'Line1';
-
-      const backupPanel   = document.getElementById('backupPanel');
-      const backupLineBtns= document.querySelectorAll('.backup-line-btn');
-      const backupSecBtns = document.querySelectorAll('.backup-sec-btn');
-      let currentBackupLine = 'Line1';
-
-      const maintenancePanel = document.getElementById('maintenancePanel');
-      const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
-
-
-      // 🔹 Program Backup → Google Drive URL 對應表
-      const BackupUrlMap = {
-        Line1: {
-          F12:  'https://drive.google.com/drive/folders/1v6Ceoo7Wh9aty0tDBdt8CkwoJedd-bbi?usp=sharing',
-          F13:  'https://drive.google.com/drive/folders/14i873c0LQENb_O_6vsGISQsxonO1BEDj?usp=sharing',
-          F16:  'https://drive.google.com/drive/folders/12fY1QcORExwPcFH_GVZhM8FcTimul-jU?usp=sharing',
-          F42:  'https://drive.google.com/drive/folders/12EhLZW0etEC2eX3t1QPSlOQI86v3YBJh?usp=sharing',
-          F55:  'https://drive.google.com/drive/folders/1hNL663CCzPXi6uChKaXEVf3yc6VpBST8?usp=sharing',
-          F201: 'https://drive.google.com/drive/folders/19fiHd3JljzATXPGSb944Ob8O0C-6qGWD?usp=sharing',
-          FlameTreater:  'https://drive.google.com/drive/folders/1SNnpyf1PDYRcZAoSDNYBmPTchnuvSYmR?usp=sharing',
-          MainBlending:  'https://drive.google.com/drive/folders/1VAsJrBLZshXFI_6HzhCIL9SjqbGqP7E2?usp=sharing',
-          MainLoading:   'https://drive.google.com/drive/folders/1ppVLuY4cHoSJq12iq9_cEPDWaoR6VUei?usp=sharing',
-          ScadaPC1PC2:   'https://drive.google.com/drive/folders/1Lp0bYwOoRJnCxE1WcPonfHgVf5RSH6u5?usp=sharing',
-          SoftalTreater: 'https://drive.google.com/drive/folders/1qEx6-8WRo4QEKsjO5wmtHlPoPfTN5HR9?usp=sharing',
-          TDOBruckpanel: 'https://drive.google.com/drive/folders/1mlAJeh3JdacXibpfr9NBGspvtNSpoxcZ?usp=sharing',
-          WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1xqzHfOX-2xa5iCWIigus_ZtSfPK37pnP?usp=sharing'
-        },
-        Line2: {
-          F12:  'https://drive.google.com/drive/folders/1MOg8It7DghhjMPjUdPTeyjbts-K7RCj3?usp=sharing',
-          F13:  'https://drive.google.com/drive/folders/1cw7rWWhM-h1Q_fNGW5l6IzNWttKb91mS?usp=sharing',
-          F16:  'https://drive.google.com/drive/folders/1rjGW78fMciI3ZhbjT_JU5PhRj79BHNJj?usp=sharing',
-          F42:  'https://drive.google.com/drive/folders/1OttyO_Uk4rQisi_M8UwYHe7ZgGzErf5r?usp=sharing',
-          F55:  'https://drive.google.com/drive/folders/1I8XypN9MpQuxRWKMiZi612gc9iL6w5Ds?usp=sharing',
-          F201: 'https://drive.google.com/drive/folders/1bK9TyVJYjDO4CQXpAJgpQpLyNAKw6w54?usp=sharing',
-          FlameTreater:  'https://drive.google.com/drive/folders/1S9Mzbx7r46z0GAk7h7R5YD0TCSG8gQWk?usp=sharing',
-          MainBlending:  'https://drive.google.com/drive/folders/1KywwO5cSHbrM9GhllLpIg-1NQZ2krp6H?usp=sharing',
-          MainLoading:   'https://drive.google.com/drive/folders/1aCY1gUZyfNaVAzFaU43cvv5V3MZUmxe7?usp=sharing',
-          ScadaPC3PC4:   'https://drive.google.com/drive/folders/1QVcuAic2-Ga2s5Pb_RdWOjrpsEIxoSYA?usp=sharing',
-          SoftalTreater: 'https://drive.google.com/drive/folders/1IxbErY8lF8IpV97Y6HtL2STe99dpFHVR?usp=sharing',
-          TDOBruckpanel: 'https://drive.google.com/drive/folders/1FbXqingTcAdaIa7pj3fIBhseShuHQ1rs?usp=sharing',
-          WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1_yZfO4H7qoHHL6D8E9x0I6Z_fjpp4l7q?usp=sharing'
-        },
-        Line3: {
-          F12:  'https://drive.google.com/drive/folders/1J1FDGMU1oSsFXBQYwYNQnsnETmgMqzIF?usp=sharing',
-          F13:  'https://drive.google.com/drive/folders/1AuHXv1zkGWq1alUudBpqtTKL5afj3dww?usp=sharing',
-          F16:  'https://drive.google.com/drive/folders/1EI3PvRbv-iIGRb-sX1sqMjBAataaxpkO?usp=sharing',
-          F42:  'https://drive.google.com/drive/folders/1XRi0Tw6f2oq_x_d4QNcslHp-jZ__OVH_?usp=sharing',
-          F55:  'https://drive.google.com/drive/folders/1Qj0sMFX8r4Ma6mdZOfUwN1idFUj3N_M1?usp=sharing',
-          F201: 'https://drive.google.com/drive/folders/1KgV_VN0XlqmdnIM5vbPifdiPMWYpvWmc?usp=sharing',
-          FlameTreater:  'https://drive.google.com/drive/folders/1kybXlTN449z2TGa55acsASTntk1oMMRt?usp=sharing',
-          MainBlending:  'https://drive.google.com/drive/folders/1HO4VvGrlizBuxDQt2-aHLgGe7HTxBFjR?usp=sharing',
-          MainLoading:   'https://drive.google.com/drive/folders/1i-7ih-rfeHT5snZLu5oId6sT2BG9xj52?usp=sharing',
-          ScadaPC5PC6:   'https://drive.google.com/drive/folders/1CeaMxupbXTmQ4GZbuogEIAjBB6uCLnAb?usp=sharing',
-          SoftalTreater: 'https://drive.google.com/drive/folders/18S8v2Xh4xJZyiHm_9uwMm6-k39xa-Db_?usp=sharing',
-          TDOBruckpanel: 'https://drive.google.com/drive/folders/1RwLyQ-6CYFMbqiTbQnXvllQCx18BkSua?usp=sharing',
-          WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1qSb8IUbyskgrQt8jj8i_FVgbSaqTMyw8?usp=sharing'
-        },
-        Line4: {
-          F12:  'https://drive.google.com/drive/folders/1jr7GiTRAq-x5jU4_xJS0Mm8jFJ_pjviL?usp=sharing',
-          F13:  'https://drive.google.com/drive/folders/1KxYwuqPNMjR4Yx1hez1XKDAmJ75O6ms7?usp=sharing',
-          F16:  'https://drive.google.com/drive/folders/1TucxT8luoPl3bt-ZB-V_-jGyAjVEYBiV?usp=sharing',
-          F42:  'https://drive.google.com/drive/folders/1GhbC4C6VbbnRivOC7nLqyx3MHxrVojpl?usp=sharing',
-          F55:  'https://drive.google.com/drive/folders/1DZ2cwLgLjWbtq3UDzbIqWQPOkwc5B2tV?usp=sharing',
-          F201: 'https://drive.google.com/drive/folders/12AtVUT5m6b4tYhNDuTyHTQG7bqkQsC-K?usp=sharing',
-          FlameTreater:  'https://drive.google.com/drive/folders/1tJa6cidGd_jnyQFv4tAWsdb-GQeVtsFF?usp=sharing',
-          MainBlending:  'https://drive.google.com/drive/folders/1JKBYVve6DpdDXW4GXjx0ccMLU9TEj-Fw?usp=sharing',
-          MainLoading:   'https://drive.google.com/drive/folders/1bIcOGqr9r-xRwEQf6GXb_n-p4KeX7u7_?usp=sharing',
-          ScadaPC7PC8:   'https://drive.google.com/drive/folders/1gCwSkxVAg-64tlLRMHvDhNWgoQYmKRTK?usp=sharing',
-          SoftalTreater: 'https://drive.google.com/drive/folders/14WMNIQ3TwQ_e0DaSDZ2MS9yrZKIKfuNX?usp=sharing',
-          TDOBruckpanel: 'https://drive.google.com/drive/folders/1vevMWNfXb_RZq1ur8_avkUe9xamveNvz?usp=sharing',
-          WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1imnJYm7Zq4eOFPpECu21_NtoKKLOdpjG?usp=sharing'
-        },
-        Reclaim: {
-          XRO1: 'https://drive.google.com/drive/folders/16UrOueEYpUX0sCJy9ofQnchOHuRd00KI?usp=sharing',
-          XRO2: 'https://drive.google.com/drive/folders/1tZQuk9hzqUrxxf1H3rjti5KxP1bj9iSy?usp=sharing',
-          XRO3: 'https://drive.google.com/drive/folders/1g8cdW0StRIGv2fHt_iQnUOagFejsIrlP?usp=sharing'
-        }
-      };
-     
-
-      function setModule(title, sub){
-        if (titleEl) titleEl.textContent = title;
-        if (subEl)   subEl.textContent   = sub;
-      }
-
-      function formatLineLabel(lineKey){
-        if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
-        return lineKey;
-      }
-
-      // Schematic 檔名規則：Line-1-4-Schematic.html?line=1&sec=F13
-      function buildSchematicFileName(lineKey, sectionKey){
-        const n = lineKey.replace('Line',''); // Line1 -> 1
-        return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
-      }
-
-      // 預設主模組切換（Home / PC Manager 等）
-      buttons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const role = btn.dataset.role || '';
-
-          // Line Schematic parent：只展開 / 收合子列表
-          if (role === 'schematic-parent'){
-            if (!schematicPanel) return;
-            const isOpen = schematicPanel.classList.toggle('open');
-
-            // ✅ 所有 nav-item 先清除 active，再把自己設 active
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            // 若開 schematic，把其他 panel 關掉
-            if (isOpen){
-              if (backupPanel) backupPanel.classList.remove('open');
-              if (maintenancePanel) maintenancePanel.classList.remove('open');
-            }
-
-            setModule(
-              btn.dataset.title || 'Line Schematic',
-              btn.dataset.sub   || 'Select line and section.'
-            );
-            return;
-          }
-
-          // Program Backup parent：只展開 / 收合子列表
-          if (role === 'backup-parent'){
-            if (!backupPanel) return;
-            const isOpen = backupPanel.classList.toggle('open');
-
-            // ✅ 所有 nav-item 先清除 active，再把自己設 active
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            // 若開 backup，把其他 panel 關掉
-            if (isOpen){
-              if (schematicPanel) schematicPanel.classList.remove('open');
-              if (maintenancePanel) maintenancePanel.classList.remove('open');
-            }
-
-            setModule(
-              btn.dataset.title || 'Program Backup',
-              btn.dataset.sub   || 'Select line and section to open backup.'
-            );
-            return;
-          }
-
-          // Maintenance parent：只展開 / 收合 Maintenance PDF 子列表
-          if (role === 'maintenance-parent'){
-            if (!maintenancePanel) return;
-            const isOpen = maintenancePanel.classList.toggle('open');
-
-            // ✅ 所有 nav-item 先清除 active，再把自己設 active
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            // 若開 maintenance，把其他 panel 關掉
-            if (isOpen){
-              if (schematicPanel) schematicPanel.classList.remove('open');
-              if (backupPanel)    backupPanel.classList.remove('open');
-            }
-
-            setModule(
-              btn.dataset.title || 'Maintenance',
-              btn.dataset.sub   || 'Open maintenance SOP PDFs.'
-            );
-            return;
-          }
-
-          // 其他一般按鈕：照舊
-          const src = btn.dataset.src;
-          if (!src) return;
-
-          buttons.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const title = btn.dataset.title || 'Module';
-          const sub   = btn.dataset.sub || '';
-          if (frame && src) frame.src = src;
-          setModule(title, sub);
-
-          if (panel && panel.classList.contains('open')){
-            panel.classList.remove('open');
-            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-          }
-
-          if (schematicPanel)  schematicPanel.classList.remove('open');
-          if (backupPanel)     backupPanel.classList.remove('open');
-          if (maintenancePanel)maintenancePanel.classList.remove('open');
-        });
-      });
-
-      // Line Schematic：Line 1~4
-      schematicLineBtns.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const lineKey = btn.getAttribute('data-line') || 'Line1';
-          currentSchematicLine = lineKey;
-          schematicLineBtns.forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-        });
-      });
-
-      // Line Schematic：Section F12/F13/F16/F201
-      schematicSecBtns.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const sectionKey   = btn.getAttribute('data-section');
-          const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-          if (!sectionKey) return;
-
-          const file = buildSchematicFileName(currentSchematicLine, sectionKey);
-          if (frame){
-            frame.src = file;
-          }
-
-          const lineLabel = formatLineLabel(currentSchematicLine);
-          setModule(
-            'Line Schematic – ' + lineLabel + ' – ' + sectionLabel,
-            'Schematic file: ' + file
-          );
-
-          if (panel && panel.classList.contains('open')){
-            panel.classList.remove('open');
-            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-          }
-        });
-      });
-
-      // Program Backup：Line1~4 / Reclaim
-      backupLineBtns.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const lineKey = btn.getAttribute('data-line') || 'Line1';
-          currentBackupLine = lineKey;
-          backupLineBtns.forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-        });
-      });
-
-      // Program Backup：Section / System → 偽 iframe + 實際開 Google Drive
-      backupSecBtns.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const sectionKey   = btn.getAttribute('data-section');
-          const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-          if (!sectionKey) return;
-
-          const lineMap = BackupUrlMap[currentBackupLine] || {};
-          const driveUrl = lineMap[sectionKey];
-
-          if (!driveUrl) {
-            alert('No backup URL for ' + currentBackupLine + ' / ' + sectionKey);
-            return;
-          }
-
-          // 右側 iframe 載入 GoogleDriveLoader.html（偽 iframe）
-          const loaderUrl =
-            'GoogleDriveLoader.html'
-            + '?line=' + encodeURIComponent(currentBackupLine)
-            + '&section=' + encodeURIComponent(sectionKey)
-            + '&url=' + encodeURIComponent(driveUrl);
-
-          if (frame) {
-            frame.src = loaderUrl;
-          }
-
-          const lineLabel = formatLineLabel(currentBackupLine);
-          setModule(
-            'Program Backup – ' + lineLabel + ' – ' + sectionLabel,
-            'Opening Google Drive backup…'
-          );
-
-          if (panel && panel.classList.contains('open')){
-            panel.classList.remove('open');
-            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-          }
-        });
-      });
-      
-      // 🔹 Maintenance：改成開 Maintenance.html（裡面再用 pdf.js）
-      maintenanceSecBtns.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
-          const label = btn.getAttribute('data-label') || key || '';
-          if (!key) return;
-
-          // Portal 右側 iframe 載入 Maintenance.html
-          const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
-
-          if (frame){
-            frame.src = viewerUrl;
-          }
-
-          // 上面標題顯示
-          setModule(
-            'Maintenance – ' + label,
-            'PDF: ' + label
-          );
-
-          // 按過的高亮
-          maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-
-          // 收起 Modules 面板（手機使用體驗）
-          if (panel && panel.classList.contains('open')){
-            panel.classList.remove('open');
-            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-          }
-        });
-      });
-
-
-      // 🔹 Tags list：載入到右側 iframe，不開新分頁
-      const tagsLink = document.getElementById('tagsListLink');
-      if (tagsLink) {
-        tagsLink.addEventListener('click', function (e) {
-          e.preventDefault();
-
-          if (frame) {
-            frame.src = 'F13_PLC_Tags list.html';
-          }
-
-          setModule('Tags List', 'PLC / SCADA Tag Reference');
-
-          if (panel && panel.classList.contains('open')) {
-            panel.classList.remove('open');
-            if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
-          }
-        });
-      }
-    })();
-
-    // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
-    (function(){
-      const STYLE_KEY = 'ms-style';
-      const root = document.documentElement;
-      const mascot = document.querySelector('.mascot');
-      const styles = ['blue', 'panther', 'hangyodon'];
-
-      const themeConfig = {
-        blue: {
-          bgImage: ''                  // 用預設 CSS 漸層
-        },
-        panther: {
-          bgImage: 'url("pinkpanther.png")'
-        },
-        hangyodon: {
-          bgImage: 'url("hangyodon.png")'
-        }
-      };
-
-      function applyStyle(style){
-        const s = themeConfig[style] ? style : 'blue';
-        root.setAttribute('data-style', s);
-        const cfg = themeConfig[s];
-
-        if (mascot){
-          // 有設定圖片就蓋掉，沒有就用預設漸層方塊
-          mascot.style.backgroundImage = cfg.bgImage || '';
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
         }
 
-        localStorage.setItem(STYLE_KEY, s);
+        closeAllSubPanels();
+      });
+    });
 
-        if (window._msSyncFrameStyle){
-          setTimeout(window._msSyncFrameStyle, 30);
+    // Line Schematic：Line 1~4
+    schematicLineBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const lineKey = btn.getAttribute('data-line') || 'Line1';
+        currentSchematicLine = lineKey;
+        schematicLineBtns.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Line Schematic：Section F12/F13/F16/F201
+    schematicSecBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const sectionKey   = btn.getAttribute('data-section');
+        const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+        if (!sectionKey) return;
+
+        const file = buildSchematicFileName(currentSchematicLine, sectionKey);
+        if (frame){
+          frame.src = file;
         }
-      }
 
-      function cycleStyle(){
-        const current = root.getAttribute('data-style') || 'blue';
-        const idx = styles.indexOf(current);
-        const next = styles[(idx + 1) % styles.length];
-        applyStyle(next);
-      }
+        const lineLabel = formatLineLabel(currentSchematicLine);
+        setModule(
+          'Line Schematic – ' + lineLabel + ' – ' + sectionLabel,
+          'Schematic file: ' + file
+        );
 
-      const saved = localStorage.getItem(STYLE_KEY) || 'blue';
-      applyStyle(saved);
+        if (panel && panel.classList.contains('open')){
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    });
+
+    // Program Backup：Line1~4 / Reclaim
+    backupLineBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const lineKey = btn.getAttribute('data-line') || 'Line1';
+        currentBackupLine = lineKey;
+        backupLineBtns.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Program Backup：Section / System → 偽 iframe + 實際開 Google Drive
+    backupSecBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const sectionKey   = btn.getAttribute('data-section');
+        const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+        if (!sectionKey) return;
+
+        const lineMap = BackupUrlMap[currentBackupLine] || {};
+        const driveUrl = lineMap[sectionKey];
+
+        if (!driveUrl) {
+          alert('No backup URL for ' + currentBackupLine + ' / ' + sectionKey);
+          return;
+        }
+
+        const loaderUrl =
+          'GoogleDriveLoader.html'
+          + '?line=' + encodeURIComponent(currentBackupLine)
+          + '&section=' + encodeURIComponent(sectionKey)
+          + '&url=' + encodeURIComponent(driveUrl);
+
+        if (frame) {
+          frame.src = loaderUrl;
+        }
+
+        const lineLabel = formatLineLabel(currentBackupLine);
+        setModule(
+          'Program Backup – ' + lineLabel + ' – ' + sectionLabel,
+          'Opening Google Drive backup…'
+        );
+
+        if (panel && panel.classList.contains('open')){
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    });
+    
+    // 🔹 Maintenance：改成開 Maintenance.html（裡面再用 pdf.js）
+    maintenanceSecBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
+        const label = btn.getAttribute('data-label') || key || '';
+        if (!key) return;
+
+        const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
+
+        if (frame){
+          frame.src = viewerUrl;
+        }
+
+        setModule(
+          'Maintenance – ' + label,
+          'PDF: ' + label
+        );
+
+        maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (panel && panel.classList.contains('open')){
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    });
+
+    // 🔹 Tags list：載入到右側 iframe，不開新分頁
+    const tagsLink = document.getElementById('tagsListLink');
+    if (tagsLink) {
+      tagsLink.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        if (frame) {
+          frame.src = 'F13_PLC_Tags list.html';
+        }
+
+        setModule('Tags List', 'PLC / SCADA Tag Reference');
+
+        if (panel && panel.classList.contains('open')) {
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  })();
+
+  // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
+  (function(){
+    const STYLE_KEY = 'ms-style';
+    const root = document.documentElement;
+    const mascot = document.querySelector('.mascot');
+    const styles = ['blue', 'panther', 'hangyodon'];
+
+    const themeConfig = {
+      blue: {
+        bgImage: ''                  // 用預設 CSS 漸層
+      },
+      panther: {
+        bgImage: 'url("pinkpanther.png")'
+      },
+      hangyodon: {
+        bgImage: 'url("hangyodon.png")'
+      }
+    };
+
+    function applyStyle(style){
+      const s = themeConfig[style] ? style : 'blue';
+      root.setAttribute('data-style', s);
+      const cfg = themeConfig[s];
 
       if (mascot){
-        mascot.style.cursor = 'pointer';
-        mascot.title = 'Click to change style';
-        mascot.addEventListener('click', cycleStyle);
+        mascot.style.backgroundImage = cfg.bgImage || '';
       }
-    })();
-  </script>
+
+      localStorage.setItem(STYLE_KEY, s);
+
+      if (window._msSyncFrameStyle){
+        setTimeout(window._msSyncFrameStyle, 30);
+      }
+    }
+
+    function cycleStyle(){
+      const current = root.getAttribute('data-style') || 'blue';
+      const idx = styles.indexOf(current);
+      const next = styles[(idx + 1) % styles.length];
+      applyStyle(next);
+    }
+
+    const saved = localStorage.getItem(STYLE_KEY) || 'blue';
+    applyStyle(saved);
+
+    if (mascot){
+      mascot.style.cursor = 'pointer';
+      mascot.title = 'Click to change style';
+      mascot.addEventListener('click', cycleStyle);
+    }
+  })();
+</script>
 </body>
 </html>
