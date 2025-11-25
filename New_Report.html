@@ -544,16 +544,20 @@
   equipInputEl.value = assetId;
 
   const record = {
-    date,
+    Date: date,
     line,
     section,
-    equipment: assetId,   // ⬅ 儲存時就叫 equipment，但內容是 Asset ID
+    asset_id: assetId,
     category,
-    downtime,
-    rootcause,
-    action,
-    timestamp: new Date().toISOString()
+    downtime_min: downtime,
+    root_cause: rootcause,
+    action_taken: action,
+    location_from: loc_from,
+    location_to: loc_to,
+    timestamp: new Date().toISOString(),
+    id: crypto.randomUUID()
   };
+
 
   const logs = loadRecords();
   logs.push(record);
