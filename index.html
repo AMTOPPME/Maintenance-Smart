@@ -818,6 +818,11 @@
       const maintenancePanel = document.getElementById('maintenancePanel');
       const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
 
+      // ✅ 共用 pdf.js viewer（請改成你 Line-1-4 Schematic 用的那個路徑）
+      // 例如：const PDFJS_VIEWER = 'pdfjs/web/viewer.html';
+      const PDFJS_VIEWER = 'pdfjs/web/viewer.html';
+      const PDFJS_VIEWER_HASH = '#zoom=page-width'; // 可依需要調整
+
       // 🔹 Program Backup → Google Drive URL 對應表
       const BackupUrlMap = {
         Line1: {
@@ -1096,49 +1101,43 @@
         });
       });
 
-      // 🔹 Maintenance：用 pdf.js viewer 在 iframe 開 PDF
-maintenanceSecBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const key   = btn.getAttribute('data-pdf-key');
-    const label = btn.getAttribute('data-label') || key || '';
-    if (!key) return;
+      // 🔹 Maintenance：用「同一顆 pdf.js viewer」在 iframe 開 PDF
+      maintenanceSecBtns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const key   = btn.getAttribute('data-pdf-key');
+          const label = btn.getAttribute('data-label') || key || '';
+          if (!key) return;
 
-    const pdfPath = MaintenancePdfMap[key];
-    if (!pdfPath){
-      alert('No PDF file mapped for: ' + key);
-      return;
-    }
+          const pdfPath = MaintenancePdfMap[key];
+          if (!pdfPath){
+            alert('No PDF file mapped for: ' + key);
+            return;
+          }
 
-    // 用 pdf.js viewer 包裝後的 URL
-    // 假設你的 pdf.js viewer 檔名叫 PDFViewer.html
-    const viewerUrl =
-      'PDFViewer.html'
-      + '?file='  + encodeURIComponent(pdfPath)
-      + '&title=' + encodeURIComponent(label);
+          // 用官方 pdf.js viewer（跟 Line-1-4 schematic 一樣）
+          const viewerUrl =
+            PDFJS_VIEWER
+            + '?file=' + encodeURIComponent(pdfPath)
+            + PDFJS_VIEWER_HASH;
 
-    // 載入 pdf.js viewer 到右側 iframe
-    if (frame){
-      frame.src = viewerUrl;
-    }
+          if (frame){
+            frame.src = viewerUrl;
+          }
 
-    // 標題改成 Maintenance – xxx
-    setModule(
-      'Maintenance – ' + label,
-      'PDF: ' + pdfPath
-    );
+          setModule(
+            'Maintenance – ' + label,
+            'PDF: ' + pdfPath
+          );
 
-    // 按過的高亮
-    maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
+          maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
 
-    // 收起 Modules 面板（手機使用體驗）
-    if (panel && panel.classList.contains('open')){
-      panel.classList.remove('open');
-      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-    }
-  });
-});
-
+          if (panel && panel.classList.contains('open')){
+            panel.classList.remove('open');
+            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+          }
+        });
+      });
 
       // 🔹 Tags list：載入到右側 iframe，不開新分頁
       const tagsLink = document.getElementById('tagsListLink');
@@ -1146,15 +1145,12 @@ maintenanceSecBtns.forEach(btn=>{
         tagsLink.addEventListener('click', function (e) {
           e.preventDefault();
 
-          // 載入 Tags viewer 頁面（F13_PLC_Tags list.html）
           if (frame) {
             frame.src = 'F13_PLC_Tags list.html';
           }
 
-          // 上方標題改成 Tags List
           setModule('Tags List', 'PLC / SCADA Tag Reference');
 
-          // 如果 Modules 面板是打開的，把它關掉（手機版會比較乾淨）
           if (panel && panel.classList.contains('open')) {
             panel.classList.remove('open');
             if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
