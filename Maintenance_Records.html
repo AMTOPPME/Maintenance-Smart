@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Maintenance Records | Maintenance Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --card-bg:#ffffff;
+      --border-subtle:#e5e7eb;
+      --accent:#2563eb;
+      --accent-soft:#eff6ff;
+      --accent-hover:#1d4ed8;
+      --text:#111827;
+      --text-soft:#6b7280;
+      --radius-xl:18px;
+      --shadow-soft-md:0 16px 40px rgba(15,23,42,.09);
+      --shadow-soft-sm:0 10px 26px rgba(15,23,42,.06);
+      --small-font:13px;
+      --xsmall-font:11px;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      padding:16px;
+    }
+
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+    }
+
+    .head{
+      margin-bottom:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+    }
+    .head-title{
+      font-size:20px;
+      font-weight:650;
+      margin:0 0 2px;
+    }
+    .head-sub{
+      margin:0;
+      font-size:var(--small-font);
+      color:var(--text-soft);
+    }
+
+    .summary-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:#f9fafb;
+      font-size:var(--xsmall-font);
+      color:var(--text-soft);
+    }
+    .summary-chip strong{
+      color:var(--text);
+      font-weight:600;
+    }
+
+    .toolbar{
+      background:var(--card-bg);
+      border-radius:var(--radius-xl);
+      padding:10px 12px;
+      border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow-soft-sm);
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      margin-bottom:10px;
+    }
+    .toolbar-group{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .toolbar-label{
+      font-size:var(--xsmall-font);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--text-soft);
+    }
+
+    .input, .select{
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      padding:6px 10px;
+      font-size:var(--small-font);
+      background:#f9fafb;
+      min-width:120px;
+      outline:none;
+      transition:border-color .15s, box-shadow .15s, background .15s;
+    }
+    .input:focus, .select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(37,99,235,.25);
+      background:#ffffff;
+    }
+    .input-search{
+      min-width:200px;
+    }
+
+    .btn-small{
+      border:none;
+      border-radius:999px;
+      padding:6px 12px;
+      font-size:var(--xsmall-font);
+      font-weight:600;
+      cursor:pointer;
+      background:var(--accent-soft);
+      color:var(--accent);
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      transition:background .15s, transform .05s, box-shadow .15s;
+    }
+    .btn-small:hover{
+      background:#dbeafe;
+      transform:translateY(-1px);
+      box-shadow:0 4px 10px rgba(37,99,235,.35);
+    }
+
+    .table-wrap{
+      margin-top:8px;
+      background:var(--card-bg);
+      border-radius:var(--radius-xl);
+      border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow-soft-md);
+      overflow:hidden;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:var(--small-font);
+    }
+    thead{
+      background:#f9fafb;
+    }
+    th,td{
+      padding:8px 10px;
+      border-bottom:1px solid #e5e7eb;
+      vertical-align:top;
+    }
+    th{
+      text-align:left;
+      font-weight:600;
+      color:var(--text-soft);
+      white-space:nowrap;
+      cursor:pointer;
+      user-select:none;
+    }
+    th.sortable:hover{
+      background:#eef2ff;
+    }
+    th .sort-indicator{
+      font-size:10px;
+      margin-left:4px;
+      opacity:.6;
+    }
+    tbody tr:nth-child(even){
+      background:#f9fafb;
+    }
+    tbody tr:hover{
+      background:#eef2ff;
+    }
+
+    td.equip{
+      font-weight:600;
+      color:var(--text);
+    }
+    td.small{
+      font-size:var(--xsmall-font);
+      color:var(--text-soft);
+    }
+    td.actions{
+      white-space:nowrap;
+    }
+
+    .pill-cat{
+      display:inline-flex;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:var(--xsmall-font);
+      background:#eef2ff;
+      color:#3730a3;
+    }
+
+    .tag-line{
+      font-size:var(--xsmall-font);
+      color:#2563eb;
+      font-weight:600;
+    }
+
+    .btn-ghost{
+      border:none;
+      border-radius:999px;
+      padding:4px 8px;
+      font-size:10px;
+      cursor:pointer;
+      background:#e5e7eb;
+      color:#374151;
+      margin-right:4px;
+      transition:background .15s, transform .05s;
+    }
+    .btn-ghost:hover{
+      background:#d1d5db;
+      transform:translateY(-1px);
+    }
+    .btn-danger{
+      background:#fee2e2;
+      color:#b91c1c;
+    }
+    .btn-danger:hover{
+      background:#fecaca;
+    }
+
+    .empty{
+      padding:30px 16px;
+      text-align:center;
+      font-size:var(--small-font);
+      color:var(--text-soft);
+    }
+
+    /* Modal for edit */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.35);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:20;
+    }
+    .modal-backdrop.open{
+      display:flex;
+    }
+    .modal{
+      background:var(--card-bg);
+      border-radius:18px;
+      padding:16px 18px 14px;
+      border:1px solid var(--border-subtle);
+      box-shadow:0 20px 45px rgba(15,23,42,.35);
+      width:100%;
+      max-width:460px;
+    }
+    .modal-title{
+      margin:0 0 4px;
+      font-size:16px;
+      font-weight:650;
+    }
+    .modal-sub{
+      margin:0 0 10px;
+      font-size:var(--xsmall-font);
+      color:var(--text-soft);
+    }
+    .modal-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .modal-row > div{flex:1;}
+    .modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      margin-top:8px;
+    }
+    .btn-primary{
+      border:none;
+      border-radius:999px;
+      padding:7px 14px;
+      font-size:var(--xsmall-font);
+      font-weight:600;
+      cursor:pointer;
+      background:var(--accent);
+      color:#fff;
+      box-shadow:0 6px 14px rgba(37,99,235,.35);
+      transition:background .15s, transform .05s, box-shadow .15s;
+    }
+    .btn-primary:hover{
+      background:var(--accent-hover);
+      transform:translateY(-1px);
+      box-shadow:0 9px 22px rgba(37,99,235,.45);
+    }
+    .btn-secondary{
+      border:none;
+      border-radius:999px;
+      padding:7px 14px;
+      font-size:var(--xsmall-font);
+      cursor:pointer;
+      background:#e5e7eb;
+      color:#374151;
+    }
+
+    @media (max-width:768px){
+      body{padding:10px;}
+      .toolbar{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .input-search{min-width:0;width:100%;}
+      .table-wrap{
+        border-radius:14px;
+        overflow-x:auto;
+      }
+      table{min-width:900px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="head">
+      <div>
+        <h1 class="head-title">Maintenance Records</h1>
+        <p class="head-sub">
+          View, search, filter, edit, and delete maintenance logs stored in this browser.
+        </p>
+      </div>
+      <div class="summary-chip">
+        Total records: <strong id="sumTotal">0</strong>
+        · This month: <strong id="sumMonth">0</strong>
+      </div>
+    </header>
+
+    <section class="toolbar">
+      <div class="toolbar-group">
+        <span class="toolbar-label">Search</span>
+        <input id="searchInput" class="input input-search" type="search"
+               placeholder="Search equipment, root cause, action..." />
+      </div>
+
+      <div class="toolbar-group">
+        <span class="toolbar-label">Filters</span>
+        <select id="lineFilter" class="select">
+          <option value="">All lines</option>
+          <option value="Line1">Line 1</option>
+          <option value="Line2">Line 2</option>
+          <option value="Line3">Line 3</option>
+          <option value="Line4">Line 4</option>
+          <option value="Reclaim">Reclaim</option>
+        </select>
+        <select id="sectionFilter" class="select">
+          <option value="">All sections</option>
+          <option value="F12">F12</option>
+          <option value="F13">F13</option>
+          <option value="F16">F16</option>
+          <option value="F201">F201</option>
+          <option value="F42">F42</option>
+          <option value="F55">F55</option>
+        </select>
+        <select id="categoryFilter" class="select">
+          <option value="">All categories</option>
+          <option>Electrical</option>
+          <option>Mechanical</option>
+          <option>Instrument</option>
+          <option>Network</option>
+          <option>Software</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="toolbar-group">
+        <button id="btnClearFilters" class="btn-small" type="button">
+          Clear filters
+        </button>
+      </div>
+    </section>
+
+    <section class="table-wrap" id="tableWrap">
+      <div class="empty" id="emptyState">
+        No maintenance records found in this browser.
+        <br/>
+        Create new records using <strong>Maintenance Report</strong> module first.
+      </div>
+      <table id="recordsTable" style="display:none;">
+        <thead>
+          <tr>
+            <th class="sortable" data-sort="date">Date<span class="sort-indicator"></span></th>
+            <th class="sortable" data-sort="line">Line / Section<span class="sort-indicator"></span></th>
+            <th class="sortable" data-sort="equipment">Equipment<span class="sort-indicator"></span></th>
+            <th class="sortable" data-sort="category">Category<span class="sort-indicator"></span></th>
+            <th class="sortable" data-sort="downtime">Downtime (min)<span class="sort-indicator"></span></th>
+            <th>Root Cause / Action</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="recordsBody"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- Edit modal -->
+  <div class="modal-backdrop" id="editBackdrop">
+    <div class="modal">
+      <h2 class="modal-title">Edit record</h2>
+      <p class="modal-sub">Update the selected maintenance record and save changes.</p>
+
+      <div class="modal-row">
+        <div>
+          <label for="editDate">Date</label>
+          <input id="editDate" class="input" type="date" />
+        </div>
+        <div>
+          <label for="editLine">Line</label>
+          <select id="editLine" class="select">
+            <option value="Line1">Line 1</option>
+            <option value="Line2">Line 2</option>
+            <option value="Line3">Line 3</option>
+            <option value="Line4">Line 4</option>
+            <option value="Reclaim">Reclaim</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-row">
+        <div>
+          <label for="editSection">Section</label>
+          <select id="editSection" class="select">
+            <option value="F12">F12</option>
+            <option value="F13">F13</option>
+            <option value="F16">F16</option>
+            <option value="F201">F201</option>
+            <option value="F42">F42</option>
+            <option value="F55">F55</option>
+          </select>
+        </div>
+        <div>
+          <label for="editCategory">Category</label>
+          <select id="editCategory" class="select">
+            <option>Electrical</option>
+            <option>Mechanical</option>
+            <option>Instrument</option>
+            <option>Network</option>
+            <option>Software</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="editEquipment">Equipment</label>
+      <input id="editEquipment" class="input" type="text" />
+
+      <label for="editRoot">Root Cause</label>
+      <textarea id="editRoot" class="input" style="border-radius:12px;"></textarea>
+
+      <label for="editAction">Action Taken</label>
+      <textarea id="editAction" class="input" style="border-radius:12px;"></textarea>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" type="button" id="btnCancelEdit">Cancel</button>
+        <button class="btn-primary" type="button" id="btnSaveEdit">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'ms-maintenance-logs';
+
+    let records = [];
+    let filtered = [];
+    let sortKey = 'date';
+    let sortDir = 'desc'; // 'asc' or 'desc'
+    let editingId = null;
+
+    function loadRecords(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY) || '[]';
+        const arr = JSON.parse(raw);
+        if (!Array.isArray(arr)) return [];
+
+        // 確保每筆都有 id，之後 Edit / Delete 用
+        let changed = false;
+        arr.forEach((rec, idx) => {
+          if (!rec.id){
+            if (window.crypto && crypto.randomUUID){
+              rec.id = crypto.randomUUID();
+            }else{
+              rec.id = 'rec_' + Date.now() + '_' + idx;
+            }
+            changed = true;
+          }
+        });
+        if (changed){
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+        }
+        return arr;
+      }catch(e){
+        console.error('Failed to load records', e);
+        return [];
+      }
+    }
+
+    function saveRecords(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function applyFilters(){
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const fLine = document.getElementById('lineFilter').value;
+      const fSec  = document.getElementById('sectionFilter').value;
+      const fCat  = document.getElementById('categoryFilter').value;
+
+      filtered = records.filter(r => {
+        if (fLine && r.line !== fLine) return false;
+        if (fSec && r.section !== fSec) return false;
+        if (fCat && r.category !== fCat) return false;
+
+        if (q){
+          const hay = [
+            r.equipment || '',
+            r.rootcause || '',
+            r.action || ''
+          ].join(' ').toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      sortFiltered();
+      renderTable();
+      updateSummary();
+    }
+
+    function sortFiltered(){
+      filtered.sort((a, b) => {
+        let va = a[sortKey];
+        let vb = b[sortKey];
+
+        if (sortKey === 'date'){
+          va = new Date(a.date || 0).getTime();
+          vb = new Date(b.date || 0).getTime();
+        }
+
+        if (sortKey === 'downtime'){
+          va = Number(a.downtime || 0);
+          vb = Number(b.downtime || 0);
+        }
+
+        if (typeof va === 'string') va = va.toLowerCase();
+        if (typeof vb === 'string') vb = vb.toLowerCase();
+
+        if (va < vb) return sortDir === 'asc' ? -1 : 1;
+        if (va > vb) return sortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      // 更新表頭排序符號
+      document.querySelectorAll('th.sortable').forEach(th => {
+        const key = th.dataset.sort;
+        const span = th.querySelector('.sort-indicator');
+        if (!span) return;
+        if (key === sortKey){
+          span.textContent = sortDir === 'asc' ? '▲' : '▼';
+        }else{
+          span.textContent = '';
+        }
+      });
+    }
+
+    function formatDate(dateStr){
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString();
+    }
+
+    function renderTable(){
+      const tbody = document.getElementById('recordsBody');
+      const table = document.getElementById('recordsTable');
+      const empty = document.getElementById('emptyState');
+
+      tbody.innerHTML = '';
+
+      if (!filtered.length){
+        table.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      table.style.display = 'table';
+      empty.style.display = 'none';
+
+      filtered.forEach(rec => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = rec.id;
+
+        const tdDate = document.createElement('td');
+        tdDate.textContent = formatDate(rec.date);
+        tdDate.className = 'small';
+        tr.appendChild(tdDate);
+
+        const tdLS = document.createElement('td');
+        const spanLine = document.createElement('div');
+        spanLine.className = 'tag-line';
+        spanLine.textContent = rec.line || '';
+        const spanSec = document.createElement('div');
+        spanSec.className = 'small';
+        spanSec.textContent = rec.section || '';
+        tdLS.appendChild(spanLine);
+        tdLS.appendChild(spanSec);
+        tr.appendChild(tdLS);
+
+        const tdEquip = document.createElement('td');
+        tdEquip.className = 'equip';
+        tdEquip.textContent = rec.equipment || '';
+        tr.appendChild(tdEquip);
+
+        const tdCat = document.createElement('td');
+        const pill = document.createElement('span');
+        pill.className = 'pill-cat';
+        pill.textContent = rec.category || '';
+        tdCat.appendChild(pill);
+        tr.appendChild(tdCat);
+
+        const tdDown = document.createElement('td');
+        tdDown.className = 'small';
+        tdDown.textContent = Number(rec.downtime || 0);
+        tr.appendChild(tdDown);
+
+        const tdDesc = document.createElement('td');
+        tdDesc.className = 'small';
+        const rc = document.createElement('div');
+        rc.innerHTML = '<strong>Root:</strong> ' + (rec.rootcause || '');
+        const ac = document.createElement('div');
+        ac.innerHTML = '<strong>Action:</strong> ' + (rec.action || '');
+        tdDesc.appendChild(rc);
+        tdDesc.appendChild(ac);
+        tr.appendChild(tdDesc);
+
+        const tdActions = document.createElement('td');
+        tdActions.className = 'actions';
+
+        const btnEdit = document.createElement('button');
+        btnEdit.className = 'btn-ghost';
+        btnEdit.textContent = 'Edit';
+        btnEdit.addEventListener('click', () => openEdit(rec.id));
+
+        const btnDel = document.createElement('button');
+        btnDel.className = 'btn-ghost btn-danger';
+        btnDel.textContent = 'Delete';
+        btnDel.addEventListener('click', () => deleteRecord(rec.id));
+
+        tdActions.appendChild(btnEdit);
+        tdActions.appendChild(btnDel);
+        tr.appendChild(tdActions);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateSummary(){
+      const sumTotalEl = document.getElementById('sumTotal');
+      const sumMonthEl = document.getElementById('sumMonth');
+      sumTotalEl.textContent = records.length;
+
+      const now = new Date();
+      const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+      let cnt = 0;
+      records.forEach(r => {
+        if (!r.date) return;
+        const d = new Date(r.date);
+        if (!isNaN(d.getTime())){
+          const m = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+          if (m === ym) cnt++;
+        }
+      });
+      sumMonthEl.textContent = cnt;
+    }
+
+    function clearFilters(){
+      document.getElementById('searchInput').value = '';
+      document.getElementById('lineFilter').value = '';
+      document.getElementById('sectionFilter').value = '';
+      document.getElementById('categoryFilter').value = '';
+      applyFilters();
+    }
+
+    function deleteRecord(id){
+      if (!confirm('Delete this record? This cannot be undone.')) return;
+      records = records.filter(r => r.id !== id);
+      saveRecords();
+      applyFilters();
+    }
+
+    function openEdit(id){
+      const rec = records.find(r => r.id === id);
+      if (!rec) return;
+      editingId = id;
+
+      document.getElementById('editDate').value = rec.date ? rec.date.slice(0,10) : '';
+      document.getElementById('editLine').value = rec.line || 'Line1';
+      document.getElementById('editSection').value = rec.section || 'F12';
+      document.getElementById('editCategory').value = rec.category || 'Other';
+      document.getElementById('editEquipment').value = rec.equipment || '';
+      document.getElementById('editRoot').value = rec.rootcause || '';
+      document.getElementById('editAction').value = rec.action || '';
+
+      document.getElementById('editBackdrop').classList.add('open');
+    }
+
+    function closeEdit(){
+      editingId = null;
+      document.getElementById('editBackdrop').classList.remove('open');
+    }
+
+    function saveEdit(){
+      if (!editingId) return;
+      const idx = records.findIndex(r => r.id === editingId);
+      if (idx === -1) return;
+
+      const rec = records[idx];
+      rec.date      = document.getElementById('editDate').value || rec.date;
+      rec.line      = document.getElementById('editLine').value;
+      rec.section   = document.getElementById('editSection').value;
+      rec.category  = document.getElementById('editCategory').value;
+      rec.equipment = document.getElementById('editEquipment').value.trim();
+      rec.rootcause = document.getElementById('editRoot').value.trim();
+      rec.action    = document.getElementById('editAction').value.trim();
+
+      records[idx] = rec;
+      saveRecords();
+      applyFilters();
+      closeEdit();
+    }
+
+    // 初始化
+    (function init(){
+      records = loadRecords();
+      filtered = [...records];
+
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('lineFilter').addEventListener('change', applyFilters);
+      document.getElementById('sectionFilter').addEventListener('change', applyFilters);
+      document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+      document.getElementById('btnClearFilters').addEventListener('click', clearFilters);
+
+      document.querySelectorAll('th.sortable').forEach(th => {
+        th.addEventListener('click', () => {
+          const key = th.dataset.sort;
+          if (sortKey === key){
+            sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+          }else{
+            sortKey = key;
+            sortDir = key === 'date' ? 'desc' : 'asc';
+          }
+          sortFiltered();
+          renderTable();
+        });
+      });
+
+      document.getElementById('btnCancelEdit').addEventListener('click', closeEdit);
+      document.getElementById('btnSaveEdit').addEventListener('click', saveEdit);
+      document.getElementById('editBackdrop').addEventListener('click', (e)=>{
+        if (e.target.id === 'editBackdrop') closeEdit();
+      });
+
+      applyFilters();
+    })();
+  </script>
+</body>
+</html>
