@@ -1,60 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Maintenance Records | Maintenance Smart</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>Maintenance Smart | Maintenance Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Apply theme & style from portal -->
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('ms-theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
 
   <style>
-    :root{
-      --bg:#f3f4f6;
-      --card-bg:#ffffff;
-      --border-subtle:#e5e7eb;
-      --accent:#2563eb;
-      --accent-soft:#eff6ff;
-      --accent-hover:#1d4ed8;
-      --text:#111827;
-      --text-soft:#6b7280;
-      --radius-xl:18px;
-      --shadow-soft-md:0 16px 40px rgba(15,23,42,.09);
-      --shadow-soft-sm:0 10px 26px rgba(15,23,42,.06);
-      --small-font:13px;
-      --xsmall-font:11px;
+    :root {
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --border-subtle: #e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text: #111827;
+      --text-soft: #6b7280;
+      --radius-xl: 16px;
+      --shadow-soft-sm: 0 8px 20px rgba(15,23,42,0.06);
+      --small-font: 13px;
+      --xsmall-font: 11px;
     }
 
-    *{box-sizing:border-box;}
-
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      min-height:100vh;
-      padding:16px;
+    html[data-theme="dark"] {
+      --bg: #020617;
+      --card-bg: #020617;
+      --border-subtle: #1f2937;
+      --accent: #60a5fa;
+      --accent-hover: #3b82f6;
+      --text: #e5e7eb;
+      --text-soft: #9ca3af;
+      --shadow-soft-sm: 0 8px 20px rgba(0,0,0,0.75);
     }
 
-    .page{
-      max-width:1100px;
-      margin:0 auto;
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 15px;
+      background:
+        radial-gradient(circle at top, rgba(129,140,248,0.14), transparent),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-text-size-adjust: 100%;
+      transition: background .25s ease, color .25s ease;
     }
 
-    .head{
-      margin-bottom:14px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:flex-end;
+    html[data-style="panther"] body {
+      background:
+        radial-gradient(circle at top, rgba(244,114,182,.28), transparent),
+        var(--bg);
     }
-    .head-title{
-      font-size:20px;
-      font-weight:650;
-      margin:0 0 2px;
+    html[data-style="hangyodon"] body {
+      background:
+        radial-gradient(circle at top, rgba(56,189,248,.35), transparent),
+        var(--bg);
     }
-    .head-sub{
-      margin:0;
-      font-size:var(--small-font);
-      color:var(--text-soft);
+
+    .side-panther,
+    .side-hangyodon{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      width:360px;
+      opacity:.9;
+      z-index:1;
+      pointer-events:none;
+      user-select:none;
+      display:none;
+      transition:transform .25s ease, opacity .25s ease;
+    }
+    .side-panther.left{left:1.5%;transform:translateY(-50%) scaleX(1)}
+    .side-panther.right{right:1.5%;transform:translateY(-50%) scaleX(1)}
+    .side-hangyodon.left{left:1.5%;transform:translateY(-50%) scaleX(-1)}
+    .side-hangyodon.right{right:1.5%;transform:translateY(-50%) scaleX(-1)}
+
+    html[data-style="panther"] .side-panther{display:block;}
+    html[data-style="hangyodon"] .side-hangyodon{display:block;}
+
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{
+        display:none !important;
+      }
+
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block !important;
+        position:fixed !important;
+        left:50% !important;
+        right:auto !important;
+        top:50% !important;
+        transform:translate(-50%, -50%) !important;
+        width:260px;
+        opacity:0.9;
+        pointer-events:none;
+        z-index:1;
+      }
+    }
+
+    .page {
+      position:relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 32px;
+      z-index:2;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 14px;
+      box-shadow: var(--shadow-soft-sm);
+      margin-bottom: 14px;
+      transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .card-subtitle {
+      font-size: var(--small-font);
+      color: var(--text-soft);
+      margin-bottom: 8px;
     }
 
     .summary-chip{
@@ -73,125 +159,181 @@
       font-weight:600;
     }
 
-    .toolbar{
-      background:var(--card-bg);
-      border-radius:var(--radius-xl);
-      padding:10px 12px;
-      border:1px solid var(--border-subtle);
-      box-shadow:var(--shadow-soft-sm);
+    .header-row{
       display:flex;
+      justify-content:space-between;
+      align-items:center;
       flex-wrap:wrap;
       gap:8px;
-      align-items:center;
-      margin-bottom:10px;
-    }
-    .toolbar-group{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-    }
-    .toolbar-label{
-      font-size:var(--xsmall-font);
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      color:var(--text-soft);
     }
 
-    .input, .select{
-      border-radius:999px;
-      border:1px solid var(--border-subtle);
-      padding:6px 10px;
-      font-size:var(--small-font);
-      background:#f9fafb;
-      min-width:120px;
-      outline:none;
-      transition:border-color .15s, box-shadow .15s, background .15s;
-    }
-    .input:focus, .select:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 1px rgba(37,99,235,.25);
-      background:#ffffff;
-    }
-    .input-search{
-      min-width:200px;
+    /* Filters (沿用 PC Manager 風格) */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
     }
 
-    .btn-small{
-      border:none;
-      border-radius:999px;
-      padding:6px 12px;
-      font-size:var(--xsmall-font);
+    .filters-label {
+      font-size: var(--xsmall-font);
+      color: var(--text-soft);
+      margin-right: 2px;
+    }
+
+    .filters input,
+    .filters select {
+      font-size: var(--small-font);
+      padding: 7px 9px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: var(--text);
+      min-width: 150px;
+      transition: all 0.15s ease;
+    }
+
+    html[data-theme="dark"] .filters input,
+    html[data-theme="dark"] .filters select {
+      background:#020617;
+      border-color:#1f2937;
+      color:var(--text);
+    }
+
+    .filters input::placeholder { color: #9ca3af; }
+
+    .filters input:focus,
+    .filters select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.14);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 7px 13px;
+      font-size: var(--xsmall-font);
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      background: #e5e7eb;
+      color: #111827;
       font-weight:600;
-      cursor:pointer;
-      background:var(--accent-soft);
-      color:var(--accent);
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      transition:background .15s, transform .05s, box-shadow .15s;
-    }
-    .btn-small:hover{
-      background:#dbeafe;
-      transform:translateY(-1px);
-      box-shadow:0 4px 10px rgba(37,99,235,.35);
     }
 
-    .table-wrap{
-      margin-top:8px;
-      background:var(--card-bg);
-      border-radius:var(--radius-xl);
-      border:1px solid var(--border-subtle);
-      box-shadow:var(--shadow-soft-md);
-      overflow:hidden;
+    .btn:hover {
+      background: #d1d5db;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(148,163,253,0.35);
     }
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:var(--small-font);
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.35);
     }
-    thead{
-      background:#f9fafb;
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
     }
-    th,td{
-      padding:8px 10px;
-      border-bottom:1px solid #e5e7eb;
-      vertical-align:top;
+
+    .table-wrap {
+      margin-top: 4px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      overflow-x: auto;
+      background: #ffffff;
+      box-shadow: var(--shadow-soft-sm);
     }
-    th{
-      text-align:left;
-      font-weight:600;
-      color:var(--text-soft);
-      white-space:nowrap;
-      cursor:pointer;
-      user-select:none;
+    html[data-theme="dark"] .table-wrap {
+      background:#020617;
+      border-color:#1f2937;
     }
-    th.sortable:hover{
-      background:#eef2ff;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--small-font);
     }
+
+    thead { background: #f9fafb; }
+    html[data-theme="dark"] thead { background:#020617; }
+
+    th, td {
+      padding: 8px 9px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    html[data-theme="dark"] th,
+    html[data-theme="dark"] td{
+      border-bottom-color:#1f2937;
+    }
+
+    th {
+      font-size: var(--xsmall-font);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-soft);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th.sortable:hover {
+      color: var(--accent);
+      background: #eef2ff;
+    }
+
     th .sort-indicator{
       font-size:10px;
       margin-left:4px;
       opacity:.6;
     }
-    tbody tr:nth-child(even){
-      background:#f9fafb;
+
+    tbody tr{
+      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
     }
+    tbody tr:nth-child(even){background:#ffffff;}
+    tbody tr:nth-child(odd){background:#fdfdfd;}
+    html[data-theme="dark"] tbody tr:nth-child(even),
+    html[data-theme="dark"] tbody tr:nth-child(odd){background:transparent;}
     tbody tr:hover{
-      background:#eef2ff;
+      background:#eff6ff;
+      transform:translateY(-1px);
+      box-shadow:0 4px 10px rgba(148,163,253,0.25);
+    }
+    html[data-theme="dark"] tbody tr:hover{
+      background:rgba(37,99,235,.25);
     }
 
-    td.equip{
-      font-weight:600;
+    td{
+      max-width:260px;
+      overflow:hidden;
+      text-overflow:ellipsis;
       color:var(--text);
+      vertical-align:top;
     }
-    td.small{
+
+    .tag-line{
+      font-size:var(--xsmall-font);
+      color:#2563eb;
+      font-weight:600;
+      margin-bottom:2px;
+    }
+    .text-small{
       font-size:var(--xsmall-font);
       color:var(--text-soft);
     }
-    td.actions{
-      white-space:nowrap;
+    .equip{
+      font-weight:600;
     }
 
     .pill-cat{
@@ -201,12 +343,6 @@
       font-size:var(--xsmall-font);
       background:#eef2ff;
       color:#3730a3;
-    }
-
-    .tag-line{
-      font-size:var(--xsmall-font);
-      color:#2563eb;
-      font-weight:600;
     }
 
     .btn-ghost{
@@ -239,7 +375,7 @@
       color:var(--text-soft);
     }
 
-    /* Modal for edit */
+    /* Modal */
     .modal-backdrop{
       position:fixed;
       inset:0;
@@ -249,9 +385,7 @@
       justify-content:center;
       z-index:20;
     }
-    .modal-backdrop.open{
-      display:flex;
-    }
+    .modal-backdrop.open{display:flex;}
     .modal{
       background:var(--card-bg);
       border-radius:18px;
@@ -283,73 +417,121 @@
       gap:8px;
       margin-top:8px;
     }
-    .btn-primary{
-      border:none;
-      border-radius:999px;
-      padding:7px 14px;
-      font-size:var(--xsmall-font);
-      font-weight:600;
-      cursor:pointer;
-      background:var(--accent);
-      color:#fff;
-      box-shadow:0 6px 14px rgba(37,99,235,.35);
-      transition:background .15s, transform .05s, box-shadow .15s;
-    }
-    .btn-primary:hover{
-      background:var(--accent-hover);
-      transform:translateY(-1px);
-      box-shadow:0 9px 22px rgba(37,99,235,.45);
-    }
-    .btn-secondary{
-      border:none;
-      border-radius:999px;
-      padding:7px 14px;
-      font-size:var(--xsmall-font);
-      cursor:pointer;
-      background:#e5e7eb;
-      color:#374151;
+
+    @media (max-width: 900px){
+      .table-wrap{border-radius:14px;overflow-x:auto;}
+      table{min-width:900px;}
     }
 
-    @media (max-width:768px){
-      body{padding:10px;}
-      .toolbar{
-        flex-direction:column;
-        align-items:flex-start;
+    /* Back to top */
+    #backToTop {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .25s ease, box-shadow .25s ease;
+    }
+    #backToTop.visible{opacity:1;pointer-events:auto;}
+    #backToTop:hover{
+      transform:translateY(-4px);
+      box-shadow:0 10px 28px rgba(0,0,0,0.30);
+    }
+    html[data-style="panther"] #backToTop{
+      background:transparent;
+      background-image:url("pinkpanther2.png");
+      background-size:100% 100%;
+      background-position:center;
+      color:transparent;
+      border:none;
+    }
+    html[data-style="hangyodon"] #backToTop{
+      background:transparent;
+      background-image:url("hangyodon2.png");
+      background-size:100% 100%;
+      background-position:center;
+      color:transparent;
+      border:none;
+    }
+
+    @media print{
+      body{
+        background:#ffffff !important;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
       }
-      .input-search{min-width:0;width:100%;}
+      .side-panther,
+      .side-hangyodon,
+      #backToTop{
+        display:none !important;
+      }
+      .page{
+        max-width:100%;
+        padding:0;
+      }
+      .card{
+        box-shadow:none;
+        border-radius:0;
+        margin:0 0 8px;
+      }
       .table-wrap{
-        border-radius:14px;
-        overflow-x:auto;
+        box-shadow:none;
+        border-radius:0;
+        border:1px solid #000;
       }
-      table{min-width:900px;}
+      th,td{
+        border-color:#000 !important;
+        color:#000 !important;
+      }
+      .pill-cat{
+        border:1px solid #000 !important;
+        background:#fff !important;
+        color:#000 !important;
+      }
     }
   </style>
 </head>
 <body>
+
+  <!-- side characters -->
+  <img src="pinkpanther1.png" alt="Pink Panther Left" class="side-panther left">
+  <img src="pinkpanther2.png" alt="Pink Panther Right" class="side-panther right">
+  <img src="hangyodon1.png" alt="Hangyodon Left" class="side-hangyodon left">
+  <img src="hangyodon2.png" alt="Hangyodon Right" class="side-hangyodon right">
+
   <div class="page">
-    <header class="head">
-      <div>
-        <h1 class="head-title">Maintenance Records</h1>
-        <p class="head-sub">
-          View, search, filter, edit, and delete maintenance logs stored in this browser.
-        </p>
-      </div>
-      <div class="summary-chip">
-        Total records: <strong id="sumTotal">0</strong>
-        · This month: <strong id="sumMonth">0</strong>
-      </div>
-    </header>
-
-    <section class="toolbar">
-      <div class="toolbar-group">
-        <span class="toolbar-label">Search</span>
-        <input id="searchInput" class="input input-search" type="search"
-               placeholder="Search equipment, root cause, action..." />
+    <div class="card">
+      <div class="header-row">
+        <div>
+          <h2>Maintenance records</h2>
+          <div class="card-subtitle">
+            Logs loaded from <strong>ms-maintenance-logs</strong> in this browser.
+            Use <em>Maintenance Report</em> to add new records.
+          </div>
+        </div>
+        <div class="summary-chip">
+          Total: <strong id="sumTotal">0</strong> · This month: <strong id="sumMonth">0</strong>
+        </div>
       </div>
 
-      <div class="toolbar-group">
-        <span class="toolbar-label">Filters</span>
-        <select id="lineFilter" class="select">
+      <div class="filters">
+        <span class="filters-label">Filter:</span>
+        <input id="searchInput" type="search" placeholder="Search equipment / root cause / action">
+        <select id="lineFilter">
           <option value="">All lines</option>
           <option value="Line1">Line 1</option>
           <option value="Line2">Line 2</option>
@@ -357,7 +539,7 @@
           <option value="Line4">Line 4</option>
           <option value="Reclaim">Reclaim</option>
         </select>
-        <select id="sectionFilter" class="select">
+        <select id="sectionFilter">
           <option value="">All sections</option>
           <option value="F12">F12</option>
           <option value="F13">F13</option>
@@ -366,7 +548,7 @@
           <option value="F42">F42</option>
           <option value="F55">F55</option>
         </select>
-        <select id="categoryFilter" class="select">
+        <select id="categoryFilter">
           <option value="">All categories</option>
           <option>Electrical</option>
           <option>Mechanical</option>
@@ -375,36 +557,35 @@
           <option>Software</option>
           <option>Other</option>
         </select>
+        <button class="btn" id="btnClearFilters">Clear filters</button>
       </div>
+    </div>
 
-      <div class="toolbar-group">
-        <button id="btnClearFilters" class="btn-small" type="button">
-          Clear filters
-        </button>
+    <div class="card">
+      <h2>Record list</h2>
+      <div class="card-subtitle">
+        Click column headers to sort. Use Edit / Delete to update the local log.
       </div>
-    </section>
-
-    <section class="table-wrap" id="tableWrap">
-      <div class="empty" id="emptyState">
-        No maintenance records found in this browser.
-        <br/>
-        Create new records using <strong>Maintenance Report</strong> module first.
+      <div class="table-wrap">
+        <div class="empty" id="emptyState">
+          No maintenance records found. Create records in <strong>Maintenance Report</strong> first.
+        </div>
+        <table id="recordsTable" style="display:none;">
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="date">Date<span class="sort-indicator"></span></th>
+              <th class="sortable" data-sort="line">Line / Section<span class="sort-indicator"></span></th>
+              <th class="sortable" data-sort="equipment">Equipment<span class="sort-indicator"></span></th>
+              <th class="sortable" data-sort="category">Category<span class="sort-indicator"></span></th>
+              <th class="sortable" data-sort="downtime">Downtime (min)<span class="sort-indicator"></span></th>
+              <th>Root cause / Action</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="recordsBody"></tbody>
+        </table>
       </div>
-      <table id="recordsTable" style="display:none;">
-        <thead>
-          <tr>
-            <th class="sortable" data-sort="date">Date<span class="sort-indicator"></span></th>
-            <th class="sortable" data-sort="line">Line / Section<span class="sort-indicator"></span></th>
-            <th class="sortable" data-sort="equipment">Equipment<span class="sort-indicator"></span></th>
-            <th class="sortable" data-sort="category">Category<span class="sort-indicator"></span></th>
-            <th class="sortable" data-sort="downtime">Downtime (min)<span class="sort-indicator"></span></th>
-            <th>Root Cause / Action</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="recordsBody"></tbody>
-      </table>
-    </section>
+    </div>
   </div>
 
   <!-- Edit modal -->
@@ -416,11 +597,11 @@
       <div class="modal-row">
         <div>
           <label for="editDate">Date</label>
-          <input id="editDate" class="input" type="date" />
+          <input id="editDate" class="filters-input" type="date">
         </div>
         <div>
           <label for="editLine">Line</label>
-          <select id="editLine" class="select">
+          <select id="editLine">
             <option value="Line1">Line 1</option>
             <option value="Line2">Line 2</option>
             <option value="Line3">Line 3</option>
@@ -430,10 +611,10 @@
         </div>
       </div>
 
-      <div class="modal-row">
+      <div class="modal-row" style="margin-top:8px;">
         <div>
           <label for="editSection">Section</label>
-          <select id="editSection" class="select">
+          <select id="editSection">
             <option value="F12">F12</option>
             <option value="F13">F13</option>
             <option value="F16">F16</option>
@@ -444,7 +625,7 @@
         </div>
         <div>
           <label for="editCategory">Category</label>
-          <select id="editCategory" class="select">
+          <select id="editCategory">
             <option>Electrical</option>
             <option>Mechanical</option>
             <option>Instrument</option>
@@ -455,21 +636,49 @@
         </div>
       </div>
 
-      <label for="editEquipment">Equipment</label>
-      <input id="editEquipment" class="input" type="text" />
+      <div style="margin-top:8px;">
+        <label for="editEquipment">Equipment</label>
+        <input id="editEquipment" type="text">
+      </div>
 
-      <label for="editRoot">Root Cause</label>
-      <textarea id="editRoot" class="input" style="border-radius:12px;"></textarea>
+      <div style="margin-top:8px;">
+        <label for="editRoot">Root cause</label>
+        <textarea id="editRoot" rows="3"></textarea>
+      </div>
 
-      <label for="editAction">Action Taken</label>
-      <textarea id="editAction" class="input" style="border-radius:12px;"></textarea>
+      <div style="margin-top:8px;">
+        <label for="editAction">Action taken</label>
+        <textarea id="editAction" rows="3"></textarea>
+      </div>
 
       <div class="modal-actions">
-        <button class="btn-secondary" type="button" id="btnCancelEdit">Cancel</button>
-        <button class="btn-primary" type="button" id="btnSaveEdit">Save</button>
+        <button class="btn" type="button" id="btnCancelEdit">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btnSaveEdit">Save</button>
       </div>
     </div>
   </div>
+
+  <!-- Back to Top -->
+  <button id="backToTop" title="Back to Top">↑</button>
+
+  <script>
+    // Back to top
+    (function(){
+      const btn = document.getElementById('backToTop');
+      if (!btn) return;
+      const THRESHOLD = 250;
+      function updateVisibility(){
+        if (window.scrollY > THRESHOLD) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+      }
+      function scrollToTop(){
+        window.scrollTo({top:0, behavior:'smooth'});
+      }
+      window.addEventListener('scroll', updateVisibility);
+      btn.addEventListener('click', scrollToTop);
+      updateVisibility();
+    })();
+  </script>
 
   <script>
     const STORAGE_KEY = 'ms-maintenance-logs';
@@ -477,7 +686,7 @@
     let records = [];
     let filtered = [];
     let sortKey = 'date';
-    let sortDir = 'desc'; // 'asc' or 'desc'
+    let sortDir = 'desc';
     let editingId = null;
 
     function loadRecords(){
@@ -486,9 +695,8 @@
         const arr = JSON.parse(raw);
         if (!Array.isArray(arr)) return [];
 
-        // 確保每筆都有 id，之後 Edit / Delete 用
         let changed = false;
-        arr.forEach((rec, idx) => {
+        arr.forEach((rec, idx)=>{
           if (!rec.id){
             if (window.crypto && crypto.randomUUID){
               rec.id = crypto.randomUUID();
@@ -503,7 +711,7 @@
         }
         return arr;
       }catch(e){
-        console.error('Failed to load records', e);
+        console.error(e);
         return [];
       }
     }
@@ -513,22 +721,18 @@
     }
 
     function applyFilters(){
-      const q = document.getElementById('searchInput').value.trim().toLowerCase();
-      const fLine = document.getElementById('lineFilter').value;
-      const fSec  = document.getElementById('sectionFilter').value;
-      const fCat  = document.getElementById('categoryFilter').value;
+      const q  = document.getElementById('searchInput').value.trim().toLowerCase();
+      const lf = document.getElementById('lineFilter').value;
+      const sf = document.getElementById('sectionFilter').value;
+      const cf = document.getElementById('categoryFilter').value;
 
-      filtered = records.filter(r => {
-        if (fLine && r.line !== fLine) return false;
-        if (fSec && r.section !== fSec) return false;
-        if (fCat && r.category !== fCat) return false;
+      filtered = records.filter(r=>{
+        if (lf && r.line !== lf) return false;
+        if (sf && r.section !== sf) return false;
+        if (cf && r.category !== cf) return false;
 
         if (q){
-          const hay = [
-            r.equipment || '',
-            r.rootcause || '',
-            r.action || ''
-          ].join(' ').toLowerCase();
+          const hay = ((r.equipment||'')+' '+(r.rootcause||'')+' '+(r.action||'')).toLowerCase();
           if (!hay.includes(q)) return false;
         }
         return true;
@@ -540,20 +744,18 @@
     }
 
     function sortFiltered(){
-      filtered.sort((a, b) => {
+      filtered.sort((a,b)=>{
         let va = a[sortKey];
         let vb = b[sortKey];
 
         if (sortKey === 'date'){
-          va = new Date(a.date || 0).getTime();
-          vb = new Date(b.date || 0).getTime();
+          va = new Date(a.date||0).getTime();
+          vb = new Date(b.date||0).getTime();
         }
-
         if (sortKey === 'downtime'){
-          va = Number(a.downtime || 0);
-          vb = Number(b.downtime || 0);
+          va = Number(a.downtime||0);
+          vb = Number(b.downtime||0);
         }
-
         if (typeof va === 'string') va = va.toLowerCase();
         if (typeof vb === 'string') vb = vb.toLowerCase();
 
@@ -562,8 +764,7 @@
         return 0;
       });
 
-      // 更新表頭排序符號
-      document.querySelectorAll('th.sortable').forEach(th => {
+      document.querySelectorAll('th.sortable').forEach(th=>{
         const key = th.dataset.sort;
         const span = th.querySelector('.sort-indicator');
         if (!span) return;
@@ -575,10 +776,10 @@
       });
     }
 
-    function formatDate(dateStr){
-      if (!dateStr) return '';
-      const d = new Date(dateStr);
-      if (isNaN(d.getTime())) return dateStr;
+    function formatDate(s){
+      if (!s) return '';
+      const d = new Date(s);
+      if (isNaN(d.getTime())) return s;
       return d.toLocaleDateString();
     }
 
@@ -594,28 +795,27 @@
         empty.style.display = 'block';
         return;
       }
-
       table.style.display = 'table';
       empty.style.display = 'none';
 
-      filtered.forEach(rec => {
+      filtered.forEach(rec=>{
         const tr = document.createElement('tr');
         tr.dataset.id = rec.id;
 
         const tdDate = document.createElement('td');
+        tdDate.className = 'text-small';
         tdDate.textContent = formatDate(rec.date);
-        tdDate.className = 'small';
         tr.appendChild(tdDate);
 
         const tdLS = document.createElement('td');
-        const spanLine = document.createElement('div');
-        spanLine.className = 'tag-line';
-        spanLine.textContent = rec.line || '';
-        const spanSec = document.createElement('div');
-        spanSec.className = 'small';
-        spanSec.textContent = rec.section || '';
-        tdLS.appendChild(spanLine);
-        tdLS.appendChild(spanSec);
+        const divLine = document.createElement('div');
+        divLine.className = 'tag-line';
+        divLine.textContent = rec.line || '';
+        const divSec = document.createElement('div');
+        divSec.className = 'text-small';
+        divSec.textContent = rec.section || '';
+        tdLS.appendChild(divLine);
+        tdLS.appendChild(divSec);
         tr.appendChild(tdLS);
 
         const tdEquip = document.createElement('td');
@@ -624,65 +824,60 @@
         tr.appendChild(tdEquip);
 
         const tdCat = document.createElement('td');
-        const pill = document.createElement('span');
-        pill.className = 'pill-cat';
-        pill.textContent = rec.category || '';
-        tdCat.appendChild(pill);
+        const spanCat = document.createElement('span');
+        spanCat.className = 'pill-cat';
+        spanCat.textContent = rec.category || '';
+        tdCat.appendChild(spanCat);
         tr.appendChild(tdCat);
 
         const tdDown = document.createElement('td');
-        tdDown.className = 'small';
-        tdDown.textContent = Number(rec.downtime || 0);
+        tdDown.className = 'text-small';
+        tdDown.textContent = Number(rec.downtime||0);
         tr.appendChild(tdDown);
 
         const tdDesc = document.createElement('td');
-        tdDesc.className = 'small';
-        const rc = document.createElement('div');
-        rc.innerHTML = '<strong>Root:</strong> ' + (rec.rootcause || '');
-        const ac = document.createElement('div');
-        ac.innerHTML = '<strong>Action:</strong> ' + (rec.action || '');
-        tdDesc.appendChild(rc);
-        tdDesc.appendChild(ac);
+        tdDesc.className = 'text-small';
+        const d1 = document.createElement('div');
+        d1.innerHTML = '<strong>Root:</strong> ' + (rec.rootcause||'');
+        const d2 = document.createElement('div');
+        d2.innerHTML = '<strong>Action:</strong> ' + (rec.action||'');
+        tdDesc.appendChild(d1);
+        tdDesc.appendChild(d2);
         tr.appendChild(tdDesc);
 
-        const tdActions = document.createElement('td');
-        tdActions.className = 'actions';
-
-        const btnEdit = document.createElement('button');
-        btnEdit.className = 'btn-ghost';
-        btnEdit.textContent = 'Edit';
-        btnEdit.addEventListener('click', () => openEdit(rec.id));
-
-        const btnDel = document.createElement('button');
-        btnDel.className = 'btn-ghost btn-danger';
-        btnDel.textContent = 'Delete';
-        btnDel.addEventListener('click', () => deleteRecord(rec.id));
-
-        tdActions.appendChild(btnEdit);
-        tdActions.appendChild(btnDel);
-        tr.appendChild(tdActions);
+        const tdAct = document.createElement('td');
+        const btnE = document.createElement('button');
+        btnE.className = 'btn-ghost';
+        btnE.textContent = 'Edit';
+        btnE.addEventListener('click', ()=>openEdit(rec.id));
+        const btnD = document.createElement('button');
+        btnD.className = 'btn-ghost btn-danger';
+        btnD.textContent = 'Delete';
+        btnD.addEventListener('click', ()=>deleteRecord(rec.id));
+        tdAct.appendChild(btnE);
+        tdAct.appendChild(btnD);
+        tr.appendChild(tdAct);
 
         tbody.appendChild(tr);
       });
     }
 
     function updateSummary(){
-      const sumTotalEl = document.getElementById('sumTotal');
-      const sumMonthEl = document.getElementById('sumMonth');
-      sumTotalEl.textContent = records.length;
+      const totalEl = document.getElementById('sumTotal');
+      const monthEl = document.getElementById('sumMonth');
+      totalEl.textContent = records.length;
 
       const now = new Date();
       const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
       let cnt = 0;
-      records.forEach(r => {
+      records.forEach(r=>{
         if (!r.date) return;
         const d = new Date(r.date);
-        if (!isNaN(d.getTime())){
-          const m = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-          if (m === ym) cnt++;
-        }
+        if (isNaN(d.getTime())) return;
+        const m = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+        if (m === ym) cnt++;
       });
-      sumMonthEl.textContent = cnt;
+      monthEl.textContent = cnt;
     }
 
     function clearFilters(){
@@ -695,13 +890,13 @@
 
     function deleteRecord(id){
       if (!confirm('Delete this record? This cannot be undone.')) return;
-      records = records.filter(r => r.id !== id);
+      records = records.filter(r=>r.id !== id);
       saveRecords();
       applyFilters();
     }
 
     function openEdit(id){
-      const rec = records.find(r => r.id === id);
+      const rec = records.find(r=>r.id === id);
       if (!rec) return;
       editingId = id;
 
@@ -723,7 +918,7 @@
 
     function saveEdit(){
       if (!editingId) return;
-      const idx = records.findIndex(r => r.id === editingId);
+      const idx = records.findIndex(r=>r.id === editingId);
       if (idx === -1) return;
 
       const rec = records[idx];
@@ -741,7 +936,7 @@
       closeEdit();
     }
 
-    // 初始化
+    // init
     (function init(){
       records = loadRecords();
       filtered = [...records];
@@ -752,8 +947,8 @@
       document.getElementById('categoryFilter').addEventListener('change', applyFilters);
       document.getElementById('btnClearFilters').addEventListener('click', clearFilters);
 
-      document.querySelectorAll('th.sortable').forEach(th => {
-        th.addEventListener('click', () => {
+      document.querySelectorAll('th.sortable').forEach(th=>{
+        th.addEventListener('click', ()=>{
           const key = th.dataset.sort;
           if (sortKey === key){
             sortDir = sortDir === 'asc' ? 'desc' : 'asc';
@@ -768,7 +963,7 @@
 
       document.getElementById('btnCancelEdit').addEventListener('click', closeEdit);
       document.getElementById('btnSaveEdit').addEventListener('click', saveEdit);
-      document.getElementById('editBackdrop').addEventListener('click', (e)=>{
+      document.getElementById('editBackdrop').addEventListener('click',(e)=>{
         if (e.target.id === 'editBackdrop') closeEdit();
       });
 
