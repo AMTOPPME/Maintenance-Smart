@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PDF Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(15,23,42,0.98);
+      border-bottom: 1px solid #1f2937;
+      backdrop-filter: blur(10px);
+      font-size: 13px;
+    }
+    .toolbar-title {
+      flex: 1;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn {
+      border-radius: 999px;
+      border: 1px solid #374151;
+      background: #111827;
+      color: #e5e7eb;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #1f2937;
+    }
+    .page-info {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-left: 4px;
+      margin-right: 4px;
+    }
+    #viewerContainer {
+      position: absolute;
+      top: 40px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: auto;
+      background: #020617;
+      display: flex;
+      justify-content: center;
+    }
+    #pdfCanvas {
+      margin: 16px;
+      background: #111827;
+      box-shadow: 0 18px 50px rgba(15,23,42,0.7);
+    }
+    .msg {
+      padding: 32px 16px;
+      text-align: center;
+      font-size: 14px;
+      color: #e5e7eb;
+    }
+  </style>
+
+  <!-- pdf.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+  <div class="toolbar">
+    <div class="toolbar-title" id="docTitle">PDF Viewer</div>
+    <button class="btn" id="zoomOut">-</button>
+    <button class="btn" id="zoomIn">+</button>
+    <span class="page-info" id="pageInfo">0 / 0</span>
+    <button class="btn" id="prev">&lt; Prev</button>
+    <button class="btn" id="next">Next &gt;</button>
+  </div>
+
+  <div id="viewerContainer">
+    <canvas id="pdfCanvas"></canvas>
+  </div>
+
+  <div id="message" class="msg" style="display:none;"></div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const fileParam  = params.get('file');
+    const titleParam = params.get('title') || fileParam || 'PDF';
+
+    const titleEl = document.getElementById('docTitle');
+    const msgEl   = document.getElementById('message');
+    const canvas  = document.getElementById('pdfCanvas');
+    const ctx     = canvas.getContext('2d');
+    const pageInfoEl = document.getElementById('pageInfo');
+
+    document.title = titleParam + ' – Maintenance Smart';
+    if (titleEl) titleEl.textContent = titleParam;
+
+    if (!fileParam) {
+      msgEl.style.display = 'block';
+      msgEl.textContent = 'No "file" parameter provided.';
+      canvas.style.display = 'none';
+    }
+
+    const url = fileParam;  // 路徑相對於這個 HTML 檔
+
+    const pdfjsLib = window['pdfjs-dist/build/pdf'];
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    let pdfDoc = null;
+    let pageNum = 1;
+    let scale = 1.1;
+
+    function renderPage(num) {
+      pdfDoc.getPage(num).then(function(page) {
+        const viewport = page.getViewport({ scale: scale });
+        canvas.height = viewport.height;
+        canvas.width  = viewport.width;
+
+        const renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        page.render(renderContext).promise.then(function () {
+          pageInfoEl.textContent = num + ' / ' + pdfDoc.numPages;
+        });
+      });
+    }
+
+    function queueRenderPage(num) {
+      if (!pdfDoc) return;
+      if (num < 1 || num > pdfDoc.numPages) return;
+      renderPage(num);
+    }
+
+    pdfjsLib.getDocument(url).promise.then(function(pdf) {
+      pdfDoc = pdf;
+      pageNum = 1;
+      renderPage(pageNum);
+    }).catch(function(err){
+      msgEl.style.display = 'block';
+      msgEl.textContent = 'Failed to load PDF: ' + err.message;
+      canvas.style.display = 'none';
+    });
+
+    document.getElementById('prev').addEventListener('click', function(){
+      if (!pdfDoc || pageNum <= 1) return;
+      pageNum--;
+      queueRenderPage(pageNum);
+    });
+    document.getElementById('next').addEventListener('click', function(){
+      if (!pdfDoc || pageNum >= pdfDoc.numPages) return;
+      pageNum++;
+      queueRenderPage(pageNum);
+    });
+    document.getElementById('zoomIn').addEventListener('click', function(){
+      if (!pdfDoc) return;
+      scale *= 1.2;
+      queueRenderPage(pageNum);
+    });
+    document.getElementById('zoomOut').addEventListener('click', function(){
+      if (!pdfDoc) return;
+      scale /= 1.2;
+      queueRenderPage(pageNum);
+    });
+  </script>
+</body>
+</html>
