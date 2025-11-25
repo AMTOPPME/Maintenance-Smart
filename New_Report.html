@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Maintenance Report | Maintenance Smart</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<style>
+  body{
+    font-family:system-ui, sans-serif;
+    margin:20px;
+    background:#f3f4f6;
+  }
+  .card{
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    width:100%;
+    max-width:540px;
+    margin:auto;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+  }
+  h2{margin-top:0;}
+  label{font-weight:600;}
+  input,select,textarea{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #d1d5db;
+    margin-bottom:18px;
+    font-size:15px;
+  }
+  textarea{height:90px; resize:vertical;}
+  button{
+    padding:12px;
+    width:100%;
+    border:none;
+    background:#2563eb;
+    color:white;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+  }
+  button:hover{
+    background:#1e4fd3;
+  }
+  .msg{
+    margin-top:12px;
+    color:green;
+    font-weight:600;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+<h2>Submit Maintenance Record</h2>
+
+<label>Date</label>
+<input type="date" id="dateInput" />
+
+<label>Line</label>
+<select id="lineInput">
+  <option value="Line1">Line 1</option>
+  <option value="Line2">Line 2</option>
+  <option value="Line3">Line 3</option>
+  <option value="Line4">Line 4</option>
+  <option value="Reclaim">Reclaim</option>
+</select>
+
+<label>Section</label>
+<select id="sectionInput">
+  <option value="F12">F12</option>
+  <option value="F13">F13</option>
+  <option value="F16">F16</option>
+  <option value="F201">F201</option>
+  <option value="F42">F42</option>
+  <option value="F55">F55</option>
+</select>
+
+<label>Equipment</label>
+<input type="text" id="equipInput" placeholder="e.g. SCADA PC5, PanelView, 1756-EN2TR"/>
+
+<label>Category</label>
+<select id="catInput">
+  <option>Electrical</option>
+  <option>Mechanical</option>
+  <option>Instrument</option>
+  <option>Network</option>
+  <option>Software</option>
+  <option>Other</option>
+</select>
+
+<label>Downtime (min)</label>
+<input type="number" id="downInput" placeholder="e.g. 30" min="0"/>
+
+<label>Root Cause</label>
+<textarea id="rootInput" placeholder="Describe what caused the failure…"></textarea>
+
+<label>Action Taken</label>
+<textarea id="actionInput" placeholder="Describe what you did to fix…"></textarea>
+
+<button onclick="saveRecord()">Submit</button>
+
+<div id="msg" class="msg"></div>
+
+</div>
+
+<script>
+function saveRecord(){
+  const rec = {
+    date: dateInput.value,
+    line: lineInput.value,
+    section: sectionInput.value,
+    equipment: equipInput.value,
+    category: catInput.value,
+    downtime: Number(downInput.value),
+    rootcause: rootInput.value,
+    action: actionInput.value,
+    timestamp: new Date().toISOString()
+  };
+
+  // 讀本地 JSON（如果沒有就建立）
+  let arr = JSON.parse(localStorage.getItem("ms-maintenance") || "[]");
+  arr.push(rec);
+  localStorage.setItem("ms-maintenance", JSON.stringify(arr));
+
+  msg.textContent = "Record saved locally!";
+  
+  // 清空
+  rootInput.value="";
+  actionInput.value="";
+  equipInput.value="";
+  downInput.value="";
+}
+</script>
+
+</body>
+</html>
