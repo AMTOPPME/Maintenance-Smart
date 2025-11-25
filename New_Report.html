@@ -384,6 +384,16 @@
       placeholder="e.g. PC-001, PC-023, PC-120">
   </div>
 </div>
+<div class="form-row">
+  <div>
+    <label for="locFromInput">Location From</label>
+    <input type="text" id="locFromInput" placeholder="e.g. Line 2 MCC">
+  </div>
+  <div>
+    <label for="locToInput">Location To</label>
+    <input type="text" id="locToInput" placeholder="e.g. Line 2 control room">
+  </div>
+</div>
 
 
       <div class="saveRecord()">
@@ -519,6 +529,8 @@
   const downtime  = Number(document.getElementById('downInput').value || 0);
   const rootcause = document.getElementById('rootInput').value.trim();
   const action    = document.getElementById('actionInput').value.trim();
+  const loc_from = document.getElementById('locFromInput').value.trim();
+  const loc_to   = document.getElementById('locToInput').value.trim();
 
   // 沒填日期或 Asset ID 格式不正確
   if (!date || !assetId){
