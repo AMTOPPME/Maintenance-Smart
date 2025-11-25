@@ -915,12 +915,8 @@
             if (!schematicPanel) return;
             const isOpen = schematicPanel.classList.toggle('open');
 
-            // 取消其他一般模組的 active
-            buttons.forEach(b=>{
-              if (b !== btn && !b.dataset.role){
-                b.classList.remove('active');
-              }
-            });
+            // ✅ 所有 nav-item 先清除 active，再把自己設 active
+            buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             // 若開 schematic，把其他 panel 關掉
@@ -941,11 +937,8 @@
             if (!backupPanel) return;
             const isOpen = backupPanel.classList.toggle('open');
 
-            buttons.forEach(b=>{
-              if (b !== btn && !b.dataset.role){
-                b.classList.remove('active');
-              }
-            });
+            // ✅ 所有 nav-item 先清除 active，再把自己設 active
+            buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             // 若開 backup，把其他 panel 關掉
@@ -966,11 +959,8 @@
             if (!maintenancePanel) return;
             const isOpen = maintenancePanel.classList.toggle('open');
 
-            buttons.forEach(b=>{
-              if (b !== btn && !b.dataset.role){
-                b.classList.remove('active');
-              }
-            });
+            // ✅ 所有 nav-item 先清除 active，再把自己設 active
+            buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             // 若開 maintenance，把其他 panel 關掉
@@ -1092,37 +1082,37 @@
         });
       });
       
-// 🔹 Maintenance：改成開 Maintenance.html（裡面再用 pdf.js）
-maintenanceSecBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
-    const label = btn.getAttribute('data-label') || key || '';
-    if (!key) return;
+      // 🔹 Maintenance：改成開 Maintenance.html（裡面再用 pdf.js）
+      maintenanceSecBtns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
+          const label = btn.getAttribute('data-label') || key || '';
+          if (!key) return;
 
-    // Portal 右側 iframe 載入 Maintenance.html
-    const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
+          // Portal 右側 iframe 載入 Maintenance.html
+          const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
 
-    if (frame){
-      frame.src = viewerUrl;
-    }
+          if (frame){
+            frame.src = viewerUrl;
+          }
 
-    // 上面標題顯示
-    setModule(
-      'Maintenance – ' + label,
-      'PDF: ' + label
-    );
+          // 上面標題顯示
+          setModule(
+            'Maintenance – ' + label,
+            'PDF: ' + label
+          );
 
-    // 按過的高亮
-    maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
+          // 按過的高亮
+          maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
 
-    // 收起 Modules 面板（手機使用體驗）
-    if (panel && panel.classList.contains('open')){
-      panel.classList.remove('open');
-      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-    }
-  });
-});
+          // 收起 Modules 面板（手機使用體驗）
+          if (panel && panel.classList.contains('open')){
+            panel.classList.remove('open');
+            if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+          }
+        });
+      });
 
 
       // 🔹 Tags list：載入到右側 iframe，不開新分頁
