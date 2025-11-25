@@ -315,6 +315,7 @@
 
     tbody tr {
       transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      cursor: pointer; /* 點整列跳 Maintenance Records */
     }
 
     tbody tr:nth-child(even) { background: #ffffff; }
@@ -673,6 +674,7 @@
 
     let data = [...computers];
 
+    // 篩選
     data = data.filter(c => {
       const cStatus = (c.status || "").toLowerCase();
       if (fStatus && cStatus !== fStatus) return false;
@@ -689,6 +691,7 @@
       return true;
     });
 
+    // 排序
     data.sort((a, b) => {
       const x = (a[currentSortKey] || "").toString();
       const y = (b[currentSortKey] || "").toString();
@@ -707,9 +710,14 @@
         status === "broken" ? "status-broken" :
         status === "test" ? "status-test" :
         "";
+
       const tr = document.createElement("tr");
+
+      const assetId = c.asset_id || "";
+      tr.dataset.assetId = assetId;
+
       tr.innerHTML = `
-        <td>${c.asset_id || ""}</td>
+        <td>${assetId}</td>
         <td>${c.hostname || ""}</td>
         <td>${c.computer || ""}</td>
         <td>${c.department || ""}</td>
@@ -720,6 +728,15 @@
         <td>${c.owner || ""}</td>
         <td class="note">${c.note || ""}</td>
       `;
+
+      // ★ 點整列 → 開 Maintenance_Records.html 並帶 asset 參數
+      tr.addEventListener("click", () => {
+        const id = tr.dataset.assetId;
+        if (!id) return;
+        const url = "Maintenance_Records.html?asset=" + encodeURIComponent(id);
+        window.open(url, "_blank");  // 如果要同頁開，用 "_self"
+      });
+
       tbody.appendChild(tr);
     });
 
