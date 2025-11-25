@@ -150,7 +150,7 @@
     }
 
     /* Form layout */
-    .form-row{
+    .saveRecord(){
       display:flex;
       gap:10px;
       flex-wrap:wrap;
@@ -369,25 +369,24 @@
         </div>
       </div>
 
-      <div class="form-row">
-        <div>
-          <label for="sectionInput">Section</label>
-          <select id="sectionInput">
-            <option value="F12">F12</option>
-            <option value="F13">F13</option>
-            <option value="F16">F16</option>
-            <option value="F201">F201</option>
-            <option value="F42">F42</option>
-            <option value="F55">F55</option>
-          </select>
-        </div>
-        <div>
-          <label for="equipInput">Equipment</label>
-          <input type="text" id="equipInput" placeholder="e.g. SCADA PC5, 1756-EN2TR, PanelView">
-        </div>
-      </div>
+     <div class="form-row">
+  <div>
+    <label for="sectionInput">Section</label>
+    <select id="sectionInput">
+      ...
+    </select>
+  </div>
+  <div>
+    <label for="equipInput">Asset ID (PC-xxx)</label>
+    <input
+      type="text"
+      id="equipInput"
+      placeholder="e.g. PC-001, PC-023, PC-120">
+  </div>
+</div>
 
-      <div class="form-row">
+
+      <div class="saveRecord()">
         <div>
           <label for="catInput">Category</label>
           <select id="catInput">
@@ -405,14 +404,14 @@
         </div>
       </div>
 
-      <div class="form-row">
+      <div class="saveRecord()">
         <div>
           <label for="rootInput">Root cause</label>
           <textarea id="rootInput" placeholder="Describe what caused the failure…"></textarea>
         </div>
       </div>
 
-      <div class="form-row">
+      <div class="saveRecord()">
         <div>
           <label for="actionInput">Action taken</label>
           <textarea id="actionInput" placeholder="Describe what you did to fix the issue…"></textarea>
@@ -481,33 +480,84 @@
         input.value = today;
       }
     }
+    function normalizeAssetId(input) {
+  if (!input) return "";
+
+  // 全部轉大寫 & 去掉前後空白
+  let v = input.trim().toUpperCase();
+
+  // ① 已經是 PC-001 這種 → 直接用
+  if (/^PC-\d{3}$/.test(v)) return v;
+
+  // ② 其他寫法：PC001 / PC 1 / pc1 / 001 / 1 ...
+  // 去掉開頭的 "PC" / "pc" 之類，再只留下數字
+  v = input.trim().toUpperCase();
+  v = v.replace(/^PC/i, "").replace(/[^0-9]/g, "");
+
+  if (!v) return "";
+
+  const num = parseInt(v, 10);
+  if (!Number.isFinite(num) || num < 1 || num > 999) {
+    // 超出範圍就視為不合法
+    return "";
+  }
+
+  // 補成三位數：1 → 001
+  return "PC-" + String(num).padStart(3, "0");
+}
 
     function saveRecord(){
-      const date      = document.getElementById('dateInput').value;
-      const line      = document.getElementById('lineInput').value;
-      const section   = document.getElementById('sectionInput').value;
-      const equipment = document.getElementById('equipInput').value.trim();
-      const category  = document.getElementById('catInput').value;
-      const downtime  = Number(document.getElementById('downInput').value || 0);
-      const rootcause = document.getElementById('rootInput').value.trim();
-      const action    = document.getElementById('actionInput').value.trim();
+  const date      = document.getElementById('dateInput').value;
+  const line      = document.getElementById('lineInput').value;
+  const section   = document.getElementById('sectionInput').value;
 
-      if (!date || !equipment){
-        updateStatus('Please fill at least <strong>Date</strong> and <strong>Equipment</strong>.');
-        return;
-      }
+  const equipInputEl = document.getElementById('equipInput');
+  const rawEquip     = equipInputEl.value;
+  const assetId      = normalizeAssetId(rawEquip);   // ⬅ 轉成 PC-xxx
 
-      const record = {
-        date,
-        line,
-        section,
-        equipment,
-        category,
-        downtime,
-        rootcause,
-        action,
-        timestamp: new Date().toISOString()
-      };
+  const category  = document.getElementById('catInput').value;
+  const downtime  = Number(document.getElementById('downInput').value || 0);
+  const rootcause = document.getElementById('rootInput').value.trim();
+  const action    = document.getElementById('actionInput').value.trim();
+
+  // 沒填日期或 Asset ID 格式不正確
+  if (!date || !assetId){
+    updateStatus(
+      'Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).'
+    );
+    return;
+  }
+
+  // 把格式化好的字串回寫到輸入框，讓畫面也看到 PC-0xx
+  equipInputEl.value = assetId;
+
+  const record = {
+    date,
+    line,
+    section,
+    equipment: assetId,   // ⬅ 儲存時就叫 equipment，但內容是 Asset ID
+    category,
+    downtime,
+    rootcause,
+    action,
+    timestamp: new Date().toISOString()
+  };
+
+  const logs = loadRecords();
+  logs.push(record);
+  saveRecords(logs);
+
+  // 清掉其他欄位（Asset ID 我會留著，方便連續記同一台）
+  // 如果你想提交後也清空 Asset ID，就把下一行註解掉
+  // equipInputEl.value = '';
+
+  document.getElementById('downInput').value = '';
+  document.getElementById('rootInput').value = '';
+  document.getElementById('actionInput').value = '';
+
+  updateStatus('Record saved locally.');
+}
+
 
       const logs = loadRecords();
       logs.push(record);
