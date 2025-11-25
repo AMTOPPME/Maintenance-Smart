@@ -1,138 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Maintenance Report | Maintenance Smart</title>
-<meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<style>
-  body{
-    font-family:system-ui, sans-serif;
-    margin:20px;
-    background:#f3f4f6;
-  }
-  .card{
-    background:white;
-    padding:20px;
-    border-radius:16px;
-    width:100%;
-    max-width:540px;
-    margin:auto;
-    box-shadow:0 6px 18px rgba(0,0,0,.08);
-  }
-  h2{margin-top:0;}
-  label{font-weight:600;}
-  input,select,textarea{
-    width:100%;
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #d1d5db;
-    margin-bottom:18px;
-    font-size:15px;
-  }
-  textarea{height:90px; resize:vertical;}
-  button{
-    padding:12px;
-    width:100%;
-    border:none;
-    background:#2563eb;
-    color:white;
-    border-radius:12px;
-    cursor:pointer;
-    font-size:16px;
-    font-weight:600;
-  }
-  button:hover{
-    background:#1e4fd3;
-  }
-  .msg{
-    margin-top:12px;
-    color:green;
-    font-weight:600;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Maintenance Report | Maintenance Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --card-bg:#ffffff;
+      --border:#e5e7eb;
+      --accent:#2563eb;
+      --accent-hover:#1d4ed8;
+      --text:#111827;
+      --text-soft:#6b7280;
+      --radius:18px;
+      --shadow:0 18px 40px rgba(15,23,42,.10);
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      background:var(--bg);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      color:var(--text);
+    }
+    .card{
+      width:100%;
+      max-width:560px;
+      background:var(--card-bg);
+      border-radius:var(--radius);
+      padding:22px 20px 20px;
+      box-shadow:var(--shadow);
+      border:1px solid var(--border);
+    }
+    .title{
+      margin:0 0 4px;
+      font-size:20px;
+      font-weight:650;
+    }
+    .subtitle{
+      margin:0 0 16px;
+      font-size:13px;
+      color:var(--text-soft);
+    }
+    label{
+      display:block;
+      margin-bottom:4px;
+      font-size:13px;
+      font-weight:600;
+      color:var(--text);
+    }
+    input,select,textarea{
+      width:100%;
+      font-size:14px;
+      padding:9px 11px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      margin-bottom:14px;
+      font-family:inherit;
+      outline:none;
+      transition:border-color .15s ease, box-shadow .15s ease;
+      background:#f9fafb;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(37,99,235,.25);
+      background:#fff;
+    }
+    textarea{
+      resize:vertical;
+      min-height:80px;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+    }
+    .row > div{flex:1;}
+    .btn-row{
+      display:flex;
+      gap:10px;
+      margin-top:4px;
+    }
+    button{
+      flex:1;
+      border:none;
+      border-radius:999px;
+      padding:10px 14px;
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      transition:background .15s, transform .05s, box-shadow .15s;
+    }
+    .btn-primary{
+      background:var(--accent);
+      color:#fff;
+      box-shadow:0 6px 14px rgba(37,99,235,.35);
+    }
+    .btn-primary:hover{
+      background:var(--accent-hover);
+      transform:translateY(-1px);
+      box-shadow:0 9px 20px rgba(37,99,235,.45);
+    }
+    .btn-ghost{
+      background:#eef2ff;
+      color:#3730a3;
+    }
+    .btn-ghost:hover{
+      background:#e0e7ff;
+      transform:translateY(-1px);
+    }
+    .status{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--text-soft);
+    }
+    .status strong{color:var(--accent);}
+  </style>
 </head>
 <body>
-<div class="card">
-<h2>Submit Maintenance Record</h2>
+  <div class="card">
+    <h2 class="title">Submit Maintenance Record</h2>
+    <p class="subtitle">
+      Fill this form after each maintenance task. Records are stored locally in your browser.
+    </p>
 
-<label>Date</label>
-<input type="date" id="dateInput" />
+    <div class="row">
+      <div>
+        <label for="dateInput">Date</label>
+        <input type="date" id="dateInput" />
+      </div>
+      <div>
+        <label for="lineInput">Line</label>
+        <select id="lineInput">
+          <option value="Line1">Line 1</option>
+          <option value="Line2">Line 2</option>
+          <option value="Line3">Line 3</option>
+          <option value="Line4">Line 4</option>
+          <option value="Reclaim">Reclaim</option>
+        </select>
+      </div>
+    </div>
 
-<label>Line</label>
-<select id="lineInput">
-  <option value="Line1">Line 1</option>
-  <option value="Line2">Line 2</option>
-  <option value="Line3">Line 3</option>
-  <option value="Line4">Line 4</option>
-  <option value="Reclaim">Reclaim</option>
-</select>
+    <div class="row">
+      <div>
+        <label for="sectionInput">Section</label>
+        <select id="sectionInput">
+          <option value="F12">F12</option>
+          <option value="F13">F13</option>
+          <option value="F16">F16</option>
+          <option value="F201">F201</option>
+          <option value="F42">F42</option>
+          <option value="F55">F55</option>
+        </select>
+      </div>
+      <div>
+        <label for="equipInput">Equipment</label>
+        <input type="text" id="equipInput" placeholder="e.g. SCADA PC5, PanelView, 1756-EN2TR" />
+      </div>
+    </div>
 
-<label>Section</label>
-<select id="sectionInput">
-  <option value="F12">F12</option>
-  <option value="F13">F13</option>
-  <option value="F16">F16</option>
-  <option value="F201">F201</option>
-  <option value="F42">F42</option>
-  <option value="F55">F55</option>
-</select>
+    <div class="row">
+      <div>
+        <label for="catInput">Category</label>
+        <select id="catInput">
+          <option>Electrical</option>
+          <option>Mechanical</option>
+          <option>Instrument</option>
+          <option>Network</option>
+          <option>Software</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="downInput">Downtime (min)</label>
+        <input type="number" id="downInput" placeholder="e.g. 30" min="0" />
+      </div>
+    </div>
 
-<label>Equipment</label>
-<input type="text" id="equipInput" placeholder="e.g. SCADA PC5, PanelView, 1756-EN2TR"/>
+    <label for="rootInput">Root Cause</label>
+    <textarea id="rootInput" placeholder="Describe what caused the failure…"></textarea>
 
-<label>Category</label>
-<select id="catInput">
-  <option>Electrical</option>
-  <option>Mechanical</option>
-  <option>Instrument</option>
-  <option>Network</option>
-  <option>Software</option>
-  <option>Other</option>
-</select>
+    <label for="actionInput">Action Taken</label>
+    <textarea id="actionInput" placeholder="Describe what you did to fix the issue…"></textarea>
 
-<label>Downtime (min)</label>
-<input type="number" id="downInput" placeholder="e.g. 30" min="0"/>
+    <div class="btn-row">
+      <button class="btn-primary" type="button" onclick="saveRecord()">Submit</button>
+      <button class="btn-ghost" type="button" onclick="downloadJson()">Download JSON</button>
+    </div>
 
-<label>Root Cause</label>
-<textarea id="rootInput" placeholder="Describe what caused the failure…"></textarea>
+    <div id="status" class="status"></div>
+  </div>
 
-<label>Action Taken</label>
-<textarea id="actionInput" placeholder="Describe what you did to fix…"></textarea>
+  <script>
+    const STORAGE_KEY = 'ms-maintenance-logs';
 
-<button onclick="saveRecord()">Submit</button>
+    function loadRecords(){
+      try{
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      }catch(e){
+        console.error(e);
+        return [];
+      }
+    }
 
-<div id="msg" class="msg"></div>
+    function saveRecords(arr){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    }
 
-</div>
+    function updateStatus(message){
+      const el = document.getElementById('status');
+      if (!el) return;
+      const logs = loadRecords();
+      el.innerHTML = message + '<br><strong>Total records: ' + logs.length + '</strong>';
+    }
 
-<script>
-function saveRecord(){
-  const rec = {
-    date: dateInput.value,
-    line: lineInput.value,
-    section: sectionInput.value,
-    equipment: equipInput.value,
-    category: catInput.value,
-    downtime: Number(downInput.value),
-    rootcause: rootInput.value,
-    action: actionInput.value,
-    timestamp: new Date().toISOString()
-  };
+    function setToday(){
+      const input = document.getElementById('dateInput');
+      if (!input) return;
+      if (!input.value){
+        const today = new Date().toISOString().slice(0,10);
+        input.value = today;
+      }
+    }
 
-  // 讀本地 JSON（如果沒有就建立）
-  let arr = JSON.parse(localStorage.getItem("ms-maintenance") || "[]");
-  arr.push(rec);
-  localStorage.setItem("ms-maintenance", JSON.stringify(arr));
+    function saveRecord(){
+      const date      = document.getElementById('dateInput').value;
+      const line      = document.getElementById('lineInput').value;
+      const section   = document.getElementById('sectionInput').value;
+      const equipment = document.getElementById('equipInput').value.trim();
+      const category  = document.getElementById('catInput').value;
+      const downtime  = Number(document.getElementById('downInput').value || 0);
+      const rootcause = document.getElementById('rootInput').value.trim();
+      const action    = document.getElementById('actionInput').value.trim();
 
-  msg.textContent = "Record saved locally!";
-  
-  // 清空
-  rootInput.value="";
-  actionInput.value="";
-  equipInput.value="";
-  downInput.value="";
-}
-</script>
+      if (!date || !equipment){
+        updateStatus('Please fill at least <strong>Date</strong> and <strong>Equipment</strong>.');
+        return;
+      }
 
+      const record = {
+        date,
+        line,
+        section,
+        equipment,
+        category,
+        downtime,
+        rootcause,
+        action,
+        timestamp: new Date().toISOString()
+      };
+
+      const logs = loadRecords();
+      logs.push(record);
+      saveRecords(logs);
+
+      // 清空部分欄位，方便連續輸入
+      document.getElementById('equipInput').value = '';
+      document.getElementById('downInput').value = '';
+      document.getElementById('rootInput').value = '';
+      document.getElementById('actionInput').value = '';
+
+      updateStatus('Record saved locally.');
+    }
+
+    function downloadJson(){
+      const logs = loadRecords();
+      const blob = new Blob([JSON.stringify(logs, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'maintenance_logs.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      updateStatus('JSON file downloaded. You can use it in Python.');
+    }
+
+    // 初始化
+    setToday();
+    updateStatus('Ready to record maintenance tasks.');
+  </script>
 </body>
 </html>
