@@ -701,6 +701,12 @@
     let sortDir = 'desc';
     let editingId = null;
 
+    // 讀取網址 ?asset=PC-xxx
+    function getAssetIdFromQuery(){
+      const params = new URLSearchParams(window.location.search);
+      return params.get('asset') || '';
+    }
+
     // 將舊/新格式的紀錄統一成標準欄位
     function normalizeRecord(rec, idx){
       // 日期：Date / date
@@ -924,11 +930,17 @@
         const btnE = document.createElement('button');
         btnE.className = 'btn-ghost';
         btnE.textContent = 'Edit';
-        btnE.addEventListener('click', ()=>openEdit(rec.id));
+        btnE.addEventListener('click', (ev)=>{
+          ev.stopPropagation();
+          openEdit(rec.id);
+        });
         const btnD = document.createElement('button');
         btnD.className = 'btn-ghost btn-danger';
         btnD.textContent = 'Delete';
-        btnD.addEventListener('click', ()=>deleteRecord(rec.id));
+        btnD.addEventListener('click', (ev)=>{
+          ev.stopPropagation();
+          deleteRecord(rec.id);
+        });
         tdAct.appendChild(btnE);
         tdAct.appendChild(btnD);
         tr.appendChild(tdAct);
@@ -1019,6 +1031,15 @@
     (function init(){
       records = loadRecords();
       filtered = [...records];
+
+      // 先從 URL 讀取 ?asset=PC-xxx → 放到搜尋欄
+      const assetFromUrl = getAssetIdFromQuery();
+      if (assetFromUrl){
+        const searchEl = document.getElementById('searchInput');
+        if (searchEl){
+          searchEl.value = assetFromUrl;
+        }
+      }
 
       document.getElementById('searchInput').addEventListener('input', applyFilters);
       document.getElementById('lineFilter').addEventListener('change', applyFilters);
