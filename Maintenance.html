@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Maintenance | Maintenance Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 套用主題（blue / panther / hangyodon） -->
+  <script>
+    (function () {
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card-bg:#ffffff;
+      --border-subtle:#e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text: #111827;
+      --text-soft: #6b7280;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(129,140,248,0.12), transparent),
+        var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      -webkit-text-size-adjust: 100%;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    /* style 背景—與主頁同步 */
+    html[data-style="panther"] body{
+      background:
+        radial-gradient(circle at top,rgba(244,114,182,.28),transparent),
+        var(--bg);
+    }
+    html[data-style="hangyodon"] body{
+      background:
+        radial-gradient(circle at top,rgba(56,189,248,.35),transparent),
+        var(--bg);
+    }
+
+    /* Back to Top 按鈕外觀 */
+    #backToTop {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;          /* 預設不顯示，捲動後用 JS 打開 */
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      z-index: 9999;
+      transition: all .25s ease;
+    }
+    #backToTop:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.30);
+    }
+
+    /* panther → 使用粉紅角色圖片 */
+    html[data-style="panther"] #backToTop {
+      background: transparent;
+      background-image: url("pinkpanther2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
+    /* hangyodon → 使用魚丁角色圖片 */
+    html[data-style="hangyodon"] #backToTop {
+      background: transparent;
+      background-image: url("hangyodon2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
+    /* 角色背景（左右兩側大圖） */
+    .side-panther,
+    .side-hangyodon{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      width:320px;
+      opacity:.9;
+      z-index:1;
+      pointer-events:none;
+      user-select:none;
+      transition: transform .25s ease, opacity .25s ease;
+      display:none;
+    }
+
+    .side-panther.left{left:1.5%; transform:translateY(-50%) scaleX(1);}
+    .side-panther.right{right:1.5%; transform:translateY(-50%) scaleX(1);}
+
+    .side-hangyodon.left{left:1.5%; transform:translateY(-50%) scaleX(-1);}
+    .side-hangyodon.right{right:1.5%; transform:translateY(-50%) scaleX(-1);}
+
+    html[data-style="panther"] .side-panther{display:block;}
+    html[data-style="hangyodon"] .side-hangyodon{display:block;}
+
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{
+        display:none !important;
+      }
+
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block !important;
+        position:fixed !important;
+        left:50% !important;
+        right:auto !important;
+        top:50% !important;
+        transform:translate(-50%, -50%) !important;
+        width:260px;
+        opacity:.7;
+      }
+    }
+
+    /* Title */
+    h1 {
+      color: var(--accent);
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0 0 6px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin: 0 0 10px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Toolbar button */
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
+    }
+    .btn {
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(37,99,235,0.35);
+      background: #fff;
+      color: var(--accent);
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(37,99,235,0.12);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      display:inline-block;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(37,99,235,0.25);
+      border-color: var(--accent-hover);
+    }
+
+    /* PDF Viewer */
+    .viewer {
+      width: 100%;
+      max-width: 1100px;
+      height: calc(100dvh - 170px);
+      min-height: 380px;
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+      z-index: 2;
+    }
+    .viewer iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+    }
+
+    .fallback {
+      padding: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    @media (max-width: 480px) {
+      .viewer { height: calc(100dvh - 180px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 左右角色 -->
+  <img src="pinkpanther1.png" alt="" class="side-panther left">
+  <img src="pinkpanther2.png" alt="" class="side-panther right">
+
+  <img src="hangyodon1.png" alt="" class="side-hangyodon left">
+  <img src="hangyodon2.png" alt="" class="side-hangyodon right">
+
+  <h1 id="pageTitle">Maintenance</h1>
+  <div class="subtitle" id="pageSub">Maintenance SOP – PDF Viewer</div>
+
+  <div class="toolbar">
+    <a class="btn" id="openNewTab" href="#" target="_blank" rel="noopener noreferrer">
+      Open in New Tab ↗
+    </a>
+  </div>
+
+  <div class="viewer" id="viewer">
+    <!-- 電腦：pdf.js viewer；手機 / iPad：會被 JS 改成按鈕 -->
+    <iframe id="pdfFrame" title="PDF viewer"></iframe>
+  </div>
+
+  <!-- Back to Top 按鈕 -->
+  <button id="backToTop" title="Back to Top">↑</button>
+
+  <!-- Back To Top：同時控制主頁 + 內嵌 pdf.js viewer -->
+  <script>
+    (function(){
+      const btn   = document.getElementById('backToTop');
+      const frame = document.getElementById('pdfFrame');
+      if (!btn) return;
+
+      const MAIN_THRESHOLD = 120;   // 主頁捲動多少才出現
+      const PDF_THRESHOLD  = 80;    // PDF viewer 捲動多少才出現
+
+      function showBtn() {
+        btn.style.display = 'flex';
+      }
+      function hideBtn() {
+        btn.style.display = 'none';
+      }
+
+      // ① 監聽主頁 window scroll
+      function handleMainScroll() {
+        if (window.scrollY > MAIN_THRESHOLD) {
+          showBtn();
+        } else {
+          // 如果 PDF 那邊沒捲動，也一起隱藏
+          hideBtn();
+        }
+      }
+      window.addEventListener('scroll', handleMainScroll);
+
+      // ② PDF viewer 回到最上方
+      function scrollPdfToTop() {
+        if (!frame || !frame.contentWindow) return;
+        try{
+          const cw = frame.contentWindow;
+          const doc = cw.document;
+          const container = doc.getElementById('viewerContainer');
+
+          if (container && typeof container.scrollTo === 'function') {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
+          } else if (typeof cw.scrollTo === 'function') {
+            cw.scrollTo(0, 0);
+          }
+        }catch(e){
+          // 若跨網域或其他錯誤，就安靜失敗，不影響主頁
+        }
+      }
+
+      // ③ BackToTop 點擊：主頁 + PDF 一起回頂部
+      btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollPdfToTop();
+      });
+
+      // ④ 監聽 pdf.js viewer 的捲動（讓 iframe 捲動也能顯示按鈕）
+      function attachPdfScrollListener() {
+        if (!frame || !frame.contentWindow) return;
+        try{
+          const cw   = frame.contentWindow;
+          const doc  = cw.document;
+          const cont = doc.getElementById('viewerContainer');
+
+          const target = cont || cw;
+          if (!target) return;
+
+          target.addEventListener('scroll', () => {
+            try{
+              const top = cont ? cont.scrollTop : cw.scrollY || cw.pageYOffset || 0;
+              if (top > PDF_THRESHOLD) {
+                showBtn();
+              } else if (window.scrollY <= MAIN_THRESHOLD) {
+                // 主頁也沒捲動，就隱藏
+                hideBtn();
+              }
+            }catch(e){}
+          });
+        }catch(e){
+          // 不能存取（跨網域）就略過，只用主頁的 scroll 邏輯
+        }
+      }
+
+      if (frame){
+        frame.addEventListener('load', () => {
+          // 等 pdf.js 初始化後再掛 scroll（稍微 delay）
+          setTimeout(attachPdfScrollListener, 800);
+        });
+      }
+    })();
+  </script>
+
+  <!-- PDF 載入 / pdf.js viewer 切換 -->
+  <script>
+  (function () {
+    // key 對應：從 URL ?key=SiemensS7 / ?key=ABPLCPlan
+    const DocMap = {
+      SiemensS7: {
+        file: 'Siemens S7 Procedures.pdf',
+        title: 'Siemens S7 Procedures',
+        desc: 'Siemens S7 Backup Procedures – Maintenance SOP'
+      },
+      ABPLCPlan: {
+        file: 'AB PLC Plan.pdf',
+        title: 'AB PLC Plan',
+        desc: 'Allen-Bradley PLC Maintenance Plan – Maintenance SOP'
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    let key = params.get('key') || 'SiemensS7';
+    if (!DocMap[key]) key = 'SiemensS7';
+
+    const docInfo = DocMap[key];
+
+    // ===== PDF 檔名 =====
+    const pdfFileName = docInfo.file;
+
+    // 手機 / iPad 直接開用（Maintenance.html 與 PDF 同一層）
+    const pdfUrlForDirect = pdfFileName;
+
+    // 給 pdf.js viewer 用（viewer.html 在 /pdfjs/web/，PDF 在網站根目錄）
+    const pdfUrlForViewer = `../../${pdfFileName}`;
+
+    // pdf.js viewer 路徑
+    const pdfjsViewerBase = 'pdfjs/web/viewer.html';
+    const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
+
+    const titleEl    = document.getElementById('pageTitle');
+    const subEl      = document.getElementById('pageSub');
+    const viewer     = document.getElementById('viewer');
+    const frame      = document.getElementById('pdfFrame');
+    const openNewTab = document.getElementById('openNewTab');
+
+    // ===== 更新標題 =====
+    if (titleEl){
+      titleEl.textContent = `Maintenance – ${docInfo.title}`;
+    }
+    if (subEl){
+      subEl.textContent = docInfo.desc;
+    }
+
+    // ===== 裝置偵測 =====
+    const isTouch          = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const isSmallScreen    = window.innerWidth <= 1024;
+    const isMobileOrTablet = isTouch && isSmallScreen;
+
+    if (isMobileOrTablet) {
+      // 手機 / iPad：只顯示一顆按鈕，用瀏覽器開 PDF
+      if (openNewTab) openNewTab.style.display = 'none';
+      if (viewer) {
+        viewer.innerHTML = `
+          <div class="fallback">
+            Tap the button below to open<br><strong>${docInfo.title}</strong> PDF.<br><br>
+            <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
+              Open PDF ↗
+            </a>
+          </div>`;
+      }
+      return;
+    }
+
+    // ===== 桌機：內嵌 pdf.js viewer =====
+    if (frame) {
+      frame.src = viewerUrl;
+    }
+    if (openNewTab) {
+      openNewTab.href = viewerUrl;
+    }
+  })();
+  </script>
+</body>
+</html>
