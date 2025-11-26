@@ -496,17 +496,24 @@
       }
     }
 
+    // 讀取網址 ?asset=PC-xxx
+    function getAssetIdFromQuery(){
+      const params = new URLSearchParams(window.location.search);
+      const asset = params.get('asset');
+      if (!asset) return '';
+      return normalizeAssetId(asset);
+    }
+
+    // Asset ID 標準化：PC-001 ~ PC-999
     function normalizeAssetId(input) {
       if (!input) return "";
 
-      // 全部轉大寫 & 去掉前後空白
-      let v = input.trim().toUpperCase();
+      let v = String(input).trim().toUpperCase();
 
-      // 已經是 PC-001 這種 → 直接用
+      // 已經是 PC-001 格式
       if (/^PC-\d{3}$/.test(v)) return v;
 
-      // 其他寫法：PC001 / PC 1 / pc1 / 001 / 1 ...
-      v = input.trim().toUpperCase();
+      // 把 PC 前綴拿掉，只留數字
       v = v.replace(/^PC/i, "").replace(/[^0-9]/g, "");
 
       if (!v) return "";
@@ -558,7 +565,7 @@
         location_from: loc_from,
         location_to: loc_to,
         timestamp: new Date().toISOString(),
-        id: crypto.randomUUID()
+        id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : ('rec_' + Date.now())
       };
 
       const logs = loadRecords();
@@ -589,8 +596,31 @@
       updateStatus('JSON file downloaded. You can use it in Python / Excel.');
     }
 
-    setToday();
-    updateStatus('Ready to record maintenance tasks.');
+    (function init(){
+      setToday();
+
+      // 從網址帶進來的 ?asset=PC-xxx 自動填入
+      const fromUrl = getAssetIdFromQuery();
+      if (fromUrl) {
+        const equipInputEl = document.getElementById('equipInput');
+        if (equipInputEl) equipInputEl.value = fromUrl;
+      }
+
+      // Asset ID 欄位 blur 時自動整理成標準格式（如果合法）
+      const equipInputEl = document.getElementById('equipInput');
+      if (equipInputEl) {
+        equipInputEl.addEventListener('blur', ()=>{
+          const formatted = normalizeAssetId(equipInputEl.value);
+          if (formatted) {
+            equipInputEl.value = formatted;
+          } else {
+            equipInputEl.value = equipInputEl.value.trim().toUpperCase();
+          }
+        });
+      }
+
+      updateStatus('Ready to record maintenance tasks.');
+    })();
   </script>
 </body>
 </html>
