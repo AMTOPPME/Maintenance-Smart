@@ -145,6 +145,7 @@
 
     .summary-chip{
       display:inline-flex;
+      flex-wrap:wrap;
       align-items:center;
       gap:6px;
       padding:5px 10px;
@@ -524,7 +525,9 @@
           </div>
         </div>
         <div class="summary-chip">
-          Total: <strong id="sumTotal">0</strong> · This month: <strong id="sumMonth">0</strong>
+          Total: <strong id="sumTotal">0</strong>
+          · This month: <strong id="sumMonth">0</strong>
+          · This month downtime: <strong id="sumMonthDown">0</strong> min
         </div>
       </div>
 
@@ -533,29 +536,12 @@
         <input id="searchInput" type="search" placeholder="Search asset ID / root cause / action / location">
         <select id="lineFilter">
           <option value="">All lines</option>
-          <option value="Line1">Line 1</option>
-          <option value="Line2">Line 2</option>
-          <option value="Line3">Line 3</option>
-          <option value="Line4">Line 4</option>
-          <option value="Reclaim">Reclaim</option>
         </select>
         <select id="sectionFilter">
           <option value="">All sections</option>
-          <option value="F12">F12</option>
-          <option value="F13">F13</option>
-          <option value="F16">F16</option>
-          <option value="F201">F201</option>
-          <option value="F42">F42</option>
-          <option value="F55">F55</option>
         </select>
         <select id="categoryFilter">
           <option value="">All categories</option>
-          <option>Electrical</option>
-          <option>Mechanical</option>
-          <option>Instrument</option>
-          <option>Network</option>
-          <option>Software</option>
-          <option>Other</option>
         </select>
         <button class="btn" id="btnClearFilters">Clear filters</button>
       </div>
@@ -564,7 +550,7 @@
     <div class="card">
       <h2>Record list</h2>
       <div class="card-subtitle">
-        Click column headers to sort. Use Edit / Delete to update the local log.
+        Click column headers to sort. Click a row or use Edit / Delete to update the local log.
       </div>
       <div class="table-wrap">
         <div class="empty" id="emptyState">
@@ -700,11 +686,40 @@
     let sortKey = 'Date';
     let sortDir = 'desc';
     let editingId = null;
+    let searchTimer = null;
 
     // 讀取網址 ?asset=PC-xxx
     function getAssetIdFromQuery(){
       const params = new URLSearchParams(window.location.search);
       return params.get('asset') || '';
+    }
+
+    // Asset ID 標準化：PC-001 ~ PC-999
+    function normalizeAssetId(raw){
+      if (!raw) return '';
+      let s = String(raw).trim().toUpperCase();
+
+      // 如果只有數字 → PC-XXX
+      if (/^\d{1,3}$/.test(s)) {
+        s = 'PC-' + s.padStart(3, '0');
+      }
+
+      // PC1 / PC01 / pc-1 → PC-001
+      const m = s.match(/^PC[-\s]?(\d{1,3})$/i);
+      if (m) {
+        s = 'PC-' + m[1].padStart(3, '0');
+      }
+
+      return s;
+    }
+
+    function validateAndFormatAssetId(input){
+      const formatted = normalizeAssetId(input);
+      if (!formatted || !/^PC-\d{3}$/.test(formatted)) {
+        alert('Asset ID must be in format: PC-001 ~ PC-999');
+        return null;
+      }
+      return formatted;
     }
 
     // 將舊/新格式的紀錄統一成標準欄位
@@ -713,7 +728,8 @@
       const dateVal = rec.Date || rec.date || '';
 
       // 資產 ID：asset_id / equipment
-      const assetId = rec.asset_id || rec.equipment || '';
+      const assetRaw = rec.asset_id || rec.equipment || '';
+      const assetId = normalizeAssetId(assetRaw);
 
       // 故障時間：downtime_min / downtime
       let dt = 0;
@@ -777,6 +793,73 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
     }
 
+    // 根據現有 records 自動產生 line / section / category 選項
+    function populateFilterOptions(){
+      const lineSel = document.getElementById('lineFilter');
+      const secSel  = document.getElementById('sectionFilter');
+      const catSel  = document.getElementById('categoryFilter');
+
+      if (!lineSel || !secSel || !catSel) return;
+
+      const currentLine = lineSel.value;
+      const currentSec  = secSel.value;
+      const currentCat  = catSel.value;
+
+      const lines = new Set();
+      const secs  = new Set();
+      const cats  = new Set();
+
+      records.forEach(r=>{
+        if (r.line) lines.add(r.line);
+        if (r.section) secs.add(r.section);
+        if (r.category) cats.add(r.category);
+      });
+
+      function resetSelect(sel){
+        while (sel.options.length > 1) sel.remove(1);
+      }
+
+      resetSelect(lineSel);
+      resetSelect(secSel);
+      resetSelect(catSel);
+
+      [...lines].sort().forEach(v=>{
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v;
+        lineSel.appendChild(opt);
+      });
+      [...secs].sort().forEach(v=>{
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v;
+        secSel.appendChild(opt);
+      });
+      [...cats].sort().forEach(v=>{
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v;
+        catSel.appendChild(opt);
+      });
+
+      // 如果原本選的值還存在，就恢復；不然就 All
+      if ([...lineSel.options].some(o=>o.value === currentLine)) {
+        lineSel.value = currentLine;
+      } else {
+        lineSel.value = '';
+      }
+      if ([...secSel.options].some(o=>o.value === currentSec)) {
+        secSel.value = currentSec;
+      } else {
+        secSel.value = '';
+      }
+      if ([...catSel.options].some(o=>o.value === currentCat)) {
+        catSel.value = currentCat;
+      } else {
+        catSel.value = '';
+      }
+    }
+
     function applyFilters(){
       const q  = document.getElementById('searchInput').value.trim().toLowerCase();
       const lf = document.getElementById('lineFilter').value;
@@ -804,6 +887,14 @@
       sortFiltered();
       renderTable();
       updateSummary();
+    }
+
+    // 搜尋加 debounce，避免每打字就重算
+    function onSearchInput(){
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(()=>{
+        applyFilters();
+      }, 200);
     }
 
     function sortFiltered(){
@@ -839,11 +930,15 @@
       });
     }
 
+    // 固定 yyyy-mm-dd 格式
     function formatDate(s){
       if (!s) return '';
       const d = new Date(s);
       if (isNaN(d.getTime())) return s;
-      return d.toLocaleDateString();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      return `${y}-${m}-${day}`;
     }
 
     function renderTable(){
@@ -864,6 +959,11 @@
       filtered.forEach(rec=>{
         const tr = document.createElement('tr');
         tr.dataset.id = rec.id;
+
+        // 點整列也能編輯
+        tr.addEventListener('click', ()=>{
+          openEdit(rec.id);
+        });
 
         // Date
         const tdDate = document.createElement('td');
@@ -952,19 +1052,25 @@
     function updateSummary(){
       const totalEl = document.getElementById('sumTotal');
       const monthEl = document.getElementById('sumMonth');
+      const monthDownEl = document.getElementById('sumMonthDown');
       totalEl.textContent = records.length;
 
       const now = new Date();
       const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
       let cnt = 0;
+      let down = 0;
       records.forEach(r=>{
         if (!r.Date) return;
         const d = new Date(r.Date);
         if (isNaN(d.getTime())) return;
         const m = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-        if (m === ym) cnt++;
+        if (m === ym) {
+          cnt++;
+          down += Number(r.downtime_min || 0) || 0;
+        }
       });
       monthEl.textContent = cnt;
+      monthDownEl.textContent = down;
     }
 
     function clearFilters(){
@@ -979,6 +1085,7 @@
       if (!confirm('Delete this record? This cannot be undone.')) return;
       records = records.filter(r=>r.id !== id);
       saveRecords();
+      populateFilterOptions();
       applyFilters();
     }
 
@@ -1011,11 +1118,17 @@
       if (idx === -1) return;
 
       const rec = records[idx];
+
+      const formattedAssetId = validateAndFormatAssetId(
+        document.getElementById('editAssetId').value
+      );
+      if (formattedAssetId === null) return; // 格式錯誤，不儲存
+
       rec.Date          = document.getElementById('editDate').value || rec.Date;
       rec.line          = document.getElementById('editLine').value;
       rec.section       = document.getElementById('editSection').value;
       rec.category      = document.getElementById('editCategory').value;
-      rec.asset_id      = document.getElementById('editAssetId').value.trim();
+      rec.asset_id      = formattedAssetId;
       rec.location_from = document.getElementById('editLocFrom').value.trim();
       rec.location_to   = document.getElementById('editLocTo').value.trim();
       rec.root_cause    = document.getElementById('editRoot').value.trim();
@@ -1023,6 +1136,7 @@
 
       records[idx] = rec;
       saveRecords();
+      populateFilterOptions();
       applyFilters();
       closeEdit();
     }
@@ -1031,6 +1145,8 @@
     (function init(){
       records = loadRecords();
       filtered = [...records];
+
+      populateFilterOptions();
 
       // 先從 URL 讀取 ?asset=PC-xxx → 放到搜尋欄
       const assetFromUrl = getAssetIdFromQuery();
@@ -1041,7 +1157,7 @@
         }
       }
 
-      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('searchInput').addEventListener('input', onSearchInput);
       document.getElementById('lineFilter').addEventListener('change', applyFilters);
       document.getElementById('sectionFilter').addEventListener('change', applyFilters);
       document.getElementById('categoryFilter').addEventListener('change', applyFilters);
