@@ -343,12 +343,37 @@
   <!-- PDF 載入 / pdf.js viewer 切換 -->
   <script>
   (function () {
-    // key 對應：從 URL ?key=SiemensS7 / ?key=ABPLCPlan
+    // key 對應：從 URL ?key=SiemensS7 / ?key=MitsubishiPLC ... 等
     const DocMap = {
       SiemensS7: {
         file: 'Siemens S7 Procedures.pdf',
         title: 'Siemens S7 Procedures',
         desc: 'Siemens S7 Backup Procedures – Maintenance SOP'
+      },
+      MitsubishiPLC: {
+        file: 'Mitsubishi PLC Upload Download Procedure.pdf',
+        title: 'Mitsubishi PLC Upload/Download Procedure',
+        desc: 'Mitsubishi PLC Upload/Download Procedures – Maintenance SOP'
+      },
+      SiemensS5: {
+        file: 'Siemens S5 Procedure.pdf',
+        title: 'Siemens S5 Procedure',
+        desc: 'Siemens S5 Backup/Restore Procedures – Maintenance SOP'
+      },
+      BardacDrive: {
+        file: 'Bardac Drive Procedure.pdf',
+        title: 'Bardac Drive Procedure',
+        desc: 'Bardac Drive Parameters & Backup Procedures – Maintenance SOP'
+      },
+      ReclaimScreenchanger: {
+        file: 'Reclaim Screenchanger PLC Procedure.pdf',
+        title: 'Reclaim Screenchanger PLC Procedure',
+        desc: 'Reclaim Line Screenchanger PLC Procedures – Maintenance SOP'
+      },
+      ABPLCProcedure: {
+        file: 'AB PLC Procedure.pdf',
+        title: 'AB PLC Procedure',
+        desc: 'Allen-Bradley PLC Upload/Download Procedures – Maintenance SOP'
       },
       ABPLCPlan: {
         file: 'AB PLC Plan.pdf',
@@ -418,6 +443,6 @@
       openNewTab.href = viewerUrl;
     }
   })();
-  </script>
+</script>
 </body>
 </html>
