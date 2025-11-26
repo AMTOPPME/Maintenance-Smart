@@ -681,25 +681,69 @@
           </button>
 
           <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
-            <div class="maintenance-title">PDF</div>
-            <div class="maintenance-sec-row">
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="SiemensS7"
-                data-label="Siemens S7 Procedures">
-                <span class="code">Siemens S7 Procedures</span>
-              </button>
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="ABPLCPlan"
-                data-label="AB PLC Plan">
-                <span class="code">AB PLC Plan</span>
-              </button>
-            </div>
-          </div>
-        </li>
+  <div class="maintenance-title">PDF</div>
+  <div class="maintenance-sec-row">
+    <!-- Siemens S7（原本就有） -->
+    <button
+      class="maintenance-sec-btn"
+      type="button"
+      data-pdf-key="SiemensS7"
+      data-label="Siemens S7 Procedures">
+      <span class="code">Siemens S7 Procedures</span>
+    </button>
+
+    <!-- 🔽 新增的五個程序 PDF 🔽 -->
+    <button
+      class="maintenance-sec-btn"
+      type="button"
+      data-pdf-key="MitsubishiPLC"
+      data-label="Mitsubishi PLC Upload/Download Procedure">
+      <span class="code">Mitsubishi PLC Upload/Download Procedure</span>
+    </button>
+
+    <button
+      class="maintenance-sec-btn"
+      type="button"
+      data-pdf-key="SiemensS5"
+      data-label="Siemens S5 Procedure">
+      <span class="code">Siemens S5 Procedure</span>
+    </button>
+
+    <button
+      class="maintenance-sec-btn"
+      type="button"
+      data-pdf-key="BardacDrive"
+      data-label="Bardac Drive Procedure">
+      <span class="code">Bardac Drive Procedure</span>
+    </button>
+
+    <button
+      class="maintenance-sec-btn"
+      type="button"
+      data-pdf-key="ReclaimScreenchanger"
+      data-label="Reclaim Screenchanger PLC Procedure">
+      <span class="code">Reclaim Screenchanger PLC Procedure</span>
+    </button>
+
+    <button
+      class="maintenance-sec-btn"
+      type="button"
+      data-pdf-key="ABPLCProcedure"
+      data-label="AB PLC Procedure">
+      <span class="code">AB PLC Procedure</span>
+    </button>
+
+    <!-- AB PLC Plan（原本就有） -->
+    <button
+      class="maintenance-sec-btn"
+      type="button"
+      data-pdf-key="ABPLCPlan"
+      data-label="AB PLC Plan">
+      <span class="code">AB PLC Plan</span>
+    </button>
+  </div>
+</div>
+
         
         <!-- Maintenance Records：檢視 & 編輯維修紀錄 -->
         <li>
