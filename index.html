@@ -668,89 +668,92 @@
           </div>
         </li>
         <!-- Maintenance：可展開子列表，直接打開 PDF -->
-        <li class="nav-group-maintenance">
-          <button
-            class="nav-item-btn"
-            type="button"
-            data-role="maintenance-parent"
-            data-title="Maintenance"
-            data-sub="Open maintenance SOP PDFs.">
-            <span class="nav-icon">🔧</span>
-            <span class="nav-label">Maintenance</span>
-            <span class="nav-chevron" aria-hidden="true">▾</span>
-          </button>
+        <!-- Maintenance：可展開子列表，直接打開 PDF -->
+<li class="nav-group-maintenance">
+  <button
+    class="nav-item-btn"
+    type="button"
+    data-role="maintenance-parent"
+    data-title="Maintenance"
+    data-sub="Open maintenance SOP PDFs.">
+    <span class="nav-icon">🔧</span>
+    <span class="nav-label">Maintenance</span>
+    <span class="nav-chevron" aria-hidden="true">▾</span>
+  </button>
 
-          <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
-  <div class="maintenance-title">PDF</div>
-  <div class="maintenance-sec-row">
-    <button
-      class="maintenance-sec-btn"
-      type="button"
-      data-pdf-key="HardDrivesBackup"
-      data-label="Hard Drives Backup">
-      <span class="code">Hard Drives Backup</span>
-    </button>
+  <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
+    <div class="maintenance-title">PDF</div>
+    <div class="maintenance-sec-row">
+      <!-- Hard Drives Backup（新加的） -->
+      <button
+        class="maintenance-sec-btn"
+        type="button"
+        data-pdf-key="HardDrivesBackup"
+        data-label="Hard Drives Backup">
+        <span class="code">Hard Drives Backup</span>
+      </button>
 
-    <!-- Siemens S7（原本就有） -->
-    <button
-      class="maintenance-sec-btn"
-      type="button"
-      data-pdf-key="SiemensS7"
-      data-label="Siemens S7 Procedures">
-      <span class="code">Siemens S7 Procedures</span>
-    </button>
+      <!-- Siemens S7 -->
+      <button
+        class="maintenance-sec-btn"
+        type="button"
+        data-pdf-key="SiemensS7"
+        data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
 
-    <!-- 🔽 新增的五個程序 PDF 🔽 -->
-    <button
-      class="maintenance-sec-btn"
-      type="button"
-      data-pdf-key="SiemensS5"
-      data-label="Siemens S5 Procedure">
-      <span class="code">Siemens S5 Procedure</span>
-    </button>
-    
-    <button
-      class="maintenance-sec-btn"
-      type="button"
-      data-pdf-key="MitsubishiPLC"
-      data-label="Mitsubishi PLC Procedure">
-      <span class="code">Mitsubishi PLC Procedure</span>
-    </button>
-    
-    <button
-      class="maintenance-sec-btn"
-      type="button"
-      data-pdf-key="BardacDrive"
-      data-label="Bardac Drive Procedure">
-      <span class="code">Bardac Drive Procedure</span>
-    </button>
+      <!-- 其他程序 PDF -->
+      <button
+        class="maintenance-sec-btn"
+        type="button"
+        data-pdf-key="SiemensS5"
+        data-label="Siemens S5 Procedure">
+        <span class="code">Siemens S5 Procedure</span>
+      </button>
 
-    <button
-      class="maintenance-sec-btn"
-      type="button"
-      data-pdf-key="ReclaimSC"
-      data-label="Reclaim SC PLC Procedure">
-      <span class="code">Reclaim SC PLC Procedure</span>
-    </button>
+      <button
+        class="maintenance-sec-btn"
+        type="button"
+        data-pdf-key="MitsubishiPLC"
+        data-label="Mitsubishi PLC Procedure">
+        <span class="code">Mitsubishi PLC Procedure</span>
+      </button>
 
-    <button
-      class="maintenance-sec-btn"
-      type="button"
-      data-pdf-key="ABPLCProcedure"
-      data-label="AB PLC Procedure">
-      <span class="code">AB PLC Procedure</span>
-    </button>
+      <button
+        class="maintenance-sec-btn"
+        type="button"
+        data-pdf-key="BardacDrive"
+        data-label="Bardac Drive Procedure">
+        <span class="code">Bardac Drive Procedure</span>
+      </button>
 
-    <!-- AB PLC Plan（原本就有） -->
-    <button
-      class="maintenance-sec-btn"
-      type="button"
-      data-pdf-key="ABPLCPlan"
-      data-label="AB PLC Plan">
-      <span class="code">AB PLC Plan</span>
-    </button>
+      <button
+        class="maintenance-sec-btn"
+        type="button"
+        data-pdf-key="ReclaimSC"
+        data-label="Reclaim SC PLC Procedure">
+        <span class="code">Reclaim SC PLC Procedure</span>
+      </button>
+
+      <button
+        class="maintenance-sec-btn"
+        type="button"
+        data-pdf-key="ABPLCProcedure"
+        data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+
+      <button
+        class="maintenance-sec-btn"
+        type="button"
+        data-pdf-key="ABPLCPlan"
+        data-label="AB PLC Plan">
+        <span class="code">AB PLC Plan</span>
+      </button>
+    </div>
   </div>
-</div>
+</li>
+
 
         
         <!-- Maintenance Records：檢視 & 編輯維修紀錄 -->
