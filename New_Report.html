@@ -312,6 +312,13 @@
       color: transparent;
       border: none;
     }
+    /* 手機版：讓 form-row-half 強制變兩欄（各 50%） */
+    @media (max-width: 480px) {
+      .form-row.form-row-half > div {
+        flex: 0 0 calc(50% - 5px);
+        min-width: 0;
+      }
+    }
 
     @media print{
       body{
@@ -352,54 +359,55 @@
         as <strong>ms-maintenance-logs</strong>. Use the JSON download button for backup / reporting.
       </div>
 
-      <div class="form-row">
-        <div>
-          <label for="dateInput">Date</label>
-          <input type="date" id="dateInput">
-        </div>
-        <div>
-          <label for="lineInput">Line</label>
-          <select id="lineInput">
-            <option value="Line1">Line 1</option>
-            <option value="Line2">Line 2</option>
-            <option value="Line3">Line 3</option>
-            <option value="Line4">Line 4</option>
-            <option value="Reclaim">Reclaim</option>
-          </select>
-        </div>
-      </div>
+<div class="form-row form-row-half">
+  <div>
+    <label for="dateInput">Date</label>
+    <input type="date" id="dateInput">
+  </div>
+  <div>
+    <label for="lineInput">Line</label>
+    <select id="lineInput">
+      <option value="Line1">Line 1</option>
+      <option value="Line2">Line 2</option>
+      <option value="Line3">Line 3</option>
+      <option value="Line4">Line 4</option>
+      <option value="Reclaim">Reclaim</option>
+    </select>
+  </div>
+</div>
 
-      <div class="form-row">
-        <div>
-          <label for="sectionInput">Section</label>
-          <select id="sectionInput">
-            <option value="">Select…</option>
-            <option value="MCC">MCC</option>
-            <option value="Control Room">Control Room</option>
-            <option value="Field">Field</option>
-            <option value="Server Room">Server Room</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div>
-          <label for="equipInput">Asset ID (PC-xxx)</label>
-          <input
-            type="text"
-            id="equipInput"
-            placeholder="e.g. PC-001, PC-023, PC-120">
-        </div>
-      </div>
+<div class="form-row form-row-half">
+  <div>
+    <label for="sectionInput">Section</label>
+    <select id="sectionInput">
+      <option value="">Select…</option>
+      <option value="MCC">MCC</option>
+      <option value="Control Room">Control Room</option>
+      <option value="Field">Field</option>
+      <option value="Server Room">Server Room</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+  <div>
+    <label for="equipInput">Asset ID (PC-xxx)</label>
+    <input
+      type="text"
+      id="equipInput"
+      placeholder="e.g. PC-001, PC-023, PC-120">
+  </div>
+</div>
 
-      <div class="form-row">
-        <div>
-          <label for="locFromInput">Location From</label>
-          <input type="text" id="locFromInput" placeholder="e.g. Line 2 MCC">
-        </div>
-        <div>
-          <label for="locToInput">Location To</label>
-          <input type="text" id="locToInput" placeholder="e.g. Line 2 control room">
-        </div>
-      </div>
+<div class="form-row form-row-half">
+  <div>
+    <label for="locFromInput">Location From</label>
+    <input type="text" id="locFromInput" placeholder="e.g. Line 2 MCC">
+  </div>
+  <div>
+    <label for="locToInput">Location To</label>
+    <input type="text" id="locToInput" placeholder="e.g. Line 2 control room">
+  </div>
+</div>
+
 
       <div class="form-row">
         <div>
