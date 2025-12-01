@@ -312,13 +312,22 @@
       color: transparent;
       border: none;
     }
-    /* 手機版：讓 form-row-half 強制變兩欄（各 50%） */
-    @media (max-width: 480px) {
+    /* 給有 form-row-half 的 row：先把 min-width 拿掉 */
+    .form-row.form-row-half > div {
+      min-width: 0;
+    }
+
+    /* 手機～中小螢幕：強制各 50% 寬 */
+    @media (max-width: 900px) {
+      .form-row.form-row-half {
+        justify-content: space-between;
+      }
       .form-row.form-row-half > div {
         flex: 0 0 calc(50% - 5px);
-        min-width: 0;
+        max-width: calc(50% - 5px);
       }
     }
+
 
     @media print{
       body{
