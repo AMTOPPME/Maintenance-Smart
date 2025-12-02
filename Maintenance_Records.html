@@ -679,512 +679,540 @@
   </script>
 
   <script>
-    const STORAGE_KEY = 'ms-maintenance-logs';
+  const STORAGE_KEY   = 'ms-maintenance-logs';
 
-    let records = [];
-    let filtered = [];
-    let sortKey = 'Date';
-    let sortDir = 'desc';
-    let editingId = null;
-    let searchTimer = null;
+  // 🔧 換成你的後端網址（一定要 https）
+  const API_BASE_URL  = 'https://your-server.example.com';
+  const LOGS_ENDPOINT = API_BASE_URL + '/logs';
 
-    // 讀取網址 ?asset=PC-xxx
-    function getAssetIdFromQuery(){
-      const params = new URLSearchParams(window.location.search);
-      return params.get('asset') || '';
+  let records   = [];
+  let filtered  = [];
+  let sortKey   = 'Date';
+  let sortDir   = 'desc';
+  let editingId = null;
+  let searchTimer = null;
+
+  // ===== URL ?asset=PC-xxx =====
+  function getAssetIdFromQuery(){
+    const params = new URLSearchParams(window.location.search);
+    return params.get('asset') || '';
+  }
+
+  // ===== Asset ID 正規化 PC-001 ~ PC-999 =====
+  function normalizeAssetId(raw){
+    if (!raw) return '';
+    let s = String(raw).trim().toUpperCase();
+
+    // 只有數字 → PC-XXX
+    if (/^\d{1,3}$/.test(s)) {
+      s = 'PC-' + s.padStart(3, '0');
     }
 
-    // Asset ID 標準化：PC-001 ~ PC-999
-    function normalizeAssetId(raw){
-      if (!raw) return '';
-      let s = String(raw).trim().toUpperCase();
-
-      // 如果只有數字 → PC-XXX
-      if (/^\d{1,3}$/.test(s)) {
-        s = 'PC-' + s.padStart(3, '0');
-      }
-
-      // PC1 / PC01 / pc-1 → PC-001
-      const m = s.match(/^PC[-\s]?(\d{1,3})$/i);
-      if (m) {
-        s = 'PC-' + m[1].padStart(3, '0');
-      }
-
-      return s;
+    // PC1 / PC01 / pc-1 → PC-001
+    const m = s.match(/^PC[-\s]?(\d{1,3})$/i);
+    if (m) {
+      s = 'PC-' + m[1].padStart(3, '0');
     }
+    return s;
+  }
 
-    function validateAndFormatAssetId(input){
-      const formatted = normalizeAssetId(input);
-      if (!formatted || !/^PC-\d{3}$/.test(formatted)) {
-        alert('Asset ID must be in format: PC-001 ~ PC-999');
-        return null;
-      }
-      return formatted;
+  function validateAndFormatAssetId(input){
+    const formatted = normalizeAssetId(input);
+    if (!formatted || !/^PC-\d{3}$/.test(formatted)) {
+      alert('Asset ID must be in format: PC-001 ~ PC-999');
+      return null;
     }
+    return formatted;
+  }
 
-    // 將舊/新格式的紀錄統一成標準欄位
-    function normalizeRecord(rec, idx){
-      // 日期：Date / date
-      const dateVal = rec.Date || rec.date || '';
+  // ===== 統一舊/新欄位格式 =====
+  function normalizeRecord(rec, idx){
+    const dateVal = rec.Date || rec.date || '';
 
-      // 資產 ID：asset_id / equipment
-      const assetRaw = rec.asset_id || rec.equipment || '';
-      const assetId = normalizeAssetId(assetRaw);
+    const assetRaw = rec.asset_id || rec.equipment || '';
+    const assetId  = normalizeAssetId(assetRaw);
 
-      // 故障時間：downtime_min / downtime
-      let dt = 0;
-      if (rec.downtime_min != null) dt = rec.downtime_min;
-      else if (rec.downtime != null) dt = rec.downtime;
+    let dt = 0;
+    if (rec.downtime_min != null) dt = rec.downtime_min;
+    else if (rec.downtime != null) dt = rec.downtime;
 
-      // Root cause / Action
-      const root = rec.root_cause || rec.rootcause || '';
-      const act  = rec.action_taken || rec.action || '';
+    const root = rec.root_cause   || rec.rootcause   || '';
+    const act  = rec.action_taken || rec.action      || '';
 
-      const line = rec.line || '';
-      const section = rec.section || '';
-      const cat  = rec.category || '';
-      const locFrom = rec.location_from || '';
-      const locTo   = rec.location_to || '';
-      const ts   = rec.timestamp || '';
+    const line    = rec.line    || '';
+    const section = rec.section || '';
+    const cat     = rec.category || '';
+    const locFrom = rec.location_from || '';
+    const locTo   = rec.location_to   || '';
+    const ts      = rec.timestamp || '';
 
-      let id = rec.id;
-      if (!id){
-        if (window.crypto && crypto.randomUUID){
-          id = crypto.randomUUID();
-        }else{
-          id = 'rec_' + Date.now() + '_' + idx;
-        }
-      }
-
-      return {
-        Date: dateVal,
-        line: line,
-        section: section,
-        asset_id: assetId,
-        category: cat,
-        downtime_min: Number(dt) || 0,
-        root_cause: root,
-        action_taken: act,
-        location_from: locFrom,
-        location_to: locTo,
-        timestamp: ts,
-        id: id
-      };
-    }
-
-    function loadRecords(){
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY) || '[]';
-        const arr = JSON.parse(raw);
-        if (!Array.isArray(arr)) return [];
-
-        const normalized = arr.map((rec, idx)=> normalizeRecord(rec, idx));
-
-        // 回寫成標準欄位，之後就都用新版欄位
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-        return normalized;
-      }catch(e){
-        console.error(e);
-        return [];
+    let id = rec.id;
+    if (!id){
+      if (window.crypto && crypto.randomUUID){
+        id = crypto.randomUUID();
+      }else{
+        id = 'rec_' + Date.now() + '_' + idx;
       }
     }
 
-    function saveRecords(){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    return {
+      Date: dateVal,
+      line,
+      section,
+      asset_id: assetId,
+      category: cat,
+      downtime_min: Number(dt) || 0,
+      root_cause:   root,
+      action_taken: act,
+      location_from: locFrom,
+      location_to:   locTo,
+      timestamp: ts,
+      id
+    };
+  }
+
+  // ===== localStorage 版：只負責本機快取 =====
+  function loadRecordsFromLocal(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY) || '[]';
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+
+      const normalized = arr.map((rec, idx)=> normalizeRecord(rec, idx));
+      // 回寫成標準格式
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+      return normalized;
+    }catch(e){
+      console.error(e);
+      return [];
     }
+  }
 
-    // 根據現有 records 自動產生 line / section / category 選項
-    function populateFilterOptions(){
-      const lineSel = document.getElementById('lineFilter');
-      const secSel  = document.getElementById('sectionFilter');
-      const catSel  = document.getElementById('categoryFilter');
+  function saveRecordsToLocal(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+  }
 
-      if (!lineSel || !secSel || !catSel) return;
+  // ===== Server API 呼叫 =====
+  async function fetchServerLogs(){
+    const res = await fetch(LOGS_ENDPOINT, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    if (!res.ok){
+      throw new Error('Server error: ' + res.status);
+    }
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      console.warn('Server /logs 回傳不是 array，實際為：', data);
+      return [];
+    }
+    // 從伺服器來的資料也 normalize
+    return data.map((rec, idx)=> normalizeRecord(rec, idx));
+  }
 
-      const currentLine = lineSel.value;
-      const currentSec  = secSel.value;
-      const currentCat  = catSel.value;
-
-      const lines = new Set();
-      const secs  = new Set();
-      const cats  = new Set();
-
-      records.forEach(r=>{
-        if (r.line) lines.add(r.line);
-        if (r.section) secs.add(r.section);
-        if (r.category) cats.add(r.category);
+  async function updateOnServer(rec){
+    // 假設後端是 PUT /logs/:id
+    try{
+      await fetch(`${LOGS_ENDPOINT}/${encodeURIComponent(rec.id)}`, {
+        method:'PUT',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify(rec)
       });
+    }catch(e){
+      console.warn('Update server failed, local-only updated.', e);
+    }
+  }
 
-      function resetSelect(sel){
-        while (sel.options.length > 1) sel.remove(1);
+  async function deleteOnServer(id){
+    // 假設後端是 DELETE /logs/:id
+    try{
+      await fetch(`${LOGS_ENDPOINT}/${encodeURIComponent(id)}`, {
+        method:'DELETE'
+      });
+    }catch(e){
+      console.warn('Delete on server failed, local-only deleted.', e);
+    }
+  }
+
+  // ===== 自動產生 filter 選項 =====
+  function populateFilterOptions(){
+    const lineSel = document.getElementById('lineFilter');
+    const secSel  = document.getElementById('sectionFilter');
+    const catSel  = document.getElementById('categoryFilter');
+
+    if (!lineSel || !secSel || !catSel) return;
+
+    const currentLine = lineSel.value;
+    const currentSec  = secSel.value;
+    const currentCat  = catSel.value;
+
+    const lines = new Set();
+    const secs  = new Set();
+    const cats  = new Set();
+
+    records.forEach(r=>{
+      if (r.line)    lines.add(r.line);
+      if (r.section) secs.add(r.section);
+      if (r.category)cats.add(r.category);
+    });
+
+    function resetSelect(sel){
+      while (sel.options.length > 1) sel.remove(1);
+    }
+    resetSelect(lineSel);
+    resetSelect(secSel);
+    resetSelect(catSel);
+
+    [...lines].sort().forEach(v=>{
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      lineSel.appendChild(opt);
+    });
+    [...secs].sort().forEach(v=>{
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      secSel.appendChild(opt);
+    });
+    [...cats].sort().forEach(v=>{
+      const opt = document.createElement('option');
+      opt.value = v;
+      catSel.appendChild(opt);
+    });
+
+    if ([...lineSel.options].some(o=>o.value === currentLine)) lineSel.value = currentLine;
+    else lineSel.value = '';
+    if ([...secSel.options].some(o=>o.value === currentSec))   secSel.value = currentSec;
+    else secSel.value = '';
+    if ([...catSel.options].some(o=>o.value === currentCat))   catSel.value = currentCat;
+    else catSel.value = '';
+  }
+
+  function applyFilters(){
+    const q  = document.getElementById('searchInput').value.trim().toLowerCase();
+    const lf = document.getElementById('lineFilter').value;
+    const sf = document.getElementById('sectionFilter').value;
+    const cf = document.getElementById('categoryFilter').value;
+
+    filtered = records.filter(r=>{
+      if (lf && r.line !== lf) return false;
+      if (sf && r.section !== sf) return false;
+      if (cf && r.category !== cf) return false;
+
+      if (q){
+        const hay = (
+          (r.asset_id||'')+' '+
+          (r.root_cause||'')+' '+
+          (r.action_taken||'')+' '+
+          (r.location_from||'')+' '+
+          (r.location_to||'')
+        ).toLowerCase();
+        if (!hay.includes(q)) return false;
       }
+      return true;
+    });
 
-      resetSelect(lineSel);
-      resetSelect(secSel);
-      resetSelect(catSel);
+    sortFiltered();
+    renderTable();
+    updateSummary();
+  }
 
-      [...lines].sort().forEach(v=>{
-        const opt = document.createElement('option');
-        opt.value = v;
-        opt.textContent = v;
-        lineSel.appendChild(opt);
-      });
-      [...secs].sort().forEach(v=>{
-        const opt = document.createElement('option');
-        opt.value = v;
-        opt.textContent = v;
-        secSel.appendChild(opt);
-      });
-      [...cats].sort().forEach(v=>{
-        const opt = document.createElement('option');
-        opt.value = v;
-        opt.textContent = v;
-        catSel.appendChild(opt);
-      });
+  function onSearchInput(){
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applyFilters, 200);
+  }
 
-      // 如果原本選的值還存在，就恢復；不然就 All
-      if ([...lineSel.options].some(o=>o.value === currentLine)) {
-        lineSel.value = currentLine;
+  function sortFiltered(){
+    filtered.sort((a,b)=>{
+      let va = a[sortKey];
+      let vb = b[sortKey];
+
+      if (sortKey === 'Date'){
+        va = new Date(a.Date || a.date || 0).getTime();
+        vb = new Date(b.Date || b.date || 0).getTime();
+      } else if (sortKey === 'downtime_min'){
+        va = Number(a.downtime_min || a.downtime || 0);
+        vb = Number(b.downtime_min || b.downtime || 0);
       } else {
-        lineSel.value = '';
+        if (typeof va === 'string') va = va.toLowerCase();
+        if (typeof vb === 'string') vb = vb.toLowerCase();
       }
-      if ([...secSel.options].some(o=>o.value === currentSec)) {
-        secSel.value = currentSec;
-      } else {
-        secSel.value = '';
+
+      if (va < vb) return sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    document.querySelectorAll('th.sortable').forEach(th=>{
+      const key = th.dataset.sort;
+      const span = th.querySelector('.sort-indicator');
+      if (!span) return;
+      if (key === sortKey){
+        span.textContent = sortDir === 'asc' ? '▲' : '▼';
+      }else{
+        span.textContent = '';
       }
-      if ([...catSel.options].some(o=>o.value === currentCat)) {
-        catSel.value = currentCat;
-      } else {
-        catSel.value = '';
-      }
+    });
+  }
+
+  function formatDate(s){
+    if (!s) return '';
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return s;
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function renderTable(){
+    const tbody = document.getElementById('recordsBody');
+    const table = document.getElementById('recordsTable');
+    const empty = document.getElementById('emptyState');
+
+    tbody.innerHTML = '';
+
+    if (!filtered.length){
+      table.style.display = 'none';
+      empty.style.display = 'block';
+      return;
     }
+    table.style.display = 'table';
+    empty.style.display = 'none';
 
-    function applyFilters(){
-      const q  = document.getElementById('searchInput').value.trim().toLowerCase();
-      const lf = document.getElementById('lineFilter').value;
-      const sf = document.getElementById('sectionFilter').value;
-      const cf = document.getElementById('categoryFilter').value;
+    filtered.forEach(rec=>{
+      const tr = document.createElement('tr');
+      tr.dataset.id = rec.id;
 
-      filtered = records.filter(r=>{
-        if (lf && r.line !== lf) return false;
-        if (sf && r.section !== sf) return false;
-        if (cf && r.category !== cf) return false;
+      tr.addEventListener('click', ()=> openEdit(rec.id));
 
-        if (q){
-          const hay = (
-            (r.asset_id||'')+' '+
-            (r.root_cause||'')+' '+
-            (r.action_taken||'')+' '+
-            (r.location_from||'')+' '+
-            (r.location_to||'')
-          ).toLowerCase();
-          if (!hay.includes(q)) return false;
-        }
-        return true;
+      const tdDate = document.createElement('td');
+      tdDate.className = 'text-small';
+      tdDate.textContent = formatDate(rec.Date);
+      tr.appendChild(tdDate);
+
+      const tdLS = document.createElement('td');
+      const divLine = document.createElement('div');
+      divLine.className = 'tag-line';
+      divLine.textContent = rec.line || '';
+      const divSec = document.createElement('div');
+      divSec.className = 'text-small';
+      divSec.textContent = rec.section || '';
+      tdLS.appendChild(divLine);
+      tdLS.appendChild(divSec);
+      tr.appendChild(tdLS);
+
+      const tdEquip = document.createElement('td');
+      tdEquip.className = 'equip';
+      tdEquip.textContent = rec.asset_id || '';
+      tr.appendChild(tdEquip);
+
+      const tdCat = document.createElement('td');
+      const spanCat = document.createElement('span');
+      spanCat.className = 'pill-cat';
+      spanCat.textContent = rec.category || '';
+      tdCat.appendChild(spanCat);
+      tr.appendChild(tdCat);
+
+      const tdDown = document.createElement('td');
+      tdDown.className = 'text-small';
+      tdDown.textContent = Number(rec.downtime_min||0);
+      tr.appendChild(tdDown);
+
+      const tdLoc = document.createElement('td');
+      tdLoc.className = 'text-small';
+      const lf = document.createElement('div');
+      lf.innerHTML = '<strong>From:</strong> ' + (rec.location_from || '');
+      const lt = document.createElement('div');
+      lt.innerHTML = '<strong>To:</strong> ' + (rec.location_to || '');
+      tdLoc.appendChild(lf);
+      tdLoc.appendChild(lt);
+      tr.appendChild(tdLoc);
+
+      const tdDesc = document.createElement('td');
+      tdDesc.className = 'text-small';
+      const d1 = document.createElement('div');
+      d1.innerHTML = '<strong>Root:</strong> ' + (rec.root_cause||'');
+      const d2 = document.createElement('div');
+      d2.innerHTML = '<strong>Action:</strong> ' + (rec.action_taken||'');
+      tdDesc.appendChild(d1);
+      tdDesc.appendChild(d2);
+      tr.appendChild(tdDesc);
+
+      const tdAct = document.createElement('td');
+      const btnE = document.createElement('button');
+      btnE.className = 'btn-ghost';
+      btnE.textContent = 'Edit';
+      btnE.addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        openEdit(rec.id);
       });
-
-      sortFiltered();
-      renderTable();
-      updateSummary();
-    }
-
-    // 搜尋加 debounce，避免每打字就重算
-    function onSearchInput(){
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(()=>{
-        applyFilters();
-      }, 200);
-    }
-
-    function sortFiltered(){
-      filtered.sort((a,b)=>{
-        let va = a[sortKey];
-        let vb = b[sortKey];
-
-        if (sortKey === 'Date'){
-          va = new Date(a.Date || a.date || 0).getTime();
-          vb = new Date(b.Date || b.date || 0).getTime();
-        } else if (sortKey === 'downtime_min'){
-          va = Number(a.downtime_min || a.downtime || 0);
-          vb = Number(b.downtime_min || b.downtime || 0);
-        } else {
-          if (typeof va === 'string') va = va.toLowerCase();
-          if (typeof vb === 'string') vb = vb.toLowerCase();
-        }
-
-        if (va < vb) return sortDir === 'asc' ? -1 : 1;
-        if (va > vb) return sortDir === 'asc' ? 1 : -1;
-        return 0;
+      const btnD = document.createElement('button');
+      btnD.className = 'btn-ghost btn-danger';
+      btnD.textContent = 'Delete';
+      btnD.addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        deleteRecord(rec.id);
       });
+      tdAct.appendChild(btnE);
+      tdAct.appendChild(btnD);
+      tr.appendChild(tdAct);
 
-      document.querySelectorAll('th.sortable').forEach(th=>{
+      tbody.appendChild(tr);
+    });
+  }
+
+  function updateSummary(){
+    const totalEl     = document.getElementById('sumTotal');
+    const monthEl     = document.getElementById('sumMonth');
+    const monthDownEl = document.getElementById('sumMonthDown');
+    totalEl.textContent = records.length;
+
+    const now = new Date();
+    const ym  = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    let cnt = 0;
+    let down = 0;
+    records.forEach(r=>{
+      if (!r.Date) return;
+      const d = new Date(r.Date);
+      if (isNaN(d.getTime())) return;
+      const m = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+      if (m === ym) {
+        cnt++;
+        down += Number(r.downtime_min || 0) || 0;
+      }
+    });
+    monthEl.textContent = cnt;
+    monthDownEl.textContent = down;
+  }
+
+  function clearFilters(){
+    document.getElementById('searchInput').value = '';
+    document.getElementById('lineFilter').value = '';
+    document.getElementById('sectionFilter').value = '';
+    document.getElementById('categoryFilter').value = '';
+    applyFilters();
+  }
+
+  async function deleteRecord(id){
+    if (!confirm('Delete this record? This cannot be undone.')) return;
+    records = records.filter(r=>r.id !== id);
+    saveRecordsToLocal();
+    populateFilterOptions();
+    applyFilters();
+
+    // 伺服器同步（失敗就只刪本機）
+    deleteOnServer(id);
+  }
+
+  function openEdit(id){
+    const rec = records.find(r=>r.id === id);
+    if (!rec) return;
+    editingId = id;
+
+    document.getElementById('editDate').value    = rec.Date ? String(rec.Date).slice(0,10) : '';
+    document.getElementById('editLine').value    = rec.line || 'Line1';
+    document.getElementById('editSection').value = rec.section || 'F12';
+    document.getElementById('editCategory').value= rec.category || 'Other';
+    document.getElementById('editAssetId').value = rec.asset_id || '';
+    document.getElementById('editLocFrom').value = rec.location_from || '';
+    document.getElementById('editLocTo').value   = rec.location_to || '';
+    document.getElementById('editRoot').value    = rec.root_cause || '';
+    document.getElementById('editAction').value  = rec.action_taken || '';
+
+    document.getElementById('editBackdrop').classList.add('open');
+  }
+
+  function closeEdit(){
+    editingId = null;
+    document.getElementById('editBackdrop').classList.remove('open');
+  }
+
+  async function saveEdit(){
+    if (!editingId) return;
+    const idx = records.findIndex(r=>r.id === editingId);
+    if (idx === -1) return;
+
+    const rec = records[idx];
+
+    const formattedAssetId = validateAndFormatAssetId(
+      document.getElementById('editAssetId').value
+    );
+    if (formattedAssetId === null) return;
+
+    rec.Date          = document.getElementById('editDate').value || rec.Date;
+    rec.line          = document.getElementById('editLine').value;
+    rec.section       = document.getElementById('editSection').value;
+    rec.category      = document.getElementById('editCategory').value;
+    rec.asset_id      = formattedAssetId;
+    rec.location_from = document.getElementById('editLocFrom').value.trim();
+    rec.location_to   = document.getElementById('editLocTo').value.trim();
+    rec.root_cause    = document.getElementById('editRoot').value.trim();
+    rec.action_taken  = document.getElementById('editAction').value.trim();
+
+    records[idx] = rec;
+    saveRecordsToLocal();
+    populateFilterOptions();
+    applyFilters();
+    closeEdit();
+
+    // 傳回伺服器
+    updateOnServer(rec);
+  }
+
+  // ===== init：優先讀伺服器，失敗再用 localStorage =====
+  (async function init(){
+    try{
+      const serverLogs = await fetchServerLogs();
+      records = serverLogs;
+      saveRecordsToLocal();           // 伺服器成功 → 更新 localStorage 快取
+    }catch(e){
+      console.warn('Load from server failed, fallback to localStorage.', e);
+      records = loadRecordsFromLocal();
+    }
+
+    filtered = [...records];
+    populateFilterOptions();
+
+    const assetFromUrl = getAssetIdFromQuery();
+    if (assetFromUrl){
+      const searchEl = document.getElementById('searchInput');
+      if (searchEl) searchEl.value = assetFromUrl;
+    }
+
+    document.getElementById('searchInput').addEventListener('input', onSearchInput);
+    document.getElementById('lineFilter').addEventListener('change', applyFilters);
+    document.getElementById('sectionFilter').addEventListener('change', applyFilters);
+    document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+    document.getElementById('btnClearFilters').addEventListener('click', clearFilters);
+
+    document.querySelectorAll('th.sortable').forEach(th=>{
+      th.addEventListener('click', ()=>{
         const key = th.dataset.sort;
-        const span = th.querySelector('.sort-indicator');
-        if (!span) return;
-        if (key === sortKey){
-          span.textContent = sortDir === 'asc' ? '▲' : '▼';
+        if (sortKey === key){
+          sortDir = sortDir === 'asc' ? 'desc' : 'asc';
         }else{
-          span.textContent = '';
+          sortKey = key;
+          sortDir = key === 'Date' ? 'desc' : 'asc';
         }
+        sortFiltered();
+        renderTable();
       });
-    }
+    });
 
-    // 固定 yyyy-mm-dd 格式
-    function formatDate(s){
-      if (!s) return '';
-      const d = new Date(s);
-      if (isNaN(d.getTime())) return s;
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,'0');
-      const day = String(d.getDate()).padStart(2,'0');
-      return `${y}-${m}-${day}`;
-    }
+    document.getElementById('btnCancelEdit').addEventListener('click', closeEdit);
+    document.getElementById('btnSaveEdit').addEventListener('click', saveEdit);
+    document.getElementById('editBackdrop').addEventListener('click',(e)=>{
+      if (e.target.id === 'editBackdrop') closeEdit();
+    });
 
-    function renderTable(){
-      const tbody = document.getElementById('recordsBody');
-      const table = document.getElementById('recordsTable');
-      const empty = document.getElementById('emptyState');
-
-      tbody.innerHTML = '';
-
-      if (!filtered.length){
-        table.style.display = 'none';
-        empty.style.display = 'block';
-        return;
-      }
-      table.style.display = 'table';
-      empty.style.display = 'none';
-
-      filtered.forEach(rec=>{
-        const tr = document.createElement('tr');
-        tr.dataset.id = rec.id;
-
-        // 點整列也能編輯
-        tr.addEventListener('click', ()=>{
-          openEdit(rec.id);
-        });
-
-        // Date
-        const tdDate = document.createElement('td');
-        tdDate.className = 'text-small';
-        tdDate.textContent = formatDate(rec.Date);
-        tr.appendChild(tdDate);
-
-        // Line / Section
-        const tdLS = document.createElement('td');
-        const divLine = document.createElement('div');
-        divLine.className = 'tag-line';
-        divLine.textContent = rec.line || '';
-        const divSec = document.createElement('div');
-        divSec.className = 'text-small';
-        divSec.textContent = rec.section || '';
-        tdLS.appendChild(divLine);
-        tdLS.appendChild(divSec);
-        tr.appendChild(tdLS);
-
-        // Asset ID
-        const tdEquip = document.createElement('td');
-        tdEquip.className = 'equip';
-        tdEquip.textContent = rec.asset_id || '';
-        tr.appendChild(tdEquip);
-
-        // Category
-        const tdCat = document.createElement('td');
-        const spanCat = document.createElement('span');
-        spanCat.className = 'pill-cat';
-        spanCat.textContent = rec.category || '';
-        tdCat.appendChild(spanCat);
-        tr.appendChild(tdCat);
-
-        // Downtime
-        const tdDown = document.createElement('td');
-        tdDown.className = 'text-small';
-        tdDown.textContent = Number(rec.downtime_min||0);
-        tr.appendChild(tdDown);
-
-        // Location from / to
-        const tdLoc = document.createElement('td');
-        tdLoc.className = 'text-small';
-        const lf = document.createElement('div');
-        lf.innerHTML = '<strong>From:</strong> ' + (rec.location_from || '');
-        const lt = document.createElement('div');
-        lt.innerHTML = '<strong>To:</strong> ' + (rec.location_to || '');
-        tdLoc.appendChild(lf);
-        tdLoc.appendChild(lt);
-        tr.appendChild(tdLoc);
-
-        // Root cause / Action
-        const tdDesc = document.createElement('td');
-        tdDesc.className = 'text-small';
-        const d1 = document.createElement('div');
-        d1.innerHTML = '<strong>Root:</strong> ' + (rec.root_cause||'');
-        const d2 = document.createElement('div');
-        d2.innerHTML = '<strong>Action:</strong> ' + (rec.action_taken||'');
-        tdDesc.appendChild(d1);
-        tdDesc.appendChild(d2);
-        tr.appendChild(tdDesc);
-
-        // Actions
-        const tdAct = document.createElement('td');
-        const btnE = document.createElement('button');
-        btnE.className = 'btn-ghost';
-        btnE.textContent = 'Edit';
-        btnE.addEventListener('click', (ev)=>{
-          ev.stopPropagation();
-          openEdit(rec.id);
-        });
-        const btnD = document.createElement('button');
-        btnD.className = 'btn-ghost btn-danger';
-        btnD.textContent = 'Delete';
-        btnD.addEventListener('click', (ev)=>{
-          ev.stopPropagation();
-          deleteRecord(rec.id);
-        });
-        tdAct.appendChild(btnE);
-        tdAct.appendChild(btnD);
-        tr.appendChild(tdAct);
-
-        tbody.appendChild(tr);
-      });
-    }
-
-    function updateSummary(){
-      const totalEl = document.getElementById('sumTotal');
-      const monthEl = document.getElementById('sumMonth');
-      const monthDownEl = document.getElementById('sumMonthDown');
-      totalEl.textContent = records.length;
-
-      const now = new Date();
-      const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-      let cnt = 0;
-      let down = 0;
-      records.forEach(r=>{
-        if (!r.Date) return;
-        const d = new Date(r.Date);
-        if (isNaN(d.getTime())) return;
-        const m = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-        if (m === ym) {
-          cnt++;
-          down += Number(r.downtime_min || 0) || 0;
-        }
-      });
-      monthEl.textContent = cnt;
-      monthDownEl.textContent = down;
-    }
-
-    function clearFilters(){
-      document.getElementById('searchInput').value = '';
-      document.getElementById('lineFilter').value = '';
-      document.getElementById('sectionFilter').value = '';
-      document.getElementById('categoryFilter').value = '';
-      applyFilters();
-    }
-
-    function deleteRecord(id){
-      if (!confirm('Delete this record? This cannot be undone.')) return;
-      records = records.filter(r=>r.id !== id);
-      saveRecords();
-      populateFilterOptions();
-      applyFilters();
-    }
-
-    function openEdit(id){
-      const rec = records.find(r=>r.id === id);
-      if (!rec) return;
-      editingId = id;
-
-      document.getElementById('editDate').value = rec.Date ? String(rec.Date).slice(0,10) : '';
-      document.getElementById('editLine').value = rec.line || 'Line1';
-      document.getElementById('editSection').value = rec.section || 'F12';
-      document.getElementById('editCategory').value = rec.category || 'Other';
-      document.getElementById('editAssetId').value = rec.asset_id || '';
-      document.getElementById('editLocFrom').value = rec.location_from || '';
-      document.getElementById('editLocTo').value = rec.location_to || '';
-      document.getElementById('editRoot').value = rec.root_cause || '';
-      document.getElementById('editAction').value = rec.action_taken || '';
-
-      document.getElementById('editBackdrop').classList.add('open');
-    }
-
-    function closeEdit(){
-      editingId = null;
-      document.getElementById('editBackdrop').classList.remove('open');
-    }
-
-    function saveEdit(){
-      if (!editingId) return;
-      const idx = records.findIndex(r=>r.id === editingId);
-      if (idx === -1) return;
-
-      const rec = records[idx];
-
-      const formattedAssetId = validateAndFormatAssetId(
-        document.getElementById('editAssetId').value
-      );
-      if (formattedAssetId === null) return; // 格式錯誤，不儲存
-
-      rec.Date          = document.getElementById('editDate').value || rec.Date;
-      rec.line          = document.getElementById('editLine').value;
-      rec.section       = document.getElementById('editSection').value;
-      rec.category      = document.getElementById('editCategory').value;
-      rec.asset_id      = formattedAssetId;
-      rec.location_from = document.getElementById('editLocFrom').value.trim();
-      rec.location_to   = document.getElementById('editLocTo').value.trim();
-      rec.root_cause    = document.getElementById('editRoot').value.trim();
-      rec.action_taken  = document.getElementById('editAction').value.trim();
-
-      records[idx] = rec;
-      saveRecords();
-      populateFilterOptions();
-      applyFilters();
-      closeEdit();
-    }
-
-    // init
-    (function init(){
-      records = loadRecords();
-      filtered = [...records];
-
-      populateFilterOptions();
-
-      // 先從 URL 讀取 ?asset=PC-xxx → 放到搜尋欄
-      const assetFromUrl = getAssetIdFromQuery();
-      if (assetFromUrl){
-        const searchEl = document.getElementById('searchInput');
-        if (searchEl){
-          searchEl.value = assetFromUrl;
-        }
-      }
-
-      document.getElementById('searchInput').addEventListener('input', onSearchInput);
-      document.getElementById('lineFilter').addEventListener('change', applyFilters);
-      document.getElementById('sectionFilter').addEventListener('change', applyFilters);
-      document.getElementById('categoryFilter').addEventListener('change', applyFilters);
-      document.getElementById('btnClearFilters').addEventListener('click', clearFilters);
-
-      document.querySelectorAll('th.sortable').forEach(th=>{
-        th.addEventListener('click', ()=>{
-          const key = th.dataset.sort;
-          if (sortKey === key){
-            sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-          }else{
-            sortKey = key;
-            sortDir = key === 'Date' ? 'desc' : 'asc';
-          }
-          sortFiltered();
-          renderTable();
-        });
-      });
-
-      document.getElementById('btnCancelEdit').addEventListener('click', closeEdit);
-      document.getElementById('btnSaveEdit').addEventListener('click', saveEdit);
-      document.getElementById('editBackdrop').addEventListener('click',(e)=>{
-        if (e.target.id === 'editBackdrop') closeEdit();
-      });
-
-      applyFilters();
-    })();
-  </script>
+    applyFilters();
+  })();
+</script>
 </body>
 </html>
