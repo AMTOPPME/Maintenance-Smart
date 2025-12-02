@@ -486,9 +486,38 @@
     })();
   </script>
 
+    <!-- Back to Top button -->
+  <button id="backToTop" title="Back to Top">↑</button>
+
+  <script>
+    // Back to top (跟 PC Manager 一樣)
+    (function(){
+      const btn = document.getElementById('backToTop');
+      if (!btn) return;
+      const THRESHOLD = 250;
+      function updateVisibility(){
+        if (window.scrollY > THRESHOLD) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+      }
+      function scrollToTop(){
+        window.scrollTo({top:0, behavior:'smooth'});
+      }
+      window.addEventListener('scroll', updateVisibility);
+      btn.addEventListener('click', scrollToTop);
+      updateVisibility();
+    })();
+  </script>
+
+  <!-- 這一段是新的表單 + 後端串接程式 -->
   <script>
     const STORAGE_KEY = 'ms-maintenance-logs';
 
+    // ✅ 後端位址：目前先用本機 SQLite 後端
+    // 如果你的 Node 還在跑，就會是這個
+    const API_BASE_URL = 'http://172.17.12.173:3000';
+    const LOGS_ENDPOINT = API_BASE_URL + '/logs';
+
+    // ===== 共用小工具 =====
     function loadRecords(){
       try{
         return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -548,7 +577,25 @@
       return "PC-" + String(num).padStart(3, "0");
     }
 
-    function saveRecord(){
+    // ===== 跟後端 POST /logs 串接 =====
+    async function saveRecordToServer(payload) {
+      const res = await fetch(LOGS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error('Server error: ' + res.status + ' ' + text);
+      }
+
+      // 你的後端目前回 { ok:true }，這裡先接著
+      return res.json().catch(() => ({}));
+    }
+
+    // ===== 主按鈕：Submit record =====
+    async function saveRecord(){
       const date      = document.getElementById('dateInput').value;
       const line      = document.getElementById('lineInput').value;
       const section   = document.getElementById('sectionInput').value;
@@ -564,7 +611,7 @@
       const loc_from  = document.getElementById('locFromInput').value.trim();
       const loc_to    = document.getElementById('locToInput').value.trim();
 
-      // 沒填日期或 Asset ID 格式不正確
+      // 檢查必填
       if (!date || !assetId){
         updateStatus(
           'Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).'
@@ -572,10 +619,25 @@
         return;
       }
 
-      // 把格式化好的字串回寫到輸入框，讓畫面也看到 PC-0xx
+      // 把格式化好的 Asset ID 寫回欄位
       equipInputEl.value = assetId;
 
-      const record = {
+      // 給後端（SQLite）用的 payload：欄位名對應 index.js /logs
+      const payloadForServer = {
+        asset_id: assetId,
+        line,
+        section,
+        date,
+        category,
+        downtime_min: downtime,
+        location_from: loc_from,
+        location_to: loc_to,
+        root_cause: rootcause,
+        action_taken: action
+      };
+
+      // 給 localStorage 備份的版本（多一些欄位給你下載 JSON 用）
+      const recordForLocal = {
         Date: date,
         line,
         section,
@@ -590,20 +652,34 @@
         id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : ('rec_' + Date.now())
       };
 
+      let serverOk = false;
+      try{
+        await saveRecordToServer(payloadForServer);
+        serverOk = true;
+      }catch(e){
+        console.error('Save to server failed:', e);
+      }
+
+      // 不管後端有沒有成功，先把資料寫到 localStorage 當備份
       const logs = loadRecords();
-      logs.push(record);
+      logs.push(recordForLocal);
       saveRecords(logs);
 
-      // 清掉其他欄位（Asset ID 留著，方便連續記錄同一台）
+      // 清掉一些欄位（Asset ID 保留，方便連續輸入同一台）
       document.getElementById('downInput').value = '';
       document.getElementById('rootInput').value = '';
       document.getElementById('actionInput').value = '';
       document.getElementById('locFromInput').value = '';
       document.getElementById('locToInput').value = '';
 
-      updateStatus('Record saved locally.');
+      if (serverOk){
+        updateStatus('✅ Record saved to <strong>server (SQLite)</strong> and this browser.');
+      }else{
+        updateStatus('⚠ Server unavailable – record saved in <strong>this browser only</strong>.');
+      }
     }
 
+    // 下載 JSON（沿用舊的）
     function downloadJson(){
       const logs = loadRecords();
       const blob = new Blob([JSON.stringify(logs, null, 2)], {type:'application/json'});
@@ -618,6 +694,7 @@
       updateStatus('JSON file downloaded. You can use it in Python / Excel.');
     }
 
+    // 初始化
     (function init(){
       setToday();
 
