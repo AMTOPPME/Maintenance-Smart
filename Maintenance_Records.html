@@ -520,8 +520,8 @@
         <div>
           <h2>Maintenance records</h2>
           <div class="card-subtitle">
-            Logs loaded from <strong>ms-maintenance-logs</strong> in this browser.
-            Use <em>Maintenance Report</em> to add new records.
+            Logs are loaded from the <strong>SQLite backend</strong> first,
+            then cached in <strong>ms-maintenance-logs</strong> in this browser.
           </div>
         </div>
         <div class="summary-chip">
@@ -579,7 +579,7 @@
   <div class="modal-backdrop" id="editBackdrop">
     <div class="modal">
       <h2 class="modal-title">Edit record</h2>
-      <p class="modal-sub">Update the selected maintenance record and save changes.</p>
+      <p class="modal-sub">Update the selected maintenance record and save changes (local only for now).</p>
 
       <div class="modal-row">
         <div>
@@ -681,8 +681,8 @@
   <script>
   const STORAGE_KEY   = 'ms-maintenance-logs';
 
-  // 🔧 換成你的後端網址（一定要 https）
-  const API_BASE_URL  = 'https://your-server.example.com';
+  // ✅ 現在連到你本機的 Node + SQLite
+  const API_BASE_URL  = 'http://localhost:3000';
   const LOGS_ENDPOINT = API_BASE_URL + '/logs';
 
   let records   = [];
@@ -703,12 +703,10 @@
     if (!raw) return '';
     let s = String(raw).trim().toUpperCase();
 
-    // 只有數字 → PC-XXX
     if (/^\d{1,3}$/.test(s)) {
       s = 'PC-' + s.padStart(3, '0');
     }
 
-    // PC1 / PC01 / pc-1 → PC-001
     const m = s.match(/^PC[-\s]?(\d{1,3})$/i);
     if (m) {
       s = 'PC-' + m[1].padStart(3, '0');
@@ -771,7 +769,7 @@
     };
   }
 
-
+  // ===== localStorage 版：只負責本機快取 =====
   function loadRecordsFromLocal(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY) || '[]';
@@ -779,7 +777,6 @@
       if (!Array.isArray(arr)) return [];
 
       const normalized = arr.map((rec, idx)=> normalizeRecord(rec, idx));
-      // 回寫成標準格式
       localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
       return normalized;
     }catch(e){
@@ -796,46 +793,27 @@
   async function fetchServerLogs(){
     const res = await fetch(LOGS_ENDPOINT, {
       method: 'GET',
-      headers: {
-        'Accept': 'application/json'
-      }
+      headers: { 'Accept': 'application/json' }
     });
     if (!res.ok){
       throw new Error('Server error: ' + res.status);
     }
     const data = await res.json();
-    if (!Array.isArray(data)) {
-      console.warn('Server /logs 回傳不是 array，實際為：', data);
-      return [];
+    // 你的後端格式：{ ok:true, data:[...] }
+    if (data && data.ok && Array.isArray(data.data)) {
+      return data.data.map((rec, idx)=> normalizeRecord(rec, idx));
     }
-    // 從伺服器來的資料也 normalize
-    return data.map((rec, idx)=> normalizeRecord(rec, idx));
+    console.warn('Unexpected /logs response:', data);
+    return [];
   }
 
+  // 現在先不對伺服器做編輯/刪除，只在本機改
   async function updateOnServer(rec){
-    // 假設後端是 PUT /logs/:id
-    try{
-      await fetch(`${LOGS_ENDPOINT}/${encodeURIComponent(rec.id)}`, {
-        method:'PUT',
-        headers:{
-          'Content-Type':'application/json'
-        },
-        body: JSON.stringify(rec)
-      });
-    }catch(e){
-      console.warn('Update server failed, local-only updated.', e);
-    }
+    console.log('Update on server not implemented yet. Local-only edit.', rec);
   }
 
   async function deleteOnServer(id){
-    // 假設後端是 DELETE /logs/:id
-    try{
-      await fetch(`${LOGS_ENDPOINT}/${encodeURIComponent(id)}`, {
-        method:'DELETE'
-      });
-    }catch(e){
-      console.warn('Delete on server failed, local-only deleted.', e);
-    }
+    console.log('Delete on server not implemented yet. Local-only delete.', id);
   }
 
   // ===== 自動產生 filter 選項 =====
@@ -876,7 +854,6 @@
     [...secs].sort().forEach(v=>{
       const opt = document.createElement('option');
       opt.value = v;
-      opt.textContent = v;
       secSel.appendChild(opt);
     });
     [...cats].sort().forEach(v=>{
@@ -1100,14 +1077,13 @@
   }
 
   async function deleteRecord(id){
-    if (!confirm('Delete this record? This cannot be undone.')) return;
+    if (!confirm('Delete this record from local cache?')) return;
     records = records.filter(r=>r.id !== id);
     saveRecordsToLocal();
     populateFilterOptions();
     applyFilters();
 
-    // 伺服器同步（失敗就只刪本機）
-    deleteOnServer(id);
+    deleteOnServer(id); // 目前只是 console.log
   }
 
   function openEdit(id){
@@ -1161,8 +1137,7 @@
     applyFilters();
     closeEdit();
 
-    // 傳回伺服器
-    updateOnServer(rec);
+    updateOnServer(rec); // 目前只是 console.log
   }
 
   // ===== init：優先讀伺服器，失敗再用 localStorage =====
@@ -1213,6 +1188,6 @@
 
     applyFilters();
   })();
-</script>
+  </script>
 </body>
 </html>
