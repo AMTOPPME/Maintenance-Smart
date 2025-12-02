@@ -35,7 +35,6 @@
       --xsmall-font: 11px;
     }
 
-    /* Dark mode */
     html[data-theme="dark"] {
       --bg: #020617;
       --card-bg: #020617;
@@ -62,7 +61,6 @@
       transition: background .25s ease, color .25s ease;
     }
 
-    /* style 背景：跟 PC Manager 一致 */
     html[data-style="panther"] body {
       background:
         radial-gradient(circle at top, rgba(244,114,182,.28), transparent),
@@ -74,7 +72,6 @@
         var(--bg);
     }
 
-    /* Side characters */
     .side-panther,
     .side-hangyodon{
       position:fixed;
@@ -96,7 +93,6 @@
     html[data-style="panther"] .side-panther{display:block;}
     html[data-style="hangyodon"] .side-hangyodon{display:block;}
 
-    /* 手機：只留中間一隻 */
     @media (max-width: 900px){
       html[data-style="panther"] .side-panther.left,
       html[data-style="hangyodon"] .side-hangyodon.left{
@@ -149,7 +145,6 @@
       margin-bottom: 10px;
     }
 
-    /* Form layout */
     .form-row{
       display:flex;
       gap:10px;
@@ -261,7 +256,6 @@
       color:var(--accent);
     }
 
-    /* Back to Top （表單頁也順便放一顆）*/
     #backToTop {
       position: fixed;
       bottom: 22px;
@@ -312,12 +306,10 @@
       color: transparent;
       border: none;
     }
-    /* 給有 form-row-half 的 row：先把 min-width 拿掉 */
+
     .form-row.form-row-half > div {
       min-width: 0;
     }
-
-    /* 手機～中小螢幕：強制各 50% 寬 */
     @media (max-width: 900px) {
       .form-row.form-row-half {
         justify-content: space-between;
@@ -327,7 +319,6 @@
         max-width: calc(50% - 5px);
       }
     }
-
 
     @media print{
       body{
@@ -364,64 +355,64 @@
     <div class="card">
       <h2>Maintenance report</h2>
       <div class="card-subtitle">
-        Fill this form after each maintenance task. Data is stored in this browser
-        as <strong>ms-maintenance-logs</strong>. Use the JSON download button for backup / reporting.
+        Fill this form after each maintenance task. Data is sent to the cloud backend
+        and also stored in this browser as <strong>ms-maintenance-logs</strong>.
+        Use the JSON download button for backup / reporting.
       </div>
 
-<!-- DATE 一整行 -->
-<div class="form-row">
-  <div>
-    <label for="dateInput">Date</label>
-    <input type="date" id="dateInput">
-  </div>
-</div>
+      <!-- DATE -->
+      <div class="form-row">
+        <div>
+          <label for="dateInput">Date</label>
+          <input type="date" id="dateInput">
+        </div>
+      </div>
 
-<!-- LINE 一整行 -->
-<div class="form-row">
-  <div>
-    <label for="lineInput">Line</label>
-    <select id="lineInput">
-      <option value="Line1">Line 1</option>
-      <option value="Line2">Line 2</option>
-      <option value="Line3">Line 3</option>
-      <option value="Line4">Line 4</option>
-      <option value="Reclaim">Reclaim</option>
-    </select>
-  </div>
-</div>
+      <!-- LINE -->
+      <div class="form-row">
+        <div>
+          <label for="lineInput">Line</label>
+          <select id="lineInput">
+            <option value="Line1">Line 1</option>
+            <option value="Line2">Line 2</option>
+            <option value="Line3">Line 3</option>
+            <option value="Line4">Line 4</option>
+            <option value="Reclaim">Reclaim</option>
+          </select>
+        </div>
+      </div>
 
-<div class="form-row form-row-half">
-  <div>
-    <label for="sectionInput">Section</label>
-    <select id="sectionInput">
-      <option value="">Select…</option>
-      <option value="MCC">MCC</option>
-      <option value="Control Room">Control Room</option>
-      <option value="Field">Field</option>
-      <option value="Server Room">Server Room</option>
-      <option value="Other">Other</option>
-    </select>
-  </div>
-  <div>
-    <label for="equipInput">Asset ID (PC-xxx)</label>
-    <input
-      type="text"
-      id="equipInput"
-      placeholder="e.g. PC-001, PC-023, PC-120">
-  </div>
-</div>
+      <div class="form-row form-row-half">
+        <div>
+          <label for="sectionInput">Section</label>
+          <select id="sectionInput">
+            <option value="">Select…</option>
+            <option value="MCC">MCC</option>
+            <option value="Control Room">Control Room</option>
+            <option value="Field">Field</option>
+            <option value="Server Room">Server Room</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label for="equipInput">Asset ID (PC-xxx)</label>
+          <input
+            type="text"
+            id="equipInput"
+            placeholder="e.g. PC-001, PC-023, PC-120">
+        </div>
+      </div>
 
-<div class="form-row form-row-half">
-  <div>
-    <label for="locFromInput">Location From</label>
-    <input type="text" id="locFromInput" placeholder="e.g. Line 2 MCC">
-  </div>
-  <div>
-    <label for="locToInput">Location To</label>
-    <input type="text" id="locToInput" placeholder="e.g. Line 2 control room">
-  </div>
-</div>
-
+      <div class="form-row form-row-half">
+        <div>
+          <label for="locFromInput">Location From</label>
+          <input type="text" id="locFromInput" placeholder="e.g. Line 2 MCC">
+        </div>
+        <div>
+          <label for="locToInput">Location To</label>
+          <input type="text" id="locToInput" placeholder="e.g. Line 2 control room">
+        </div>
+      </div>
 
       <div class="form-row">
         <div>
@@ -468,7 +459,7 @@
   <button id="backToTop" title="Back to Top">↑</button>
 
   <script>
-    // Back to top (跟 PC Manager 一樣)
+    // Back to top
     (function(){
       const btn = document.getElementById('backToTop');
       if (!btn) return;
@@ -486,38 +477,13 @@
     })();
   </script>
 
-    <!-- Back to Top button -->
-  <button id="backToTop" title="Back to Top">↑</button>
-
-  <script>
-    // Back to top (跟 PC Manager 一樣)
-    (function(){
-      const btn = document.getElementById('backToTop');
-      if (!btn) return;
-      const THRESHOLD = 250;
-      function updateVisibility(){
-        if (window.scrollY > THRESHOLD) btn.classList.add('visible');
-        else btn.classList.remove('visible');
-      }
-      function scrollToTop(){
-        window.scrollTo({top:0, behavior:'smooth'});
-      }
-      window.addEventListener('scroll', updateVisibility);
-      btn.addEventListener('click', scrollToTop);
-      updateVisibility();
-    })();
-  </script>
-
-  <!-- 這一段是新的表單 + 後端串接程式 -->
   <script>
     const STORAGE_KEY = 'ms-maintenance-logs';
 
-    // ✅ 後端位址：目前先用本機 SQLite 後端
-    // 如果你的 Node 還在跑，就會是這個
-    const API_BASE_URL = 'https://maintenance-backend-kh4z.onrender.com/';
+    // ✅ 雲端 API
+    const API_BASE_URL = 'https://maintenance-backend-kh4z.onrender.com';
     const LOGS_ENDPOINT = API_BASE_URL + '/logs';
 
-    // ===== 共用小工具 =====
     function loadRecords(){
       try{
         return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -547,7 +513,6 @@
       }
     }
 
-    // 讀取網址 ?asset=PC-xxx
     function getAssetIdFromQuery(){
       const params = new URLSearchParams(window.location.search);
       const asset = params.get('asset');
@@ -555,29 +520,22 @@
       return normalizeAssetId(asset);
     }
 
-    // Asset ID 標準化：PC-001 ~ PC-999
     function normalizeAssetId(input) {
       if (!input) return "";
-
       let v = String(input).trim().toUpperCase();
 
-      // 已經是 PC-001 格式
       if (/^PC-\d{3}$/.test(v)) return v;
 
-      // 把 PC 前綴拿掉，只留數字
       v = v.replace(/^PC/i, "").replace(/[^0-9]/g, "");
-
       if (!v) return "";
 
       const num = parseInt(v, 10);
       if (!Number.isFinite(num) || num < 1 || num > 999) {
         return "";
       }
-
       return "PC-" + String(num).padStart(3, "0");
     }
 
-    // ===== 跟後端 POST /logs 串接 =====
     async function saveRecordToServer(payload) {
       const res = await fetch(LOGS_ENDPOINT, {
         method: 'POST',
@@ -589,12 +547,9 @@
         const text = await res.text().catch(() => '');
         throw new Error('Server error: ' + res.status + ' ' + text);
       }
-
-      // 你的後端目前回 { ok:true }，這裡先接著
       return res.json().catch(() => ({}));
     }
 
-    // ===== 主按鈕：Submit record =====
     async function saveRecord(){
       const date      = document.getElementById('dateInput').value;
       const line      = document.getElementById('lineInput').value;
@@ -602,7 +557,7 @@
 
       const equipInputEl = document.getElementById('equipInput');
       const rawEquip     = equipInputEl.value;
-      const assetId      = normalizeAssetId(rawEquip);   // 轉成 PC-xxx
+      const assetId      = normalizeAssetId(rawEquip);
 
       const category  = document.getElementById('catInput').value;
       const downtime  = Number(document.getElementById('downInput').value || 0);
@@ -611,7 +566,6 @@
       const loc_from  = document.getElementById('locFromInput').value.trim();
       const loc_to    = document.getElementById('locToInput').value.trim();
 
-      // 檢查必填
       if (!date || !assetId){
         updateStatus(
           'Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).'
@@ -619,10 +573,8 @@
         return;
       }
 
-      // 把格式化好的 Asset ID 寫回欄位
       equipInputEl.value = assetId;
 
-      // 給後端（SQLite）用的 payload：欄位名對應 index.js /logs
       const payloadForServer = {
         asset_id: assetId,
         line,
@@ -636,7 +588,6 @@
         action_taken: action
       };
 
-      // 給 localStorage 備份的版本（多一些欄位給你下載 JSON 用）
       const recordForLocal = {
         Date: date,
         line,
@@ -660,12 +611,10 @@
         console.error('Save to server failed:', e);
       }
 
-      // 不管後端有沒有成功，先把資料寫到 localStorage 當備份
       const logs = loadRecords();
       logs.push(recordForLocal);
       saveRecords(logs);
 
-      // 清掉一些欄位（Asset ID 保留，方便連續輸入同一台）
       document.getElementById('downInput').value = '';
       document.getElementById('rootInput').value = '';
       document.getElementById('actionInput').value = '';
@@ -679,7 +628,6 @@
       }
     }
 
-    // 下載 JSON（沿用舊的）
     function downloadJson(){
       const logs = loadRecords();
       const blob = new Blob([JSON.stringify(logs, null, 2)], {type:'application/json'});
@@ -694,18 +642,15 @@
       updateStatus('JSON file downloaded. You can use it in Python / Excel.');
     }
 
-    // 初始化
     (function init(){
       setToday();
 
-      // 從網址帶進來的 ?asset=PC-xxx 自動填入
       const fromUrl = getAssetIdFromQuery();
       if (fromUrl) {
         const equipInputEl = document.getElementById('equipInput');
         if (equipInputEl) equipInputEl.value = fromUrl;
       }
 
-      // Asset ID 欄位 blur 時自動整理成標準格式（如果合法）
       const equipInputEl = document.getElementById('equipInput');
       if (equipInputEl) {
         equipInputEl.addEventListener('blur', ()=>{
