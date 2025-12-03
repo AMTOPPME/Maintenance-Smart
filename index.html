@@ -262,9 +262,8 @@
       box-shadow:0 4px 10px rgba(37,99,235,.35);
     }
 
-    /* ==== 兩層子列表共用樣式 ==== */
+    /* ==== 兩層子列表共用樣式（Line Schematic + Maintenance） ==== */
     .nav-group-schematic .nav-item-btn,
-    .nav-group-backup .nav-item-btn,
     .nav-group-maintenance .nav-item-btn{
       justify-content:space-between;
     }
@@ -274,7 +273,6 @@
     }
 
     .schematic-panel,
-    .backup-panel,
     .maintenance-panel{
       margin-top:4px;
       margin-left:26px;
@@ -286,13 +284,11 @@
       display:none;
     }
     .schematic-panel.open,
-    .backup-panel.open,
     .maintenance-panel.open{
       display:block;
     }
 
     .schematic-title,
-    .backup-title,
     .maintenance-title{
       font-size:11px;
       font-weight:600;
@@ -302,15 +298,13 @@
       margin-bottom:6px;
     }
 
-    .schematic-line-row,
-    .backup-line-row{
+    .schematic-line-row{
       display:flex;
       flex-wrap:wrap;
       gap:6px;
       margin-bottom:6px;
     }
-    .schematic-line-btn,
-    .backup-line-btn{
+    .schematic-line-btn{
       border-radius:999px;
       border:1px solid transparent;
       background:#eff6ff;
@@ -323,13 +317,11 @@
       gap:4px;
       transition:background .15s,border-color .15s,color .15s,transform .1s;
     }
-    .schematic-line-btn:hover,
-    .backup-line-btn:hover{
+    .schematic-line-btn:hover{
       background:#dbeafe;
       transform:translateY(-1px);
     }
-    .schematic-line-btn.active,
-    .backup-line-btn.active{
+    .schematic-line-btn.active{
       background:#1d4ed8;
       border-color:#1d4ed8;
       color:#fff;
@@ -337,14 +329,12 @@
     }
 
     .schematic-sec-row,
-    .backup-sec-row,
     .maintenance-sec-row{
       display:flex;
       flex-wrap:wrap;
       gap:6px;
     }
     .schematic-sec-btn,
-    .backup-sec-btn,
     .maintenance-sec-btn{
       border-radius:999px;
       border:1px solid var(--border-subtle);
@@ -359,13 +349,11 @@
       transition:background .15s,border-color .15s,color .15s,transform .1s;
     }
     .schematic-sec-btn span.code,
-    .backup-sec-btn span.code,
     .maintenance-sec-btn span.code{
       font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size:11px;
     }
     .schematic-sec-btn:hover,
-    .backup-sec-btn:hover,
     .maintenance-sec-btn:hover{
       background:#fff;
       border-color:var(--accent-soft);
@@ -379,8 +367,7 @@
       box-shadow:0 3px 8px rgba(37,99,235,.4);
     }
 
-    .schematic-hint,
-    .backup-hint{
+    .schematic-hint{
       margin-top:6px;
       font-size:10px;
       color:var(--text-soft);
@@ -480,7 +467,6 @@
       }
 
       .schematic-panel,
-      .backup-panel,
       .maintenance-panel{
         margin-left:0;
       }
@@ -585,7 +571,7 @@
             <div class="schematic-hint">
               Default file rule:
               <code>Line-[lineNumber]-Schematic.html?sec=[section]</code>
-              (e.g. <code>Line-1-Schematic.html?sec=F13</code>)
+              (e.g. <code>Line-1-4-Schematic.html?line=1&amp;sec=F13</code>)
             </div>
             <div class="ls-tags">
               <div class="ls-label">TAGS LIST</div>
@@ -596,167 +582,92 @@
           </div>
         </li>
 
-        <!-- Program Backup：兩層列表 -->
-        <li class="nav-group-backup">
+        <!-- Maintenance：可展開子列表，直接打開 PDF -->
+        <li class="nav-group-maintenance">
           <button
             class="nav-item-btn"
             type="button"
-            data-role="backup-parent"
-            data-title="Program Backup"
-            data-sub="Select line (Line 1~4 / Reclaim) and section to open backup.">
-            <span class="nav-icon">📁</span>
-            <span class="nav-label">Program Backup</span>
+            data-role="maintenance-parent"
+            data-title="Maintenance"
+            data-sub="Open maintenance SOP PDFs.">
+            <span class="nav-icon">🔧</span>
+            <span class="nav-label">Maintenance</span>
             <span class="nav-chevron" aria-hidden="true">▾</span>
           </button>
 
-          <div class="backup-panel" id="backupPanel" aria-label="Program backup selector">
-            <div class="backup-title">LINE</div>
-            <div class="backup-line-row">
-              <button class="backup-line-btn active" type="button" data-line="Line1">Line 1</button>
-              <button class="backup-line-btn" type="button" data-line="Line2">Line 2</button>
-              <button class="backup-line-btn" type="button" data-line="Line3">Line 3</button>
-              <button class="backup-line-btn" type="button" data-line="Line4">Line 4</button>
-              <button class="backup-line-btn" type="button" data-line="Reclaim">Reclaim</button>
-            </div>
+          <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
+            <div class="maintenance-title">PDF</div>
+            <div class="maintenance-sec-row">
+              <!-- Hard Drives Backup -->
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="HardDrivesBackup"
+                data-label="Hard Drives Backup">
+                <span class="code">Hard Drives Backup</span>
+              </button>
 
-            <div class="backup-title">SECTION</div>
-            <div class="backup-sec-row">
-              <button class="backup-sec-btn" type="button" data-section="F12" data-label="F12">
-                <span class="code">F12</span>
+              <!-- Siemens S7 -->
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="SiemensS7"
+                data-label="Siemens S7 Procedures">
+                <span class="code">Siemens S7 Procedures</span>
               </button>
-              <button class="backup-sec-btn" type="button" data-section="F13" data-label="F13">
-                <span class="code">F13</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="F16" data-label="F16">
-                <span class="code">F16</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="F42" data-label="F42">
-                <span class="code">F42</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="F55" data-label="F55">
-                <span class="code">F55</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="F201" data-label="F201">
-                <span class="code">F201</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="FlameTreater" data-label="Flame Treater">
-                <span class="code">Flame Treater</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="MainBlending" data-label="Main Blending">
-                <span class="code">Main Blending</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="MainLoading" data-label="Main Loading">
-                <span class="code">Main Loading</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="ScadaPC1PC2" data-label="Scada PC1 PC2">
-                <span class="code">Scada PC1 PC2</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="SoftalTreater" data-label="Softal Treater">
-                <span class="code">Softal Treater</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="TDOBruckpanel" data-label="TDO Bruckpanel">
-                <span class="code">TDO Bruckpanel</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="WinderCarrgeBruckpanel" data-label="Winder Carrge Bruckpanel">
-                <span class="code">Winder Carrge Bruckpanel</span>
-              </button>
-            </div>
 
-            <div class="backup-hint">
-              Open backups from Google Drive (Line / Section → URL).
+              <!-- 其他程序 PDF -->
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="SiemensS5"
+                data-label="Siemens S5 Procedure">
+                <span class="code">Siemens S5 Procedure</span>
+              </button>
+
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="MitsubishiPLC"
+                data-label="Mitsubishi PLC Procedure">
+                <span class="code">Mitsubishi PLC Procedure</span>
+              </button>
+
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="BardacDrive"
+                data-label="Bardac Drive Procedure">
+                <span class="code">Bardac Drive Procedure</span>
+              </button>
+
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="ReclaimSC"
+                data-label="Reclaim SC PLC Procedure">
+                <span class="code">Reclaim SC PLC Procedure</span>
+              </button>
+
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="ABPLCProcedure"
+                data-label="AB PLC Procedure">
+                <span class="code">AB PLC Procedure</span>
+              </button>
+
+              <button
+                class="maintenance-sec-btn"
+                type="button"
+                data-pdf-key="ABPLCPlan"
+                data-label="AB PLC Plan">
+                <span class="code">AB PLC Plan</span>
+              </button>
             </div>
           </div>
         </li>
-        <!-- Maintenance：可展開子列表，直接打開 PDF -->
-        <!-- Maintenance：可展開子列表，直接打開 PDF -->
-<li class="nav-group-maintenance">
-  <button
-    class="nav-item-btn"
-    type="button"
-    data-role="maintenance-parent"
-    data-title="Maintenance"
-    data-sub="Open maintenance SOP PDFs.">
-    <span class="nav-icon">🔧</span>
-    <span class="nav-label">Maintenance</span>
-    <span class="nav-chevron" aria-hidden="true">▾</span>
-  </button>
 
-  <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
-    <div class="maintenance-title">PDF</div>
-    <div class="maintenance-sec-row">
-      <!-- Hard Drives Backup（新加的） -->
-      <button
-        class="maintenance-sec-btn"
-        type="button"
-        data-pdf-key="HardDrivesBackup"
-        data-label="Hard Drives Backup">
-        <span class="code">Hard Drives Backup</span>
-      </button>
-
-
-      <!-- Siemens S7 -->
-      <button
-        class="maintenance-sec-btn"
-        type="button"
-        data-pdf-key="SiemensS7"
-        data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-
-      <!-- 其他程序 PDF -->
-      <button
-        class="maintenance-sec-btn"
-        type="button"
-        data-pdf-key="SiemensS5"
-        data-label="Siemens S5 Procedure">
-        <span class="code">Siemens S5 Procedure</span>
-      </button>
-
-      <button
-        class="maintenance-sec-btn"
-        type="button"
-        data-pdf-key="MitsubishiPLC"
-        data-label="Mitsubishi PLC Procedure">
-        <span class="code">Mitsubishi PLC Procedure</span>
-      </button>
-
-      <button
-        class="maintenance-sec-btn"
-        type="button"
-        data-pdf-key="BardacDrive"
-        data-label="Bardac Drive Procedure">
-        <span class="code">Bardac Drive Procedure</span>
-      </button>
-
-      <button
-        class="maintenance-sec-btn"
-        type="button"
-        data-pdf-key="ReclaimSC"
-        data-label="Reclaim SC PLC Procedure">
-        <span class="code">Reclaim SC PLC Procedure</span>
-      </button>
-
-      <button
-        class="maintenance-sec-btn"
-        type="button"
-        data-pdf-key="ABPLCProcedure"
-        data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
-
-      <button
-        class="maintenance-sec-btn"
-        type="button"
-        data-pdf-key="ABPLCPlan"
-        data-label="AB PLC Plan">
-        <span class="code">AB PLC Plan</span>
-      </button>
-    </div>
-  </div>
-</li>
-
-
-        
         <!-- Maintenance Records：檢視 & 編輯維修紀錄 -->
         <li>
           <button
@@ -783,7 +694,6 @@
 
       </ul>
     </nav>
-
 
     <div class="workspace">
       <main class="main">
@@ -878,7 +788,7 @@
     });
   })();
 
-  // 切換模組 + Line Schematic / Program Backup / Maintenance 兩層選單
+  // 切換模組 + Line Schematic / Maintenance 兩層選單
   (function(){
     const frame   = document.getElementById('mainFrame');
     const titleEl = document.getElementById('moduleTitle');
@@ -892,11 +802,6 @@
     const schematicSecBtns = document.querySelectorAll('.schematic-sec-btn');
     let currentSchematicLine = 'Line1';
 
-    const backupPanel   = document.getElementById('backupPanel');
-    const backupLineBtns= document.querySelectorAll('.backup-line-btn');
-    const backupSecBtns = document.querySelectorAll('.backup-sec-btn');
-    let currentBackupLine = 'Line1';
-
     const maintenancePanel = document.getElementById('maintenancePanel');
     const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
 
@@ -908,79 +813,8 @@
 
     function closeAllSubPanels(){
       if (schematicPanel)   schematicPanel.classList.remove('open');
-      if (backupPanel)      backupPanel.classList.remove('open');
       if (maintenancePanel) maintenancePanel.classList.remove('open');
     }
-
-    // 🔹 Program Backup → Google Drive URL 對應表
-    const BackupUrlMap = {
-      Line1: {
-        F12:  'https://drive.google.com/drive/folders/1v6Ceoo7Wh9aty0tDBdt8CkwoJedd-bbi?usp=sharing',
-        F13:  'https://drive.google.com/drive/folders/14i873c0LQENb_O_6vsGISQsxonO1BEDj?usp=sharing',
-        F16:  'https://drive.google.com/drive/folders/12fY1QcORExwPcFH_GVZhM8FcTimul-jU?usp=sharing',
-        F42:  'https://drive.google.com/drive/folders/12EhLZW0etEC2eX3t1QPSlOQI86v3YBJh?usp=sharing',
-        F55:  'https://drive.google.com/drive/folders/1hNL663CCzPXi6uChKaXEVf3yc6VpBST8?usp=sharing',
-        F201: 'https://drive.google.com/drive/folders/19fiHd3JljzATXPGSb944Ob8O0C-6qGWD?usp=sharing',
-        FlameTreater:  'https://drive.google.com/drive/folders/1SNnpyf1PDYRcZAoSDNYBmPTchnuvSYmR?usp=sharing',
-        MainBlending:  'https://drive.google.com/drive/folders/1VAsJrBLZshXFI_6HzhCIL9SjqbGqP7E2?usp=sharing',
-        MainLoading:   'https://drive.google.com/drive/folders/1ppVLuY4cHoSJq12iq9_cEPDWaoR6VUei?usp=sharing',
-        ScadaPC1PC2:   'https://drive.google.com/drive/folders/1Lp0bYwOoRJnCxE1WcPonfHgVf5RSH6u5?usp=sharing',
-        SoftalTreater: 'https://drive.google.com/drive/folders/1qEx6-8WRo4QEKsjO5wmtHlPoPfTN5HR9?usp=sharing',
-        TDOBruckpanel: 'https://drive.google.com/drive/folders/1mlAJeh3JdacXibpfr9NBGspvtNSpoxcZ?usp=sharing',
-        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1xqzHfOX-2xa5iCWIigus_ZtSfPK37pnP?usp=sharing'
-      },
-      Line2: {
-        F12:  'https://drive.google.com/drive/folders/1MOg8It7DghhjMPjUdPTeyjbts-K7RCj3?usp=sharing',
-        F13:  'https://drive.google.com/drive/folders/1cw7rWWhM-h1Q_fNGW5l6IzNWttKb91mS?usp=sharing',
-        F16:  'https://drive.google.com/drive/folders/1rjGW78fMciI3ZhbjT_JU5PhRj79BHNJj?usp=sharing',
-        F42:  'https://drive.google.com/drive/folders/1OttyO_Uk4rQisi_M8UwYHe7ZgGzErf5r?usp=sharing',
-        F55:  'https://drive.google.com/drive/folders/1I8XypN9MpQuxRWKMiZi612gc9iL6w5Ds?usp=sharing',
-        F201: 'https://drive.google.com/drive/folders/1bK9TyVJYjDO4CQXpAJgpQpLyNAKw6w54?usp=sharing',
-        FlameTreater:  'https://drive.google.com/drive/folders/1S9Mzbx7r46z0GAk7h7R5YD0TCSG8gQWk?usp=sharing',
-        MainBlending:  'https://drive.google.com/drive/folders/1KywwO5cSHbrM9GhllLpIg-1NQZ2krp6H?usp=sharing',
-        MainLoading:   'https://drive.google.com/drive/folders/1aCY1gUZyfNaVAzFaU43cvv5V3MZUmxe7?usp=sharing',
-        ScadaPC3PC4:   'https://drive.google.com/drive/folders/1QVcuAic2-Ga2s5Pb_RdWOjrpsEIxoSYA?usp=sharing',
-        SoftalTreater: 'https://drive.google.com/drive/folders/1IxbErY8lF8IpV97Y6HtL2STe99dpFHVR?usp=sharing',
-        TDOBruckpanel: 'https://drive.google.com/drive/folders/1FbXqingTcAdaIa7pj3fIBhseShuHQ1rs?usp=sharing',
-        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1_yZfO4H7qoHHL6D8E9x0I6Z_fjpp4l7q?usp=sharing'
-      },
-      Line3: {
-        F12:  'https://drive.google.com/drive/folders/1J1FDGMU1oSsFXBQYwYNQnsnETmgMqzIF?usp=sharing',
-        F13:  'https://drive.google.com/drive/folders/1AuHXv1zkGWq1alUudBpqtTKL5afj3dww?usp=sharing',
-        F16:  'https://drive.google.com/drive/folders/1EI3PvRbv-iIGRb-sX1sqMjBAataaxpkO?usp=sharing',
-        F42:  'https://drive.google.com/drive/folders/1XRi0Tw6f2oq_x_d4QNcslHp-jZ__OVH_?usp=sharing',
-        F55:  'https://drive.google.com/drive/folders/1Qj0sMFX8r4Ma6mdZOfUwN1idFUj3N_M1?usp=sharing',
-        F201: 'https://drive.google.com/drive/folders/1KgV_VN0XlqmdnIM5vbPifdiPMWYpvWmc?usp=sharing',
-        FlameTreater:  'https://drive.google.com/drive/folders/1kybXlTN449z2TGa55acsASTntk1oMMRt?usp=sharing',
-        MainBlending:  'https://drive.google.com/drive/folders/1HO4VvGrlizBuxDQt2-aHLgGe7HTxBFjR?usp=sharing',
-        MainLoading:   'https://drive.google.com/drive/folders/1i-7ih-rfeHT5snZLu5oId6sT2BG9xj52?usp=sharing',
-        ScadaPC5PC6:   'https://drive.google.com/drive/folders/1CeaMxupbXTmQ4GZbuogEIAjBB6uCLnAb?usp=sharing',
-        SoftalTreater: 'https://drive.google.com/drive/folders/18S8v2Xh4xJZyiHm_9uwMm6-k39xa-Db_?usp=sharing',
-        TDOBruckpanel: 'https://drive.google.com/drive/folders/1RwLyQ-6CYFMbqiTbQnXvllQCx18BkSua?usp=sharing',
-        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1qSb8IUbyskgrQt8jj8i_FVgbSaqTMyw8?usp=sharing'
-      },
-      Line4: {
-        F12:  'https://drive.google.com/drive/folders/1jr7GiTRAq-x5jU4_xJS0Mm8jFJ_pjviL?usp=sharing',
-        F13:  'https://drive.google.com/drive/folders/1KxYwuqPNMjR4Yx1hez1XKDAmJ75O6ms7?usp=sharing',
-        F16:  'https://drive.google.com/drive/folders/1TucxT8luoPl3bt-ZB-V_-jGyAjVEYBiV?usp=sharing',
-        F42:  'https://drive.google.com/drive/folders/1GhbC4C6VbbnRivOC7nLqyx3MHxrVojpl?usp=sharing',
-        F55:  'https://drive.google.com/drive/folders/1DZ2cwLgLjWbtq3UDzbIqWQPOkwc5B2tV?usp=sharing',
-        F201: 'https://drive.google.com/drive/folders/12AtVUT5m6b4tYhNDuTyHTQG7bqkQsC-K?usp=sharing',
-        FlameTreater:  'https://drive.google.com/drive/folders/1tJa6cidGd_jnyQFv4tAWsdb-GQeVtsFF?usp=sharing',
-        MainBlending:  'https://drive.google.com/drive/folders/1JKBYVve6DpdDXW4GXjx0ccMLU9TEj-Fw?usp=sharing',
-        MainLoading:   'https://drive.google.com/drive/folders/1bIcOGqr9r-xRwEQf6GXb_n-p4KeX7u7_?usp=sharing',
-        ScadaPC7PC8:   'https://drive.google.com/drive/folders/1gCwSkxVAg-64tlLRMHvDhNWgoQYmKRTK?usp=sharing',
-        SoftalTreater: 'https://drive.google.com/drive/folders/14WMNIQ3TwQ_e0DaSDZ2MS9yrZKIKfuNX?usp=sharing',
-        TDOBruckpanel: 'https://drive.google.com/drive/folders/1vevMWNfXb_RZq1ur8_avkUe9xamveNvz?usp=sharing',
-        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1imnJYm7Zq4eOFPpECu21_NtoKKLOdpjG?usp=sharing'
-      },
-      Reclaim: {
-        XRO1: 'https://drive.google.com/drive/folders/16UrOueEYpUX0sCJy9ofQnchOHuRd00KI?usp=sharing',
-        XRO2: 'https://drive.google.com/drive/folders/1tZQuk9hzqUrxxf1H3rjti5KxP1bj9iSy?usp=sharing',
-        XRO3: 'https://drive.google.com/drive/folders/1g8cdW0StRIGv2fHt_iQnUOagFejsIrlP?usp=sharing'
-      }
-    };
-   
 
     function setModule(title, sub){
       if (titleEl) titleEl.textContent = title;
@@ -1022,25 +856,6 @@
           return;
         }
 
-        // Program Backup parent
-        if (role === 'backup-parent'){
-          if (!backupPanel) return;
-          const wasOpen = backupPanel.classList.contains('open');
-
-          activateNav(btn);
-          closeAllSubPanels();
-
-          if (!wasOpen) {
-            backupPanel.classList.add('open');
-          }
-
-          setModule(
-            btn.dataset.title || 'Program Backup',
-            btn.dataset.sub   || 'Select line and section to open backup.'
-          );
-          return;
-        }
-
         // Maintenance parent
         if (role === 'maintenance-parent'){
           if (!maintenancePanel) return;
@@ -1060,7 +875,7 @@
           return;
         }
 
-        // 其他一般按鈕：Home / PC Manager
+        // 其他一般按鈕：Home / PC Manager / Records / Report
         const src = btn.dataset.src;
         if (!src) return;
 
@@ -1115,55 +930,7 @@
       });
     });
 
-    // Program Backup：Line1~4 / Reclaim
-    backupLineBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const lineKey = btn.getAttribute('data-line') || 'Line1';
-        currentBackupLine = lineKey;
-        backupLineBtns.forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-
-    // Program Backup：Section / System → 偽 iframe + 實際開 Google Drive
-    backupSecBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const sectionKey   = btn.getAttribute('data-section');
-        const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-        if (!sectionKey) return;
-
-        const lineMap = BackupUrlMap[currentBackupLine] || {};
-        const driveUrl = lineMap[sectionKey];
-
-        if (!driveUrl) {
-          alert('No backup URL for ' + currentBackupLine + ' / ' + sectionKey);
-          return;
-        }
-
-        const loaderUrl =
-          'GoogleDriveLoader.html'
-          + '?line=' + encodeURIComponent(currentBackupLine)
-          + '&section=' + encodeURIComponent(sectionKey)
-          + '&url=' + encodeURIComponent(driveUrl);
-
-        if (frame) {
-          frame.src = loaderUrl;
-        }
-
-        const lineLabel = formatLineLabel(currentBackupLine);
-        setModule(
-          'Program Backup – ' + lineLabel + ' – ' + sectionLabel,
-          'Opening Google Drive backup…'
-        );
-
-        if (panel && panel.classList.contains('open')){
-          panel.classList.remove('open');
-          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-        }
-      });
-    });
-    
-    // 🔹 Maintenance：改成開 Maintenance.html（裡面再用 pdf.js）
+    // 🔹 Maintenance：開 Maintenance.html（裡面再用 pdf.js）
     maintenanceSecBtns.forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
