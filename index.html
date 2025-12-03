@@ -100,6 +100,29 @@
     }
     .brand-sub{font-size:13px;color:var(--text-soft)}
 
+    /* 中間名言區塊 */
+    .top-quote{
+      flex:1;
+      text-align:center;
+      padding:0 16px;
+      max-width:520px;
+    }
+    .quote-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--text-soft);
+      margin-bottom:4px;
+    }
+    .quote-text{
+      font-size:13px;
+      color:var(--text);
+      font-style:italic;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
     /* Modules 按鈕（topbar 左下角） */
     .menu-button{
       border-radius:999px;
@@ -436,6 +459,13 @@
         font-size:12px;
       }
 
+      .top-quote{
+        width:100%;
+        text-align:left;
+        padding:4px 0 0;
+        order:3;
+      }
+
       .top-meta{
         width:100%;
         justify-content:flex-start;
@@ -450,7 +480,7 @@
 
       /* 手機版 Modules 按鈕：放在 topbar 最下面，佔滿一行 */
       .menu-button{
-        order:3;             /* 整個 topbar 的最後一個 */
+        order:4;             /* 整個 topbar 的最後一個 */
         align-self:stretch;
         justify-content:center;
         text-align:center;
@@ -493,6 +523,13 @@
           <span class="menu-label">Modules</span>
         </button>
       </div>
+
+      <!-- 中間名言 -->
+      <div class="top-quote">
+        <div class="quote-label">Quote of the moment</div>
+        <div class="quote-text" id="topQuote">Loading…</div>
+      </div>
+
       <div class="top-meta">
         <div class="pill designer">
           <span class="pill-label">Designed by</span>
@@ -741,6 +778,87 @@
       updateModDate();
     }
   })();
+
+  // 名言輪播：50 句，每 2 分鐘換一個
+  <script>
+  // 名言輪播：50 句，每 2 分鐘換一個
+  (function(){
+    const QUOTE_INTERVAL_MS = 120000; // 2 分鐘
+    const el = document.getElementById('topQuote');
+    if (!el) return;
+
+    const quotes = [
+      "Tell me and I forget. Teach me and I remember. Involve me and I learn. — Benjamin Franklin",
+      "A pessimist is one who makes difficulties of his opportunities and an optimist is one who makes opportunities of his difficulties. — Harry S. Truman",
+      "Always remember that you are absolutely unique. Just like everyone else. — Margaret Mead",
+      "An unexamined life is not worth living. — Socrates",
+      "Challenges are what make life interesting and overcoming them is what makes life meaningful. — Joshua J. Marine",
+      "Don’t judge each day by the harvest you reap but by the seeds that you plant. — Robert Louis Stevenson",
+      "Education is not the filling of a pail but the lighting of a fire. — William Butler Yeats",
+      "Every man is a poet when he is in love. — Plato",
+      "Genius only means hard-working all one’s life. — Mendeleyev",
+      "Happiness lies not in the mere possession of money; it lies in the joy of achievement, in the thrill of creative effort. — Franklin Roosevelt",
+      "I am a slow walker, but I never walk backwards. — Abraham Lincoln",
+      "I can’t change the direction of the wind, but I can adjust my sails to always reach my destination. — Jimmy Dean",
+      "I didn’t fail the test. I just found 100 ways to do it wrong. — Benjamin Franklin",
+      "I disapprove of what you say, but I will defend to the death your right to say it. — Voltaire",
+      "If I looked compared to others far, is because I stand on giant’s shoulder. — Newton",
+      "If you can’t fly, then run; if you can’t run, then walk; if you can’t walk, then crawl; but whatever you do, you have to keep moving forward. — Martin Luther King",
+      "If you don’t like something, change it; if you can’t change it, change the way you think about it. — Mary Engelbreit",
+      "If you have no critics, you will likely have no success. — Malcolm S. Forbes",
+      "If you judge people, you have no time to love them. — Mother Teresa",
+      "If you look at what you have in life, you’ll always have more. If you look at what you don’t have in life, you’ll never have enough. — Oprah Winfrey",
+      "Imagination is more important than knowledge. — Albert Einstein",
+      "Intelligence plus character – that is the goal of real education. — Martin Luther King",
+      "It is not how much you do, but how much love you put into the doing that matters. — Mother Teresa",
+      "Knowledge is a treasure, but practice is the key to it. — Thomas Fuller",
+      "Knowledge is power. — Francis Bacon",
+      "Life is like riding a bicycle. To keep your balance you must keep moving. — Albert Einstein",
+      "Living without an aim is like sailing without a compass. — Alexandre Dumas",
+      "Love the life you live. Live the life you love. — Bob Marley",
+      "Love well, whip well. — Benjamin Franklin",
+      "Never argue with stupid people, they will drag you down to their level and then beat you with experience. — Mark Twain",
+      "Success is not final, failure is not fatal: it is the courage to continue that counts. — Winston Churchill",
+      "The best and most beautiful things in the world cannot be seen or even touched. They must be felt with the heart. — Helen Keller",
+      "The first wealth is health. — Ralph Waldo Emerson",
+      "The greatest glory in living lies not in never falling, but in rising every time we fall. — Nelson Mandela",
+      "The only thing we have to fear is fear itself. — Franklin Roosevelt",
+      "The only way to do great work is to love what you do. If you haven’t found it yet, keep looking. Don’t settle. — Steve Jobs",
+      "The ordinary focus on what they’re getting. The extraordinary think about who they’re becoming. — Robin Sharma",
+      "The past cannot be changed. The future is yet in your power. — Mary Pickford",
+      "The purpose of our lives is to be happy. — Dalai Lama",
+      "The way to get started is to quit talking and begin doing. — Walt Disney",
+      "There are seven things that will destroy us: wealth without work; pleasure without conscience; knowledge without character; religion without sacrifice; politics without principle; science without humanity; business without ethics. — Mahatma Gandhi",
+      "Those who dare to fail miserably can achieve greatly. — John F. Kennedy",
+      "Try not to become a man of success but rather try to become a man of value. — Albert Einstein",
+      "Until we can manage time, we can manage nothing else. — Peter F. Drucker",
+      "We must accept finite disappointment, but we must never lose infinite hope. — Martin Luther King",
+      "When the whole world is silent, even one voice becomes powerful. — Malala",
+      "When we are saying this cannot be accomplished, this cannot be done, then we are short-changing ourselves. My brain, it cannot process failure. It will not process failure. — Kobe Bryant",
+      "Where there is a will, there is a way. — Thomas Edison",
+      "You have to believe in yourself. That’s the secret of success. — Charles Chaplin",
+      "You must be the change you want to see in the world. — Gandhi"
+    ];
+
+    let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
+    if (isNaN(index) || index < 0 || index >= quotes.length) {
+      index = 0;
+    }
+
+    function showQuote() {
+      el.textContent = quotes[index];
+      localStorage.setItem('ms-quote-idx', String(index));
+    }
+
+    showQuote();
+
+    setInterval(function(){
+      index = (index + 1) % quotes.length;
+      showQuote();
+    }, QUOTE_INTERVAL_MS);
+  })();
+</script>
+
 
   // ---- 子頁面同步主頁 style ----
   (function syncStyleToIframe(){
