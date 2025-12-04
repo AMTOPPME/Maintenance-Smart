@@ -812,13 +812,65 @@
   }
 
   // 現在先不對伺服器做編輯/刪除，只在本機改
-  async function updateOnServer(rec){
-    console.log('Update on server not implemented yet. Local-only edit.', rec);
+ async function updateOnServer(rec){
+  try {
+    // 從前端 record 映射成後端資料表欄位
+    const payload = {
+      date:          rec.Date || null,
+      line:          rec.line || null,
+      section:       rec.section || null,
+      asset_id:      rec.asset_id || null,
+      category:      rec.category || null,
+      downtime_min:  Number(rec.downtime_min || 0),
+      root_cause:    rec.root_cause || null,
+      action_taken:  rec.action_taken || null,
+      location_from: rec.location_from || null,
+      location_to:   rec.location_to || null
+    };
+
+    const res = await fetch(`${LOGS_ENDPOINT}/${encodeURIComponent(rec.id)}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      console.error('Update on server failed, status =', res.status);
+      return;
+    }
+
+    const data = await res.json();
+    console.log('Update on server ok:', data);
+  } catch (err) {
+    console.error('Update on server error:', err);
   }
+}
+
 
   async function deleteOnServer(id){
-    console.log('Delete on server not implemented yet. Local-only delete.', id);
+  try {
+    const res = await fetch(`${LOGS_ENDPOINT}/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!res.ok) {
+      console.error('Delete on server failed, status =', res.status);
+      return;
+    }
+
+    const data = await res.json();
+    console.log('Delete on server ok:', data);
+  } catch (err) {
+    console.error('Delete on server error:', err);
   }
+}
+
 
   // ===== 自動產生 filter 選項 =====
   function populateFilterOptions(){
