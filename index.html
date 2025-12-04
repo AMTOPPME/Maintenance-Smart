@@ -102,12 +102,11 @@
     .brand-sub{font-size:13px;color:var(--text-soft)}
 
     /* 中間名言區塊 */
-    .top-quote{
-      flex:1;
-      text-align:center;
-      padding:0 16px;
-      max-width:520px;
+    .top-quote {
+      text-align: center;    /* 讓標題居中 */
+      justify-self: center;  /* 在 grid 中置中 */
     }
+
     .quote-label{
       font-size:11px;
       text-transform:uppercase;
@@ -120,11 +119,15 @@
       font-weight: 500;
       color: #3b82f6;
       font-style: italic;
-      white-space: normal;      /* ✅ 允許自動換行 */
-      overflow: visible;        /* ✅ 不要裁切內容 */
-      text-overflow: clip;      /* 或直接刪掉這行也可以 */
-      word-wrap: break-word;    /* 句子很長時自動斷行 */
+
+      max-width: 720px;      /* ⚠️ 加這行：限制寬度，讓排版好看 */
+      margin: 0 auto;        /* ⚠️ 加這行：整段水平置中 */
+
+      text-align: left;      /* ✔ 每行靠左 */
+      white-space: normal;
+      word-wrap: break-word;
     }
+
 
 
 
