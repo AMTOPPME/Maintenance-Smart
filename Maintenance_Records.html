@@ -681,6 +681,9 @@
   <script>
   const STORAGE_KEY   = 'ms-maintenance-logs';
 
+  // 🔑 Delete 密碼（自己改）
+  const DELETE_PASSWORD = '1234';
+
   // ✅ 連到 Render 雲端的 Node + SQLite 後端
   const API_BASE_URL = 'https://maintenance-backend-kh4z.onrender.com';
   const LOGS_ENDPOINT = API_BASE_URL + '/logs';
@@ -950,6 +953,7 @@
 
   function renderTable(){
     const tbody = document.getElementById('recordsBody');
+    thead = document.querySelector('#recordsTable thead');
     const table = document.getElementById('recordsTable');
     const empty = document.getElementById('emptyState');
 
@@ -1078,7 +1082,17 @@
   }
 
   async function deleteRecord(id){
+    // 🔑 第一關：密碼
+    const input = prompt('Enter password to delete this record:');
+    if (input === null) return; // 使用者按取消
+    if (input !== DELETE_PASSWORD){
+      alert('Incorrect password. Delete cancelled.');
+      return;
+    }
+
+    // 第二關：原本 confirm
     if (!confirm('Delete this record from local cache?')) return;
+
     records = records.filter(r=>r.id !== id);
     saveRecordsToLocal();
     populateFilterOptions();
