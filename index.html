@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,17 +56,13 @@
       border-radius:22px;
       border:1px solid var(--border-subtle);
       box-shadow:var(--shadow-soft-md);
-
-      /* 3 欄：左 / 中 / 右 */
-      display:grid;
-      grid-template-columns:auto 1fr auto;
-      column-gap:14px;
-      align-items:flex-start;   /* ✅ 讓三個區塊都貼齊上緣 */
-
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-start;
       margin-bottom:18px;
       transition:background .25s ease,box-shadow .25s ease,border-color .25s ease;
     }
-
 
     /* 左側：品牌 + Modules 按鈕（上下排列） */
     .top-left{
@@ -104,30 +101,30 @@
     }
     .brand-sub{font-size:13px;color:var(--text-soft)}
 
-   /* 中間名言區塊 */
+    /* 中間名言區塊 */
     .top-quote{
+      flex:1;
       text-align:center;
-      justify-self:center;   /* 在 grid 中間那欄置中 */
+      padding:0 16px;
+      max-width:520px;
     }
-
-    .quote-label {
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-soft);
-      margin-bottom: 4px;
+    .quote-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--text-soft);
+      margin-bottom:4px;
     }
-
-    .quote-text{
-      font-size: 18px;
-      font-weight: 500;
-      color: #3b82f6;        /* 你現在用的藍色 */
-      font-style: italic;
-      white-space: normal;
-      overflow: visible;
-      text-overflow: clip;
-      word-wrap: break-word;
-    }
+   .quote-text{
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+  font-style: italic;
+  white-space: normal;      /* ✅ 允許自動換行 */
+  overflow: visible;        /* ✅ 不要裁切內容 */
+  text-overflow: clip;      /* 或直接刪掉這行也可以 */
+  word-wrap: break-word;    /* 句子很長時自動斷行 */
+}
 
 
 
@@ -160,12 +157,8 @@
       align-items:center;
       font-size:11px;
       flex-wrap:wrap;
-
       justify-content:flex-end;
-      justify-self:end;        /* ✅ 在 grid 中靠右 */
-      align-self:flex-start;   /* ✅ 在 topbar 中靠上 */
     }
-
     .pill{
       padding:5px 11px;
       border-radius:999px;
