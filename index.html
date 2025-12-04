@@ -55,10 +55,13 @@
       border-radius:22px;
       border:1px solid var(--border-subtle);
       box-shadow:var(--shadow-soft-md);
-      display:flex;
-      justify-content:space-between;
-      gap:14px;
-      align-items:flex-start;
+
+      /* ✅ 改成 3 欄 Grid：左 / 中 / 右 */
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      align-items:center;
+      column-gap:14px;
+
       margin-bottom:18px;
       transition:background .25s ease,box-shadow .25s ease,border-color .25s ease;
     }
@@ -100,36 +103,31 @@
     }
     .brand-sub{font-size:13px;color:var(--text-soft)}
 
-    /* 中間名言區塊 */
-    .top-quote-bar {
-  width: 100%;
-  display: flex;
-  justify-content: center;   /* 整塊在整個畫面中水平置中 */
-}
+   /* 中間名言區塊 */
+    .top-quote{
+      text-align:center;
+      justify-self:center;   /* 在 grid 中間那欄置中 */
+    }
 
-.top-quote-inner {
-  max-width: 960px;          /* 可調整：名言區最大寬度 */
-  text-align: center;        /* 文字置中 */
-}
+    .quote-label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 4px;
+    }
 
-.quote-label {
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--text-soft);
-  margin-bottom: 4px;
-}
+    .quote-text{
+      font-size: 18px;
+      font-weight: 500;
+      color: #3b82f6;        /* 你現在用的藍色 */
+      font-style: italic;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      word-wrap: break-word;
+    }
 
-.quote-text{
-  font-size: 18px;
-  font-weight: 500;
-  color: #3b82f6;           /* 前面幫你挑的藍色 */
-  font-style: italic;
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
-  word-wrap: break-word;
-}
 
 
     /* Modules 按鈕（topbar 左下角） */
