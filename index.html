@@ -101,30 +101,35 @@
     .brand-sub{font-size:13px;color:var(--text-soft)}
 
     /* 中間名言區塊 */
-    .top-quote{
-      flex:1;
-      text-align:center;
-      padding:0 16px;
-      max-width:520px;
-    }
-    .quote-label{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:var(--text-soft);
-      margin-bottom:4px;
-    }
-   .quote-text{
-  font-size: 18px;
-  font-weight: 500;
-  color: #3b82f6;
-  font-style: italic;
-  white-space: normal;      /* ✅ 允許自動換行 */
-  overflow: visible;        /* ✅ 不要裁切內容 */
-  text-overflow: clip;      /* 或直接刪掉這行也可以 */
-  word-wrap: break-word;    /* 句子很長時自動斷行 */
+    .top-quote-bar {
+  width: 100%;
+  display: flex;
+  justify-content: center;   /* 整塊在整個畫面中水平置中 */
 }
 
+.top-quote-inner {
+  max-width: 960px;          /* 可調整：名言區最大寬度 */
+  text-align: center;        /* 文字置中 */
+}
+
+.quote-label {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 4px;
+}
+
+.quote-text{
+  font-size: 18px;
+  font-weight: 500;
+  color: #3b82f6;           /* 前面幫你挑的藍色 */
+  font-style: italic;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  word-wrap: break-word;
+}
 
 
     /* Modules 按鈕（topbar 左下角） */
