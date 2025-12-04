@@ -56,15 +56,16 @@
       border:1px solid var(--border-subtle);
       box-shadow:var(--shadow-soft-md);
 
-      /* ✅ 改成 3 欄 Grid：左 / 中 / 右 */
+      /* 3 欄：左 / 中 / 右 */
       display:grid;
       grid-template-columns:auto 1fr auto;
-      align-items:center;
       column-gap:14px;
+      align-items:flex-start;   /* ✅ 讓三個區塊都貼齊上緣 */
 
       margin-bottom:18px;
       transition:background .25s ease,box-shadow .25s ease,border-color .25s ease;
     }
+
 
     /* 左側：品牌 + Modules 按鈕（上下排列） */
     .top-left{
@@ -159,8 +160,12 @@
       align-items:center;
       font-size:11px;
       flex-wrap:wrap;
+
       justify-content:flex-end;
+      justify-self:end;        /* ✅ 在 grid 中靠右 */
+      align-self:flex-start;   /* ✅ 在 topbar 中靠上 */
     }
+
     .pill{
       padding:5px 11px;
       border-radius:999px;
