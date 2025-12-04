@@ -115,14 +115,16 @@
       margin-bottom:4px;
     }
    .quote-text{
-      font-size: 16px;        /* 原本約 13px → 提升到 16px */
-      font-weight: 500;
-      color: var(--text);
-      font-style: italic;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  font-style: italic;
+  white-space: normal;      /* ✅ 允許自動換行 */
+  overflow: visible;        /* ✅ 不要裁切內容 */
+  text-overflow: clip;      /* 或直接刪掉這行也可以 */
+  word-wrap: break-word;    /* 句子很長時自動斷行 */
+}
+
 
 
     /* Modules 按鈕（topbar 左下角） */
