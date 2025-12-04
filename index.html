@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -868,264 +869,293 @@
 </script>
 
 <script>
-// 切換模組 + Line Schematic / Maintenance 兩層選單
-(function(){
-  const frame   = document.getElementById('mainFrame');
-  const titleEl = document.getElementById('moduleTitle');
-  const subEl   = document.getElementById('moduleSub');
-  const panel   = document.getElementById('navPanel');
-  const menuBtn = document.getElementById('menuButton');
-  const buttons = document.querySelectorAll('.nav-item-btn');
+  // ---- 子頁面同步主頁 style ----
+  (function syncStyleToIframe(){
+    const frame = document.getElementById("mainFrame");
 
-  const schematicPanel   = document.getElementById('schematicPanel');
-  const schematicLineBtns= document.querySelectorAll('.schematic-line-btn');
-  const schematicSecBtns = document.querySelectorAll('.schematic-sec-btn');
-  let currentSchematicLine = 'Line1';
+    function applyStyleToFrame(){
+      if (!frame || !frame.contentDocument) return;
+      const style = document.documentElement.getAttribute("data-style") || "blue";
+      const frameHtml = frame.contentDocument.documentElement;
+      frameHtml.setAttribute("data-style", style);
+    }
 
-  const maintenancePanel = document.getElementById('maintenancePanel');
-  const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
+    if (frame){
+      frame.addEventListener("load", function(){
+        setTimeout(applyStyleToFrame, 30);
+      });
+    }
 
-  // 🔸 判斷是不是觸控裝置（手機 / 平板）
-  const isTouchDevice =
-    ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    window._msSyncFrameStyle = applyStyleToFrame;
+  })();
 
-  // 🔹 共用 helper：active + 收起所有 sub panel
-  function activateNav(btn){
-    buttons.forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-  }
+  // Modules 面板開關
+  (function(){
+    const menuBtn = document.getElementById('menuButton');
+    const panel = document.getElementById('navPanel');
 
-  function closeAllSubPanels(){
-    if (schematicPanel)   schematicPanel.classList.remove('open');
-    if (maintenancePanel) maintenancePanel.classList.remove('open');
-  }
+    function togglePanel(){
+      const isOpen = panel.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
 
-  function setModule(title, sub){
-    if (titleEl) titleEl.textContent = title;
-    if (subEl)   subEl.textContent   = sub;
-  }
+    if (menuBtn && panel){
+      menuBtn.addEventListener('click', togglePanel);
+    }
 
-  function formatLineLabel(lineKey){
-    if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
-    return lineKey;
-  }
+    // 點擊頁面其他地方就關閉（桌機用，比較乾淨）
+    document.addEventListener('click', (e)=>{
+      if (!panel.classList.contains('open')) return;
+      const insidePanel = panel.contains(e.target);
+      const insideBtn   = menuBtn.contains(e.target);
+      if (!insidePanel && !insideBtn){
+        panel.classList.remove('open');
+        menuBtn.setAttribute('aria-expanded','false');
+      }
+    });
+  })();
 
-  // Schematic 檔名規則：Line-1-4-Schematic.html?line=1&sec=F13
-  function buildSchematicFileName(lineKey, sectionKey){
-    const n = lineKey.replace('Line',''); // Line1 -> 1
-    return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
-  }
+  // 切換模組 + Line Schematic / Maintenance 兩層選單
+  (function(){
+    const frame   = document.getElementById('mainFrame');
+    const titleEl = document.getElementById('moduleTitle');
+    const subEl   = document.getElementById('moduleSub');
+    const panel   = document.getElementById('navPanel');
+    const menuBtn = document.getElementById('menuButton');
+    const buttons = document.querySelectorAll('.nav-item-btn');
 
-  // 預設主模組切換（Home / PC Manager 等）
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const role = btn.dataset.role || '';
+    const schematicPanel   = document.getElementById('schematicPanel');
+    const schematicLineBtns= document.querySelectorAll('.schematic-line-btn');
+    const schematicSecBtns = document.querySelectorAll('.schematic-sec-btn');
+    let currentSchematicLine = 'Line1';
 
-      // Line Schematic parent
-      if (role === 'schematic-parent'){
-        if (!schematicPanel) return;
-        const wasOpen = schematicPanel.classList.contains('open');
+    const maintenancePanel = document.getElementById('maintenancePanel');
+    const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
+
+    // 🔹 共用 helper：active + 收起所有 sub panel
+    function activateNav(btn){
+      buttons.forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    function closeAllSubPanels(){
+      if (schematicPanel)   schematicPanel.classList.remove('open');
+      if (maintenancePanel) maintenancePanel.classList.remove('open');
+    }
+
+    function setModule(title, sub){
+      if (titleEl) titleEl.textContent = title;
+      if (subEl)   subEl.textContent   = sub;
+    }
+
+    function formatLineLabel(lineKey){
+      if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
+      return lineKey;
+    }
+
+    // Schematic 檔名規則：Line-1-4-Schematic.html?line=1&sec=F13
+    function buildSchematicFileName(lineKey, sectionKey){
+      const n = lineKey.replace('Line',''); // Line1 -> 1
+      return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
+    }
+
+    // 預設主模組切換（Home / PC Manager 等）
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const role = btn.dataset.role || '';
+
+        // Line Schematic parent
+        if (role === 'schematic-parent'){
+          if (!schematicPanel) return;
+          const wasOpen = schematicPanel.classList.contains('open');
+
+          activateNav(btn);
+          closeAllSubPanels();
+
+          if (!wasOpen) {
+            schematicPanel.classList.add('open');
+          }
+
+          setModule(
+            btn.dataset.title || 'Line Schematic',
+            btn.dataset.sub   || 'Select line and section.'
+          );
+          return;
+        }
+
+        // Maintenance parent
+        if (role === 'maintenance-parent'){
+          if (!maintenancePanel) return;
+          const wasOpen = maintenancePanel.classList.contains('open');
+
+          activateNav(btn);
+          closeAllSubPanels();
+
+          if (!wasOpen) {
+            maintenancePanel.classList.add('open');
+          }
+
+          setModule(
+            btn.dataset.title || 'Maintenance',
+            btn.dataset.sub   || 'Open maintenance SOP PDFs.'
+          );
+          return;
+        }
+
+        // 其他一般按鈕：Home / PC Manager / Records / Report
+        const src = btn.dataset.src;
+        if (!src) return;
 
         activateNav(btn);
-        closeAllSubPanels();
 
-        if (!wasOpen) {
-          schematicPanel.classList.add('open');
+        const title = btn.dataset.title || 'Module';
+        const sub   = btn.dataset.sub || '';
+        if (frame && src) frame.src = src;
+        setModule(title, sub);
+
+        if (panel && panel.classList.contains('open')){
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
         }
 
-        setModule(
-          btn.dataset.title || 'Line Schematic',
-          btn.dataset.sub   || 'Select line and section.'
-        );
-        return;
-      }
-
-      // Maintenance parent
-      if (role === 'maintenance-parent'){
-        if (!maintenancePanel) return;
-        const wasOpen = maintenancePanel.classList.contains('open');
-
-        activateNav(btn);
         closeAllSubPanels();
-
-        if (!wasOpen) {
-          maintenancePanel.classList.add('open');
-        }
-
-        setModule(
-          btn.dataset.title || 'Maintenance',
-          btn.dataset.sub   || 'Open maintenance SOP PDFs.'
-        );
-        return;
-      }
-
-      // 其他一般按鈕：Home / PC Manager / Records / Report
-      const src = btn.dataset.src;
-      if (!src) return;
-
-      activateNav(btn);
-
-      const title = btn.dataset.title || 'Module';
-      const sub   = btn.dataset.sub || '';
-      if (frame && src) frame.src = src;
-      setModule(title, sub);
-
-      if (panel && panel.classList.contains('open')){
-        panel.classList.remove('open');
-        if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-      }
-
-      closeAllSubPanels();
-    });
-  });
-
-  // Line Schematic：Line 1~4
-  schematicLineBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const lineKey = btn.getAttribute('data-line') || 'Line1';
-      currentSchematicLine = lineKey;
-      schematicLineBtns.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-  });
-
-  // Line Schematic：Section F12/F13/F16/F201
-  schematicSecBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const sectionKey   = btn.getAttribute('data-section');
-      const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-      if (!sectionKey) return;
-
-      const file = buildSchematicFileName(currentSchematicLine, sectionKey);
-      if (frame){
-        frame.src = file;
-      }
-
-      const lineLabel = formatLineLabel(currentSchematicLine);
-      setModule(
-        'Line Schematic – ' + lineLabel + ' – ' + sectionLabel,
-        'Schematic file: ' + file
-      );
-
-      if (panel && panel.classList.contains('open')){
-        panel.classList.remove('open');
-        if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-      }
-    });
-  });
-
-  // 🔹 Maintenance：開 Maintenance.html（裡面再用 pdf.js）
-  maintenanceSecBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
-      const label = btn.getAttribute('data-label') || key || '';
-      if (!key) return;
-
-      const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
-
-      if (frame){
-        frame.src = viewerUrl;
-      }
-
-      setModule(
-        'Maintenance – ' + label,
-        'PDF: ' + label
-      );
-
-      maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-
-      if (panel && panel.classList.contains('open')){
-        panel.classList.remove('open');
-        if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-      }
-    });
-  });
-
-  // =========================
-  // 🖱️ 桌機版：滑鼠移過去就展開子選單
-  // =========================
-  if (!isTouchDevice) {
-    const schematicGroup   = document.querySelector('.nav-group-schematic');
-    const maintenanceGroup = document.querySelector('.nav-group-maintenance');
-
-    let hoverTimer = null;
-    function scheduleClose(panelEl) {
-      if (!panelEl) return;
-      clearTimeout(hoverTimer);
-      hoverTimer = setTimeout(() => {
-        panelEl.classList.remove('open');
-      }, 200); // 0.2 秒緩衝
-    }
-
-    // --- Line Schematic hover ---
-    if (schematicGroup && schematicPanel) {
-      const schematicBtn = schematicGroup.querySelector(
-        '[data-role="schematic-parent"]'
-      );
-
-      schematicGroup.addEventListener('mouseenter', () => {
-        clearTimeout(hoverTimer);
-        closeAllSubPanels();
-        if (schematicBtn) {
-          activateNav(schematicBtn);
-        }
-        schematicPanel.classList.add('open');
-        setModule(
-          (schematicBtn && schematicBtn.dataset.title) || 'Line Schematic',
-          (schematicBtn && schematicBtn.dataset.sub)   || 'Select line and section.'
-        );
       });
+    });
 
-      schematicGroup.addEventListener('mouseleave', () => {
-        scheduleClose(schematicPanel);
+    // Line Schematic：Line 1~4
+    schematicLineBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const lineKey = btn.getAttribute('data-line') || 'Line1';
+        currentSchematicLine = lineKey;
+        schematicLineBtns.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Line Schematic：Section F12/F13/F16/F201
+    schematicSecBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const sectionKey   = btn.getAttribute('data-section');
+        const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+        if (!sectionKey) return;
+
+        const file = buildSchematicFileName(currentSchematicLine, sectionKey);
+        if (frame){
+          frame.src = file;
+        }
+
+        const lineLabel = formatLineLabel(currentSchematicLine);
+        setModule(
+          'Line Schematic – ' + lineLabel + ' – ' + sectionLabel,
+          'Schematic file: ' + file
+        );
+
+        if (panel && panel.classList.contains('open')){
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    });
+
+    // 🔹 Maintenance：開 Maintenance.html（裡面再用 pdf.js）
+    maintenanceSecBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
+        const label = btn.getAttribute('data-label') || key || '';
+        if (!key) return;
+
+        const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
+
+        if (frame){
+          frame.src = viewerUrl;
+        }
+
+        setModule(
+          'Maintenance – ' + label,
+          'PDF: ' + label
+        );
+
+        maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (panel && panel.classList.contains('open')){
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    });
+
+    // 🔹 Tags list：載入到右側 iframe，不開新分頁
+    const tagsLink = document.getElementById('tagsListLink');
+    if (tagsLink) {
+      tagsLink.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        if (frame) {
+          frame.src = 'F13_PLC_Tags list.html';
+        }
+
+        setModule('Tags List', 'PLC / SCADA Tag Reference');
+
+        if (panel && panel.classList.contains('open')) {
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+        }
       });
     }
+  })();
 
-    // --- Maintenance hover ---
-    if (maintenanceGroup && maintenancePanel) {
-      const maintenanceBtn = maintenanceGroup.querySelector(
-        '[data-role="maintenance-parent"]'
-      );
+  // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
+  (function(){
+    const STYLE_KEY = 'ms-style';
+    const root = document.documentElement;
+    const mascot = document.querySelector('.mascot');
+    const styles = ['blue', 'panther', 'hangyodon'];
 
-      maintenanceGroup.addEventListener('mouseenter', () => {
-        clearTimeout(hoverTimer);
-        closeAllSubPanels();
-        if (maintenanceBtn) {
-          activateNav(maintenanceBtn);
-        }
-        maintenancePanel.classList.add('open');
-        setModule(
-          (maintenanceBtn && maintenanceBtn.dataset.title) || 'Maintenance',
-          (maintenanceBtn && maintenanceBtn.dataset.sub)   || 'Open maintenance SOP PDFs.'
-        );
-      });
+    const themeConfig = {
+      blue: {
+        bgImage: ''                  // 用預設 CSS 漸層
+      },
+      panther: {
+        bgImage: 'url("pinkpanther.png")'
+      },
+      hangyodon: {
+        bgImage: 'url("hangyodon.png")'
+      }
+    };
 
-      maintenanceGroup.addEventListener('mouseleave', () => {
-        scheduleClose(maintenancePanel);
-      });
+    function applyStyle(style){
+      const s = themeConfig[style] ? style : 'blue';
+      root.setAttribute('data-style', s);
+      const cfg = themeConfig[s];
+
+      if (mascot){
+        mascot.style.backgroundImage = cfg.bgImage || '';
+      }
+
+      localStorage.setItem(STYLE_KEY, s);
+
+      if (window._msSyncFrameStyle){
+        setTimeout(window._msSyncFrameStyle, 30);
+      }
     }
-  }
 
-  // 🔹 Tags list：載入到右側 iframe，不開新分頁
-  const tagsLink = document.getElementById('tagsListLink');
-  if (tagsLink) {
-    tagsLink.addEventListener('click', function (e) {
-      e.preventDefault();
+    function cycleStyle(){
+      const current = root.getAttribute('data-style') || 'blue';
+      const idx = styles.indexOf(current);
+      const next = styles[(idx + 1) % styles.length];
+      applyStyle(next);
+    }
 
-      if (frame) {
-        frame.src = 'F13_PLC_Tags list.html';
-      }
+    const saved = localStorage.getItem(STYLE_KEY) || 'blue';
+    applyStyle(saved);
 
-      setModule('Tags List', 'PLC / SCADA Tag Reference');
-
-      if (panel && panel.classList.contains('open')) {
-        panel.classList.remove('open');
-        if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-})();
+    if (mascot){
+      mascot.style.cursor = 'pointer';
+      mascot.title = 'Click to change style';
+      mascot.addEventListener('click', cycleStyle);
+    }
+  })();
 </script>
 </body>
 </html>
