@@ -520,7 +520,7 @@
         <div>
           <h2>Maintenance records</h2>
           <div class="card-subtitle">
-            Logs are loaded from the <strong>SQLite backend</strong> first,
+            Logs are loaded from the <strong>Google Sheets backend (Apps Script)</strong> first,
             then cached in <strong>ms-maintenance-logs</strong> in this browser.
           </div>
         </div>
@@ -678,16 +678,15 @@
     })();
   </script>
 
-  <script>
+<script>
   const STORAGE_KEY   = 'ms-maintenance-logs';
 
   // 🔑 Delete 密碼（自己改）
   const DELETE_PASSWORD = '1234';
 
-  // ✅ 連到 Render 雲端的 Node + SQLite 後端
-  const API_BASE_URL = 'https://maintenance-backend-kh4z.onrender.com';
-  const LOGS_ENDPOINT = API_BASE_URL + '/logs';
-
+  // ✅ 改成連到 Google Apps Script Web App
+  const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbxJUFvlzTUGaAypG11pmmkC41dXmrvtQB6_gBu0GZMNH0Seu7TK_svF4QOH7eON-9rU/exec';
+  const LOGS_ENDPOINT = API_BASE_URL;   // 同一個網址，GET=讀取, POST=新增/修改/刪除
 
   let records   = [];
   let filtered  = [];
@@ -746,7 +745,7 @@
     const cat     = rec.category || '';
     const locFrom = rec.location_from || '';
     const locTo   = rec.location_to   || '';
-    const ts      = rec.timestamp || '';
+    const ts      = rec.timestamp || rec.created_at || '';
 
     let id = rec.id;
     if (!id){
@@ -793,7 +792,7 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
   }
 
-  // ===== Server API 呼叫 =====
+  // ===== Server API 呼叫：Google Apps Script /exec =====
   async function fetchServerLogs(){
     const res = await fetch(LOGS_ENDPOINT, {
       method: 'GET',
@@ -803,74 +802,83 @@
       throw new Error('Server error: ' + res.status);
     }
     const data = await res.json();
-    // 你的後端格式：{ ok:true, data:[...] }
+    // Apps Script 回傳格式：{ ok:true, data:[...] }
     if (data && data.ok && Array.isArray(data.data)) {
       return data.data.map((rec, idx)=> normalizeRecord(rec, idx));
     }
-    console.warn('Unexpected /logs response:', data);
+    console.warn('Unexpected /exec response:', data);
     return [];
   }
 
-  // 現在先不對伺服器做編輯/刪除，只在本機改
- async function updateOnServer(rec){
-  try {
-    // 從前端 record 映射成後端資料表欄位
-    const payload = {
-      date:          rec.Date || null,
-      line:          rec.line || null,
-      section:       rec.section || null,
-      asset_id:      rec.asset_id || null,
-      category:      rec.category || null,
-      downtime_min:  Number(rec.downtime_min || 0),
-      root_cause:    rec.root_cause || null,
-      action_taken:  rec.action_taken || null,
-      location_from: rec.location_from || null,
-      location_to:   rec.location_to || null
-    };
+  // 🔄 更新到 Google Sheets（Apps Script 要有 op=update）
+  async function updateOnServer(rec){
+    try {
+      const payload = {
+        id:            rec.id,
+        date:          rec.Date || null,
+        line:          rec.line || null,
+        section:       rec.section || null,
+        asset_id:      rec.asset_id || null,
+        category:      rec.category || null,
+        downtime_min:  Number(rec.downtime_min || 0),
+        root_cause:    rec.root_cause || null,
+        action_taken:  rec.action_taken || null,
+        location_from: rec.location_from || null,
+        location_to:   rec.location_to || null
+      };
 
-    const res = await fetch(`${LOGS_ENDPOINT}/${encodeURIComponent(rec.id)}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
+      const body = new URLSearchParams();
+      body.append('op', 'update');
+      body.append('payload', JSON.stringify(payload));
 
-    if (!res.ok) {
-      console.error('Update on server failed, status =', res.status);
-      return;
-    }
+      const res = await fetch(LOGS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'Accept': 'application/json'
+        },
+        body
+      });
 
-    const data = await res.json();
-    console.log('Update on server ok:', data);
-  } catch (err) {
-    console.error('Update on server error:', err);
-  }
-}
-
-
-  async function deleteOnServer(id){
-  try {
-    const res = await fetch(`${LOGS_ENDPOINT}/${encodeURIComponent(id)}`, {
-      method: 'DELETE',
-      headers: {
-        'Accept': 'application/json'
+      if (!res.ok) {
+        console.error('Update on server failed, status =', res.status);
+        return;
       }
-    });
 
-    if (!res.ok) {
-      console.error('Delete on server failed, status =', res.status);
-      return;
+      const data = await res.json();
+      console.log('Update on server ok:', data);
+    } catch (err) {
+      console.error('Update on server error:', err);
     }
-
-    const data = await res.json();
-    console.log('Delete on server ok:', data);
-  } catch (err) {
-    console.error('Delete on server error:', err);
   }
-}
 
+  // ❌ 從 Google Sheets 刪除（Apps Script 要有 op=delete）
+  async function deleteOnServer(id){
+    try {
+      const body = new URLSearchParams();
+      body.append('op', 'delete');
+      body.append('id', String(id));
+
+      const res = await fetch(LOGS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'Accept': 'application/json'
+        },
+        body
+      });
+
+      if (!res.ok) {
+        console.error('Delete on server failed, status =', res.status);
+        return;
+      }
+
+      const data = await res.json();
+      console.log('Delete on server ok:', data);
+    } catch (err) {
+      console.error('Delete on server error:', err);
+    }
+  }
 
   // ===== 自動產生 filter 選項 =====
   function populateFilterOptions(){
@@ -1005,7 +1013,6 @@
 
   function renderTable(){
     const tbody = document.getElementById('recordsBody');
-    thead = document.querySelector('#recordsTable thead');
     const table = document.getElementById('recordsTable');
     const empty = document.getElementById('emptyState');
 
@@ -1022,7 +1029,6 @@
     filtered.forEach(rec=>{
       const tr = document.createElement('tr');
       tr.dataset.id = rec.id;
-
       tr.addEventListener('click', ()=> openEdit(rec.id));
 
       const tdDate = document.createElement('td');
@@ -1134,23 +1140,21 @@
   }
 
   async function deleteRecord(id){
-    // 🔑 第一關：密碼
     const input = prompt('Enter password to delete this record:');
-    if (input === null) return; // 使用者按取消
+    if (input === null) return;
     if (input !== DELETE_PASSWORD){
       alert('Incorrect password. Delete cancelled.');
       return;
     }
-
-    // 第二關：原本 confirm
-    if (!confirm('Delete this record from local cache?')) return;
+    if (!confirm('Delete this record?')) return;
 
     records = records.filter(r=>r.id !== id);
     saveRecordsToLocal();
     populateFilterOptions();
     applyFilters();
 
-    deleteOnServer(id); // 目前只是 console.log
+    // 同步刪除到 Google Sheets（如果 Apps Script 已實作 op=delete）
+    deleteOnServer(id);
   }
 
   function openEdit(id){
@@ -1204,7 +1208,8 @@
     applyFilters();
     closeEdit();
 
-    updateOnServer(rec); // 目前只是 console.log
+    // 同步更新到 Google Sheets（如果 Apps Script 已實作 op=update）
+    updateOnServer(rec);
   }
 
   // ===== init：優先讀伺服器，失敗再用 localStorage =====
@@ -1212,7 +1217,7 @@
     try{
       const serverLogs = await fetchServerLogs();
       records = serverLogs;
-      saveRecordsToLocal();           // 伺服器成功 → 更新 localStorage 快取
+      saveRecordsToLocal();
     }catch(e){
       console.warn('Load from server failed, fallback to localStorage.', e);
       records = loadRecordsFromLocal();
@@ -1255,6 +1260,6 @@
 
     applyFilters();
   })();
-  </script>
+</script>
 </body>
 </html>
