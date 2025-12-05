@@ -355,7 +355,7 @@
     <div class="card">
       <h2>Maintenance report</h2>
       <div class="card-subtitle">
-        Fill this form after each maintenance task. Data is sent to the cloud backend
+        Fill this form after each maintenance task. Data is sent to the <strong>Google Sheets backend (Apps Script)</strong>
         and also stored in this browser as <strong>ms-maintenance-logs</strong>.
         Use the JSON download button for backup / reporting.
       </div>
@@ -478,193 +478,207 @@
   </script>
 
   <script>
-    const STORAGE_KEY = 'ms-maintenance-logs';
+  const STORAGE_KEY = 'ms-maintenance-logs';
 
-    // ✅ 雲端 API
-    const API_BASE_URL = 'https://maintenance-backend-kh4z.onrender.com';
-    const LOGS_ENDPOINT = API_BASE_URL + '/logs';
+  // ✅ 改成你的 Apps Script Web App URL
+  const API_BASE_URL =
+    'https://script.google.com/macros/s/AKfycbxJUFvlzTUGaAypG11pmmkC41dXmrvtQB6_gBu0GZMNH0Seu7TK_svF4QOH7eON-9rU/exec';
+  const LOGS_ENDPOINT = API_BASE_URL; // GET = 讀, POST = 新增
 
-    function loadRecords(){
-      try{
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      }catch(e){
-        console.error(e);
-        return [];
-      }
+  function loadRecords(){
+    try{
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    }catch(e){
+      console.error(e);
+      return [];
+    }
+  }
+
+  function saveRecords(arr){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }
+
+  function updateStatus(msg){
+    const el = document.getElementById('status');
+    if (!el) return;
+    const logs = loadRecords();
+    el.innerHTML = msg + '<br><strong>Total records: ' + logs.length + '</strong>';
+  }
+
+  function setToday(){
+    const input = document.getElementById('dateInput');
+    if (!input) return;
+    if (!input.value){
+      const today = new Date().toISOString().slice(0,10);
+      input.value = today;
+    }
+  }
+
+  function getAssetIdFromQuery(){
+    const params = new URLSearchParams(window.location.search);
+    const asset = params.get('asset');
+    if (!asset) return '';
+    return normalizeAssetId(asset);
+  }
+
+  function normalizeAssetId(input) {
+    if (!input) return "";
+    let v = String(input).trim().toUpperCase();
+
+    if (/^PC-\d{3}$/.test(v)) return v;
+
+    v = v.replace(/^PC/i, "").replace(/[^0-9]/g, "");
+    if (!v) return "";
+
+    const num = parseInt(v, 10);
+    if (!Number.isFinite(num) || num < 1 || num > 999) {
+      return "";
+    }
+    return "PC-" + String(num).padStart(3, "0");
+  }
+
+  // 🔐 寫入 Google Sheet（Apps Script 要有 op="add" 的 doPost）
+  async function saveRecordToServer(payload) {
+    const body = new URLSearchParams();
+    body.append('op', 'add');
+    body.append('payload', JSON.stringify(payload));
+
+    const res = await fetch(LOGS_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'Accept': 'application/json'
+      },
+      body
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      throw new Error('Server error: ' + res.status + ' ' + text);
+    }
+    return res.json().catch(() => ({}));
+  }
+
+  async function saveRecord(){
+    const date      = document.getElementById('dateInput').value;
+    const line      = document.getElementById('lineInput').value;
+    const section   = document.getElementById('sectionInput').value;
+
+    const equipInputEl = document.getElementById('equipInput');
+    const rawEquip     = equipInputEl.value;
+    const assetId      = normalizeAssetId(rawEquip);
+
+    const category  = document.getElementById('catInput').value;
+    const downtime  = Number(document.getElementById('downInput').value || 0);
+    const rootcause = document.getElementById('rootInput').value.trim();
+    const action    = document.getElementById('actionInput').value.trim();
+    const loc_from  = document.getElementById('locFromInput').value.trim();
+    const loc_to    = document.getElementById('locToInput').value.trim();
+
+    if (!date || !assetId){
+      updateStatus(
+        'Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).'
+      );
+      return;
     }
 
-    function saveRecords(arr){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    // 把輸入框修正成標準格式
+    equipInputEl.value = assetId;
+
+    // 傳給 Google Sheets 的欄位（要跟 Apps Script / Sheet 的欄位對應）
+    const payloadForServer = {
+      date,
+      line,
+      section,
+      asset_id: assetId,
+      category,
+      downtime_min: downtime,
+      root_cause:    rootcause,
+      action_taken:  action,
+      location_from: loc_from,
+      location_to:   loc_to
+    };
+
+    // 存在 localStorage 的格式（給 Report / Records 用）
+    const recordForLocal = {
+      Date: date,
+      line,
+      section,
+      asset_id: assetId,
+      category,
+      downtime_min: downtime,
+      root_cause:    rootcause,
+      action_taken:  action,
+      location_from: loc_from,
+      location_to:   loc_to,
+      timestamp: new Date().toISOString(),
+      id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : ('rec_' + Date.now())
+    };
+
+    let serverOk = false;
+    try{
+      await saveRecordToServer(payloadForServer);
+      serverOk = true;
+    }catch(e){
+      console.error('Save to server failed:', e);
     }
 
-    function updateStatus(msg){
-      const el = document.getElementById('status');
-      if (!el) return;
-      const logs = loadRecords();
-      el.innerHTML = msg + '<br><strong>Total records: ' + logs.length + '</strong>';
+    const logs = loadRecords();
+    logs.push(recordForLocal);
+    saveRecords(logs);
+
+    // 清空幾個欄位，方便連續填寫
+    document.getElementById('downInput').value = '';
+    document.getElementById('rootInput').value = '';
+    document.getElementById('actionInput').value = '';
+    document.getElementById('locFromInput').value = '';
+    document.getElementById('locToInput').value = '';
+
+    if (serverOk){
+      updateStatus('✅ Record saved to <strong>Google Sheet</strong> and this browser.');
+    }else{
+      updateStatus('⚠ Google Sheets backend unavailable – record saved in <strong>this browser only</strong>.');
+    }
+  }
+
+  function downloadJson(){
+    const logs = loadRecords();
+    const blob = new Blob([JSON.stringify(logs, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'maintenance_logs.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    updateStatus('JSON file downloaded. You can use it in Python / Excel.');
+  }
+
+  (function init(){
+    setToday();
+
+    const fromUrl = getAssetIdFromQuery();
+    if (fromUrl) {
+      const equipInputEl = document.getElementById('equipInput');
+      if (equipInputEl) equipInputEl.value = fromUrl;
     }
 
-    function setToday(){
-      const input = document.getElementById('dateInput');
-      if (!input) return;
-      if (!input.value){
-        const today = new Date().toISOString().slice(0,10);
-        input.value = today;
-      }
-    }
-
-    function getAssetIdFromQuery(){
-      const params = new URLSearchParams(window.location.search);
-      const asset = params.get('asset');
-      if (!asset) return '';
-      return normalizeAssetId(asset);
-    }
-
-    function normalizeAssetId(input) {
-      if (!input) return "";
-      let v = String(input).trim().toUpperCase();
-
-      if (/^PC-\d{3}$/.test(v)) return v;
-
-      v = v.replace(/^PC/i, "").replace(/[^0-9]/g, "");
-      if (!v) return "";
-
-      const num = parseInt(v, 10);
-      if (!Number.isFinite(num) || num < 1 || num > 999) {
-        return "";
-      }
-      return "PC-" + String(num).padStart(3, "0");
-    }
-
-    async function saveRecordToServer(payload) {
-      const res = await fetch(LOGS_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+    const equipInputEl = document.getElementById('equipInput');
+    if (equipInputEl) {
+      equipInputEl.addEventListener('blur', ()=>{
+        const formatted = normalizeAssetId(equipInputEl.value);
+        if (formatted) {
+          equipInputEl.value = formatted;
+        } else {
+          equipInputEl.value = equipInputEl.value.trim().toUpperCase();
+        }
       });
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        throw new Error('Server error: ' + res.status + ' ' + text);
-      }
-      return res.json().catch(() => ({}));
     }
 
-    async function saveRecord(){
-      const date      = document.getElementById('dateInput').value;
-      const line      = document.getElementById('lineInput').value;
-      const section   = document.getElementById('sectionInput').value;
+    updateStatus('Ready to record maintenance tasks.');
+  })();
+</script>
 
-      const equipInputEl = document.getElementById('equipInput');
-      const rawEquip     = equipInputEl.value;
-      const assetId      = normalizeAssetId(rawEquip);
-
-      const category  = document.getElementById('catInput').value;
-      const downtime  = Number(document.getElementById('downInput').value || 0);
-      const rootcause = document.getElementById('rootInput').value.trim();
-      const action    = document.getElementById('actionInput').value.trim();
-      const loc_from  = document.getElementById('locFromInput').value.trim();
-      const loc_to    = document.getElementById('locToInput').value.trim();
-
-      if (!date || !assetId){
-        updateStatus(
-          'Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).'
-        );
-        return;
-      }
-
-      equipInputEl.value = assetId;
-
-      const payloadForServer = {
-        asset_id: assetId,
-        line,
-        section,
-        date,
-        category,
-        downtime_min: downtime,
-        location_from: loc_from,
-        location_to: loc_to,
-        root_cause: rootcause,
-        action_taken: action
-      };
-
-      const recordForLocal = {
-        Date: date,
-        line,
-        section,
-        asset_id: assetId,
-        category,
-        downtime_min: downtime,
-        root_cause: rootcause,
-        action_taken: action,
-        location_from: loc_from,
-        location_to: loc_to,
-        timestamp: new Date().toISOString(),
-        id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : ('rec_' + Date.now())
-      };
-
-      let serverOk = false;
-      try{
-        await saveRecordToServer(payloadForServer);
-        serverOk = true;
-      }catch(e){
-        console.error('Save to server failed:', e);
-      }
-
-      const logs = loadRecords();
-      logs.push(recordForLocal);
-      saveRecords(logs);
-
-      document.getElementById('downInput').value = '';
-      document.getElementById('rootInput').value = '';
-      document.getElementById('actionInput').value = '';
-      document.getElementById('locFromInput').value = '';
-      document.getElementById('locToInput').value = '';
-
-      if (serverOk){
-        updateStatus('✅ Record saved to <strong>server (SQLite)</strong> and this browser.');
-      }else{
-        updateStatus('⚠ Server unavailable – record saved in <strong>this browser only</strong>.');
-      }
-    }
-
-    function downloadJson(){
-      const logs = loadRecords();
-      const blob = new Blob([JSON.stringify(logs, null, 2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'maintenance_logs.json';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      updateStatus('JSON file downloaded. You can use it in Python / Excel.');
-    }
-
-    (function init(){
-      setToday();
-
-      const fromUrl = getAssetIdFromQuery();
-      if (fromUrl) {
-        const equipInputEl = document.getElementById('equipInput');
-        if (equipInputEl) equipInputEl.value = fromUrl;
-      }
-
-      const equipInputEl = document.getElementById('equipInput');
-      if (equipInputEl) {
-        equipInputEl.addEventListener('blur', ()=>{
-          const formatted = normalizeAssetId(equipInputEl.value);
-          if (formatted) {
-            equipInputEl.value = formatted;
-          } else {
-            equipInputEl.value = equipInputEl.value.trim().toUpperCase();
-          }
-        });
-      }
-
-      updateStatus('Ready to record maintenance tasks.');
-    })();
-  </script>
 </body>
 </html>
