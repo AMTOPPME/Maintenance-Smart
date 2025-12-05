@@ -680,13 +680,10 @@
 
 <script>
   const STORAGE_KEY   = 'ms-maintenance-logs';
+const DELETE_PASSWORD = '1234';
 
-  // 🔑 Delete 密碼（自己改）
-  const DELETE_PASSWORD = '1234';
-
-  // ✅ 改成連到 Google Apps Script Web App
-  const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbxJUFvlzTUGaAypG11pmmkC41dXmrvtQB6_gBu0GZMNH0Seu7TK_svF4QOH7eON-9rU/exec';
-  const LOGS_ENDPOINT = API_BASE_URL;   // 同一個網址，GET=讀取, POST=新增/修改/刪除
+// ✅ 直接打 Google Sheet Web App
+const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbxJUFvlzTUGaAypG11pmmkC41dXmrvtQB6_gBu0GZMNH0Seu7TK_svF4QOH7eON-9rU/exec';
 
   let records   = [];
   let filtered  = [];
@@ -793,22 +790,23 @@
   }
 
   // ===== Server API 呼叫：Google Apps Script /exec =====
+ // ===== Server API 呼叫（從 Google Sheet 讀）=====
   async function fetchServerLogs(){
-    const res = await fetch(LOGS_ENDPOINT, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' }
-    });
-    if (!res.ok){
-      throw new Error('Server error: ' + res.status);
-    }
-    const data = await res.json();
-    // Apps Script 回傳格式：{ ok:true, data:[...] }
-    if (data && data.ok && Array.isArray(data.data)) {
-      return data.data.map((rec, idx)=> normalizeRecord(rec, idx));
-    }
-    console.warn('Unexpected /exec response:', data);
-    return [];
+  const res = await fetch(SHEET_API_URL, {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' }
+  });
+  if (!res.ok){
+    throw new Error('Server error: ' + res.status);
   }
+  const data = await res.json();
+  if (data && data.ok && Array.isArray(data.data)) {
+    return data.data.map((rec, idx)=> normalizeRecord(rec, idx));
+  }
+  console.warn('Unexpected Sheet response:', data);
+  return [];
+}
+
 
   // 🔄 更新到 Google Sheets（Apps Script 要有 op=update）
   async function updateOnServer(rec){
