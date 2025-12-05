@@ -539,25 +539,18 @@
 
   // 🔐 寫入 Google Sheet（Apps Script 要有 op="add" 的 doPost）
   async function saveRecordToServer(payload) {
-    const body = new URLSearchParams();
-    body.append('op', 'add');
-    body.append('payload', JSON.stringify(payload));
+  const res = await fetch(SHEET_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
 
-    const res = await fetch(LOGS_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-        'Accept': 'application/json'
-      },
-      body
-    });
-
-    if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      throw new Error('Server error: ' + res.status + ' ' + text);
-    }
-    return res.json().catch(() => ({}));
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error('Server error: ' + res.status + ' ' + text);
   }
+  return res.json().catch(() => ({}));
+}
 
   async function saveRecord(){
     const date      = document.getElementById('dateInput').value;
