@@ -892,31 +892,95 @@
   // Modules 面板開關
   (function(){
     const menuBtn = document.getElementById('menuButton');
-    const panel = document.getElementById('navPanel');
+    const panel   = document.getElementById('navPanel');
+    if (!menuBtn || !panel) return;
+
+    // 判斷是否為觸控裝置
+    const isTouchDevice =
+      ('ontouchstart' in window) ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+    let hideTimer = null;
+
+    function openPanel(){
+      panel.classList.add('open');
+      menuBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closePanel(){
+      panel.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
 
     function togglePanel(){
-      const isOpen = panel.classList.toggle('open');
-      menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) {
+        closePanel();
+      } else {
+        openPanel();
+      }
     }
 
-    if (menuBtn && panel){
-      menuBtn.addEventListener('click', togglePanel);
-    }
+    // 手機 / 平板：保留點一下展開 / 收起
+    menuBtn.addEventListener('click', function(){
+      togglePanel();
+    });
 
-    // 點擊頁面其他地方就關閉（桌機用，比較乾淨）
+    // 點擊頁面其他地方就關閉（通用）
     document.addEventListener('click', (e)=>{
       if (!panel.classList.contains('open')) return;
       const insidePanel = panel.contains(e.target);
       const insideBtn   = menuBtn.contains(e.target);
       if (!insidePanel && !insideBtn){
-        panel.classList.remove('open');
-        menuBtn.setAttribute('aria-expanded','false');
+        closePanel();
       }
     });
+
+    // 桌機 / 滑鼠：hover 展開 + 滑出去 0.2 秒後收起
+    if (!isTouchDevice){
+      function clearHideTimer(){
+        if (hideTimer){
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+      }
+
+      function scheduleHide(){
+        clearHideTimer();
+        hideTimer = setTimeout(()=>{
+          closePanel();
+        }, 200); // 0.2 秒後收起
+      }
+
+      // 滑到「Modules」那一行 → 展開
+      menuBtn.addEventListener('mouseenter', ()=>{
+        clearHideTimer();
+        openPanel();
+      });
+
+      // 滑到面板上 → 保持打開
+      panel.addEventListener('mouseenter', ()=>{
+        clearHideTimer();
+      });
+
+      // 從 Modules 移出，看是不是跑到 panel 裡
+      menuBtn.addEventListener('mouseleave', (e)=>{
+        const toElement = e.relatedTarget;
+        if (toElement && panel.contains(toElement)) return; // 還在面板裡
+        scheduleHide();
+      });
+
+      // 從 panel 移出，看是不是回到 Modules
+      panel.addEventListener('mouseleave', (e)=>{
+        const toElement = e.relatedTarget;
+        if (toElement && menuBtn.contains(toElement)) return;
+        scheduleHide();
+      });
+    }
   })();
 
   // 切換模組 + Line Schematic / Maintenance 兩層選單
-  (function(){
+(function(){
     const frame   = document.getElementById('mainFrame');
     const titleEl = document.getElementById('moduleTitle');
     const subEl   = document.getElementById('moduleSub');
@@ -924,13 +988,18 @@
     const menuBtn = document.getElementById('menuButton');
     const buttons = document.querySelectorAll('.nav-item-btn');
 
-    const schematicPanel   = document.getElementById('schematicPanel');
-    const schematicLineBtns= document.querySelectorAll('.schematic-line-btn');
-    const schematicSecBtns = document.querySelectorAll('.schematic-sec-btn');
+    const schematicPanel     = document.getElementById('schematicPanel');
+    const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
+    const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
     let currentSchematicLine = 'Line1';
 
-    const maintenancePanel = document.getElementById('maintenancePanel');
+    const maintenancePanel   = document.getElementById('maintenancePanel');
     const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
+
+    // 判斷是否為觸控裝置（桌機才啟用 hover）
+    const isTouchDevice =
+      ('ontouchstart' in window) ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
     // 🔹 共用 helper：active + 收起所有 sub panel
     function activateNav(btn){
@@ -959,46 +1028,51 @@
       return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
     }
 
+    // 🔹 Line Schematic parent 開啟（給 click + hover 共用）
+    function openSchematicParent(btn){
+      if (!schematicPanel) return;
+
+      activateNav(btn);
+      closeAllSubPanels();
+      schematicPanel.classList.add('open');
+
+      setModule(
+        btn.dataset.title || 'Line Schematic',
+        btn.dataset.sub   || 'Select line and section.'
+      );
+    }
+
+    // 🔹 Maintenance parent 開啟（給 click + hover 共用）
+    function openMaintenanceParent(btn){
+      if (!maintenancePanel) return;
+
+      activateNav(btn);
+      closeAllSubPanels();
+      maintenancePanel.classList.add('open');
+
+      setModule(
+        btn.dataset.title || 'Maintenance',
+        btn.dataset.sub   || 'Open maintenance SOP PDFs.'
+      );
+    }
+
     // 預設主模組切換（Home / PC Manager 等）
     buttons.forEach(btn => {
+      const role = btn.dataset.role || '';
+
+      // click 行為（桌機 + 手機都要）
       btn.addEventListener('click', () => {
-        const role = btn.dataset.role || '';
+        const roleClick = btn.dataset.role || '';
 
         // Line Schematic parent
-        if (role === 'schematic-parent'){
-          if (!schematicPanel) return;
-          const wasOpen = schematicPanel.classList.contains('open');
-
-          activateNav(btn);
-          closeAllSubPanels();
-
-          if (!wasOpen) {
-            schematicPanel.classList.add('open');
-          }
-
-          setModule(
-            btn.dataset.title || 'Line Schematic',
-            btn.dataset.sub   || 'Select line and section.'
-          );
+        if (roleClick === 'schematic-parent'){
+          openSchematicParent(btn);
           return;
         }
 
         // Maintenance parent
-        if (role === 'maintenance-parent'){
-          if (!maintenancePanel) return;
-          const wasOpen = maintenancePanel.classList.contains('open');
-
-          activateNav(btn);
-          closeAllSubPanels();
-
-          if (!wasOpen) {
-            maintenancePanel.classList.add('open');
-          }
-
-          setModule(
-            btn.dataset.title || 'Maintenance',
-            btn.dataset.sub   || 'Open maintenance SOP PDFs.'
-          );
+        if (roleClick === 'maintenance-parent'){
+          openMaintenanceParent(btn);
           return;
         }
 
@@ -1020,6 +1094,19 @@
 
         closeAllSubPanels();
       });
+
+      // 桌機 / 滑鼠：hover 到 Line Schematic / Maintenance 自動展開
+      if (!isTouchDevice && role === 'schematic-parent'){
+        btn.addEventListener('mouseenter', ()=>{
+          openSchematicParent(btn);
+        });
+      }
+
+      if (!isTouchDevice && role === 'maintenance-parent'){
+        btn.addEventListener('mouseenter', ()=>{
+          openMaintenanceParent(btn);
+        });
+      }
     });
 
     // Line Schematic：Line 1~4
