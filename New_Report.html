@@ -540,19 +540,31 @@
   // 🔐 寫入 Google Sheet（Apps Script 要有 op="add" 的 doPost）
  // 🔐 寫入 Google Sheet（Apps Script 要有 op="add" 的 doPost）
 async function saveRecordToServer(payload) {
-  const res = await fetch(LOGS_ENDPOINT, {   // ✅ 改這裡
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
+  let res;
+  try {
+    res = await fetch(LOGS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    console.error('Fetch failed:', err);
+    throw new Error('Network error: ' + err);
+  }
+
+  const text = await res.text().catch(() => '');
+  console.log('Server raw response:', res.status, text);
 
   if (!res.ok) {
-    const text = await res.text().catch(() => '');
     throw new Error('Server error: ' + res.status + ' ' + text);
   }
-  return res.json().catch(() => ({}));
-}
 
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {};
+  }
+}
   async function saveRecord(){
     const date      = document.getElementById('dateInput').value;
     const line      = document.getElementById('lineInput').value;
