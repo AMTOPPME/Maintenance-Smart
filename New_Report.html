@@ -538,8 +538,9 @@
   }
 
   // 🔐 寫入 Google Sheet（Apps Script 要有 op="add" 的 doPost）
-  async function saveRecordToServer(payload) {
-  const res = await fetch(SHEET_API_URL, {
+ // 🔐 寫入 Google Sheet（Apps Script 要有 op="add" 的 doPost）
+async function saveRecordToServer(payload) {
+  const res = await fetch(LOGS_ENDPOINT, {   // ✅ 改這裡
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
