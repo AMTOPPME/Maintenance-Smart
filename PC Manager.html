@@ -574,8 +574,7 @@
 </script>
 
 <script>
-  // ✅ 這裡改成 Google Sheet Web App
-  // 換成你自己的「電腦清單」Apps Script Web App URL
+  // ✅ 用 Google Sheet Web App
   const PC_SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzLVvEXLjs4a-A___KO-XdJGt2OJE8Nve7dN0-AVqP1gXdKkG1dRt98WMsRQRaCx7OXig/exec';
 
   let computers = [];
@@ -592,7 +591,7 @@
   const lastSyncEl   = document.getElementById("lastSync");
   const countInfoEl  = document.getElementById("countInfo");
 
-  // 從 Google Sheet 抓資料（假設回傳格式：{ ok: true, data: [ {...}, ... ] }）
+  // 🔄 從 Google Sheet 抓資料（Apps Script 回傳：{ ok: true, data: [...] }）
   async function loadFromSheet() {
     try {
       const res = await fetch(PC_SHEET_API_URL, {
@@ -602,6 +601,13 @@
       if (!res.ok) throw new Error('PC Sheet API error: ' + res.status);
 
       const data = await res.json();
+
+      // ⬇⬇ 這裡多做 ok 檢查 & 錯誤處理
+      if (!data.ok) {
+        console.error('PC Sheet API returned ok=false:', data.error);
+        throw new Error(data.error || 'PC Sheet API returned ok=false');
+      }
+
       if (!data || !Array.isArray(data.data)) {
         console.warn('Unexpected PC Sheet response:', data);
         computers = [];
@@ -615,7 +621,7 @@
       console.error(e);
       if (lastSyncEl) lastSyncEl.textContent = "Loading error (please check PC_SHEET_API_URL)";
       tbody.innerHTML = "";
-      countInfoEl.textContent = "Total: 0 records";
+      countInfoEl.textContent = "Total: 0 records (load failed)";
     }
   }
 
@@ -753,6 +759,7 @@
     }
   }
 
+  // 事件綁定
   searchInput.addEventListener("input", renderTable);
   statusFilter.addEventListener("change", renderTable);
   deptFilter.addEventListener("input", renderTable);
