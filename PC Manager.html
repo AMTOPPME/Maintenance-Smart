@@ -318,11 +318,17 @@
       cursor: pointer; /* 點整列跳 Maintenance Records */
     }
 
-    tbody tr:nth-child(even) { background: #ffffff; }
-    tbody tr:nth-child(odd)  { background: #fdfdfd; }
+        /* 一深一淺的列背景（light mode） */
+    tbody tr:nth-child(even){
+      background:#ffffff;
+    }
+    tbody tr:nth-child(odd){
+      background:#f3f4f6;  /* 比較明顯的淺灰色 */
+    }
 
+    /* dark mode 還是用透明，由 hover 顏色當對比 */
     html[data-theme="dark"] tbody tr:nth-child(even),
-    html[data-theme="dark"] tbody tr:nth-child(odd) {
+    html[data-theme="dark"] tbody tr:nth-child(odd){
       background:transparent;
     }
 
