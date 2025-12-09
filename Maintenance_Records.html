@@ -302,15 +302,30 @@
     tbody tr{
       transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
     }
-    tbody tr:nth-child(even){background:#ffffff;}
-    tbody tr:nth-child(odd){background:#fdfdfd;}
+
+    /* Light mode：一排白、一排淺灰，對照比較清楚 */
+    tbody tr:nth-child(even){
+      background:#ffffff;
+    }
+    tbody tr:nth-child(odd){
+      background:#f3f4f6;   /* 比 #fdfdfd 再深一點 */
+    }
+
+    /* Dark mode：維持透明，由 hover 顏色做對比 */
     html[data-theme="dark"] tbody tr:nth-child(even),
-    html[data-theme="dark"] tbody tr:nth-child(odd){background:transparent;}
+    html[data-theme="dark"] tbody tr:nth-child(odd){
+      background:transparent;
+    }
+
     tbody tr:hover{
       background:#eff6ff;
       transform:translateY(-1px);
       box-shadow:0 4px 10px rgba(148,163,253,0.25);
     }
+    html[data-theme="dark"] tbody tr:hover{
+      background:rgba(37,99,235,.25);
+    }
+
     html[data-theme="dark"] tbody tr:hover{
       background:rgba(37,99,235,.25);
     }
