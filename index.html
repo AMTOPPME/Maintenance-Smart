@@ -974,7 +974,8 @@
     const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
     const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
     let currentSchematicLine = null;
-
+    let currentSchematicSection = null;
+  
     const maintenancePanel   = document.getElementById('maintenancePanel');
     const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
 
@@ -1091,30 +1092,66 @@
       }
     });
 
-    // Line Schematic：Line 1~4
-    schematicLineBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const lineKey = btn.getAttribute('data-line') || 'Line1';
-        currentSchematicLine = lineKey;
-        schematicLineBtns.forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-
-    // Line Schematic：Section F12/F13/F16/F201
-    schematicSecBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const sec = btn.getAttribute('data-section');
-    currentSchematicSection = sec;
-
-    schematicSecBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
+   // Line Schematic：Line 1~4
 schematicLineBtns.forEach(btn=>{
   btn.addEventListener('click', ()=>{
-
     const lineKey = btn.getAttribute('data-line');
+    if (!lineKey) return;
+
+    // 記錄目前 LINE
+    currentSchematicLine = lineKey;
+
+    // LINE 外觀：只讓這顆 active
+    schematicLineBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // 如果還沒選 SECTION，就先不要開檔
+    if (!currentSchematicSection) return;
+
+    const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
+    if (frame){
+      frame.src = file;
+    }
+
+    const lineLabel = formatLineLabel(currentSchematicLine);
+    setModule(
+      'Line Schematic – ' + lineLabel + ' – ' + currentSchematicSection,
+      'Schematic file: ' + file
+    );
+
+    // 手機上順便收起 panel
+    if (panel && panel.classList.contains('open')){
+      panel.classList.remove('open');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+    }
+  });
+});
+
+    // Line Schematic：Section F12/F13/F16/F201
+schematicSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const sectionKey   = btn.getAttribute('data-section');
+    const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+    if (!sectionKey) return;
+
+    // 記錄目前 SECTION
+    currentSchematicSection = sectionKey;
+
+    // 🔵 SECTION 外觀：只讓這顆 active
+    schematicSecBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // 🔄 重選 SECTION 時，把 LINE 完全重置
+    currentSchematicLine = null;
+    schematicLineBtns.forEach(b=>b.classList.remove('active'));
+
+    // 只更新標題，不開檔
+    setModule(
+      'Line Schematic – ' + sectionLabel,
+      'Select LINE to open schematic.'
+    );
+  });
+});
 
     // 標記 active
     schematicLineBtns.forEach(b=>b.classList.remove('active'));
