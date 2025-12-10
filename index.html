@@ -67,10 +67,10 @@
     .top-left{
       display:flex;
       flex-direction:column;
-      justify-content:space-between;  /* 上 logo、下按鈕 */
+      justify-content:space-between;
       gap:10px;
       align-items:flex-start;
-      min-height:72px;                /* 讓按鈕靠左下 */
+      min-height:72px;
     }
 
     .brand-wrap{display:flex;align-items:center;gap:10px}
@@ -80,7 +80,7 @@
       width:28px;
       height:28px;
       border-radius:9px;
-      background:radial-gradient(circle at 30% 0,#bfdbfe,#2563eb); /* 藍色預設漸層 */
+      background:radial-gradient(circle at 30% 0,#bfdbfe,#2563eb);
       box-shadow:0 0 10px rgba(37,99,235,0.35);
       flex-shrink:0;
       object-fit:cover;
@@ -102,8 +102,8 @@
 
     /* 中間名言區塊 */
     .top-quote {
-      text-align: center;    /* 讓標題居中 */
-      justify-self: center;  /* 在 grid 中置中 */
+      text-align:center;
+      justify-self:center;
     }
 
     .quote-label{
@@ -113,18 +113,16 @@
       color:var(--text-soft);
       margin-bottom:4px;
     }
-   .quote-text{
-      font-size: 18px;
-      font-weight: 500;
-      color: #3b82f6;
-      font-style: italic;
-
-      max-width: 720px;      /* 限制寬度，讓排版好看 */
-      margin: 0 auto;        /* 整段水平置中 */
-
-      text-align: left;      /* 每行靠左 */
-      white-space: normal;
-      word-wrap: break-word;
+    .quote-text{
+      font-size:18px;
+      font-weight:500;
+      color:#3b82f6;
+      font-style:italic;
+      max-width:720px;
+      margin:0 auto;
+      text-align:left;
+      white-space:normal;
+      word-wrap:break-word;
     }
 
     /* Modules 按鈕（topbar 左下角） */
@@ -183,7 +181,6 @@
       color:var(--text);
     }
 
-    /* 整體 workspace：只剩右側內容 */
     .workspace{
       min-height:60vh;
     }
@@ -222,11 +219,11 @@
       background:#111827;
     }
 
-    /* Modules 展開面板（按鈕打開的功能列） */
+    /* Modules 展開面板 */
     .nav-panel{
       position:absolute;
       left:24px;
-      top:calc(24px + 72px); /* 大約在 topbar 下方 */
+      top:calc(24px + 72px);
       max-width:260px;
       background:rgba(255,255,255,0.97);
       border-radius:18px;
@@ -236,8 +233,8 @@
       backdrop-filter:blur(12px);
       z-index:10;
       display:none;
-      max-height: 70vh;
-      overflow-y: auto;
+      max-height:70vh;
+      overflow-y:auto;
     }
     .nav-panel.open{
       display:block;
@@ -289,7 +286,6 @@
       box-shadow:0 4px 10px rgba(37,99,235,.35);
     }
 
-    /* ==== 兩層子列表共用樣式（Line Schematic + Maintenance） ==== */
     .nav-group-schematic .nav-item-btn,
     .nav-group-maintenance .nav-item-btn{
       justify-content:space-between;
@@ -325,52 +321,82 @@
       margin-bottom:6px;
     }
 
-/* LINE 區塊：2x2 排列、按鍵同寬 */
-.schematic-line-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-bottom:6px;
-}
+    /* SECTION：藍色主按鍵 */
+    .schematic-sec-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .schematic-sec-btn{
+      border-radius:999px;
+      border:1px solid transparent;
+      background:#eff6ff;
+      padding:4px 10px;
+      font-size:11px;
+      cursor:pointer;
+      color:#1d4ed8;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      transition:background .15s,border-color .15s,color .15s,transform .1s;
+    }
+    .schematic-sec-btn span.code{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:11px;
+    }
+    .schematic-sec-btn:hover{
+      background:#dbeafe;
+      transform:translateY(-1px);
+    }
+    .schematic-sec-btn.active{
+      background:#1d4ed8;
+      border-color:#1d4ed8;
+      color:#fff;
+      box-shadow:0 3px 8px rgba(37,99,235,.4);
+    }
 
-.schematic-line-btn{
-  flex:1 1 calc(50% - 6px);   /* 每排 2 顆，寬度自動平均 */
-  justify-content:center;     /* 文字置中 */
-  text-align:center;
+    /* LINE：2x2、灰色按鍵 */
+    .schematic-line-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-bottom:6px;
+    }
+    .schematic-line-btn{
+      flex:1 1 calc(50% - 6px);
+      border-radius:999px;
+      border:1px solid var(--border-subtle);
+      background:#f9fafb;
+      padding:6px 0;
+      font-size:11px;
+      cursor:pointer;
+      color:var(--text-soft);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      transition:background .15s,border-color .15s,color .15s,transform .1s;
+      text-align:center;
+    }
+    .schematic-line-btn:hover{
+      background:#fff;
+      border-color:var(--accent-soft);
+      color:var(--accent);
+      transform:translateY(-1px);
+    }
+    .schematic-line-btn.active{
+      background:#fff;
+      border-color:var(--accent);
+      color:var(--accent);
+      box-shadow:0 3px 8px rgba(37,99,235,.25);
+    }
 
-  border-radius:999px;
-  border:1px solid transparent;
-  background:#eff6ff;
-  padding:6px 0;
-  font-size:11px;
-  cursor:pointer;
-  color:#1d4ed8;
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  transition:background .15s,border-color .15s,color .15s,transform .1s;
-}
-
-.schematic-line-btn:hover{
-  background:#dbeafe;
-  transform:translateY(-1px);
-}
-
-.schematic-line-btn.active{
-  background:#1d4ed8;
-  border-color:#1d4ed8;
-  color:#fff;
-  box-shadow:0 3px 8px rgba(37,99,235,.4);
-}
-
-
-    .schematic-sec-row,
+    /* Maintenance 按鈕（維持原本灰色） */
     .maintenance-sec-row{
       display:flex;
       flex-wrap:wrap;
       gap:6px;
     }
-    .schematic-sec-btn,
     .maintenance-sec-btn{
       border-radius:999px;
       border:1px solid var(--border-subtle);
@@ -384,21 +410,16 @@
       gap:4px;
       transition:background .15s,border-color .15s,color .15s,transform .1s;
     }
-    .schematic-sec-btn span.code,
     .maintenance-sec-btn span.code{
       font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size:11px;
     }
-    .schematic-sec-btn:hover,
     .maintenance-sec-btn:hover{
       background:#fff;
       border-color:var(--accent-soft);
       color:var(--accent);
       transform:translateY(-1px);
     }
-
-    /* ★ Section 也有 active 樣式（和 Maintenance 共用） */
-    .schematic-sec-btn.active,
     .maintenance-sec-btn.active{
       background:#1d4ed8;
       border-color:#1d4ed8;
@@ -460,10 +481,9 @@
         padding:14px 14px 18px;
       }
 
-      /* 手機版：把 top-left 展開，裡面的東西當成 topbar 直列項目 */
       .top-left{
         display:contents;
-        min-height:0;        /* 原本的 min-height 取消 */
+        min-height:0;
       }
 
       .brand-main{
@@ -487,16 +507,15 @@
         justify-content:flex-start;
         gap:6px;
         flex-wrap:wrap;
-        order:2;             /* 在品牌之後、Modules 之前 */
+        order:2;
       }
 
       .top-meta .pill{
         flex-shrink:0;
       }
 
-      /* 手機版 Modules 按鈕：放在 topbar 最下面，佔滿一行 */
       .menu-button{
-        order:4;             /* 整個 topbar 的最後一個 */
+        order:4;
         align-self:stretch;
         justify-content:center;
         text-align:center;
@@ -583,7 +602,7 @@
           </button>
         </li>
 
-        <!-- Line Schematic：兩層列表（★ 先 SECTION 再 LINE） -->
+        <!-- Line Schematic：兩層列表（先 SECTION 再 LINE） -->
         <li class="nav-group-schematic">
           <button
             class="nav-item-btn"
@@ -597,7 +616,6 @@
           </button>
 
           <div class="schematic-panel" id="schematicPanel" aria-label="Line schematic selector">
-            <!-- ★ SECTION 先 -->
             <div class="schematic-title">SECTION</div>
             <div class="schematic-sec-row">
               <button class="schematic-sec-btn" type="button" data-section="F12" data-label="F12">
@@ -614,13 +632,19 @@
               </button>
             </div>
 
-            <!-- ★ LINE 放在後面 -->
             <div class="schematic-title" style="margin-top:8px;">LINE</div>
             <div class="schematic-line-row">
               <button class="schematic-line-btn" type="button" data-line="Line1">Line 1</button>
               <button class="schematic-line-btn" type="button" data-line="Line2">Line 2</button>
               <button class="schematic-line-btn" type="button" data-line="Line3">Line 3</button>
               <button class="schematic-line-btn" type="button" data-line="Line4">Line 4</button>
+            </div>
+
+            <div class="schematic-hint">
+              Default file rule:
+              <code>Line-[lineNumber]-Schematic.html?sec=[section]</code>
+              (e.g. <code>Line-1-4-Schematic.html?line=1&amp;sec=F13</code>)<br>
+              Flow: select <strong>SECTION</strong> → select <strong>LINE</strong> to open schematic.
             </div>
 
             <div class="ls-tags">
@@ -632,7 +656,7 @@
           </div>
         </li>
 
-        <!-- Maintenance：可展開子列表，直接打開 PDF -->
+        <!-- Maintenance：可展開子列表 -->
         <li class="nav-group-maintenance">
           <button
             class="nav-item-btn"
@@ -648,86 +672,38 @@
           <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
             <div class="maintenance-title">PDF</div>
             <div class="maintenance-sec-row">
-              <!-- Hard Drives Backup -->
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="HardDrivesBackup"
-                data-label="Hard Drives Backup">
+              <button class="maintenance-sec-btn" type="button" data-pdf-key="HardDrivesBackup" data-label="Hard Drives Backup">
                 <span class="code">Hard Drives Backup</span>
               </button>
-
-              <!-- Siemens S7 (New) -->
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="SiemensS7"
-                data-label="Siemens S7 Procedures">
+              <button class="maintenance-sec-btn" type="button" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
                 <span class="code">Siemens S7 Procedures</span>
               </button>
-
-              <!-- Siemens S7 (Old) -->
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="SiemensS7_Old"
-                data-label="Siemens S7 (Old) Procedure">
+              <button class="maintenance-sec-btn" type="button" data-pdf-key="SiemensS7_Old" data-label="Siemens S7 (Old) Procedure">
                 <span class="code">Siemens S7 (Old) Procedure</span>
               </button>
-
-              <!-- 其他程序 PDF -->
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="SiemensS5"
-                data-label="Siemens S5 Procedure">
+              <button class="maintenance-sec-btn" type="button" data-pdf-key="SiemensS5" data-label="Siemens S5 Procedure">
                 <span class="code">Siemens S5 Procedure</span>
               </button>
-
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="MitsubishiPLC"
-                data-label="Mitsubishi PLC Procedure">
+              <button class="maintenance-sec-btn" type="button" data-pdf-key="MitsubishiPLC" data-label="Mitsubishi PLC Procedure">
                 <span class="code">Mitsubishi PLC Procedure</span>
               </button>
-
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="BardacDrive"
-                data-label="Bardac Drive Procedure">
+              <button class="maintenance-sec-btn" type="button" data-pdf-key="BardacDrive" data-label="Bardac Drive Procedure">
                 <span class="code">Bardac Drive Procedure</span>
               </button>
-
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="ReclaimSC"
-                data-label="Reclaim SC PLC Procedure">
+              <button class="maintenance-sec-btn" type="button" data-pdf-key="ReclaimSC" data-label="Reclaim SC PLC Procedure">
                 <span class="code">Reclaim SC PLC Procedure</span>
               </button>
-
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="ABPLCProcedure"
-                data-label="AB PLC Procedure">
+              <button class="maintenance-sec-btn" type="button" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
                 <span class="code">AB PLC Procedure</span>
               </button>
-
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="ABPLCPlan"
-                data-label="AB PLC Plan">
+              <button class="maintenance-sec-btn" type="button" data-pdf-key="ABPLCPlan" data-label="AB PLC Plan">
                 <span class="code">AB PLC Plan</span>
               </button>
             </div>
           </div>
         </li>
 
-        <!-- Maintenance Records：檢視 & 編輯維修紀錄 -->
+        <!-- Maintenance Records -->
         <li>
           <button
             class="nav-item-btn"
@@ -739,7 +715,7 @@
           </button>
         </li>
 
-        <!-- Maintenance Report：開啟維修報表表單 -->
+        <!-- Maintenance Report -->
         <li>
           <button
             class="nav-item-btn"
@@ -773,7 +749,7 @@
   </div>
 
 <script>
-  /* ---------- Modified Date：用這個 HTML 檔最後修改時間 ---------- */
+  /* ---------- Modified Date ---------- */
   (function () {
     function updateModDate() {
       var el = document.getElementById('modDate');
@@ -786,11 +762,11 @@
       }
 
       el.textContent = d.toLocaleString([], {
-        year:   'numeric',
-        month:  '2-digit',
-        day:    '2-digit',
-        hour:   '2-digit',
-        minute: '2-digit'
+        year:'numeric',
+        month:'2-digit',
+        day:'2-digit',
+        hour:'2-digit',
+        minute:'2-digit'
       });
     }
 
