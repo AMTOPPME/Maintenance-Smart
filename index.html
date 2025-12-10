@@ -325,35 +325,44 @@
       margin-bottom:6px;
     }
 
-    .schematic-line-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-bottom:6px;
-    }
-    .schematic-line-btn{
-      border-radius:999px;
-      border:1px solid transparent;
-      background:#eff6ff;
-      padding:4px 9px;
-      font-size:11px;
-      cursor:pointer;
-      color:#1d4ed8;
-      display:inline-flex;
-      align-items:center;
-      gap:4px;
-      transition:background .15s,border-color .15s,color .15s,transform .1s;
-    }
-    .schematic-line-btn:hover{
-      background:#dbeafe;
-      transform:translateY(-1px);
-    }
-    .schematic-line-btn.active{
-      background:#1d4ed8;
-      border-color:#1d4ed8;
-      color:#fff;
-      box-shadow:0 3px 8px rgba(37,99,235,.4);
-    }
+/* LINE 區塊：2x2 排列、按鍵同寬 */
+.schematic-line-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:6px;
+}
+
+.schematic-line-btn{
+  flex:1 1 calc(50% - 6px);   /* 每排 2 顆，寬度自動平均 */
+  justify-content:center;     /* 文字置中 */
+  text-align:center;
+
+  border-radius:999px;
+  border:1px solid transparent;
+  background:#eff6ff;
+  padding:6px 0;
+  font-size:11px;
+  cursor:pointer;
+  color:#1d4ed8;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  transition:background .15s,border-color .15s,color .15s,transform .1s;
+}
+
+.schematic-line-btn:hover{
+  background:#dbeafe;
+  transform:translateY(-1px);
+}
+
+.schematic-line-btn.active{
+  background:#1d4ed8;
+  border-color:#1d4ed8;
+  color:#fff;
+  box-shadow:0 3px 8px rgba(37,99,235,.4);
+}
+
 
     .schematic-sec-row,
     .maintenance-sec-row{
