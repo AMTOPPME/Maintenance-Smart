@@ -847,4 +847,412 @@
       `The past cannot be changed. The future is yet in your power. — Mary Pickford`,
       `The purpose of our lives is to be happy. — Dalai Lama`,
       `The way to get started is to quit talking and begin doing. — Walt Disney`,
-      `There are seven things that will destroy us: wealth without work; pleasure without conscience; knowledge without character; religion without sacrifice; politics without principle; science without humanity; business without ethics.
+      `There are seven things that will destroy us: wealth without work; pleasure without conscience; knowledge without character; religion without sacrifice; politics without principle; science without humanity; business without ethics. — Mahatma Gandhi`,
+      `Those who dare to fail miserably can achieve greatly. — John F. Kennedy`,
+      `Try not to become a man of success but rather try to become a man of value. — Albert Einstein`,
+      `Until we can manage time, we can manage nothing else. — Peter F. Drucker`,
+      `We must accept finite disappointment, but we must never lose infinite hope. — Martin Luther King`,
+      `When the whole world is silent, even one voice becomes powerful. — Malala`,
+      `When we are saying this cannot be accomplished, this cannot be done, then we are short-changing ourselves. My brain, it cannot process failure. It will not process failure. — Kobe Bryant`,
+      `Where there is a will, there is a way. — Thomas Edison`,
+      `You have to believe in yourself. That’s the secret of success. — Charles Chaplin`,
+      `You must be the change you want to see in the world. — Gandhi`
+    ];
+
+    let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
+    if (isNaN(index) || index < 0 || index >= quotes.length) {
+      index = 0;
+    }
+
+    function showQuote() {
+      el.textContent = quotes[index];
+      localStorage.setItem('ms-quote-idx', String(index));
+    }
+
+    showQuote();
+
+    setInterval(function(){
+      index = (index + 1) % quotes.length;
+      showQuote();
+    }, QUOTE_INTERVAL_MS);
+  })();
+</script>
+
+<script>
+  // ---- 子頁面同步主頁 style ----
+  (function syncStyleToIframe(){
+    const frame = document.getElementById("mainFrame");
+
+    function applyStyleToFrame(){
+      if (!frame || !frame.contentDocument) return;
+      const style = document.documentElement.getAttribute("data-style") || "blue";
+      const frameHtml = frame.contentDocument.documentElement;
+      frameHtml.setAttribute("data-style", style);
+    }
+
+    if (frame){
+      frame.addEventListener("load", function(){
+        setTimeout(applyStyleToFrame, 30);
+      });
+    }
+
+    window._msSyncFrameStyle = applyStyleToFrame;
+  })();
+
+  // Modules 面板開關
+  (function(){
+    const menuBtn = document.getElementById('menuButton');
+    const panel   = document.getElementById('navPanel');
+    if (!menuBtn || !panel) return;
+
+    // 判斷是否為觸控裝置
+    const isTouchDevice =
+      ('ontouchstart' in window) ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+    let hideTimer = null;
+
+    function openPanel(){
+      panel.classList.add('open');
+      menuBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closePanel(){
+      panel.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    function togglePanel(){
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) {
+        closePanel();
+      } else {
+        openPanel();
+      }
+    }
+
+    // 手機 / 平板：保留點一下展開 / 收起
+    menuBtn.addEventListener('click', function(){
+      togglePanel();
+    });
+
+    // 點擊頁面其他地方就關閉（通用）
+    document.addEventListener('click', (e)=>{
+      if (!panel.classList.contains('open')) return;
+      const insidePanel = panel.contains(e.target);
+      const insideBtn   = menuBtn.contains(e.target);
+      if (!insidePanel && !insideBtn){
+        closePanel();
+      }
+    });
+
+    // 桌機 / 滑鼠：hover 展開 + 滑出去 0.2 秒後收起
+    if (!isTouchDevice){
+      function clearHideTimer(){
+        if (hideTimer){
+          clearTimeout(hideTimer);
+          hideTimer = null;
+        }
+      }
+
+      function scheduleHide(){
+        clearHideTimer();
+        hideTimer = setTimeout(()=>{
+          closePanel();
+        }, 200); // 0.2 秒後收起
+      }
+
+      // 滑到「Modules」那一行 → 展開
+      menuBtn.addEventListener('mouseenter', ()=>{
+        clearHideTimer();
+        openPanel();
+      });
+
+      // 滑到面板上 → 保持打開
+      panel.addEventListener('mouseenter', ()=>{
+        clearHideTimer();
+      });
+
+      // 從 Modules 移出，看是不是跑到 panel 裡
+      menuBtn.addEventListener('mouseleave', (e)=>{
+        const toElement = e.relatedTarget;
+        if (toElement && panel.contains(toElement)) return; // 還在面板裡
+        scheduleHide();
+      });
+
+      // 從 panel 移出，看是不是回到 Modules
+      panel.addEventListener('mouseleave', (e)=>{
+        const toElement = e.relatedTarget;
+        if (toElement && menuBtn.contains(toElement)) return;
+        scheduleHide();
+      });
+    }
+  })();
+
+  // 切換模組 + Line Schematic / Maintenance 兩層選單
+(function(){
+    const frame   = document.getElementById('mainFrame');
+    const titleEl = document.getElementById('moduleTitle');
+    const subEl   = document.getElementById('moduleSub');
+    const panel   = document.getElementById('navPanel');
+    const menuBtn = document.getElementById('menuButton');
+    const buttons = document.querySelectorAll('.nav-item-btn');
+
+    const schematicPanel     = document.getElementById('schematicPanel');
+    const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
+    const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
+    let currentSchematicLine = 'Line1';
+
+    const maintenancePanel   = document.getElementById('maintenancePanel');
+    const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
+
+    // 判斷是否為觸控裝置（桌機才啟用 hover）
+    const isTouchDevice =
+      ('ontouchstart' in window) ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+    // 🔹 共用 helper：active + 收起所有 sub panel
+    function activateNav(btn){
+      buttons.forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    function closeAllSubPanels(){
+      if (schematicPanel)   schematicPanel.classList.remove('open');
+      if (maintenancePanel) maintenancePanel.classList.remove('open');
+    }
+
+    function setModule(title, sub){
+      if (titleEl) titleEl.textContent = title;
+      if (subEl)   subEl.textContent   = sub;
+    }
+
+    function formatLineLabel(lineKey){
+      if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
+      return lineKey;
+    }
+
+    // Schematic 檔名規則：Line-1-4-Schematic.html?line=1&sec=F13
+    function buildSchematicFileName(lineKey, sectionKey){
+      const n = lineKey.replace('Line',''); // Line1 -> 1
+      return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
+    }
+
+    // 🔹 Line Schematic parent 開啟（給 click + hover 共用）
+    function openSchematicParent(btn){
+      if (!schematicPanel) return;
+
+      activateNav(btn);
+      closeAllSubPanels();
+      schematicPanel.classList.add('open');
+
+      setModule(
+        btn.dataset.title || 'Line Schematic',
+        btn.dataset.sub   || 'Select line and section.'
+      );
+    }
+
+    // 🔹 Maintenance parent 開啟（給 click + hover 共用）
+    function openMaintenanceParent(btn){
+      if (!maintenancePanel) return;
+
+      activateNav(btn);
+      closeAllSubPanels();
+      maintenancePanel.classList.add('open');
+
+      setModule(
+        btn.dataset.title || 'Maintenance',
+        btn.dataset.sub   || 'Open maintenance SOP PDFs.'
+      );
+    }
+
+    // 預設主模組切換（Home / PC Manager 等）
+    buttons.forEach(btn => {
+      const role = btn.dataset.role || '';
+
+      // click 行為（桌機 + 手機都要）
+      btn.addEventListener('click', () => {
+        const roleClick = btn.dataset.role || '';
+
+        // Line Schematic parent
+        if (roleClick === 'schematic-parent'){
+          openSchematicParent(btn);
+          return;
+        }
+
+        // Maintenance parent
+        if (roleClick === 'maintenance-parent'){
+          openMaintenanceParent(btn);
+          return;
+        }
+
+        // 其他一般按鈕：Home / PC Manager / Records / Report
+        const src = btn.dataset.src;
+        if (!src) return;
+
+        activateNav(btn);
+
+        const title = btn.dataset.title || 'Module';
+        const sub   = btn.dataset.sub || '';
+        if (frame && src) frame.src = src;
+        setModule(title, sub);
+
+        if (panel && panel.classList.contains('open')){
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+        }
+
+        closeAllSubPanels();
+      });
+
+      // 桌機 / 滑鼠：hover 到 Line Schematic / Maintenance 自動展開
+      if (!isTouchDevice && role === 'schematic-parent'){
+        btn.addEventListener('mouseenter', ()=>{
+          openSchematicParent(btn);
+        });
+      }
+
+      if (!isTouchDevice && role === 'maintenance-parent'){
+        btn.addEventListener('mouseenter', ()=>{
+          openMaintenanceParent(btn);
+        });
+      }
+    });
+
+    // Line Schematic：Line 1~4
+    schematicLineBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const lineKey = btn.getAttribute('data-line') || 'Line1';
+        currentSchematicLine = lineKey;
+        schematicLineBtns.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Line Schematic：Section F12/F13/F16/F201
+    schematicSecBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const sectionKey   = btn.getAttribute('data-section');
+        const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+        if (!sectionKey) return;
+
+        const file = buildSchematicFileName(currentSchematicLine, sectionKey);
+        if (frame){
+          frame.src = file;
+        }
+
+        const lineLabel = formatLineLabel(currentSchematicLine);
+        setModule(
+          'Line Schematic – ' + lineLabel + ' – ' + sectionLabel,
+          'Schematic file: ' + file
+        );
+
+        if (panel && panel.classList.contains('open')){
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    });
+
+    // 🔹 Maintenance：開 Maintenance.html（裡面再用 pdf.js）
+    maintenanceSecBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
+        const label = btn.getAttribute('data-label') || key || '';
+        if (!key) return;
+
+        const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
+
+        if (frame){
+          frame.src = viewerUrl;
+        }
+
+        setModule(
+          'Maintenance – ' + label,
+          'PDF: ' + label
+        );
+
+        maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (panel && panel.classList.contains('open')){
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+        }
+      });
+    });
+
+    // 🔹 Tags list：載入到右側 iframe，不開新分頁
+    const tagsLink = document.getElementById('tagsListLink');
+    if (tagsLink) {
+      tagsLink.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        if (frame) {
+          frame.src = 'F13_PLC_Tags list.html';
+        }
+
+        setModule('Tags List', 'PLC / SCADA Tag Reference');
+
+        if (panel && panel.classList.contains('open')) {
+          panel.classList.remove('open');
+          if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  })();
+
+  // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
+  (function(){
+    const STYLE_KEY = 'ms-style';
+    const root = document.documentElement;
+    const mascot = document.querySelector('.mascot');
+    const styles = ['blue', 'panther', 'hangyodon'];
+
+    const themeConfig = {
+      blue: {
+        bgImage: ''                  // 用預設 CSS 漸層
+      },
+      panther: {
+        bgImage: 'url("pinkpanther.png")'
+      },
+      hangyodon: {
+        bgImage: 'url("hangyodon.png")'
+      }
+    };
+
+    function applyStyle(style){
+      const s = themeConfig[style] ? style : 'blue';
+      root.setAttribute('data-style', s);
+      const cfg = themeConfig[s];
+
+      if (mascot){
+        mascot.style.backgroundImage = cfg.bgImage || '';
+      }
+
+      localStorage.setItem(STYLE_KEY, s);
+
+      if (window._msSyncFrameStyle){
+        setTimeout(window._msSyncFrameStyle, 30);
+      }
+    }
+
+    function cycleStyle(){
+      const current = root.getAttribute('data-style') || 'blue';
+      const idx = styles.indexOf(current);
+      const next = styles[(idx + 1) % styles.length];
+      applyStyle(next);
+    }
+
+    const saved = localStorage.getItem(STYLE_KEY) || 'blue';
+    applyStyle(saved);
+
+    if (mascot){
+      mascot.style.cursor = 'pointer';
+      mascot.title = 'Click to change style';
+      mascot.addEventListener('click', cycleStyle);
+    }
+  })();
+</script>
+</body>
+</html>
