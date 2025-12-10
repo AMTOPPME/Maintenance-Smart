@@ -617,7 +617,7 @@
             <!-- ★ LINE 放在後面 -->
             <div class="schematic-title" style="margin-top:8px;">LINE</div>
             <div class="schematic-line-row">
-              <button class="schematic-line-btn active" type="button" data-line="Line1">Line 1</button>
+              <button class="schematic-line-btn" type="button" data-line="Line1">Line 1</button>
               <button class="schematic-line-btn" type="button" data-line="Line2">Line 2</button>
               <button class="schematic-line-btn" type="button" data-line="Line3">Line 3</button>
               <button class="schematic-line-btn" type="button" data-line="Line4">Line 4</button>
@@ -1010,7 +1010,7 @@
     const schematicPanel     = document.getElementById('schematicPanel');
     const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
     const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
-    let currentSchematicLine = 'Line1';
+    let currentSchematicLine = null;
 
     const maintenancePanel   = document.getElementById('maintenancePanel');
     const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
@@ -1140,28 +1140,48 @@
 
     // Line Schematic：Section F12/F13/F16/F201
     schematicSecBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const sectionKey   = btn.getAttribute('data-section');
-        const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-        if (!sectionKey) return;
+  btn.addEventListener('click', ()=>{
+    const sec = btn.getAttribute('data-section');
+    currentSchematicSection = sec;
 
-        const file = buildSchematicFileName(currentSchematicLine, sectionKey);
-        if (frame){
-          frame.src = file;
-        }
+    schematicSecBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+schematicLineBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
 
-        const lineLabel = formatLineLabel(currentSchematicLine);
-        setModule(
-          'Line Schematic – ' + lineLabel + ' – ' + sectionLabel,
-          'Schematic file: ' + file
-        );
+    const lineKey = btn.getAttribute('data-line');
 
-        if (panel && panel.classList.contains('open')){
-          panel.classList.remove('open');
-          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-        }
-      });
-    });
+    // 標記 active
+    schematicLineBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    currentSchematicLine = lineKey;
+
+    // 如果沒選 section → 不開檔
+    if (!currentSchematicSection) return;
+
+    // 建立檔名
+    const file = buildSchematicFileName(lineKey, currentSchematicSection);
+
+    // 載入 iframe
+    if (frame) frame.src = file;
+
+    // 更新右上標題
+    setModule(
+      `Line Schematic – ${lineKey.replace('Line','Line ')} – ${currentSchematicSection}`,
+      `Schematic file: ${file}`
+    );
+
+    // 關閉面板（如果開著）
+    if (panel && panel.classList.contains('open')){
+      panel.classList.remove('open');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+    }
+  });
+});
+
 
     // 🔹 Maintenance：開 Maintenance.html（裡面再用 pdf.js）
     maintenanceSecBtns.forEach(btn=>{
