@@ -970,6 +970,10 @@
     const menuBtn = document.getElementById('menuButton');
     const buttons = document.querySelectorAll('.nav-item-btn');
 
+    // 父按鈕：Line Schematic / Maintenance
+    const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
+    const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
+
     const schematicPanel     = document.getElementById('schematicPanel');
     const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
     const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
@@ -1149,7 +1153,9 @@
       btn.addEventListener('click', ()=>{
         const lineKey = btn.getAttribute('data-line');
         if (!lineKey) return;
-
+        if (schematicParentBtn) {
+        activateNav(schematicParentBtn);
+        }
         currentSchematicLine = lineKey;
 
         schematicLineBtns.forEach(b=>b.classList.remove('active'));
@@ -1181,13 +1187,12 @@
         const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
         if (!sectionKey) return;
 
+        // 點 SECTION 也算在用 Line Schematic
+        if (schematicParentBtn) {
+          activateNav(schematicParentBtn);
+        }
+
         currentSchematicSection = sectionKey;
-
-        schematicSecBtns.forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-
-        // 重選 SECTION 時，把 LINE 完全重置
-        currentSchematicLine = null;
         schematicLineBtns.forEach(b=>b.classList.remove('active'));
 
         setModule(
@@ -1204,9 +1209,16 @@
         const label = btn.getAttribute('data-label') || key || '';
         if (!key) return;
 
+        // 點任一 PDF → Maintenance 當前模組
+        if (maintenanceParentBtn) {
+          activateNav(maintenanceParentBtn);
+        }
+
         const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
 
-        if (frame) frame.src = viewerUrl;
+        if (frame){
+          frame.src = viewerUrl;
+        }
 
         setModule(
           'Maintenance – ' + label,
@@ -1215,7 +1227,6 @@
 
         maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
-
         if (panel && panel.classList.contains('open')){
           panel.classList.remove('open');
           if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
