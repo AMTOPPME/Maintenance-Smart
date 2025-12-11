@@ -219,8 +219,8 @@
       background:#111827;
     }
 
-    /* Modules 展開面板 */
-   .nav-panel{
+    /* Modules 展開面板（主清單在最左邊） */
+    .nav-panel{
       position:absolute;
       left:24px;
       top:calc(24px + 72px);
@@ -234,10 +234,10 @@
       z-index:10;
       display:none;
       max-height:70vh;
-      overflow-y:auto;
-      overflow-x:visible;   /* ★ 這行讓右邊的 pop-out 不被切掉 */
-    }
 
+      /* 讓右邊 pop-out 不被裁掉 */
+      overflow:visible;
+    }
     .nav-panel.open{
       display:block;
     }
@@ -297,58 +297,42 @@
       opacity:.7;
     }
 
-/* 讓父 <li> 成為定位點 */
-.nav-group-schematic,
-.nav-group-maintenance {
-  position: relative;
-}
+    /* 讓父 <li> 成為定位點 */
+    .nav-group-schematic,
+    .nav-group-maintenance{
+      position:relative;
+    }
 
-/* 子列表：預設在 Modules 右側 pop-out */
-.schematic-panel,
-.maintenance-panel {
-  position: absolute;
-  top: 0;
-  left: 100%;
-  min-width: 220px;
-  margin-left: 8px;
-  background: rgba(249,250,251,0.98);
-  border-radius: 14px;
-  border: 1px solid var(--border-subtle);
-  padding: 8px 10px 10px;
-  box-shadow: 0 8px 18px rgba(15,23,42,.12);
-  display: none;
-  z-index: 99;
-}
+    /* 子列表：預設在 Modules 右側 pop-out */
+    .schematic-panel,
+    .maintenance-panel{
+      position:absolute;
+      top:0;
+      left:100%;
+      min-width:220px;
+      margin-left:8px;
+      background:rgba(249,250,251,0.98);
+      border-radius:14px;
+      border:1px solid var(--border-subtle);
+      padding:8px 10px 10px;
+      box-shadow:0 8px 18px rgba(15,23,42,.12);
+      display:none;
+      z-index:99;
+    }
+    .schematic-panel.open,
+    .maintenance-panel.open{
+      display:block;
+    }
 
-/* 開啟狀態 */
-.schematic-panel.open,
-.maintenance-panel.open {
-  display: block;
-}
-
-.schematic-title,
-.maintenance-title{
-  font-size:11px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  color:var(--text-soft);
-  margin-bottom:6px;
-}
-
-/* 手機版：改回在下面展開 */
-@media (max-width:900px){
-  .schematic-panel,
-  .maintenance-panel{
-    position:static;
-    left:auto;
-    margin-left:0;
-    width:100%;
-    min-width:0;
-  }
-}
-
-
+    .schematic-title,
+    .maintenance-title{
+      font-size:11px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--text-soft);
+      margin-bottom:6px;
+    }
 
     /* SECTION：藍色主按鍵 */
     .schematic-sec-row{
@@ -370,7 +354,7 @@
       transition:background .15s,border-color .15s,color .15s,transform .1s;
     }
     .schematic-sec-btn span.code{
-      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
       font-size:11px;
     }
     .schematic-sec-btn:hover{
@@ -420,7 +404,7 @@
       box-shadow:0 3px 8px rgba(37,99,235,.25);
     }
 
-    /* Maintenance 按鈕（維持原本灰色） */
+    /* Maintenance 按鈕（灰色） */
     .maintenance-sec-row{
       display:flex;
       flex-wrap:wrap;
@@ -440,7 +424,7 @@
       transition:background .15s,border-color .15s,color .15s,transform .1s;
     }
     .maintenance-sec-btn span.code{
-      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
       font-size:11px;
     }
     .maintenance-sec-btn:hover{
@@ -496,84 +480,84 @@
       transform:translateY(-1px);
     }
 
-@media (max-width:900px){
-  .page{
-    padding-top:16px;
-    padding-bottom:24px;
-  }
+    /* 手機版：子列表改成在下面展開 */
+    @media (max-width:900px){
+      .page{
+        padding-top:16px;
+        padding-bottom:24px;
+      }
 
-  .topbar{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-    padding:14px 14px 18px;
-  }
+      .topbar{
+        display:flex;
+        flex-direction:column;
+        align-items:flex-start;
+        gap:10px;
+        padding:14px 14px 18px;
+      }
 
-  .top-left{
-    display:contents;
-    min-height:0;
-  }
+      .top-left{
+        display:contents;
+        min-height:0;
+      }
 
-  .brand-main{
-    font-size:17px;
-    letter-spacing:.10em;
-  }
+      .brand-main{
+        font-size:17px;
+        letter-spacing:.10em;
+      }
 
-  .brand-sub{
-    font-size:12px;
-  }
+      .brand-sub{
+        font-size:12px;
+      }
 
-  .top-quote{
-    width:100%;
-    text-align:left;
-    padding:4px 0 0;
-    order:3;
-  }
+      .top-quote{
+        width:100%;
+        text-align:left;
+        padding:4px 0 0;
+        order:3;
+      }
 
-  .top-meta{
-    width:100%;
-    justify-content:flex-start;
-    gap:6px;
-    flex-wrap:wrap;
-    order:2;
-  }
+      .top-meta{
+        width:100%;
+        justify-content:flex-start;
+        gap:6px;
+        flex-wrap:wrap;
+        order:2;
+      }
 
-  .top-meta .pill{
-    flex-shrink:0;
-  }
+      .top-meta .pill{
+        flex-shrink:0;
+      }
 
-  .menu-button{
-    order:4;
-    align-self:stretch;
-    justify-content:center;
-    text-align:center;
-    margin-top:4px;
-  }
+      .menu-button{
+        order:4;
+        align-self:stretch;
+        justify-content:center;
+        text-align:center;
+        margin-top:4px;
+      }
 
-  .nav-panel{
-    position:relative;
-    left:0;
-    top:0;
-    width:100%;
-    max-width:none;
-    margin-top:8px;
-  }
+      .nav-panel{
+        position:relative;
+        left:0;
+        top:0;
+        width:100%;
+        max-width:none;
+        margin-top:8px;
+      }
 
-  /* 這裡覆蓋掉右側 pop-out，手機改成在下面展開、佔滿寬度 */
-  .schematic-panel,
-  .maintenance-panel{
-    position:static;
-    left:auto;
-    margin-left:0;
-    width:100%;
-    min-width:0;
-  }
+      .schematic-panel,
+      .maintenance-panel{
+        position:static;
+        left:auto;
+        margin-left:0;
+        width:100%;
+        min-width:0;
+      }
 
-  .iframe-wrap{
-    height:calc(100vh - 220px);
-  }
-}
+      .iframe-wrap{
+        height:calc(100vh - 220px);
+      }
+    }
   </style>
 </head>
 <body>
