@@ -997,6 +997,9 @@
     ('ontouchstart' in window) ||
     (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
+    // ★ 目前 active 的父選項：'schematic' / 'maintenance' / null
+  let currentParent = null;
+
     // --- 子列表 hover 開關（0.1 秒後關閉），同時照顧到「移進子面板」的情況 ---
   if (!isTouchDevice){
     let schematicTimer = null;
@@ -1061,12 +1064,12 @@
     if (btn) btn.classList.add('active');
   }
 
-  function closeAllSubPanels(){
+function closeAllSubPanels(){
     if (schematicPanel)   schematicPanel.classList.remove('open');
     if (maintenancePanel) maintenancePanel.classList.remove('open');
   }
 
-  // ★ 新增：重置 Line Schematic 狀態
+  // ★ Line Schematic 子選項 reset
   function resetSchematicSelection(){
     currentSchematicLine    = null;
     currentSchematicSection = null;
@@ -1074,7 +1077,7 @@
     schematicLineBtns.forEach(b => b.classList.remove('active'));
   }
 
-  // ★ 新增：重置 Maintenance 子 PDF 狀態
+  // ★ Maintenance 子選項 reset
   function resetMaintenanceSelection(){
     maintenanceSecBtns.forEach(b => b.classList.remove('active'));
   }
@@ -1118,29 +1121,44 @@
     );
   }
 
-    // 主模組切換（Home / PC Manager / Records / Report）
+  // 主模組切換（Home / PC Manager / Records / Report / 兩個父項）
   buttons.forEach(btn => {
-    const role = btn.dataset.role || '';
-
     btn.addEventListener('click', () => {
       const roleClick = btn.dataset.role || '';
 
+      // ---- 點 Line Schematic 父 ----
       if (roleClick === 'schematic-parent'){
+        // 如果原本是 Maintenance 當前父，就 reset 它的子列表
+        if (currentParent === 'maintenance'){
+          resetMaintenanceSelection();
+        }
+        currentParent = 'schematic';
         openSchematicParent(btn);
         return;
       }
 
+      // ---- 點 Maintenance 父 ----
       if (roleClick === 'maintenance-parent'){
+        // 如果原本是 Schematic 當前父，就 reset 它的子列表
+        if (currentParent === 'schematic'){
+          resetSchematicSelection();
+        }
+        currentParent = 'maintenance';
         openMaintenanceParent(btn);
         return;
       }
 
+      // ---- 其他一般模組（Home / PC Manager / Records / Report）----
       const src = btn.dataset.src;
       if (!src) return;
 
-      // ★ 新增：切到一般模組時，重置右側子 LIST 的 active 狀態
-      resetSchematicSelection();
-      resetMaintenanceSelection();
+      // 有任何父選項被「換掉」時就 reset 自己的子列表
+      if (currentParent === 'schematic'){
+        resetSchematicSelection();
+      } else if (currentParent === 'maintenance'){
+        resetMaintenanceSelection();
+      }
+      currentParent = null;
 
       activateNav(btn);
 
@@ -1157,6 +1175,7 @@
       closeAllSubPanels();
     });
   });
+
 
   // Line Schematic：Line 1~4
   schematicLineBtns.forEach(btn=>{
