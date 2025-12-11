@@ -1028,11 +1028,29 @@
         else                       maintenanceTimer = t;
       }
 
-      // 滑進父按鈕 → 開啟子列表
-      parentBtn.addEventListener('mouseenter', ()=> {
-        clearTimer();
-        panelEl.classList.add('open');
-      });
+          // 滑進父按鈕 → 開啟子列表，順便處理父選項切換 & 子列表 reset
+    parentBtn.addEventListener('mouseenter', ()=> {
+      clearTimer();
+
+      // ★ 如果是滑到 Line Schematic
+      if (which === 'schematic') {
+        // 原本在 Maintenance → 先 reset Maintenance 子列表
+        if (currentParent === 'maintenance') {
+          resetMaintenanceSelection();
+        }
+        currentParent = 'schematic';
+      }
+      // ★ 如果是滑到 Maintenance
+      else if (which === 'maintenance') {
+        // 原本在 Schematic → 先 reset Schematic 子列表
+        if (currentParent === 'schematic') {
+          resetSchematicSelection();
+        }
+        currentParent = 'maintenance';
+      }
+
+      panelEl.classList.add('open');
+    });
 
       // 從父按鈕離開，如果是往子面板方向就不要關
       parentBtn.addEventListener('mouseleave', (e)=> {
