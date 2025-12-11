@@ -980,29 +980,41 @@
     ('ontouchstart' in window) ||
     (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-  // 🔹 用整個 <li> 當 hover 範圍，Timing 比較自然
+  // --- 子列表 hover 開關（0.8 秒關閉） ---
   const schematicGroup   = document.querySelector('.nav-group-schematic');
   const maintenanceGroup = document.querySelector('.nav-group-maintenance');
 
   if (!isTouchDevice){
+    let schematicTimer = null;
+    let maintenanceTimer = null;
+
     if (schematicGroup && schematicPanel){
       schematicGroup.addEventListener('mouseenter', () => {
+        clearTimeout(schematicTimer);
         schematicPanel.classList.add('open');
       });
       schematicGroup.addEventListener('mouseleave', () => {
-        schematicPanel.classList.remove('open');
+        clearTimeout(schematicTimer);
+        schematicTimer = setTimeout(()=>{
+          schematicPanel.classList.remove('open');
+        }, 800); // 0.8 秒
       });
     }
 
     if (maintenanceGroup && maintenancePanel){
       maintenanceGroup.addEventListener('mouseenter', () => {
+        clearTimeout(maintenanceTimer);
         maintenancePanel.classList.add('open');
       });
       maintenanceGroup.addEventListener('mouseleave', () => {
-        maintenancePanel.classList.remove('open');
+        clearTimeout(maintenanceTimer);
+        maintenanceTimer = setTimeout(()=>{
+          maintenancePanel.classList.remove('open');
+        }, 800); // 0.8 秒
       });
     }
   }
+
 
   // 共用 helper
   function activateNav(btn){
