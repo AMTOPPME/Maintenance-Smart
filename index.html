@@ -872,15 +872,16 @@
   })();
 
   // Modules 面板開關
- (function(){
+  (function(){
     const menuBtn = document.getElementById('menuButton');
     const panel   = document.getElementById('navPanel');
     if (!menuBtn || !panel) return;
 
-    // 判斷是否為觸控裝置
     const isTouchDevice =
       ('ontouchstart' in window) ||
       (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+    let hideTimer = null;
 
     function openPanel(){
       panel.classList.add('open');
@@ -892,21 +893,28 @@
       menuBtn.setAttribute('aria-expanded', 'false');
     }
 
-    function togglePanel(){
-      const isOpen = panel.classList.contains('open');
-      if (isOpen) {
-        closePanel();
-      } else {
-        openPanel();
+    function clearHideTimer(){
+      if (hideTimer){
+        clearTimeout(hideTimer);
+        hideTimer = null;
       }
     }
 
-    // 📱 手機 / 平板：點一下展開 / 收起
-    menuBtn.addEventListener('click', function(){
-      togglePanel();
-    });
+    function scheduleHide(){
+      clearHideTimer();
+      // 給一個很短的緩衝，避免移到最下面按鈕時誤關
+      hideTimer = setTimeout(closePanel, 80);  // 80ms
+    }
 
-    // 點擊頁面其他地方就關閉（通用）
+    function togglePanel(){
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) closePanel(); else openPanel();
+    }
+
+    // 📱 手機 / 平板：點一下展開 / 收起
+    menuBtn.addEventListener('click', togglePanel);
+
+    // 點擊頁面其他地方就關閉
     document.addEventListener('click', (e)=>{
       if (!panel.classList.contains('open')) return;
       const insidePanel = panel.contains(e.target);
@@ -916,29 +924,35 @@
       }
     });
 
-    // 🖥️ 桌機：hover 展開，滑鼠一移出就直接關閉（不延遲）
+    // 🖥️ 桌機：hover 展開，移出一小下才關閉
     if (!isTouchDevice){
       // 滑到「Modules」→ 展開
       menuBtn.addEventListener('mouseenter', ()=>{
+        clearHideTimer();
         openPanel();
       });
 
       // 從 Modules 移出，看是不是跑到 panel 裡
       menuBtn.addEventListener('mouseleave', (e)=>{
         const toElement = e.relatedTarget;
-        if (toElement && panel.contains(toElement)) return; // 到 panel 裡就不要關
-        closePanel(); // 直接關閉
+        if (toElement && panel.contains(toElement)) return; // 進入 panel，不關
+        scheduleHide();
+      });
+
+      // 滑到 panel → 保持開啟
+      panel.addEventListener('mouseenter', ()=>{
+        clearHideTimer();
       });
 
       // 從 panel 移出，看是不是回到 Modules
       panel.addEventListener('mouseleave', (e)=>{
         const toElement = e.relatedTarget;
-        if (toElement && menuBtn.contains(toElement)) return; // 回到按鈕也不要關
-        closePanel(); // 一離開整塊就關閉
+        if (toElement && menuBtn.contains(toElement)) return; // 回到按鈕，不關
+        scheduleHide();
       });
     }
   })();
-
+  
  // 切換模組 + Line Schematic / Maintenance 兩層選單
   (function(){
     const frame   = document.getElementById('mainFrame');
