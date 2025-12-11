@@ -872,7 +872,7 @@
   })();
 
   // Modules 面板開關
-  (function(){
+ (function(){
     const menuBtn = document.getElementById('menuButton');
     const panel   = document.getElementById('navPanel');
     if (!menuBtn || !panel) return;
@@ -881,8 +881,6 @@
     const isTouchDevice =
       ('ontouchstart' in window) ||
       (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
-
-    let hideTimer = null;
 
     function openPanel(){
       panel.classList.add('open');
@@ -903,7 +901,7 @@
       }
     }
 
-    // 手機 / 平板：保留點一下展開 / 收起
+    // 📱 手機 / 平板：點一下展開 / 收起
     menuBtn.addEventListener('click', function(){
       togglePanel();
     });
@@ -918,45 +916,25 @@
       }
     });
 
-    // 桌機 / 滑鼠：hover 展開 + 滑出去 0.2 秒後收起
+    // 🖥️ 桌機：hover 展開，滑鼠一移出就直接關閉（不延遲）
     if (!isTouchDevice){
-      function clearHideTimer(){
-        if (hideTimer){
-          clearTimeout(hideTimer);
-          hideTimer = null;
-        }
-      }
-
-      function scheduleHide(){
-        clearHideTimer();
-        hideTimer = setTimeout(()=>{
-          closePanel();
-        }, 200); // 0.2 秒後收起
-      }
-
-      // 滑到「Modules」那一行 → 展開
+      // 滑到「Modules」→ 展開
       menuBtn.addEventListener('mouseenter', ()=>{
-        clearHideTimer();
         openPanel();
-      });
-
-      // 滑到面板上 → 保持打開
-      panel.addEventListener('mouseenter', ()=>{
-        clearHideTimer();
       });
 
       // 從 Modules 移出，看是不是跑到 panel 裡
       menuBtn.addEventListener('mouseleave', (e)=>{
         const toElement = e.relatedTarget;
-        if (toElement && panel.contains(toElement)) return; // 還在面板裡
-        scheduleHide();
+        if (toElement && panel.contains(toElement)) return; // 到 panel 裡就不要關
+        closePanel(); // 直接關閉
       });
 
       // 從 panel 移出，看是不是回到 Modules
       panel.addEventListener('mouseleave', (e)=>{
         const toElement = e.relatedTarget;
-        if (toElement && menuBtn.contains(toElement)) return;
-        scheduleHide();
+        if (toElement && menuBtn.contains(toElement)) return; // 回到按鈕也不要關
+        closePanel(); // 一離開整塊就關閉
       });
     }
   })();
