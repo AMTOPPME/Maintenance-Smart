@@ -871,7 +871,7 @@
     window._msSyncFrameStyle = applyStyleToFrame;
   })();
 
-  // Modules 面板開關
+ // Modules 面板開關
   (function(){
     const menuBtn = document.getElementById('menuButton');
     const panel   = document.getElementById('navPanel');
@@ -881,7 +881,7 @@
       ('ontouchstart' in window) ||
       (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-    let hideTimer = null;
+    let mainHideTimer = null;
 
     function openPanel(){
       panel.classList.add('open');
@@ -893,17 +893,17 @@
       menuBtn.setAttribute('aria-expanded', 'false');
     }
 
-    function clearHideTimer(){
-      if (hideTimer){
-        clearTimeout(hideTimer);
-        hideTimer = null;
+    function clearMainHideTimer(){
+      if (mainHideTimer){
+        clearTimeout(mainHideTimer);
+        mainHideTimer = null;
       }
     }
 
-    function scheduleHide(){
-      clearHideTimer();
-      // 給一個很短的緩衝，避免移到最下面按鈕時誤關
-      hideTimer = setTimeout(closePanel, 80);  // 80ms
+    // 👇 Modules List 離開後 2 秒才關閉
+    function scheduleMainHide(){
+      clearMainHideTimer();
+      mainHideTimer = setTimeout(closePanel, 2000); // 2 秒
     }
 
     function togglePanel(){
@@ -914,7 +914,7 @@
     // 📱 手機 / 平板：點一下展開 / 收起
     menuBtn.addEventListener('click', togglePanel);
 
-    // 點擊頁面其他地方就關閉
+    // 點擊頁面其他地方就關閉（立刻關）
     document.addEventListener('click', (e)=>{
       if (!panel.classList.contains('open')) return;
       const insidePanel = panel.contains(e.target);
@@ -924,61 +924,87 @@
       }
     });
 
-    // 🖥️ 桌機：hover 展開，移出一小下才關閉
+    // 🖥️ 桌機：hover 展開，移出 2 秒後關閉
     if (!isTouchDevice){
       // 滑到「Modules」→ 展開
       menuBtn.addEventListener('mouseenter', ()=>{
-        clearHideTimer();
+        clearMainHideTimer();
         openPanel();
       });
 
-      // 從 Modules 移出，看是不是跑到 panel 裡
+      // 從 Modules 離開，看是不是跑到 panel 裡
       menuBtn.addEventListener('mouseleave', (e)=>{
         const toElement = e.relatedTarget;
         if (toElement && panel.contains(toElement)) return; // 進入 panel，不關
-        scheduleHide();
+        scheduleMainHide();
       });
 
       // 滑到 panel → 保持開啟
       panel.addEventListener('mouseenter', ()=>{
-        clearHideTimer();
+        clearMainHideTimer();
       });
 
-      // 從 panel 移出，看是不是回到 Modules
+      // 從 panel 離開 → 開始 2 秒倒數
       panel.addEventListener('mouseleave', (e)=>{
         const toElement = e.relatedTarget;
         if (toElement && menuBtn.contains(toElement)) return; // 回到按鈕，不關
-        scheduleHide();
+        scheduleMainHide();
       });
     }
   })();
   
  // 切換模組 + Line Schematic / Maintenance 兩層選單
-  (function(){
-    const frame   = document.getElementById('mainFrame');
-    const titleEl = document.getElementById('moduleTitle');
-    const subEl   = document.getElementById('moduleSub');
-    const panel   = document.getElementById('navPanel');
-    const menuBtn = document.getElementById('menuButton');
-    const buttons = document.querySelectorAll('.nav-item-btn');
+(function(){
+  const frame   = document.getElementById('mainFrame');
+  const titleEl = document.getElementById('moduleTitle');
+  const subEl   = document.getElementById('moduleSub');
+  const panel   = document.getElementById('navPanel');
+  const menuBtn = document.getElementById('menuButton');
+  const buttons = document.querySelectorAll('.nav-item-btn');
 
-    // 父按鈕：Line Schematic / Maintenance
-    const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
-    const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
+  // 父按鈕：Line Schematic / Maintenance
+  const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
+  const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
 
-    const schematicPanel     = document.getElementById('schematicPanel');
-    const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
-    const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
-    let currentSchematicLine    = null;
-    let currentSchematicSection = null;
+  const schematicPanel     = document.getElementById('schematicPanel');
+  const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
+  const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
+  let currentSchematicLine    = null;
+  let currentSchematicSection = null;
 
-    const maintenancePanel   = document.getElementById('maintenancePanel');
-    const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
+  const maintenancePanel   = document.getElementById('maintenancePanel');
+  const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
 
-    // 判斷是否為觸控裝置（只有桌機才啟用 hover 開關面板）
-    const isTouchDevice =
-      ('ontouchstart' in window) ||
-      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+  // 判斷是否為觸控裝置（只有桌機才啟用 hover 開關面板）
+  const isTouchDevice =
+    ('ontouchstart' in window) ||
+    (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+  /* 🔽🔽 這一整段是「子列表滑鼠移出就縮起來」── 新增在這裡 🔽🔽 */
+
+  const schematicGroup   = document.querySelector('.nav-group-schematic');
+  const maintenanceGroup = document.querySelector('.nav-group-maintenance');
+
+  if (!isTouchDevice){
+    if (schematicGroup){
+      schematicGroup.addEventListener('mouseleave', () => {
+        if (schematicPanel) schematicPanel.classList.remove('open');
+      });
+    }
+    if (maintenanceGroup){
+      maintenanceGroup.addEventListener('mouseleave', () => {
+        if (maintenancePanel) maintenancePanel.classList.remove('open');
+      });
+    }
+  }
+
+  /* 🔼🔼 新增結束，下面就接你原本的 helper / buttons.forEach 等程式碼 🔼🔼 */
+
+  // ...這裡繼續放你原本的 activateNav / setModule / buildSchematicFileName、
+  // buttons.forEach(...)、schematicLineBtns.forEach(...)、schematicSecBtns.forEach(...)
+  // 和 maintenanceSecBtns.forEach(...) 等邏輯就可以了
+})();
+
 
     // 共用 helper
     function activateNav(btn){
