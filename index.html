@@ -954,287 +954,240 @@
   })();
   
 // 切換模組 + Line Schematic / Maintenance 兩層選單
-  (function(){
-    const frame   = document.getElementById('mainFrame');
-    const titleEl = document.getElementById('moduleTitle');
-    const subEl   = document.getElementById('moduleSub');
-    const panel   = document.getElementById('navPanel');
-    const menuBtn = document.getElementById('menuButton');
-    const buttons = document.querySelectorAll('.nav-item-btn');
+(function(){
+  const frame   = document.getElementById('mainFrame');
+  const titleEl = document.getElementById('moduleTitle');
+  const subEl   = document.getElementById('moduleSub');
+  const panel   = document.getElementById('navPanel');
+  const menuBtn = document.getElementById('menuButton');
+  const buttons = document.querySelectorAll('.nav-item-btn');
 
-    // 父按鈕：Line Schematic / Maintenance
-    const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
-    const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
+  // 父按鈕：Line Schematic / Maintenance
+  const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
+  const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
 
-    const schematicPanel     = document.getElementById('schematicPanel');
-    const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
-    const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
-    let currentSchematicLine    = null;
-    let currentSchematicSection = null;
+  const schematicPanel     = document.getElementById('schematicPanel');
+  const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
+  const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
+  let currentSchematicLine    = null;
+  let currentSchematicSection = null;
 
-    const maintenancePanel   = document.getElementById('maintenancePanel');
-    const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
+  const maintenancePanel   = document.getElementById('maintenancePanel');
+  const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
 
-    // 只有桌機才啟用 hover 子列表
-    const isTouchDevice =
-      ('ontouchstart' in window) ||
-      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+  // 只有桌機才啟用 hover 子列表
+  const isTouchDevice =
+    ('ontouchstart' in window) ||
+    (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-    // 共用 helper
-    function activateNav(btn){
-      buttons.forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-    }
+  // 🔹 用整個 <li> 當 hover 範圍，Timing 比較自然
+  const schematicGroup   = document.querySelector('.nav-group-schematic');
+  const maintenanceGroup = document.querySelector('.nav-group-maintenance');
 
-    function closeAllSubPanels(){
-      if (schematicPanel)   schematicPanel.classList.remove('open');
-      if (maintenancePanel) maintenancePanel.classList.remove('open');
-    }
-
-    function setModule(title, sub){
-      if (titleEl) titleEl.textContent = title;
-      if (subEl)   subEl.textContent   = sub;
-    }
-
-    function formatLineLabel(lineKey){
-      if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
-      return lineKey;
-    }
-
-    // Schematic 檔名規則：Line-1-4-Schematic.html?line=1&sec=F13
-    function buildSchematicFileName(lineKey, sectionKey){
-      const n = lineKey.replace('Line',''); // Line1 -> 1
-      return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
-    }
-
-    // 點擊父按鈕：正式切到該模組
-    function openSchematicParent(btn){
-      if (!schematicPanel) return;
-      activateNav(btn);
-      closeAllSubPanels();
-      schematicPanel.classList.add('open');
-      setModule(
-        btn.dataset.title || 'Line Schematic',
-        btn.dataset.sub   || 'Select section (F12/F13/F16/F201) then line (1~4).'
-      );
-    }
-
-    function openMaintenanceParent(btn){
-      if (!maintenancePanel) return;
-      activateNav(btn);
-      closeAllSubPanels();
-      maintenancePanel.classList.add('open');
-      setModule(
-        btn.dataset.title || 'Maintenance',
-        btn.dataset.sub   || 'Open maintenance SOP PDFs.'
-      );
-    }
-
-    // 主模組切換（Home / PC Manager / Records / Report）
-    buttons.forEach(btn => {
-      const role = btn.dataset.role || '';
-
-      // 點擊行為（手機 + 桌機）
-      btn.addEventListener('click', () => {
-        const roleClick = btn.dataset.role || '';
-
-        if (roleClick === 'schematic-parent'){
-          openSchematicParent(btn);
-          return;
-        }
-
-        if (roleClick === 'maintenance-parent'){
-          openMaintenanceParent(btn);
-          return;
-        }
-
-        // 一般按鈕
-        const src = btn.dataset.src;
-        if (!src) return;
-
-        activateNav(btn);
-
-        const title = btn.dataset.title || 'Module';
-        const sub   = btn.dataset.sub || '';
-        if (frame) frame.src = src;
-        setModule(title, sub);
-
-        if (panel && panel.classList.contains('open')){
-          panel.classList.remove('open');
-          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-        }
-
-        closeAllSubPanels();
+  if (!isTouchDevice){
+    if (schematicGroup && schematicPanel){
+      schematicGroup.addEventListener('mouseenter', () => {
+        schematicPanel.classList.add('open');
       });
+      schematicGroup.addEventListener('mouseleave', () => {
+        schematicPanel.classList.remove('open');
+      });
+    }
 
-      // 桌機版：hover 只「展開子列表」，顏色維持淺藍（靠 :hover）
-      if (!isTouchDevice && role === 'schematic-parent' && schematicPanel){
-        let hideTimer = null;
+    if (maintenanceGroup && maintenancePanel){
+      maintenanceGroup.addEventListener('mouseenter', () => {
+        maintenancePanel.classList.add('open');
+      });
+      maintenanceGroup.addEventListener('mouseleave', () => {
+        maintenancePanel.classList.remove('open');
+      });
+    }
+  }
 
-        function cancelHide(){
-          if (hideTimer){
-            clearTimeout(hideTimer);
-            hideTimer = null;
-          }
-        }
-        function scheduleHide(){
-          cancelHide();
-          hideTimer = setTimeout(()=>{
-            schematicPanel.classList.remove('open');
-          }, 0);  // 子列表立即收起（你要「馬上縮起來」）
-        }
+  // 共用 helper
+  function activateNav(btn){
+    buttons.forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+  }
 
-        btn.addEventListener('mouseenter', ()=>{
-          cancelHide();
-          schematicPanel.classList.add('open');
-        });
+  function closeAllSubPanels(){
+    if (schematicPanel)   schematicPanel.classList.remove('open');
+    if (maintenancePanel) maintenancePanel.classList.remove('open');
+  }
 
-        btn.addEventListener('mouseleave', (e)=>{
-          const toEl = e.relatedTarget;
-          if (toEl && schematicPanel.contains(toEl)) return;
-          scheduleHide();
-        });
+  function setModule(title, sub){
+    if (titleEl) titleEl.textContent = title;
+    if (subEl)   subEl.textContent   = sub;
+  }
 
-        schematicPanel.addEventListener('mouseenter', cancelHide);
-        schematicPanel.addEventListener('mouseleave', (e)=>{
-          const toEl = e.relatedTarget;
-          if (toEl && btn.contains(toEl)) return;
-          scheduleHide();
-        });
+  function formatLineLabel(lineKey){
+    if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
+    return lineKey;
+  }
+
+  // Schematic 檔名規則：Line-1-4-Schematic.html?line=1&sec=F13
+  function buildSchematicFileName(lineKey, sectionKey){
+    const n = lineKey.replace('Line',''); // Line1 -> 1
+    return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
+  }
+
+  // 點擊父按鈕：正式切到該模組
+  function openSchematicParent(btn){
+    if (!schematicPanel) return;
+    activateNav(btn);
+    closeAllSubPanels();
+    schematicPanel.classList.add('open');
+    setModule(
+      btn.dataset.title || 'Line Schematic',
+      btn.dataset.sub   || 'Select section (F12/F13/F16/F201) then line (1~4).'
+    );
+  }
+
+  function openMaintenanceParent(btn){
+    if (!maintenancePanel) return;
+    activateNav(btn);
+    closeAllSubPanels();
+    maintenancePanel.classList.add('open');
+    setModule(
+      btn.dataset.title || 'Maintenance',
+      btn.dataset.sub   || 'Open maintenance SOP PDFs.'
+    );
+  }
+
+  // 主模組切換（Home / PC Manager / Records / Report）
+  buttons.forEach(btn => {
+    const role = btn.dataset.role || '';
+
+    // 點擊行為（手機 + 桌機）
+    btn.addEventListener('click', () => {
+      const roleClick = btn.dataset.role || '';
+
+      if (roleClick === 'schematic-parent'){
+        openSchematicParent(btn);
+        return;
       }
 
-      if (!isTouchDevice && role === 'maintenance-parent' && maintenancePanel){
-        let hideTimer = null;
-
-        function cancelHide(){
-          if (hideTimer){
-            clearTimeout(hideTimer);
-            hideTimer = null;
-          }
-        }
-        function scheduleHide(){
-          cancelHide();
-          hideTimer = setTimeout(()=>{
-            maintenancePanel.classList.remove('open');
-          }, 0);  // 同樣子列表立刻收
-        }
-
-        btn.addEventListener('mouseenter', ()=>{
-          cancelHide();
-          maintenancePanel.classList.add('open');
-        });
-
-        btn.addEventListener('mouseleave', (e)=>{
-          const toEl = e.relatedTarget;
-          if (toEl && maintenancePanel.contains(toEl)) return;
-          scheduleHide();
-        });
-
-        maintenancePanel.addEventListener('mouseenter', cancelHide);
-        maintenancePanel.addEventListener('mouseleave', (e)=>{
-          const toEl = e.relatedTarget;
-          if (toEl && btn.contains(toEl)) return;
-          scheduleHide();
-        });
+      if (roleClick === 'maintenance-parent'){
+        openMaintenanceParent(btn);
+        return;
       }
+
+      // 一般按鈕
+      const src = btn.dataset.src;
+      if (!src) return;
+
+      activateNav(btn);
+
+      const title = btn.dataset.title || 'Module';
+      const sub   = btn.dataset.sub || '';
+      if (frame) frame.src = src;
+      setModule(title, sub);
+
+      if (panel && panel.classList.contains('open')){
+        panel.classList.remove('open');
+        if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+      }
+
+      closeAllSubPanels();
     });
 
-    // Line Schematic：Line 1~4
-    schematicLineBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const lineKey = btn.getAttribute('data-line');
-        if (!lineKey) return;
+    // ❌ 這裡就不用再做 hover 開關子列表了，交給上面 group 的 mouseenter/leave
+  });
 
-        // 點任一 LINE → Line Schematic 當前模組（藍色 active）
-        if (schematicParentBtn) {
-          activateNav(schematicParentBtn);
-        }
+  // Line Schematic：Line 1~4
+  schematicLineBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const lineKey = btn.getAttribute('data-line');
+      if (!lineKey) return;
 
-        currentSchematicLine = lineKey;
+      // 點任一 LINE → Line Schematic 當前模組（藍色 active）
+      if (schematicParentBtn) {
+        activateNav(schematicParentBtn);
+      }
 
-        schematicLineBtns.forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
+      currentSchematicLine = lineKey;
 
-        // 還沒選 section 就先不要開檔
-        if (!currentSchematicSection) return;
+      schematicLineBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
 
-        const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
-        if (frame) frame.src = file;
+      // 還沒選 section 就先不要開檔
+      if (!currentSchematicSection) return;
 
-        const lineLabel = formatLineLabel(currentSchematicLine);
-        setModule(
-          'Line Schematic – ' + lineLabel + ' – ' + currentSchematicSection,
-          'Schematic file: ' + file
-        );
+      const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
+      if (frame) frame.src = file;
 
-        // 不用把 Modules Panel 關掉，交給前面那個「2 秒關閉」的模組控制
-      });
+      const lineLabel = formatLineLabel(currentSchematicLine);
+      setModule(
+        'Line Schematic – ' + lineLabel + ' – ' + currentSchematicSection,
+        'Schematic file: ' + file
+      );
     });
+  });
 
-    // Line Schematic：Section F12/F13/F16/F201
-    schematicSecBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const sectionKey   = btn.getAttribute('data-section');
-        const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-        if (!sectionKey) return;
+  // Line Schematic：Section F12/F13/F16/F201
+  schematicSecBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const sectionKey   = btn.getAttribute('data-section');
+      const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+      if (!sectionKey) return;
 
-        // 點 SECTION 也算在用 Line Schematic
-        if (schematicParentBtn) {
-          activateNav(schematicParentBtn);
-        }
+      // 點 SECTION 也算在用 Line Schematic
+      if (schematicParentBtn) {
+        activateNav(schematicParentBtn);
+      }
 
-        currentSchematicSection = sectionKey;
+      currentSchematicSection = sectionKey;
 
-        // 切換 section 時，LINE 完全重置
-        currentSchematicLine = null;
-        schematicLineBtns.forEach(b=>b.classList.remove('active'));
+      // 切換 section 時，LINE 完全重置
+      currentSchematicLine = null;
+      schematicLineBtns.forEach(b=>b.classList.remove('active'));
 
-        setModule(
-          'Line Schematic – ' + sectionLabel,
-          'Select LINE to open schematic.'
-        );
-      });
+      setModule(
+        'Line Schematic – ' + sectionLabel,
+        'Select LINE to open schematic.'
+      );
     });
+  });
 
-    // Maintenance：開 Maintenance.html（裡面再用 pdf.js）
-    maintenanceSecBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const key   = btn.getAttribute('data-pdf-key');
-        const label = btn.getAttribute('data-label') || key || '';
-        if (!key) return;
+  // Maintenance：開 Maintenance.html（裡面再用 pdf.js）
+  maintenanceSecBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key   = btn.getAttribute('data-pdf-key');
+      const label = btn.getAttribute('data-label') || key || '';
+      if (!key) return;
 
-        // 點任一 PDF → Maintenance 當前模組（藍色 active）
-        if (maintenanceParentBtn) {
-          activateNav(maintenanceParentBtn);
-        }
+      // 點任一 PDF → Maintenance 當前模組（藍色 active）
+      if (maintenanceParentBtn) {
+        activateNav(maintenanceParentBtn);
+      }
 
-        const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
+      const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
 
-        if (frame){
-          frame.src = viewerUrl;
-        }
+      if (frame){
+        frame.src = viewerUrl;
+      }
 
-        setModule(
-          'Maintenance – ' + label,
-          'PDF: ' + label
-        );
+      setModule(
+        'Maintenance – ' + label,
+        'PDF: ' + label
+      );
 
-        maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-      });
+      maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
     });
+  });
 
-    // Tags list：載入到右側 iframe
-    const tagsLink = document.getElementById('tagsListLink');
-    if (tagsLink) {
-      tagsLink.addEventListener('click', function (e) {
-        e.preventDefault();
+  // Tags list：載入到右側 iframe
+  const tagsLink = document.getElementById('tagsListLink');
+  if (tagsLink) {
+    tagsLink.addEventListener('click', function (e) {
+      e.preventDefault();
 
-        if (frame) frame.src = 'F13_PLC_Tags list.html';
-        setModule('Tags List', 'PLC / SCADA Tag Reference');
-      });
-    }
-  })();
+      if (frame) frame.src = 'F13_PLC_Tags list.html';
+      setModule('Tags List', 'PLC / SCADA Tag Reference');
+    });
+  }
+})();
 
   // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
   (function(){
