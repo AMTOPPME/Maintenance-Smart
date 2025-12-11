@@ -1066,6 +1066,20 @@
     if (maintenancePanel) maintenancePanel.classList.remove('open');
   }
 
+  // ★ 新增：重置 Line Schematic 狀態
+  function resetSchematicSelection(){
+    currentSchematicLine    = null;
+    currentSchematicSection = null;
+    schematicSecBtns.forEach(b => b.classList.remove('active'));
+    schematicLineBtns.forEach(b => b.classList.remove('active'));
+  }
+
+  // ★ 新增：重置 Maintenance 子 PDF 狀態
+  function resetMaintenanceSelection(){
+    maintenanceSecBtns.forEach(b => b.classList.remove('active'));
+  }
+
+  
   function setModule(title, sub){
     if (titleEl) titleEl.textContent = title;
     if (subEl)   subEl.textContent   = sub;
@@ -1104,7 +1118,7 @@
     );
   }
 
-  // 主模組切換（Home / PC Manager / Records / Report）
+    // 主模組切換（Home / PC Manager / Records / Report）
   buttons.forEach(btn => {
     const role = btn.dataset.role || '';
 
@@ -1123,6 +1137,10 @@
 
       const src = btn.dataset.src;
       if (!src) return;
+
+      // ★ 新增：切到一般模組時，重置右側子 LIST 的 active 狀態
+      resetSchematicSelection();
+      resetMaintenanceSelection();
 
       activateNav(btn);
 
