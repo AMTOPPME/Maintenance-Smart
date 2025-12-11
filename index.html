@@ -220,7 +220,7 @@
     }
 
     /* Modules 展開面板 */
-    .nav-panel{
+   .nav-panel{
       position:absolute;
       left:24px;
       top:calc(24px + 72px);
@@ -235,7 +235,9 @@
       display:none;
       max-height:70vh;
       overflow-y:auto;
+      overflow-x:visible;   /* ★ 這行讓右邊的 pop-out 不被切掉 */
     }
+
     .nav-panel.open{
       display:block;
     }
@@ -1011,40 +1013,63 @@
     ('ontouchstart' in window) ||
     (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-  // --- 子列表 hover 開關（0.1 秒關閉） ---
-  const schematicGroup   = document.querySelector('.nav-group-schematic');
-  const maintenanceGroup = document.querySelector('.nav-group-maintenance');
-
+    // --- 子列表 hover 開關（0.1 秒後關閉），同時照顧到「移進子面板」的情況 ---
   if (!isTouchDevice){
     let schematicTimer = null;
     let maintenanceTimer = null;
 
-    if (schematicGroup && schematicPanel){
-      schematicGroup.addEventListener('mouseenter', () => {
-        clearTimeout(schematicTimer);
-        schematicPanel.classList.add('open');
+    function setupHover(parentBtn, panelEl, which){  // which: 'schematic' or 'maintenance'
+      if (!parentBtn || !panelEl) return;
+
+      function clearTimer(){
+        if (which === 'schematic' && schematicTimer){
+          clearTimeout(schematicTimer);
+          schematicTimer = null;
+        }
+        if (which === 'maintenance' && maintenanceTimer){
+          clearTimeout(maintenanceTimer);
+          maintenanceTimer = null;
+        }
+      }
+
+      function scheduleClose(){
+        clearTimer();
+        const t = setTimeout(()=>{
+          panelEl.classList.remove('open');
+        }, 100); // ★ 0.1 秒後收起
+        if (which === 'schematic') schematicTimer = t;
+        else                       maintenanceTimer = t;
+      }
+
+      // 滑進父按鈕 → 開啟子列表
+      parentBtn.addEventListener('mouseenter', ()=> {
+        clearTimer();
+        panelEl.classList.add('open');
       });
-      schematicGroup.addEventListener('mouseleave', () => {
-        clearTimeout(schematicTimer);
-        schematicTimer = setTimeout(()=>{
-          schematicPanel.classList.remove('open');
-        }, 100); // 0.1 秒後收起
+
+      // 從父按鈕離開，如果是往子面板方向就不要關
+      parentBtn.addEventListener('mouseleave', (e)=> {
+        if (e.relatedTarget && panelEl.contains(e.relatedTarget)) return;
+        scheduleClose();
+      });
+
+      // 滑進子面板 → 保持開啟
+      panelEl.addEventListener('mouseenter', ()=> {
+        clearTimer();
+        panelEl.classList.add('open');
+      });
+
+      // 從子面板離開，如果是回到父按鈕就不要關
+      panelEl.addEventListener('mouseleave', (e)=> {
+        if (e.relatedTarget && parentBtn.contains(e.relatedTarget)) return;
+        scheduleClose();
       });
     }
 
-    if (maintenanceGroup && maintenancePanel){
-      maintenanceGroup.addEventListener('mouseenter', () => {
-        clearTimeout(maintenanceTimer);
-        maintenancePanel.classList.add('open');
-      });
-      maintenanceGroup.addEventListener('mouseleave', () => {
-        clearTimeout(maintenanceTimer);
-        maintenanceTimer = setTimeout(()=>{
-          maintenancePanel.classList.remove('open');
-        }, 100); // 0.1 秒後收起
-      });
-    }
+    setupHover(schematicParentBtn,   schematicPanel,   'schematic');
+    setupHover(maintenanceParentBtn, maintenancePanel, 'maintenance');
   }
+
 
   // 共用 helper
   function activateNav(btn){
