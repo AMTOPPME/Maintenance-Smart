@@ -1224,26 +1224,33 @@ function closeAllSubPanels(){
   });
 
   // Line Schematic：Section
-  schematicSecBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const sectionKey   = btn.getAttribute('data-section');
-      const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-      if (!sectionKey) return;
+schematicSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const sectionKey   = btn.getAttribute('data-section');
+    const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+    if (!sectionKey) return;
 
-      if (schematicParentBtn) {
-        activateNav(schematicParentBtn);
-      }
+    if (schematicParentBtn) {
+      activateNav(schematicParentBtn);
+    }
 
-      currentSchematicSection = sectionKey;
-      currentSchematicLine    = null;
-      schematicLineBtns.forEach(b=>b.classList.remove('active'));
+    currentSchematicSection = sectionKey;
+    currentSchematicLine    = null;
 
-      setModule(
-        'Line Schematic – ' + sectionLabel,
-        'Select LINE to open schematic.'
-      );
-    });
+    // ★ 先把所有 Section 的藍色關掉，再把目前這顆變藍
+    schematicSecBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Line 1~4 的藍色順便清掉
+    schematicLineBtns.forEach(b=>b.classList.remove('active'));
+
+    setModule(
+      'Line Schematic – ' + sectionLabel,
+      'Select LINE to open schematic.'
+    );
   });
+});
+
 
   // Maintenance PDF
   maintenanceSecBtns.forEach(btn=>{
