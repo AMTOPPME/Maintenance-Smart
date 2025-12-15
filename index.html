@@ -661,9 +661,9 @@
 
             <!-- 一開始先隱藏，選 SECTION 才顯示 -->
             <div class="ls-tags" style="display:none;">
-              <div class="ls-label">TAGS LIST</div>
-              <a class="ls-tag-link" href="#" id="tagsListLink">
-                Open Tags List
+              <div class="ls-label">I/O LIST</div>
+              <a class="ls-tag-link" href="#" id="ioListLink">
+                Open I/O List
               </a>
             </div>
           </div>
@@ -1275,15 +1275,32 @@
     });
   });
 
-  // Tags list
-  const tagsLink = document.getElementById('tagsListLink');
-  if (tagsLink) {
-    tagsLink.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (frame) frame.src = 'F13_PLC_Tags list.html';
-      setModule('Tags List', 'PLC / SCADA Tag Reference');
-    });
-  }
+  // I/O LIST 按鈕
+const ioLink = document.getElementById('ioListLink');
+if (ioLink) {
+  ioLink.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    // 必須先選 SECTION
+    if (!currentSchematicSection) {
+      return; // or alert("Please select SECTION first.");
+    }
+
+    // 產生對應 PDF 檔名，例如 F13 → F13_IOLIST.pdf
+    const sec = currentSchematicSection;
+    const pdf = `${sec}_IOLIST.pdf`;
+
+    if (frame){
+      frame.src = pdf;
+    }
+
+    setModule(
+      `I/O LIST – ${sec}`,
+      `PDF File: ${pdf}`
+    );
+  });
+}
+
 })();
 
   // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
