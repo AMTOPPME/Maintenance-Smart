@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>I/O List | Maintenance Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 套用主題 -->
+  <script>
+    (function () {
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
+
+  <style>
+    /* ---- 保留你原本全部 CSS，不刪減 ---- */
+
+    :root {
+      --bg: #f3f4f6;
+      --card-bg:#ffffff;
+      --border-subtle:#e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text: #111827;
+      --text-soft: #6b7280;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(129,140,248,0.12), transparent),
+        var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      -webkit-text-size-adjust: 100%;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    html[data-style="panther"] body{
+      background:
+        radial-gradient(circle at top,rgba(244,114,182,.28),transparent),
+        var(--bg);
+    }
+    html[data-style="hangyodon"] body{
+      background:
+        radial-gradient(circle at top,rgba(56,189,248,.35),transparent),
+        var(--bg);
+    }
+
+    /* 左右角色圖 */
+    .side-panther,
+    .side-hangyodon{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      width:320px;
+      opacity:.9;
+      z-index:1;
+      pointer-events:none;
+      user-select:none;
+      transition: transform .25s ease, opacity .25s ease;
+      display:none;
+    }
+
+    .side-panther.left{left:1.5%; }
+    .side-panther.right{right:1.5%; }
+
+    .side-hangyodon.left{left:1.5%; transform:translateY(-50%) scaleX(-1);}
+    .side-hangyodon.right{right:1.5%; transform:translateY(-50%) scaleX(-1);}
+
+    html[data-style="panther"] .side-panther{display:block;}
+    html[data-style="hangyodon"] .side-hangyodon{display:block;}
+
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{
+        display:none !important;
+      }
+
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block !important;
+        position:fixed !important;
+        left:50% !important;
+        right:auto !important;
+        top:50% !important;
+        transform:translate(-50%, -50%) !important;
+        width:260px;
+        opacity:.7;
+      }
+    }
+
+    /* Back to Top button */
+    #backToTop {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .25s ease, box-shadow .25s ease;
+    }
+
+    #backToTop.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 角色圖 -->
+  <img src="pinkpanther1.png" alt="" class="side-panther left">
+  <img src="pinkpanther2.png" alt="" class="side-panther right">
+
+  <img src="hangyodon1.png" alt="" class="side-hangyodon left">
+  <img src="hangyodon2.png" alt="" class="side-hangyodon right">
+
+  <h1>I/O LIST</h1>
+  <div class="subtitle" id="subtitle">Loading…</div>
+
+  <div class="toolbar">
+    <a class="btn" id="openNewTab" href="#" target="_blank" rel="noopener noreferrer">
+      Open in New Tab ↗
+    </a>
+  </div>
+
+  <div class="viewer" id="viewer">
+    <iframe id="pdfFrame" title="I/O list viewer"></iframe>
+  </div>
+
+  <button id="backToTop" title="Back to Top">↑</button>
+
+  <!-- Back to top 同步 PDF.js 捲動 -->
+  <script>
+    /* 你原本的 back-to-top 程式碼保留 */
+  </script>
+
+  <!-- ⭐ I/O LIST PDF Loader：動態依 query string 載入 Fxx_IOLIST.pdf -->
+  <script>
+    (function () {
+
+      // 取得 URL query：?sec=F12
+      const params = new URLSearchParams(window.location.search);
+      const sec = params.get("sec") || "F13";  // default=F13
+
+      // 更新副標
+      const subtitle = document.getElementById("subtitle");
+      if (subtitle) subtitle.textContent = `Section ${sec} – PLC / Equipment I/O Reference`;
+
+      // PDF 檔案名
+      const pdfFileName = `${sec}_IOLIST.pdf`;
+
+      // 直接開啟 PDF
+      const pdfUrlDirect = pdfFileName;
+
+      // pdf.js viewer 用路徑
+      const pdfUrlForViewer = "../../" + pdfFileName;
+
+      const pdfjsViewerBase = 'pdfjs/web/viewer.html';
+      const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
+
+      const viewer  = document.getElementById('viewer');
+      const frame   = document.getElementById('pdfFrame');
+      const openNewTab = document.getElementById('openNewTab');
+
+      // 判斷裝置（你原本的程式完整保留）
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const isSmallScreen = window.innerWidth <= 1024;
+      const isMobileOrTablet = isTouch && isSmallScreen;
+
+      if (isMobileOrTablet) {
+        if (openNewTab) openNewTab.style.display = 'none';
+        if (viewer) {
+          viewer.innerHTML = `
+            <div class="fallback">
+              Tap the button below to open I/O LIST PDF.<br><br>
+              <a class="btn" href="${pdfUrlDirect}" target="_blank" rel="noopener">
+                Open I/O LIST PDF ↗
+              </a>
+            </div>`;
+        }
+        return;
+      }
+
+      // 桌機 → 內嵌 pdf.js viewer
+      if (frame) frame.src = viewerUrl;
+      if (openNewTab) openNewTab.href = viewerUrl;
+
+    })();
+  </script>
+
+</body>
+</html>
