@@ -422,6 +422,43 @@
 .scada-sec-btn{
   width:100%;
 
+  /* Maintenance 2nd layer group button */
+.maintenance-group-btn{
+  width:100%;
+  border:none;
+  border-radius:12px;
+  padding:10px 12px;
+  background:#ffffff;
+  border:1px solid var(--border-subtle);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:var(--text);
+  font-size:13px;
+  box-shadow:0 6px 16px rgba(15,23,42,.06);
+  transition:transform .12s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.maintenance-group-btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(37,99,235,.35);
+  box-shadow:0 10px 22px rgba(15,23,42,.10);
+}
+
+/* Maintenance 3rd layer container */
+.maintenance-third-row{
+  display:none;
+  margin-top:8px;
+  padding-left:6px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.maintenance-group.open .maintenance-third-row{
+  display:flex;
+}
+
+
   /* layout */
   display:flex;                 /* 比 inline-flex 穩 */
   align-items:center;
@@ -747,38 +784,177 @@
             <span class="nav-chevron" aria-hidden="true">▾</span>
           </button>
 
-          <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
-            <div class="maintenance-title">Calibration PDF</div>
-            <div class="maintenance-sec-row">
-              <button class="maintenance-sec-btn" type="button" data-pdf-key="HardDrivesBackup" data-label="Hard Drives Backup">
-                <span class="code">Hard Drives Backup</span>
-              </button>
-              <button class="maintenance-sec-btn" type="button" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-                <span class="code">Siemens S7 Procedures</span>
-              </button>
-              <button class="maintenance-sec-btn" type="button" data-pdf-key="SiemensS7_Old" data-label="Siemens S7 (Old) Procedure">
-                <span class="code">Siemens S7 (Old) Procedure</span>
-              </button>
-              <button class="maintenance-sec-btn" type="button" data-pdf-key="SiemensS5" data-label="Siemens S5 Procedure">
-                <span class="code">Siemens S5 Procedure</span>
-              </button>
-              <button class="maintenance-sec-btn" type="button" data-pdf-key="MitsubishiPLC" data-label="Mitsubishi PLC Procedure">
-                <span class="code">Mitsubishi PLC Procedure</span>
-              </button>
-              <button class="maintenance-sec-btn" type="button" data-pdf-key="BardacDrive" data-label="Bardac Drive Procedure">
-                <span class="code">Bardac Drive Procedure</span>
-              </button>
-              <button class="maintenance-sec-btn" type="button" data-pdf-key="ReclaimSC" data-label="Reclaim SC PLC Procedure">
-                <span class="code">Reclaim SC PLC Procedure</span>
-              </button>
-              <button class="maintenance-sec-btn" type="button" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-                <span class="code">AB PLC Procedure</span>
-              </button>
-              <button class="maintenance-sec-btn" type="button" data-pdf-key="ABPLCPlan" data-label="AB PLC Plan">
-                <span class="code">AB PLC Plan</span>
-              </button>
-            </div>
-          </div>
+<div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
+  <div class="maintenance-title">Calibration PDF</div>
+
+  <!-- Raw Material -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      Raw Material <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="HardDrivesBackup" data-label="Hard Drives Backup">
+        <span class="code">Hard Drives Backup</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ReclaimSC" data-label="Reclaim SC PLC Procedure">
+        <span class="code">Reclaim SC PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Extruder -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      Extruder <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Die -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      Die <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Chill Roll -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      Chill Roll <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MDO -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      MDO <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TDO -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      TDO <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- PRS -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      PRS <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Treaters -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      Treaters <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Winder -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      Winder <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Grinder -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      Grinder <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Reclaim -->
+  <div class="maintenance-group">
+    <button class="maintenance-group-btn" type="button">
+      Reclaim <span class="nav-chevron">▾</span>
+    </button>
+    <div class="maintenance-third-row">
+      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
+        <span class="code">Siemens S7 Procedures</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
+        <span class="code">AB PLC Procedure</span>
+      </button>
+      <button class="maintenance-sec-btn" data-pdf-key="ReclaimSC" data-label="Reclaim SC PLC Procedure">
+        <span class="code">Reclaim SC PLC Procedure</span>
+      </button>
+    </div>
+  </div>
+</div>
         </li>
       </ul>
     </nav>
@@ -1321,29 +1497,46 @@
     });
   });
 
-  // Calibration Procedure — PDF
-  maintenanceSecBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      resetOtherGroups('maintenance');
+  // Maintenance 2nd layer open/close + 3rd layer PDF click (event delegation)
+if (maintenancePanel){
+  // 2nd layer toggle
+  maintenancePanel.addEventListener('click', (e)=>{
+    const groupBtn = e.target.closest('.maintenance-group-btn');
+    if (groupBtn){
+      const group = groupBtn.closest('.maintenance-group');
+      if (!group) return;
 
-      const key   = btn.getAttribute('data-pdf-key');
-      const label = btn.getAttribute('data-label') || key || '';
-      if (!key) return;
+      // 只開一個（要多開就把這段拿掉）
+      maintenancePanel.querySelectorAll('.maintenance-group').forEach(g=>{
+        if (g !== group) g.classList.remove('open');
+      });
 
-      activateNav(maintenanceParentBtn);
+      group.classList.toggle('open');
+      return;
+    }
 
-      const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
-      if (frame) frame.src = viewerUrl;
+    // 3rd layer pdf buttons
+    const pdfBtn = e.target.closest('.maintenance-sec-btn');
+    if (!pdfBtn) return;
 
-      setModule(
-        'Calibration Procedure – ' + label,
-        'PDF: ' + label
-      );
+    resetOtherGroups('maintenance');
 
-      maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-    });
+    const key   = pdfBtn.getAttribute('data-pdf-key');
+    const label = pdfBtn.getAttribute('data-label') || key || '';
+    if (!key) return;
+
+    activateNav(maintenanceParentBtn);
+
+    const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
+    if (frame) frame.src = viewerUrl;
+
+    setModule('Calibration Procedure – ' + label, 'PDF: ' + label);
+
+    // active 樣式
+    maintenancePanel.querySelectorAll('.maintenance-sec-btn').forEach(b=>b.classList.remove('active'));
+    pdfBtn.classList.add('active');
   });
+}
 
   // I/O LIST
   const ioLink = document.getElementById('ioListLink');
