@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>I/O List | Maintenance Smart</title>
+  <title>I/O LIST Viewer | Maintenance Smart</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- 套用主題 -->
+  <!-- 套用主題（blue / panther / hangyodon） -->
   <script>
     (function () {
       const style = localStorage.getItem('ms-style') || 'blue';
@@ -14,8 +14,6 @@
   </script>
 
   <style>
-    /* ---- 保留你原本全部 CSS，不刪減 ---- */
-
     :root {
       --bg: #f3f4f6;
       --card-bg:#ffffff;
@@ -44,6 +42,7 @@
       transition: background .25s ease, color .25s ease;
     }
 
+    /* style 背景—與主頁同步 */
     html[data-style="panther"] body{
       background:
         radial-gradient(circle at top,rgba(244,114,182,.28),transparent),
@@ -55,7 +54,53 @@
         var(--bg);
     }
 
-    /* 左右角色圖 */
+    /* Back to Top 按鈕外觀 */
+    #backToTop {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;          /* 預設不顯示，捲動後用 JS 打開 */
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      z-index: 9999;
+      transition: all .25s ease;
+    }
+    #backToTop:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.30);
+    }
+
+    /* panther → 使用粉紅角色圖片 */
+    html[data-style="panther"] #backToTop {
+      background: transparent;
+      background-image: url("pinkpanther2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
+    /* hangyodon → 使用魚丁角色圖片 */
+    html[data-style="hangyodon"] #backToTop {
+      background: transparent;
+      background-image: url("hangyodon2.png");
+      background-size: 100% 100%;
+      background-position: center;
+      color: transparent;
+      border: none;
+    }
+
+    /* 角色背景（左右兩側大圖） */
     .side-panther,
     .side-hangyodon{
       position:fixed;
@@ -70,8 +115,8 @@
       display:none;
     }
 
-    .side-panther.left{left:1.5%; }
-    .side-panther.right{right:1.5%; }
+    .side-panther.left{left:1.5%; transform:translateY(-50%) scaleX(1);}
+    .side-panther.right{right:1.5%; transform:translateY(-50%) scaleX(1);}
 
     .side-hangyodon.left{left:1.5%; transform:translateY(-50%) scaleX(-1);}
     .side-hangyodon.right{right:1.5%; transform:translateY(-50%) scaleX(-1);}
@@ -98,47 +143,100 @@
       }
     }
 
-    /* Back to Top button */
-    #backToTop {
-      position: fixed;
-      bottom: 22px;
-      right: 22px;
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent);
-      color: #fff;
+    /* Title */
+    h1 {
+      color: var(--accent);
       font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      z-index: 9999;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .2s ease, transform .25s ease, box-shadow .25s ease;
+      font-weight: 600;
+      margin: 0 0 6px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin: 0 0 10px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
     }
 
-    #backToTop.visible {
-      opacity: 1;
-      pointer-events: auto;
+    /* Toolbar button */
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
+    }
+    .btn {
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(37,99,235,0.35);
+      background: #fff;
+      color: var(--accent);
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(37,99,235,0.12);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      display:inline-block;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(37,99,235,0.25);
+      border-color: var(--accent-hover);
+    }
+
+    /* PDF Viewer */
+    .viewer {
+      width: 100%;
+      max-width: 1100px;
+      height: calc(100dvh - 170px);
+      min-height: 380px;
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+      z-index: 2;
+    }
+    .viewer iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+    }
+
+    .fallback {
+      padding: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+
+    @media (max-width: 480px) {
+      .viewer { height: calc(100dvh - 180px); }
     }
   </style>
 </head>
 <body>
 
-  <!-- 角色圖 -->
+  <!-- 左右角色 -->
   <img src="pinkpanther1.png" alt="" class="side-panther left">
   <img src="pinkpanther2.png" alt="" class="side-panther right">
 
   <img src="hangyodon1.png" alt="" class="side-hangyodon left">
   <img src="hangyodon2.png" alt="" class="side-hangyodon right">
 
-  <h1>I/O LIST</h1>
-  <div class="subtitle" id="subtitle">Loading…</div>
+  <h1 id="pageTitle">I/O LIST</h1>
+  <div class="subtitle" id="pageSub">PLC / SCADA I/O Reference</div>
 
   <div class="toolbar">
     <a class="btn" id="openNewTab" href="#" target="_blank" rel="noopener noreferrer">
@@ -147,69 +245,149 @@
   </div>
 
   <div class="viewer" id="viewer">
-    <iframe id="pdfFrame" title="I/O list viewer"></iframe>
+    <!-- 電腦：pdf.js viewer；手機 / iPad：會被 JS 改成按鈕 -->
+    <iframe id="pdfFrame" title="I/O LIST PDF viewer"></iframe>
   </div>
 
+  <!-- Back to Top 按鈕 -->
   <button id="backToTop" title="Back to Top">↑</button>
 
-  <!-- Back to top 同步 PDF.js 捲動 -->
+  <!-- Back To Top：同時控制主頁 + 內嵌 pdf.js viewer -->
   <script>
-    /* 你原本的 back-to-top 程式碼保留 */
-  </script>
+    (function(){
+      const btn   = document.getElementById('backToTop');
+      const frame = document.getElementById('pdfFrame');
+      if (!btn) return;
 
-  <!-- ⭐ I/O LIST PDF Loader：動態依 query string 載入 Fxx_IOLIST.pdf -->
-  <script>
-    (function () {
+      const MAIN_THRESHOLD = 120;
+      const PDF_THRESHOLD  = 80;
 
-      // 取得 URL query：?sec=F12
-      const params = new URLSearchParams(window.location.search);
-      const sec = params.get("sec") || "F13";  // default=F13
+      function showBtn() { btn.style.display = 'flex'; }
+      function hideBtn() { btn.style.display = 'none'; }
 
-      // 更新副標
-      const subtitle = document.getElementById("subtitle");
-      if (subtitle) subtitle.textContent = `Section ${sec} – PLC / Equipment I/O Reference`;
-
-      // PDF 檔案名
-      const pdfFileName = `${sec}_IOLIST.pdf`;
-
-      // 直接開啟 PDF
-      const pdfUrlDirect = pdfFileName;
-
-      // pdf.js viewer 用路徑
-      const pdfUrlForViewer = "../../" + pdfFileName;
-
-      const pdfjsViewerBase = 'pdfjs/web/viewer.html';
-      const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
-
-      const viewer  = document.getElementById('viewer');
-      const frame   = document.getElementById('pdfFrame');
-      const openNewTab = document.getElementById('openNewTab');
-
-      // 判斷裝置（你原本的程式完整保留）
-      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-      const isSmallScreen = window.innerWidth <= 1024;
-      const isMobileOrTablet = isTouch && isSmallScreen;
-
-      if (isMobileOrTablet) {
-        if (openNewTab) openNewTab.style.display = 'none';
-        if (viewer) {
-          viewer.innerHTML = `
-            <div class="fallback">
-              Tap the button below to open I/O LIST PDF.<br><br>
-              <a class="btn" href="${pdfUrlDirect}" target="_blank" rel="noopener">
-                Open I/O LIST PDF ↗
-              </a>
-            </div>`;
+      function handleMainScroll() {
+        if (window.scrollY > MAIN_THRESHOLD) {
+          showBtn();
+        } else {
+          hideBtn();
         }
-        return;
+      }
+      window.addEventListener('scroll', handleMainScroll);
+
+      function scrollPdfToTop() {
+        if (!frame || !frame.contentWindow) return;
+        try{
+          const cw = frame.contentWindow;
+          const doc = cw.document;
+          const container = doc.getElementById('viewerContainer');
+
+          if (container && typeof container.scrollTo === 'function') {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
+          } else if (typeof cw.scrollTo === 'function') {
+            cw.scrollTo(0, 0);
+          }
+        }catch(e){}
       }
 
-      // 桌機 → 內嵌 pdf.js viewer
-      if (frame) frame.src = viewerUrl;
-      if (openNewTab) openNewTab.href = viewerUrl;
+      btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollPdfToTop();
+      });
 
+      function attachPdfScrollListener() {
+        if (!frame || !frame.contentWindow) return;
+        try{
+          const cw   = frame.contentWindow;
+          const doc  = cw.document;
+          const cont = doc.getElementById('viewerContainer');
+
+          const target = cont || cw;
+          if (!target) return;
+
+          target.addEventListener('scroll', () => {
+            try{
+              const top = cont ? cont.scrollTop : cw.scrollY || cw.pageYOffset || 0;
+              if (top > PDF_THRESHOLD) {
+                showBtn();
+              } else if (window.scrollY <= MAIN_THRESHOLD) {
+                hideBtn();
+              }
+            }catch(e){}
+          });
+        }catch(e){}
+      }
+
+      if (frame){
+        frame.addEventListener('load', () => {
+          setTimeout(attachPdfScrollListener, 800);
+        });
+      }
     })();
   </script>
 
+  <!-- PDF 載入 / pdf.js viewer 切換 -->
+  <script>
+  (function () {
+    const allowedSecs  = ['F12','F13','F16','F201'];
+
+    const params = new URLSearchParams(window.location.search);
+    let sec  = (params.get('sec')  || 'F13').toUpperCase();
+    if (!allowedSecs.includes(sec))  sec  = 'F13';
+
+    // ===== PDF 檔名：F12_IOLIST.pdf / F13_IOLIST.pdf ... =====
+    const pdfFileName = `${sec}_IOLIST.pdf`;
+
+    // 直接開啟 PDF 用（和 IOLIST.html 在同一層）
+    const pdfUrlForDirect = pdfFileName;
+
+    // pdf.js viewer 看的路徑（從 pdfjs/web/viewer.html 回到根目錄）
+    const pdfUrlForViewer = `../../${pdfFileName}`;
+
+    const pdfjsViewerBase = 'pdfjs/web/viewer.html';
+    const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
+
+    const titleEl   = document.getElementById('pageTitle');
+    const subEl     = document.getElementById('pageSub');
+    const viewer    = document.getElementById('viewer');
+    const frame     = document.getElementById('pdfFrame');
+    const openNewTab= document.getElementById('openNewTab');
+
+    // 更新標題
+    if (titleEl){
+      titleEl.textContent = `I/O LIST – ${sec}`;
+    }
+    if (subEl){
+      subEl.textContent = `PLC / SCADA I/O list for section ${sec}`;
+    }
+
+    // 裝置偵測
+    const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const isSmallScreen = window.innerWidth <= 1024;
+    const isMobileOrTablet = isTouch && isSmallScreen;
+
+    if (isMobileOrTablet) {
+      // 手機 / iPad：只顯示一顆按鈕，用瀏覽器開 PDF
+      if (openNewTab) openNewTab.style.display = 'none';
+      if (viewer) {
+        viewer.innerHTML = `
+          <div class="fallback">
+            Tap the button below to open I/O LIST PDF.<br><br>
+            <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
+              Open I/O LIST PDF ↗
+            </a>
+          </div>`;
+      }
+      return;
+    }
+
+    // 桌機：內嵌 pdf.js viewer
+    if (frame) {
+      frame.src = viewerUrl;
+    }
+    if (openNewTab) {
+      openNewTab.href = viewerUrl;
+    }
+  })();
+  </script>
 </body>
 </html>
