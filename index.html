@@ -289,7 +289,8 @@
     }
 
     .nav-group-schematic .nav-item-btn,
-    .nav-group-maintenance .nav-item-btn{
+    .nav-group-maintenance .nav-item-btn,
+    .nav-group-scada .nav-item-btn{
       justify-content:space-between;
     }
     .nav-chevron{
@@ -299,13 +300,15 @@
 
     /* 讓父 <li> 成為定位點 */
     .nav-group-schematic,
-    .nav-group-maintenance{
+    .nav-group-maintenance,
+    .nav-group-scada{
       position:relative;
     }
 
     /* 子列表：預設在 Modules 右側 pop-out */
     .schematic-panel,
-    .maintenance-panel{
+    .maintenance-panel,
+    .scada-panel{
       position:absolute;
       top:0;
       left:100%;
@@ -320,12 +323,14 @@
       z-index:99;
     }
     .schematic-panel.open,
-    .maintenance-panel.open{
+    .maintenance-panel.open,
+    .scada-panel.open{
       display:block;
     }
 
     .schematic-title,
-    .maintenance-title{
+    .maintenance-title,
+    .scada-title{
       font-size:11px;
       font-weight:600;
       text-transform:uppercase;
@@ -404,13 +409,15 @@
       box-shadow:0 3px 8px rgba(37,99,235,.25);
     }
 
-    /* Maintenance 按鈕（灰色） */
-    .maintenance-sec-row{
+    /* Maintenance & SCADA 子按鈕（灰色） */
+    .maintenance-sec-row,
+    .scada-sec-row{
       display:flex;
       flex-wrap:wrap;
       gap:6px;
     }
-    .maintenance-sec-btn{
+    .maintenance-sec-btn,
+    .scada-sec-btn{
       border-radius:999px;
       border:1px solid var(--border-subtle);
       background:#f9fafb;
@@ -423,17 +430,20 @@
       gap:4px;
       transition:background .15s,border-color .15s,color .15s,transform .1s;
     }
-    .maintenance-sec-btn span.code{
+    .maintenance-sec-btn span.code,
+    .scada-sec-btn span.code{
       font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
       font-size:11px;
     }
-    .maintenance-sec-btn:hover{
+    .maintenance-sec-btn:hover,
+    .scada-sec-btn:hover{
       background:#fff;
       border-color:var(--accent-soft);
       color:var(--accent);
       transform:translateY(-1px);
     }
-    .maintenance-sec-btn.active{
+    .maintenance-sec-btn.active,
+    .scada-sec-btn.active{
       background:#1d4ed8;
       border-color:#1d4ed8;
       color:#fff;
@@ -546,7 +556,8 @@
       }
 
       .schematic-panel,
-      .maintenance-panel{
+      .maintenance-panel,
+      .scada-panel{
         position:static;
         left:auto;
         margin-left:0;
@@ -598,6 +609,7 @@
     <!-- Modules 功能列 -->
     <nav class="nav-panel" id="navPanel" aria-label="Module navigation">
       <ul class="nav-list">
+        <!-- Home -->
         <li>
           <button
             class="nav-item-btn active"
@@ -609,16 +621,33 @@
           </button>
         </li>
 
-        <!-- ✅ 這邊已改成 SCADA PC Inventory.html -->
-        <li>
+        <!-- SCADA PC Module -->
+        <li class="nav-group-scada">
           <button
             class="nav-item-btn"
-            data-src="SCADA PC Inventory.html"
-            data-title="SCADA PC Inventory"
-            data-sub="SCADA PC inventory list from Google Sheets.">
+            type="button"
+            data-role="scada-parent"
+            data-title="SCADA PC"
+            data-sub="SCADA PC tools: Inventory / Records / Report.">
             <span class="nav-icon">💻</span>
-            <span class="nav-label">SCADA PC Inventory</span>
+            <span class="nav-label">SCADA PC</span>
+            <span class="nav-chevron" aria-hidden="true">▾</span>
           </button>
+
+          <div class="scada-panel" id="scadaPanel" aria-label="SCADA PC selector">
+            <div class="scada-title">SCADA PC</div>
+            <div class="scada-sec-row">
+              <button class="scada-sec-btn" type="button" data-scada="inventory">
+                <span class="code">Inventory</span>
+              </button>
+              <button class="scada-sec-btn" type="button" data-scada="records">
+                <span class="code">Records</span>
+              </button>
+              <button class="scada-sec-btn" type="button" data-scada="report">
+                <span class="code">Report</span>
+              </button>
+            </div>
+          </div>
         </li>
 
         <!-- Line Schematic：兩層列表（先 SECTION 再 LINE） -->
@@ -671,18 +700,17 @@
         </li>
 
         <!-- Maintenance：可展開子列表 -->
-       <li class="nav-group-maintenance">
-        <button
-        class="nav-item-btn"
-        type="button"
-        data-role="maintenance-parent"
-        data-title="Calibration Procedure"
-        data-sub="Open calibration SOP PDFs.">
-        <span class="nav-icon">🔧</span>
-        <span class="nav-label">Calibration Procedure</span>
-        <span class="nav-chevron" aria-hidden="true">▾</span>
-      </button>
-
+        <li class="nav-group-maintenance">
+          <button
+            class="nav-item-btn"
+            type="button"
+            data-role="maintenance-parent"
+            data-title="Calibration Procedure"
+            data-sub="Open calibration SOP PDFs.">
+            <span class="nav-icon">🔧</span>
+            <span class="nav-label">Calibration Procedure</span>
+            <span class="nav-chevron" aria-hidden="true">▾</span>
+          </button>
 
           <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
             <div class="maintenance-title">Calibration PDF</div>
@@ -717,31 +745,6 @@
             </div>
           </div>
         </li>
-
-        <!-- Maintenance Records -->
-        <li>
-          <button
-            class="nav-item-btn"
-            data-src="Maintenance_Records.html"
-            data-title="Maintenance Records"
-            data-sub="View and edit maintenance logs stored in this browser.">
-            <span class="nav-icon">📋</span>
-            <span class="nav-label">Maintenance Records</span>
-          </button>
-        </li>
-
-        <!-- Maintenance Report -->
-        <li>
-          <button
-            class="nav-item-btn"
-            data-src="New_Report.html"
-            data-title="Maintenance Report"
-            data-sub="Submit and export maintenance records.">
-            <span class="nav-icon">📝</span>
-            <span class="nav-label">Maintenance Report</span>
-          </button>
-        </li>
-
       </ul>
     </nav>
 
@@ -792,7 +795,7 @@
     }
   })();
 </script>
-
+  
 <script>
   // 名言輪播：50 句，每 2 分鐘換一個
   (function(){
