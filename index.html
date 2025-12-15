@@ -1275,7 +1275,7 @@
     });
   });
 
-  // I/O LIST 按鈕
+// I/O LIST 按鈕（改用 IOLIST.html viewer）
 const ioLink = document.getElementById('ioListLink');
 if (ioLink) {
   ioLink.addEventListener('click', function (e) {
@@ -1283,24 +1283,24 @@ if (ioLink) {
 
     // 必須先選 SECTION
     if (!currentSchematicSection) {
-      return; // or alert("Please select SECTION first.");
+      // 想要提示可以改成 alert：
+      // alert("Please select SECTION first.");
+      return;
     }
 
-    // 產生對應 PDF 檔名，例如 F13 → F13_IOLIST.pdf
-    const sec = currentSchematicSection;
-    const pdf = `${sec}_IOLIST.pdf`;
+    const sec = currentSchematicSection;              // 例如 F12 / F13 / F16 / F201
+    const viewerUrl = `IOLIST.html?sec=${encodeURIComponent(sec)}`;
 
-    if (frame){
-      frame.src = pdf;
+    if (frame) {
+      frame.src = viewerUrl;
     }
 
     setModule(
       `I/O LIST – ${sec}`,
-      `PDF File: ${pdf}`
+      `I/O Reference for ${sec}`
     );
   });
 }
-
 })();
 
   // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
