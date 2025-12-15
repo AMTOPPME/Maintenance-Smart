@@ -1231,13 +1231,14 @@
 
       const title = btn.dataset.title || 'Module';
       const sub   = btn.dataset.sub || '';
-      frame.src   = src;
+      if (frame) frame.src = src;
       setModule(title, sub);
 
-      panel.classList.remove('open');
+      if (panel) panel.classList.remove('open');
       if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
 
       closeAllSubPanels();
+
     });
   });
 
@@ -1257,7 +1258,7 @@
       if (!currentSchematicSection) return;
 
       const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
-      frame.src = file;
+      if (frame) frame.src = file;
 
       const lineLabel = formatLineLabel(currentSchematicLine);
       setModule(
@@ -1303,7 +1304,7 @@
       activateNav(maintenanceParentBtn);
 
       const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
-      frame.src = viewerUrl;
+      if (frame) frame.src = viewerUrl;
 
       setModule(
         'Calibration Procedure – ' + label,
@@ -1323,7 +1324,7 @@
       if (!currentSchematicSection) return;
 
       const sec = currentSchematicSection;
-      frame.src = `IOLIST.html?sec=${encodeURIComponent(sec)}`;
+      if (frame) frame.src = `IOLIST.html?sec=${encodeURIComponent(sec)}`;
 
       setModule(
         `I/O LIST – ${sec}`,
@@ -1362,13 +1363,15 @@
           break;
       }
 
-      frame.src = src;
+      if (frame && src) frame.src = src;
       setModule(title, sub);
 
       scadaSecBtns.forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
     });
   });
+  })();
+  
  // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
 (function () {
 
@@ -1432,7 +1435,6 @@
     mascot.title = 'Click to change style';
     mascot.addEventListener('click', cycleStyle);
   }
-
 })();
 </script>
 </body>
