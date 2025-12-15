@@ -1100,22 +1100,12 @@
       parentBtn.addEventListener('mouseenter', ()=> {
         clearTimer();
 
-        if (which === 'schematic') {
-          if (currentParent === 'maintenance') resetMaintenanceSelection();
-          if (currentParent === 'scada')       resetScadaSelection();
-          currentParent = 'schematic';
-        } else if (which === 'maintenance') {
-          if (currentParent === 'schematic') resetSchematicSelection();
-          if (currentParent === 'scada')     resetScadaSelection();
-          currentParent = 'maintenance';
-        } else if (which === 'scada') {
-          if (currentParent === 'schematic')   resetSchematicSelection();
-          if (currentParent === 'maintenance') resetMaintenanceSelection();
-          currentParent = 'scada';
-        }
+        // ✅ hover 只切換目前父群組，不重置任何 active
+        currentParent = which;
 
         panelEl.classList.add('open');
       });
+
 
 
       parentBtn.addEventListener('mouseleave', (e)=> {
