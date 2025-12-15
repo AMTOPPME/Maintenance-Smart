@@ -650,7 +650,7 @@
               </button>
             </div>
 
-            <div class="schematic-title" style="margin-top:8px;">LINE</div>
+            <div class="schematic-title line-title" style="margin-top:8px; display:none;">LINE</div>
             <!-- 一開始先隱藏，選 SECTION 才顯示 -->
             <div class="schematic-line-row" style="display:none;">
               <button class="schematic-line-btn" type="button" data-line="Line1">Line 1</button>
@@ -991,9 +991,19 @@
   const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
   let currentSchematicLine    = null;
   let currentSchematicSection = null;
-  // 🔹 LINE & TAGS：只有選到 SECTION 才顯示
-  const schematicLineRow   = document.querySelector('.schematic-line-row');
-  const schematicTagsBlock = document.querySelector('.ls-tags');
+
+  // 🔹 LINE 標題 + LINE 按鈕 + TAGS：只有選到 SECTION 才顯示
+  const schematicLineRow    = document.querySelector('.schematic-line-row');
+  const schematicTagsBlock  = document.querySelector('.ls-tags');
+  const schematicLineTitle  = document.querySelector('.line-title');
+
+  function updateSchematicChildrenVisibility(){
+    const hasSection = !!currentSchematicSection;
+    if (schematicLineTitle) schematicLineTitle.style.display = hasSection ? '' : 'none';
+    if (schematicLineRow)   schematicLineRow.style.display   = hasSection ? '' : 'none';
+    if (schematicTagsBlock) schematicTagsBlock.style.display = hasSection ? '' : 'none';
+  }
+
 
   function updateSchematicChildrenVisibility(){
     const hasSection = !!currentSchematicSection;
