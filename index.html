@@ -422,41 +422,7 @@
 .scada-sec-btn{
   width:100%;
 
-  /* Maintenance 2nd layer group button */
-.maintenance-group-btn{
-  width:100%;
-  border:none;
-  border-radius:12px;
-  padding:10px 12px;
-  background:#ffffff;
-  border:1px solid var(--border-subtle);
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  color:var(--text);
-  font-size:13px;
-  box-shadow:0 6px 16px rgba(15,23,42,.06);
-  transition:transform .12s ease, box-shadow .15s ease, border-color .15s ease;
-}
-.maintenance-group-btn:hover{
-  transform:translateY(-1px);
-  border-color:rgba(37,99,235,.35);
-  box-shadow:0 10px 22px rgba(15,23,42,.10);
-}
 
-/* Maintenance 3rd layer container */
-.maintenance-third-row{
-  display:none;
-  margin-top:8px;
-  padding-left:6px;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-.maintenance-group.open .maintenance-third-row{
-  display:flex;
-}
 
 
   /* layout */
@@ -1739,35 +1705,7 @@ if (maintenancePanel){
     mascot.addEventListener('click', cycleStyle);
   }
 })();
-  (function(){
-  const panel = document.getElementById('maintenancePanel');
-  if (!panel) return;
-
-  const groups = panel.querySelectorAll('.maintenance-group');
-
-  function closeAll(){
-    groups.forEach(g => g.classList.remove('open'));
-  }
-
-  panel.addEventListener('click', e => {
-    const btn = e.target.closest('.maintenance-group-btn');
-    if (!btn) return;
-
-    const group = btn.closest('.maintenance-group');
-    const willOpen = !group.classList.contains('open');
-
-    closeAll();
-    if (willOpen) group.classList.add('open');
-  });
-
-  // 點第三層按鈕不要關掉 pop-out
-  panel.addEventListener('click', e => {
-    if (e.target.closest('.maintenance-sec-btn')) {
-      const g = e.target.closest('.maintenance-group');
-      if (g) g.classList.add('open');
-    }
-  });
-})();
+  
 </script>
 </body>
 </html>
