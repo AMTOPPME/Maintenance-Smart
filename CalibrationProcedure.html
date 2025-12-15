@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Maintenance | Maintenance Smart</title>
+  <title>Calibration Procedure | Maintenance Smart</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- 套用主題（blue / panther / hangyodon） -->
@@ -68,7 +68,7 @@
       font-size: 22px;
       font-weight: bold;
       cursor: pointer;
-      display: none;          /* 預設不顯示，捲動後用 JS 打開 */
+      display: none;
       align-items: center;
       justify-content: center;
       box-shadow: 0 8px 20px rgba(0,0,0,0.25);
@@ -235,8 +235,8 @@
   <img src="hangyodon1.png" alt="" class="side-hangyodon left">
   <img src="hangyodon2.png" alt="" class="side-hangyodon right">
 
-  <h1 id="pageTitle">Maintenance</h1>
-  <div class="subtitle" id="pageSub">Maintenance SOP – PDF Viewer</div>
+  <h1 id="pageTitle">Calibration Procedure</h1>
+  <div class="subtitle" id="pageSub">Calibration SOP – PDF Viewer</div>
 
   <div class="toolbar">
     <a class="btn" id="openNewTab" href="#" target="_blank" rel="noopener noreferrer">
@@ -245,11 +245,9 @@
   </div>
 
   <div class="viewer" id="viewer">
-    <!-- 電腦：pdf.js viewer；手機 / iPad：會被 JS 改成按鈕 -->
     <iframe id="pdfFrame" title="PDF viewer"></iframe>
   </div>
 
-  <!-- Back to Top 按鈕 -->
   <button id="backToTop" title="Back to Top">↑</button>
 
   <!-- Back To Top：同時控制主頁 + 內嵌 pdf.js viewer -->
@@ -259,28 +257,21 @@
       const frame = document.getElementById('pdfFrame');
       if (!btn) return;
 
-      const MAIN_THRESHOLD = 120;   // 主頁捲動多少才出現
-      const PDF_THRESHOLD  = 80;    // PDF viewer 捲動多少才出現
+      const MAIN_THRESHOLD = 120;
+      const PDF_THRESHOLD  = 80;
 
-      function showBtn() {
-        btn.style.display = 'flex';
-      }
-      function hideBtn() {
-        btn.style.display = 'none';
-      }
+      function showBtn() { btn.style.display = 'flex'; }
+      function hideBtn() { btn.style.display = 'none'; }
 
-      // ① 監聽主頁 window scroll
       function handleMainScroll() {
         if (window.scrollY > MAIN_THRESHOLD) {
           showBtn();
         } else {
-          // 如果 PDF 那邊沒捲動，也一起隱藏
           hideBtn();
         }
       }
       window.addEventListener('scroll', handleMainScroll);
 
-      // ② PDF viewer 回到最上方
       function scrollPdfToTop() {
         if (!frame || !frame.contentWindow) return;
         try{
@@ -293,18 +284,14 @@
           } else if (typeof cw.scrollTo === 'function') {
             cw.scrollTo(0, 0);
           }
-        }catch(e){
-          // 若跨網域或其他錯誤，就安靜失敗，不影響主頁
-        }
+        }catch(e){}
       }
 
-      // ③ BackToTop 點擊：主頁 + PDF 一起回頂部
       btn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         scrollPdfToTop();
       });
 
-      // ④ 監聽 pdf.js viewer 的捲動（讓 iframe 捲動也能顯示按鈕）
       function attachPdfScrollListener() {
         if (!frame || !frame.contentWindow) return;
         try{
@@ -321,19 +308,15 @@
               if (top > PDF_THRESHOLD) {
                 showBtn();
               } else if (window.scrollY <= MAIN_THRESHOLD) {
-                // 主頁也沒捲動，就隱藏
                 hideBtn();
               }
             }catch(e){}
           });
-        }catch(e){
-          // 不能存取（跨網域）就略過，只用主頁的 scroll 邏輯
-        }
+        }catch(e){}
       }
 
       if (frame){
         frame.addEventListener('load', () => {
-          // 等 pdf.js 初始化後再掛 scroll（稍微 delay）
           setTimeout(attachPdfScrollListener, 800);
         });
       }
@@ -344,63 +327,53 @@
   <script>
   (function () {
     // key 對應：從 URL ?key=SiemensS7 / ?key=MitsubishiPLC ... 等
-const DocMap = {
-  SiemensS7: {
-    file: 'Siemens S7 Procedures.pdf',
-    title: 'Siemens S7 Procedures',
-    desc: 'Siemens S7 Backup Procedures – Maintenance SOP'
-  },
-
-  SiemensS7_Old: {       // ← ★新增的
-    file: 'Siemens S7 (old) Procedure.pdf',
-    title: 'Siemens S7 (Old) Procedure',
-    desc: 'Siemens S7 (Old Version) Backup Procedures – Maintenance SOP'
-  },
-
-  MitsubishiPLC: {
-    file: 'Mitsubishi PLC Procedure.pdf',
-    title: 'Mitsubishi PLC Procedure',
-    desc: 'Mitsubishi PLC Procedures – Maintenance SOP'
-  },
-
-  SiemensS5: {
-    file: 'Siemens S5 Procedure.pdf',
-    title: 'Siemens S5 Procedure',
-    desc: 'Siemens S5 Backup/Restore Procedures – Maintenance SOP'
-  },
-
-  BardacDrive: {
-    file: 'Bardac Drive Procedure.pdf',
-    title: 'Bardac Drive Procedure',
-    desc: 'Bardac Drive Parameters & Backup Procedures – Maintenance SOP'
-  },
-
-  ReclaimSC: {
-    file: 'Reclaim SC PLC Procedure.pdf',
-    title: 'Reclaim SC PLC Procedure',
-    desc: 'Reclaim Line Screenchanger PLC Procedures – Maintenance SOP'
-  },
-
-  ABPLCProcedure: {
-    file: 'AB PLC Procedure.pdf',
-    title: 'AB PLC Procedure',
-    desc: 'Allen-Bradley PLC Upload/Download Procedures – Maintenance SOP'
-  },
-
-  ABPLCPlan: {
-    file: 'AB PLC Plan.pdf',
-    title: 'AB PLC Plan',
-    desc: 'Allen-Bradley PLC Maintenance Plan – Maintenance SOP'
-  },
-
-  HardDrivesBackup: {
-    file: 'Hard Drives Backup.pdf',
-    title: 'Hard Drives Backup',
-    desc: 'Hard Drives Backup Procedure – Maintenance SOP'
-  }
-};
-
-
+    const DocMap = {
+      SiemensS7: {
+        file: 'Siemens S7 Procedures.pdf',
+        title: 'Siemens S7 Procedures',
+        desc: 'Siemens S7 Backup Procedures – Calibration SOP'
+      },
+      SiemensS7_Old: {
+        file: 'Siemens S7 (old) Procedure.pdf',
+        title: 'Siemens S7 (Old) Procedure',
+        desc: 'Siemens S7 (Old Version) Backup Procedures – Calibration SOP'
+      },
+      MitsubishiPLC: {
+        file: 'Mitsubishi PLC Procedure.pdf',
+        title: 'Mitsubishi PLC Procedure',
+        desc: 'Mitsubishi PLC Procedures – Calibration SOP'
+      },
+      SiemensS5: {
+        file: 'Siemens S5 Procedure.pdf',
+        title: 'Siemens S5 Procedure',
+        desc: 'Siemens S5 Backup/Restore Procedures – Calibration SOP'
+      },
+      BardacDrive: {
+        file: 'Bardac Drive Procedure.pdf',
+        title: 'Bardac Drive Procedure',
+        desc: 'Bardac Drive Parameters & Backup Procedures – Calibration SOP'
+      },
+      ReclaimSC: {
+        file: 'Reclaim SC PLC Procedure.pdf',
+        title: 'Reclaim SC PLC Procedure',
+        desc: 'Reclaim Line Screenchanger PLC Procedures – Calibration SOP'
+      },
+      ABPLCProcedure: {
+        file: 'AB PLC Procedure.pdf',
+        title: 'AB PLC Procedure',
+        desc: 'Allen-Bradley PLC Upload/Download Procedures – Calibration SOP'
+      },
+      ABPLCPlan: {
+        file: 'AB PLC Plan.pdf',
+        title: 'AB PLC Plan',
+        desc: 'Allen-Bradley PLC Maintenance Plan – Calibration SOP'
+      },
+      HardDrivesBackup: {
+        file: 'Hard Drives Backup.pdf',
+        title: 'Hard Drives Backup',
+        desc: 'Hard Drives Backup Procedure – Calibration SOP'
+      }
+    };
 
     const params = new URLSearchParams(window.location.search);
     let key = params.get('key') || 'SiemensS7';
@@ -408,18 +381,11 @@ const DocMap = {
 
     const docInfo = DocMap[key];
 
-    // ===== PDF 檔名 =====
-    const pdfFileName = docInfo.file;
-
-    // 手機 / iPad 直接開用（Maintenance.html 與 PDF 同一層）
+    const pdfFileName     = docInfo.file;
     const pdfUrlForDirect = pdfFileName;
-
-    // 給 pdf.js viewer 用（viewer.html 在 /pdfjs/web/，PDF 在網站根目錄）
     const pdfUrlForViewer = `../../${pdfFileName}`;
-
-    // pdf.js viewer 路徑
     const pdfjsViewerBase = 'pdfjs/web/viewer.html';
-    const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
+    const viewerUrl       = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
 
     const titleEl    = document.getElementById('pageTitle');
     const subEl      = document.getElementById('pageSub');
@@ -427,21 +393,18 @@ const DocMap = {
     const frame      = document.getElementById('pdfFrame');
     const openNewTab = document.getElementById('openNewTab');
 
-    // ===== 更新標題 =====
     if (titleEl){
-      titleEl.textContent = `Maintenance – ${docInfo.title}`;
+      titleEl.textContent = `Calibration Procedure – ${docInfo.title}`;
     }
     if (subEl){
       subEl.textContent = docInfo.desc;
     }
 
-    // ===== 裝置偵測 =====
     const isTouch          = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     const isSmallScreen    = window.innerWidth <= 1024;
     const isMobileOrTablet = isTouch && isSmallScreen;
 
     if (isMobileOrTablet) {
-      // 手機 / iPad：只顯示一顆按鈕，用瀏覽器開 PDF
       if (openNewTab) openNewTab.style.display = 'none';
       if (viewer) {
         viewer.innerHTML = `
@@ -455,7 +418,6 @@ const DocMap = {
       return;
     }
 
-    // ===== 桌機：內嵌 pdf.js viewer =====
     if (frame) {
       frame.src = viewerUrl;
     }
@@ -463,6 +425,6 @@ const DocMap = {
       openNewTab.href = viewerUrl;
     }
   })();
-</script>
+  </script>
 </body>
 </html>
