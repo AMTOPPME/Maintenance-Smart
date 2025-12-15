@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Line Schematic | Maintenance Smart</title>
+  <title>Updated Schematic | Maintenance Smart</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- 套用主題（blue / panther / hangyodon） -->
@@ -235,7 +235,7 @@
   <img src="hangyodon1.png" alt="" class="side-hangyodon left">
   <img src="hangyodon2.png" alt="" class="side-hangyodon right">
 
-  <h1 id="pageTitle">Line Schematic</h1>
+  <h1 id="pageTitle">Updated Schematic</h1>
   <div class="subtitle" id="pageSub">Production Line – Wiring and PLC Diagram</div>
 
   <div class="toolbar">
@@ -375,12 +375,11 @@
 
     // ===== 更新標題 =====
     if (titleEl){
-      titleEl.textContent = `Line ${line} Schematic – ${sec}`;
+      titleEl.textContent = `Updated Schematic – Line ${line} – ${sec}`;
     }
     if (subEl){
       subEl.textContent = `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
     }
-
     // ===== 裝置偵測 =====
     const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     const isSmallScreen = window.innerWidth <= 1024;
