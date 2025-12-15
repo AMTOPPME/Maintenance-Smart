@@ -1004,13 +1004,6 @@
     if (schematicTagsBlock) schematicTagsBlock.style.display = hasSection ? '' : 'none';
   }
 
-
-  function updateSchematicChildrenVisibility(){
-    const hasSection = !!currentSchematicSection;
-    if (schematicLineRow)   schematicLineRow.style.display   = hasSection ? '' : 'none';
-    if (schematicTagsBlock) schematicTagsBlock.style.display = hasSection ? '' : 'none';
-  }
-
   const maintenancePanel   = document.getElementById('maintenancePanel');
   const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
 
@@ -1018,17 +1011,18 @@
     ('ontouchstart' in window) ||
     (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-    // ★ 目前 active 的父選項：'schematic' / 'maintenance' / null
+  // ★ 目前 active 的父選項：'schematic' / 'maintenance' / null
   let currentParent = null;
 
+  // 進入頁面先收起 LINE & TAGS
   updateSchematicChildrenVisibility();
 
-    // --- 子列表 hover 開關（0.1 秒後關閉），同時照顧到「移進子面板」的情況 ---
+  // --- 子列表 hover 開關（0.1 秒後關閉），同時照顧到「移進子面板」的情況 ---
   if (!isTouchDevice){
     let schematicTimer = null;
     let maintenanceTimer = null;
 
-    function setupHover(parentBtn, panelEl, which){  // which: 'schematic' or 'maintenance'
+    function setupHover(parentBtn, panelEl, which){
       if (!parentBtn || !panelEl) return;
 
       function clearTimer(){
@@ -1046,48 +1040,35 @@
         clearTimer();
         const t = setTimeout(()=>{
           panelEl.classList.remove('open');
-        }, 100); // ★ 0.1 秒後收起
+        }, 100);
         if (which === 'schematic') schematicTimer = t;
         else                       maintenanceTimer = t;
       }
 
-          // 滑進父按鈕 → 開啟子列表，順便處理父選項切換 & 子列表 reset
-    parentBtn.addEventListener('mouseenter', ()=> {
-      clearTimer();
+      parentBtn.addEventListener('mouseenter', ()=> {
+        clearTimer();
 
-      // ★ 如果是滑到 Line Schematic
-      if (which === 'schematic') {
-        // 原本在 Maintenance → 先 reset Maintenance 子列表
-        if (currentParent === 'maintenance') {
-          resetMaintenanceSelection();
+        if (which === 'schematic') {
+          if (currentParent === 'maintenance') resetMaintenanceSelection();
+          currentParent = 'schematic';
+        } else if (which === 'maintenance') {
+          if (currentParent === 'schematic') resetSchematicSelection();
+          currentParent = 'maintenance';
         }
-        currentParent = 'schematic';
-      }
-      // ★ 如果是滑到 Maintenance
-      else if (which === 'maintenance') {
-        // 原本在 Schematic → 先 reset Schematic 子列表
-        if (currentParent === 'schematic') {
-          resetSchematicSelection();
-        }
-        currentParent = 'maintenance';
-      }
 
-      panelEl.classList.add('open');
-    });
+        panelEl.classList.add('open');
+      });
 
-      // 從父按鈕離開，如果是往子面板方向就不要關
       parentBtn.addEventListener('mouseleave', (e)=> {
         if (e.relatedTarget && panelEl.contains(e.relatedTarget)) return;
         scheduleClose();
       });
 
-      // 滑進子面板 → 保持開啟
       panelEl.addEventListener('mouseenter', ()=> {
         clearTimer();
         panelEl.classList.add('open');
       });
 
-      // 從子面板離開，如果是回到父按鈕就不要關
       panelEl.addEventListener('mouseleave', (e)=> {
         if (e.relatedTarget && parentBtn.contains(e.relatedTarget)) return;
         scheduleClose();
@@ -1098,20 +1079,19 @@
     setupHover(maintenanceParentBtn, maintenancePanel, 'maintenance');
   }
 
-
   // 共用 helper
   function activateNav(btn){
     buttons.forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
   }
 
-function closeAllSubPanels(){
+  function closeAllSubPanels(){
     if (schematicPanel)   schematicPanel.classList.remove('open');
     if (maintenancePanel) maintenancePanel.classList.remove('open');
   }
 
   // ★ Line Schematic 子選項 reset
-    function resetSchematicSelection(){
+  function resetSchematicSelection(){
     currentSchematicLine    = null;
     currentSchematicSection = null;
     schematicSecBtns.forEach(b => b.classList.remove('active'));
@@ -1124,7 +1104,6 @@ function closeAllSubPanels(){
     maintenanceSecBtns.forEach(b => b.classList.remove('active'));
   }
 
-  
   function setModule(title, sub){
     if (titleEl) titleEl.textContent = title;
     if (subEl)   subEl.textContent   = sub;
@@ -1163,14 +1142,12 @@ function closeAllSubPanels(){
     );
   }
 
-  // 主模組切換（Home / PC Manager / Records / Report / 兩個父項）
+  // 主模組切換
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const roleClick = btn.dataset.role || '';
 
-      // ---- 點 Line Schematic 父 ----
       if (roleClick === 'schematic-parent'){
-        // 如果原本是 Maintenance 當前父，就 reset 它的子列表
         if (currentParent === 'maintenance'){
           resetMaintenanceSelection();
         }
@@ -1179,9 +1156,7 @@ function closeAllSubPanels(){
         return;
       }
 
-      // ---- 點 Maintenance 父 ----
       if (roleClick === 'maintenance-parent'){
-        // 如果原本是 Schematic 當前父，就 reset 它的子列表
         if (currentParent === 'schematic'){
           resetSchematicSelection();
         }
@@ -1190,11 +1165,9 @@ function closeAllSubPanels(){
         return;
       }
 
-      // ---- 其他一般模組（Home / PC Manager / Records / Report）----
       const src = btn.dataset.src;
       if (!src) return;
 
-      // 有任何父選項被「換掉」時就 reset 自己的子列表
       if (currentParent === 'schematic'){
         resetSchematicSelection();
       } else if (currentParent === 'maintenance'){
@@ -1217,7 +1190,6 @@ function closeAllSubPanels(){
       closeAllSubPanels();
     });
   });
-
 
   // Line Schematic：Line 1~4
   schematicLineBtns.forEach(btn=>{
@@ -1271,11 +1243,10 @@ function closeAllSubPanels(){
         'Select LINE to open schematic.'
       );
 
-      // 🔹選到 SECTION → 顯示 LINE & TAGS
+      // 選到 SECTION → 顯示 LINE 標題 + LINE & TAGS
       updateSchematicChildrenVisibility();
     });
   });
-
 
   // Maintenance PDF
   maintenanceSecBtns.forEach(btn=>{
