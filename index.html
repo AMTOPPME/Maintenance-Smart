@@ -640,6 +640,98 @@
         height:calc(100vh - 220px);
       }
     }
+    /* ===== Maintenance: 2nd level pill + 3rd level pop-out ===== */
+.nav-group-maintenance{ position:relative; }
+
+/* 第二層：膠囊標題 */
+.maintenance-group-btn{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid rgba(37,99,235,.22);
+  background:linear-gradient(0deg, rgba(37,99,235,.06), rgba(37,99,235,.06)), #fff;
+  color:var(--text);
+  cursor:pointer;
+
+  box-shadow:0 8px 18px rgba(15,23,42,.10);
+  transition:transform .12s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.maintenance-group-btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(37,99,235,.35);
+  box-shadow:0 12px 26px rgba(15,23,42,.14);
+}
+.maintenance-group-btn .chev{
+  opacity:.75;
+  transition:transform .18s ease;
+}
+
+/* 開啟狀態（第二層） */
+.maintenance-group.open .maintenance-group-btn{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+  box-shadow:0 10px 22px rgba(37,99,235,.35);
+}
+.maintenance-group.open .maintenance-group-btn .chev{
+  transform:rotate(180deg);
+}
+
+/* 第三層：右側 pop-out（你原本 maintenance-panel 那種邏輯） */
+.maintenance-third-panel{
+  position:absolute;
+  top:0;
+  left:100%;
+  margin-left:8px;
+  min-width:260px;
+
+  background:rgba(249,250,251,0.98);
+  border-radius:14px;
+  border:1px solid var(--border-subtle);
+  padding:10px 10px 12px;
+  box-shadow:0 10px 22px rgba(15,23,42,.14);
+
+  display:none;
+  z-index:120;
+}
+.maintenance-group.open .maintenance-third-panel{
+  display:block;
+}
+
+/* 第三層標題 */
+.maintenance-third-title{
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--text-soft);
+  margin-bottom:8px;
+}
+
+/* 讓 maintenance 主面板可以滾動、但 pop-out 不被裁切 */
+#maintenancePanel{
+  overflow:visible;
+  max-height:70vh;
+}
+
+/* 手機：第三層改成往下展開（不要側邊 pop-out） */
+@media (max-width:900px){
+  .maintenance-third-panel{
+    position:static;
+    left:auto;
+    margin-left:0;
+    min-width:0;
+    margin-top:8px;
+    display:none;
+  }
+  .maintenance-group.open .maintenance-third-panel{ display:block; }
+}
+
   </style>
 </head>
 <body>
@@ -790,170 +882,157 @@
   <!-- Raw Material -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      Raw Material <span class="nav-chevron">▾</span>
+      <span>Raw Material</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="HardDrivesBackup" data-label="Hard Drives Backup">
-        <span class="code">Hard Drives Backup</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ReclaimSC" data-label="Reclaim SC PLC Procedure">
-        <span class="code">Reclaim SC PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">Raw Material</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="HardDrivesBackup"><span class="code">Hard Drives Backup</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ReclaimSC"><span class="code">Reclaim SC PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- Extruder -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      Extruder <span class="nav-chevron">▾</span>
+      <span>Extruder</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">Extruder</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="SiemensS7"><span class="code">Siemens S7 Procedures</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- Die -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      Die <span class="nav-chevron">▾</span>
+      <span>Die</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">Die</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="SiemensS7"><span class="code">Siemens S7 Procedures</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- Chill Roll -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      Chill Roll <span class="nav-chevron">▾</span>
+      <span>Chill Roll</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">Chill Roll</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="SiemensS7"><span class="code">Siemens S7 Procedures</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- MDO -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      MDO <span class="nav-chevron">▾</span>
+      <span>MDO</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">MDO</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="SiemensS7"><span class="code">Siemens S7 Procedures</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- TDO -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      TDO <span class="nav-chevron">▾</span>
+      <span>TDO</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">TDO</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="SiemensS7"><span class="code">Siemens S7 Procedures</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- PRS -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      PRS <span class="nav-chevron">▾</span>
+      <span>PRS</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">PRS</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="SiemensS7"><span class="code">Siemens S7 Procedures</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- Treaters -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      Treaters <span class="nav-chevron">▾</span>
+      <span>Treaters</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">Treaters</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="SiemensS7"><span class="code">Siemens S7 Procedures</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- Winder -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      Winder <span class="nav-chevron">▾</span>
+      <span>Winder</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">Winder</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="SiemensS7"><span class="code">Siemens S7 Procedures</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- Grinder -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      Grinder <span class="nav-chevron">▾</span>
+      <span>Grinder</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">Grinder</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="SiemensS7"><span class="code">Siemens S7 Procedures</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
 
   <!-- Reclaim -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      Reclaim <span class="nav-chevron">▾</span>
+      <span>Reclaim</span><span class="chev">▾</span>
     </button>
-    <div class="maintenance-third-row">
-      <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures">
-        <span class="code">Siemens S7 Procedures</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="AB PLC Procedure">
-        <span class="code">AB PLC Procedure</span>
-      </button>
-      <button class="maintenance-sec-btn" data-pdf-key="ReclaimSC" data-label="Reclaim SC PLC Procedure">
-        <span class="code">Reclaim SC PLC Procedure</span>
-      </button>
+    <div class="maintenance-third-panel">
+      <div class="maintenance-third-title">Reclaim</div>
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn" data-pdf-key="ReclaimSC"><span class="code">Reclaim SC PLC Procedure</span></button>
+        <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure"><span class="code">AB PLC Procedure</span></button>
+      </div>
     </div>
   </div>
+
 </div>
         </li>
       </ul>
@@ -1659,6 +1738,35 @@ if (maintenancePanel){
     mascot.title = 'Click to change style';
     mascot.addEventListener('click', cycleStyle);
   }
+})();
+  (function(){
+  const panel = document.getElementById('maintenancePanel');
+  if (!panel) return;
+
+  const groups = panel.querySelectorAll('.maintenance-group');
+
+  function closeAll(){
+    groups.forEach(g => g.classList.remove('open'));
+  }
+
+  panel.addEventListener('click', e => {
+    const btn = e.target.closest('.maintenance-group-btn');
+    if (!btn) return;
+
+    const group = btn.closest('.maintenance-group');
+    const willOpen = !group.classList.contains('open');
+
+    closeAll();
+    if (willOpen) group.classList.add('open');
+  });
+
+  // 點第三層按鈕不要關掉 pop-out
+  panel.addEventListener('click', e => {
+    if (e.target.closest('.maintenance-sec-btn')) {
+      const g = e.target.closest('.maintenance-group');
+      if (g) g.classList.add('open');
+    }
+  });
 })();
 </script>
 </body>
