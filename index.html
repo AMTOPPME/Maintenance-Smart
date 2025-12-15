@@ -991,6 +991,15 @@
   const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
   let currentSchematicLine    = null;
   let currentSchematicSection = null;
+  // 🔹 LINE & TAGS：只有選到 SECTION 才顯示
+  const schematicLineRow   = document.querySelector('.schematic-line-row');
+  const schematicTagsBlock = document.querySelector('.ls-tags');
+
+  function updateSchematicChildrenVisibility(){
+    const hasSection = !!currentSchematicSection;
+    if (schematicLineRow)   schematicLineRow.style.display   = hasSection ? '' : 'none';
+    if (schematicTagsBlock) schematicTagsBlock.style.display = hasSection ? '' : 'none';
+  }
 
   const maintenancePanel   = document.getElementById('maintenancePanel');
   const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
@@ -1001,6 +1010,8 @@
 
     // ★ 目前 active 的父選項：'schematic' / 'maintenance' / null
   let currentParent = null;
+
+  updateSchematicChildrenVisibility();
 
     // --- 子列表 hover 開關（0.1 秒後關閉），同時照顧到「移進子面板」的情況 ---
   if (!isTouchDevice){
@@ -1090,11 +1101,12 @@ function closeAllSubPanels(){
   }
 
   // ★ Line Schematic 子選項 reset
-  function resetSchematicSelection(){
+    function resetSchematicSelection(){
     currentSchematicLine    = null;
     currentSchematicSection = null;
     schematicSecBtns.forEach(b => b.classList.remove('active'));
     schematicLineBtns.forEach(b => b.classList.remove('active'));
+    updateSchematicChildrenVisibility();  // 沒有 section → 收起 LINE & TAGS
   }
 
   // ★ Maintenance 子選項 reset
@@ -1226,32 +1238,33 @@ function closeAllSubPanels(){
   });
 
   // Line Schematic：Section
-schematicSecBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const sectionKey   = btn.getAttribute('data-section');
-    const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-    if (!sectionKey) return;
+  schematicSecBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const sectionKey   = btn.getAttribute('data-section');
+      const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+      if (!sectionKey) return;
 
-    if (schematicParentBtn) {
-      activateNav(schematicParentBtn);
-    }
+      if (schematicParentBtn) {
+        activateNav(schematicParentBtn);
+      }
 
-    currentSchematicSection = sectionKey;
-    currentSchematicLine    = null;
+      currentSchematicSection = sectionKey;
+      currentSchematicLine    = null;
 
-    // ★ 先把所有 Section 的藍色關掉，再把目前這顆變藍
-    schematicSecBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+      schematicSecBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-    // Line 1~4 的藍色順便清掉
-    schematicLineBtns.forEach(b=>b.classList.remove('active'));
+      schematicLineBtns.forEach(b=>b.classList.remove('active'));
 
-    setModule(
-      'Line Schematic – ' + sectionLabel,
-      'Select LINE to open schematic.'
-    );
+      setModule(
+        'Line Schematic – ' + sectionLabel,
+        'Select LINE to open schematic.'
+      );
+
+      // 🔹選到 SECTION → 顯示 LINE & TAGS
+      updateSchematicChildrenVisibility();
+    });
   });
-});
 
 
   // Maintenance PDF
