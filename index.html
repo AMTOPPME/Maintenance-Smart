@@ -368,7 +368,7 @@
       box-shadow:0 3px 8px rgba(37,99,235,.4);
     }
 
-    /* LINE：2x2、灰色按鍵 */
+    /* LINE：2x2、灰色按鍵（預設由 JS 控制顯示） */
     .schematic-line-row{
       display:flex;
       flex-wrap:wrap;
@@ -446,7 +446,7 @@
       color:var(--text-soft);
     }
 
-    /* Line Schematic → Tags list 區塊 */
+    /* Line Schematic → Tags list 區塊（顯示由 JS 控制） */
     .ls-tags{
       margin-top:6px;
       padding-top:6px;
@@ -651,14 +651,16 @@
             </div>
 
             <div class="schematic-title" style="margin-top:8px;">LINE</div>
-            <div class="schematic-line-row">
+            <!-- 一開始先隱藏，選 SECTION 才顯示 -->
+            <div class="schematic-line-row" style="display:none;">
               <button class="schematic-line-btn" type="button" data-line="Line1">Line 1</button>
               <button class="schematic-line-btn" type="button" data-line="Line2">Line 2</button>
               <button class="schematic-line-btn" type="button" data-line="Line3">Line 3</button>
               <button class="schematic-line-btn" type="button" data-line="Line4">Line 4</button>
             </div>
 
-            <div class="ls-tags">
+            <!-- 一開始先隱藏，選 SECTION 才顯示 -->
+            <div class="ls-tags" style="display:none;">
               <div class="ls-label">TAGS LIST</div>
               <a class="ls-tag-link" href="#" id="tagsListLink">
                 Open Tags List
