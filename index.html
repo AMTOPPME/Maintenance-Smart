@@ -417,48 +417,78 @@
       flex-wrap:wrap;
       gap:6px;
     }
-    .maintenance-sec-btn,
-    .scada-sec-btn{
-      border-radius:12px;
-      border:1px solid var(--border-subtle);
-      background:#f9fafb;
-      width: 100%;
-      justify-content: center;  /* 文字靠左，好看一點 *
-      padding: 10px 16px;
-      font-size: 13px;
-      cursor:pointer;
-      color:var(--text-soft);
-      display:inline-flex;
-      align-items:center;
-      gap:4px;
-      transition:background .15s,border-color .15s,color .15s,transform .1s;
-    }
-      
-    .maintenance-sec-btn span.code,
-    .scada-sec-btn span.code{
-      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-      font-size:12px;
-    }
-    .maintenance-sec-btn:hover,
-    .scada-sec-btn:hover{
-      background:#fff;
-      border-color:var(--accent-soft);
-      color:var(--accent);
-      transform:translateY(-1px);
-    }
-    .maintenance-sec-btn.active,
-    .scada-sec-btn.active{
-      background:#1d4ed8;
-      border-color:#1d4ed8;
-      color:#fff;
-      box-shadow:0 3px 8px rgba(37,99,235,.4);
-    }
+    /* ===== Sub menu buttons (SCADA / Maintenance) ===== */
+.maintenance-sec-btn,
+.scada-sec-btn{
+  width:100%;
 
-    .schematic-hint{
-      margin-top:6px;
-      font-size:10px;
-      color:var(--text-soft);
-    }
+  /* layout */
+  display:flex;                 /* 比 inline-flex 穩 */
+  align-items:center;
+  justify-content:center;       /* 文字置中 */
+  text-align:center;
+
+  /* spacing / size */
+  padding:10px 16px;            /* 不會窄 */
+  min-height:36px;              /* 更好按 */
+  font-size:13px;
+  line-height:1.2;
+
+  /* style */
+  border-radius:12px;
+  border:1px solid var(--border-subtle);
+  background:#f9fafb;
+  color:#6b7280;                /* 先固定灰色，避免 var(--text-soft) 失效變黑 */
+  cursor:pointer;
+
+  /* interaction */
+  transition: background .15s ease,
+              border-color .15s ease,
+              color .15s ease,
+              transform .12s ease,
+              box-shadow .15s ease;
+}
+
+.maintenance-sec-btn span.code,
+.scada-sec-btn span.code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-size:12px;
+}
+
+/* hover */
+.maintenance-sec-btn:hover,
+.scada-sec-btn:hover{
+  background:#fff;
+  border-color:var(--accent-soft);
+  color:var(--accent);
+  transform:translateY(-1px);
+  box-shadow:0 6px 16px rgba(15,23,42,.08);
+}
+
+/* active */
+.maintenance-sec-btn.active,
+.scada-sec-btn.active{
+  background:#1d4ed8;
+  border-color:#1d4ed8;
+  color:#fff;
+  font-weight:600;
+  box-shadow:0 8px 20px rgba(37,99,235,.35);
+}
+
+/* keyboard focus (可用 Tab 操作更舒服) */
+.maintenance-sec-btn:focus-visible,
+.scada-sec-btn:focus-visible{
+  outline:2px solid rgba(37,99,235,.45);
+  outline-offset:2px;
+}
+
+/* optional hint text */
+.schematic-hint{
+  margin-top:6px;
+  font-size:10px;
+  color:var(--text-soft);
+}
+
 
     /* Line Schematic → Tags list 區塊（顯示由 JS 控制） */
     .ls-tags{
