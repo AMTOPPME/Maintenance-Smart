@@ -670,20 +670,21 @@
         </li>
 
         <!-- Maintenance：可展開子列表 -->
-        <li class="nav-group-maintenance">
-          <button
-            class="nav-item-btn"
-            type="button"
-            data-role="maintenance-parent"
-            data-title="Maintenance"
-            data-sub="Open maintenance SOP PDFs.">
-            <span class="nav-icon">🔧</span>
-            <span class="nav-label">Maintenance</span>
-            <span class="nav-chevron" aria-hidden="true">▾</span>
-          </button>
+       <li class="nav-group-maintenance">
+        <button
+        class="nav-item-btn"
+        type="button"
+        data-role="maintenance-parent"
+        data-title="Calibration Procedure"
+        data-sub="Open calibration SOP PDFs.">
+        <span class="nav-icon">🔧</span>
+        <span class="nav-label">Calibration Procedure</span>
+        <span class="nav-chevron" aria-hidden="true">▾</span>
+      </button>
+
 
           <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
-            <div class="maintenance-title">PDF</div>
+            <div class="maintenance-title">Calibration PDF</div>
             <div class="maintenance-sec-row">
               <button class="maintenance-sec-btn" type="button" data-pdf-key="HardDrivesBackup" data-label="Hard Drives Backup">
                 <span class="code">Hard Drives Backup</span>
@@ -1248,32 +1249,33 @@
     });
   });
 
-  // Maintenance PDF
-  maintenanceSecBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const key   = btn.getAttribute('data-pdf-key');
-      const label = btn.getAttribute('data-label') || key || '';
-      if (!key) return;
+ // Calibration Procedure PDF
+maintenanceSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key   = btn.getAttribute('data-pdf-key');
+    const label = btn.getAttribute('data-label') || key || '';
+    if (!key) return;
 
-      if (maintenanceParentBtn) {
-        activateNav(maintenanceParentBtn);
-      }
+    if (maintenanceParentBtn) {
+      activateNav(maintenanceParentBtn);
+    }
 
-      const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
+    const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
 
-      if (frame){
-        frame.src = viewerUrl;
-      }
+    if (frame){
+      frame.src = viewerUrl;
+    }
 
-      setModule(
-        'Maintenance – ' + label,
-        'PDF: ' + label
-      );
+    setModule(
+      'Calibration Procedure – ' + label,
+      'PDF: ' + label
+    );
 
-      maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-    });
+    maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
   });
+});
+
 
 // I/O LIST 按鈕（改用 IOLIST.html viewer）
 const ioLink = document.getElementById('ioListLink');
