@@ -987,9 +987,10 @@
   const menuBtn = document.getElementById('menuButton');
   const buttons = document.querySelectorAll('.nav-item-btn');
 
-  // 父按鈕：Line Schematic / Maintenance
+  // 父按鈕：Line Schematic / Maintenance / SCADA
   const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
   const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
+  const scadaParentBtn       = document.querySelector('[data-role="scada-parent"]');
 
   const schematicPanel     = document.getElementById('schematicPanel');
   const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
@@ -1012,12 +1013,17 @@
   const maintenancePanel   = document.getElementById('maintenancePanel');
   const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
 
+  const scadaPanel   = document.getElementById('scadaPanel');
+  const scadaSecBtns = document.querySelectorAll('.scada-sec-btn');
+
+
   const isTouchDevice =
     ('ontouchstart' in window) ||
     (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-  // ★ 目前 active 的父選項：'schematic' / 'maintenance' / null
+  // ★ 目前 active 的父選項：'schematic' / 'maintenance' / 'scada' / null
   let currentParent = null;
+
 
   // 進入頁面先收起 LINE & TAGS
   updateSchematicChildrenVisibility();
@@ -1026,6 +1032,7 @@
   if (!isTouchDevice){
     let schematicTimer = null;
     let maintenanceTimer = null;
+    let scadaTimer = null;
 
     function setupHover(parentBtn, panelEl, which){
       if (!parentBtn || !panelEl) return;
@@ -1039,6 +1046,10 @@
           clearTimeout(maintenanceTimer);
           maintenanceTimer = null;
         }
+         if (which === 'scada' && scadaTimer){
+          clearTimeout(scadaTimer);
+          scadaTimer = null;
+        }
       }
 
       function scheduleClose(){
@@ -1046,23 +1057,32 @@
         const t = setTimeout(()=>{
           panelEl.classList.remove('open');
         }, 100);
-        if (which === 'schematic') schematicTimer = t;
-        else                       maintenanceTimer = t;
+        if (which === 'schematic')      schematicTimer = t;
+        else if (which === 'maintenance') maintenanceTimer = t;
+        else if (which === 'scada')       scadaTimer = t;
       }
+
 
       parentBtn.addEventListener('mouseenter', ()=> {
         clearTimer();
 
         if (which === 'schematic') {
           if (currentParent === 'maintenance') resetMaintenanceSelection();
+          if (currentParent === 'scada')       resetScadaSelection();
           currentParent = 'schematic';
         } else if (which === 'maintenance') {
           if (currentParent === 'schematic') resetSchematicSelection();
+          if (currentParent === 'scada')     resetScadaSelection();
           currentParent = 'maintenance';
+        } else if (which === 'scada') {
+          if (currentParent === 'schematic')   resetSchematicSelection();
+          if (currentParent === 'maintenance') resetMaintenanceSelection();
+          currentParent = 'scada';
         }
 
         panelEl.classList.add('open');
       });
+
 
       parentBtn.addEventListener('mouseleave', (e)=> {
         if (e.relatedTarget && panelEl.contains(e.relatedTarget)) return;
@@ -1082,6 +1102,7 @@
 
     setupHover(schematicParentBtn,   schematicPanel,   'schematic');
     setupHover(maintenanceParentBtn, maintenancePanel, 'maintenance');
+    setupHover(scadaParentBtn,       scadaPanel,       'scada');
   }
 
   // 共用 helper
@@ -1093,6 +1114,7 @@
   function closeAllSubPanels(){
     if (schematicPanel)   schematicPanel.classList.remove('open');
     if (maintenancePanel) maintenancePanel.classList.remove('open');
+    if (scadaPanel)       scadaPanel.classList.remove('open');
   }
 
   // ★ Line Schematic 子選項 reset
@@ -1101,12 +1123,17 @@
     currentSchematicSection = null;
     schematicSecBtns.forEach(b => b.classList.remove('active'));
     schematicLineBtns.forEach(b => b.classList.remove('active'));
-    updateSchematicChildrenVisibility();  // 沒有 section → 收起 LINE & TAGS
+    updateSchematicChildrenVisibility();
   }
 
   // ★ Maintenance 子選項 reset
   function resetMaintenanceSelection(){
     maintenanceSecBtns.forEach(b => b.classList.remove('active'));
+  }
+
+  // ★ SCADA 子選項 reset
+  function resetScadaSelection(){
+    scadaSecBtns.forEach(b => b.classList.remove('active'));
   }
 
   function setModule(title, sub){
@@ -1119,17 +1146,16 @@
     return lineKey;
   }
 
-  // Schematic 檔名規則
   function buildSchematicFileName(lineKey, sectionKey){
-    const n = lineKey.replace('Line',''); // Line1 -> 1
+    const n = lineKey.replace('Line','');
     return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
   }
 
   function openSchematicParent(btn){
-    if (!schematicPanel) return;
     activateNav(btn);
     schematicPanel.classList.add('open');
     maintenancePanel && maintenancePanel.classList.remove('open');
+    scadaPanel       && scadaPanel.classList.remove('open');
     setModule(
       btn.dataset.title || 'Line Schematic',
       btn.dataset.sub   || 'Select section (F12/F13/F16/F201) then line (1~4).'
@@ -1137,13 +1163,25 @@
   }
 
   function openMaintenanceParent(btn){
-    if (!maintenancePanel) return;
     activateNav(btn);
     maintenancePanel.classList.add('open');
     schematicPanel && schematicPanel.classList.remove('open');
+    scadaPanel     && scadaPanel.classList.remove('open');
     setModule(
       btn.dataset.title || 'Maintenance',
       btn.dataset.sub   || 'Open maintenance SOP PDFs.'
+    );
+  }
+
+  // ★ 新增：SCADA parent 展開
+  function openScadaParent(btn){
+    activateNav(btn);
+    scadaPanel.classList.add('open');
+    schematicPanel   && schematicPanel.classList.remove('open');
+    maintenancePanel && maintenancePanel.classList.remove('open');
+    setModule(
+      btn.dataset.title || 'SCADA PC',
+      btn.dataset.sub   || 'SCADA PC tools: Inventory / Records / Report.'
     );
   }
 
@@ -1152,59 +1190,64 @@
     btn.addEventListener('click', () => {
       const roleClick = btn.dataset.role || '';
 
+      // schematic parent
       if (roleClick === 'schematic-parent'){
-        if (currentParent === 'maintenance'){
-          resetMaintenanceSelection();
-        }
+        if (currentParent === 'maintenance') resetMaintenanceSelection();
+        if (currentParent === 'scada')       resetScadaSelection();
         currentParent = 'schematic';
         openSchematicParent(btn);
         return;
       }
 
+      // maintenance parent
       if (roleClick === 'maintenance-parent'){
-        if (currentParent === 'schematic'){
-          resetSchematicSelection();
-        }
+        if (currentParent === 'schematic') resetSchematicSelection();
+        if (currentParent === 'scada')     resetScadaSelection();
         currentParent = 'maintenance';
         openMaintenanceParent(btn);
         return;
       }
 
+      // ★ 新增：SCADA parent
+      if (roleClick === 'scada-parent'){
+        if (currentParent === 'schematic')   resetSchematicSelection();
+        if (currentParent === 'maintenance') resetMaintenanceSelection();
+        currentParent = 'scada';
+        openScadaParent(btn);
+        return;
+      }
+
+      // 一般 module 按鈕
       const src = btn.dataset.src;
       if (!src) return;
 
-      if (currentParent === 'schematic'){
-        resetSchematicSelection();
-      } else if (currentParent === 'maintenance'){
-        resetMaintenanceSelection();
-      }
+      if (currentParent === 'schematic')     resetSchematicSelection();
+      else if (currentParent === 'maintenance') resetMaintenanceSelection();
+      else if (currentParent === 'scada')       resetScadaSelection();
+
       currentParent = null;
 
       activateNav(btn);
 
       const title = btn.dataset.title || 'Module';
       const sub   = btn.dataset.sub || '';
-      if (frame) frame.src = src;
+      frame.src   = src;
       setModule(title, sub);
 
-      if (panel && panel.classList.contains('open')){
-        panel.classList.remove('open');
-        if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-      }
+      panel.classList.remove('open');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
 
       closeAllSubPanels();
     });
   });
 
-  // Line Schematic：Line 1~4
+  // Line Schematic — LINE
   schematicLineBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const lineKey = btn.getAttribute('data-line');
       if (!lineKey) return;
 
-      if (schematicParentBtn) {
-        activateNav(schematicParentBtn);
-      }
+      activateNav(schematicParentBtn);
 
       currentSchematicLine = lineKey;
 
@@ -1214,7 +1257,7 @@
       if (!currentSchematicSection) return;
 
       const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
-      if (frame) frame.src = file;
+      frame.src = file;
 
       const lineLabel = formatLineLabel(currentSchematicLine);
       setModule(
@@ -1224,19 +1267,17 @@
     });
   });
 
-  // Line Schematic：Section
+  // Line Schematic — SECTION
   schematicSecBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const sectionKey   = btn.getAttribute('data-section');
       const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
       if (!sectionKey) return;
 
-      if (schematicParentBtn) {
-        activateNav(schematicParentBtn);
-      }
+      activateNav(schematicParentBtn);
 
       currentSchematicSection = sectionKey;
-      currentSchematicLine    = null;
+      currentSchematicLine = null;
 
       schematicSecBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -1248,112 +1289,151 @@
         'Select LINE to open schematic.'
       );
 
-      // 選到 SECTION → 顯示 LINE 標題 + LINE & TAGS
       updateSchematicChildrenVisibility();
     });
   });
 
- // Calibration Procedure PDF
-maintenanceSecBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const key   = btn.getAttribute('data-pdf-key');
-    const label = btn.getAttribute('data-label') || key || '';
-    if (!key) return;
+  // Calibration Procedure — PDF
+  maintenanceSecBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key   = btn.getAttribute('data-pdf-key');
+      const label = btn.getAttribute('data-label') || key || '';
+      if (!key) return;
 
-    if (maintenanceParentBtn) {
       activateNav(maintenanceParentBtn);
-    }
 
-    const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
-
-    if (frame){
+      const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
       frame.src = viewerUrl;
-    }
 
-    setModule(
-      'Calibration Procedure – ' + label,
-      'PDF: ' + label
-    );
+      setModule(
+        'Calibration Procedure – ' + label,
+        'PDF: ' + label
+      );
 
-    maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
+      maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    });
   });
-});
 
+  // I/O LIST
+  const ioLink = document.getElementById('ioListLink');
+  if (ioLink) {
+    ioLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (!currentSchematicSection) return;
 
-// I/O LIST 按鈕（改用 IOLIST.html viewer）
-const ioLink = document.getElementById('ioListLink');
-if (ioLink) {
-  ioLink.addEventListener('click', function (e) {
-    e.preventDefault();
+      const sec = currentSchematicSection;
+      frame.src = `IOLIST.html?sec=${encodeURIComponent(sec)}`;
 
-    // 必須先選 SECTION
-    if (!currentSchematicSection) {
-      // 想要提示可以改成 alert：
-      // alert("Please select SECTION first.");
-      return;
-    }
+      setModule(
+        `I/O LIST – ${sec}`,
+        `I/O Reference for ${sec}`
+      );
+    });
+  }
 
-    const sec = currentSchematicSection;              // 例如 F12 / F13 / F16 / F201
-    const viewerUrl = `IOLIST.html?sec=${encodeURIComponent(sec)}`;
+  // ★ SCADA 子選項 — Inventory / Records / Report
+  scadaSecBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key = btn.dataset.scada;
+      if (!key) return;
 
-    if (frame) {
-      frame.src = viewerUrl;
-    }
+      activateNav(scadaParentBtn);
 
-    setModule(
-      `I/O LIST – ${sec}`,
-      `I/O Reference for ${sec}`
-    );
+      let src='', title='', sub='';
+
+      switch(key){
+        case 'inventory':
+          src='SCADA PC Inventory.html';
+          title='SCADA PC – Inventory';
+          sub='SCADA PC inventory list.';
+          break;
+
+        case 'records':
+          src='Maintenance_Records.html';
+          title='SCADA PC – Records';
+          sub='View and edit SCADA PC maintenance records.';
+          break;
+
+        case 'report':
+          src='New_Report.html';
+          title='SCADA PC – Report';
+          sub='Submit and export SCADA PC maintenance report.';
+          break;
+      }
+
+      frame.src = src;
+      setModule(title, sub);
+
+      scadaSecBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    });
   });
-}
+ // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
+(function () {
+
+  const STYLE_KEY = 'ms-style';
+  const root   = document.documentElement;
+  const mascot = document.querySelector('.mascot');
+
+  // 支援樣式的清單
+  const styles = ['blue', 'panther', 'hangyodon'];
+
+  // 每個主題對應的圖示
+  const themeConfig = {
+    blue: {
+      bgImage: ''
+    },
+    panther: {
+      bgImage: 'url("pinkpanther.png")'
+    },
+    hangyodon: {
+      bgImage: 'url("hangyodon.png")'
+    }
+  };
+
+  // 套用樣式
+  function applyStyle(style) {
+    const s = themeConfig[style] ? style : 'blue';
+    const cfg = themeConfig[s];
+
+    // 對整個頁面生效
+    root.setAttribute('data-style', s);
+
+    // 左上 ICON
+    if (mascot) {
+      mascot.style.backgroundImage = cfg.bgImage || '';
+    }
+
+    // 儲存至 localStorage
+    localStorage.setItem(STYLE_KEY, s);
+
+    // iframe 同步
+    if (window._msSyncFrameStyle) {
+      setTimeout(window._msSyncFrameStyle, 30);
+    }
+  }
+
+  // 點擊 → 輪播主題
+  function cycleStyle() {
+    const current = root.getAttribute('data-style') || 'blue';
+    const idx = styles.indexOf(current);
+    const next = styles[(idx + 1) % styles.length];
+    applyStyle(next);
+  }
+
+  // **初始化：抓使用者前次選擇**
+  const saved = localStorage.getItem(STYLE_KEY) || 'blue';
+  applyStyle(saved);
+
+  // 設定點擊事件
+  if (mascot) {
+    mascot.style.cursor = 'pointer';
+    mascot.title = 'Click to change style';
+    mascot.addEventListener('click', cycleStyle);
+  }
+
 })();
-
-  // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
-  (function(){
-    const STYLE_KEY = 'ms-style';
-    const root = document.documentElement;
-    const mascot = document.querySelector('.mascot');
-    const styles = ['blue', 'panther', 'hangyodon'];
-
-    const themeConfig = {
-      blue:     { bgImage: '' },
-      panther:  { bgImage: 'url("pinkpanther.png")' },
-      hangyodon:{ bgImage: 'url("hangyodon.png")' }
-    };
-
-    function applyStyle(style){
-      const s = themeConfig[style] ? style : 'blue';
-      root.setAttribute('data-style', s);
-      const cfg = themeConfig[s];
-
-      if (mascot){
-        mascot.style.backgroundImage = cfg.bgImage || '';
-      }
-
-      localStorage.setItem(STYLE_KEY, s);
-
-      if (window._msSyncFrameStyle){
-        setTimeout(window._msSyncFrameStyle, 30);
-      }
-    }
-
-    function cycleStyle(){
-      const current = root.getAttribute('data-style') || 'blue';
-      const idx = styles.indexOf(current);
-      const next = styles[(idx + 1) % styles.length];
-      applyStyle(next);
-    }
-
-    const saved = localStorage.getItem(STYLE_KEY) || 'blue';
-    applyStyle(saved);
-
-    if (mascot){
-      mascot.style.cursor = 'pointer';
-      mascot.title = 'Click to change style';
-      mascot.addEventListener('click', cycleStyle);
-    }
-  })();
 </script>
 </body>
 </html>
