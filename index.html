@@ -1189,7 +1189,7 @@
     maintenancePanel && maintenancePanel.classList.remove('open');
     scadaPanel       && scadaPanel.classList.remove('open');
     setModule(
-      btn.dataset.title || 'Updated Schematic'
+      btn.dataset.title || 'Updated Schematic',
       btn.dataset.sub   || 'Select section (F12/F13/F16/F201) then line (1~4).'
     );
   }
@@ -1288,7 +1288,7 @@
 
       const lineLabel = formatLineLabel(currentSchematicLine);
       setModule(
-        'Updated Schematic – ' + lineLabel + ' – ' + currentSchematicSection
+        'Updated Schematic – ' + lineLabel + ' – ' + currentSchematicSection,
         'Schematic file: ' + file
       );
     });
@@ -1313,7 +1313,7 @@
       schematicLineBtns.forEach(b=>b.classList.remove('active'));
 
       setModule(
-        'Updated Schematic – ' + sectionLabel
+        'Updated Schematic – ' + sectionLabel,
         'Select LINE to open schematic.'
       );
 
