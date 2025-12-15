@@ -1140,6 +1140,13 @@
     if (maintenancePanel) maintenancePanel.classList.remove('open');
     if (scadaPanel)       scadaPanel.classList.remove('open');
   }
+  
+  function resetOtherGroups(activeGroup){
+    if (activeGroup !== 'schematic')   resetSchematicSelection();
+    if (activeGroup !== 'maintenance') resetMaintenanceSelection();
+    if (activeGroup !== 'scada')       resetScadaSelection();
+    currentParent = activeGroup;
+  }
 
   // ★ Line Schematic 子選項 reset
   function resetSchematicSelection(){
@@ -1214,32 +1221,24 @@
     btn.addEventListener('click', () => {
       const roleClick = btn.dataset.role || '';
 
-      // schematic parent
-      if (roleClick === 'schematic-parent'){
-        if (currentParent === 'maintenance') resetMaintenanceSelection();
-        if (currentParent === 'scada')       resetScadaSelection();
-        currentParent = 'schematic';
-        openSchematicParent(btn);
-        return;
-      }
+     if (roleClick === 'schematic-parent'){
+      resetOtherGroups('schematic');
+      openSchematicParent(btn);
+      return;
+    }
 
-      // maintenance parent
-      if (roleClick === 'maintenance-parent'){
-        if (currentParent === 'schematic') resetSchematicSelection();
-        if (currentParent === 'scada')     resetScadaSelection();
-        currentParent = 'maintenance';
-        openMaintenanceParent(btn);
-        return;
-      }
+    if (roleClick === 'maintenance-parent'){
+      resetOtherGroups('maintenance');
+      openMaintenanceParent(btn);
+      return;
+    }
 
-      // ★ 新增：SCADA parent
-      if (roleClick === 'scada-parent'){
-        if (currentParent === 'schematic')   resetSchematicSelection();
-        if (currentParent === 'maintenance') resetMaintenanceSelection();
-        currentParent = 'scada';
-        openScadaParent(btn);
-        return;
-      }
+    if (roleClick === 'scada-parent'){
+      resetOtherGroups('scada');
+      openScadaParent(btn);
+      return;
+    }
+
 
       // 一般 module 按鈕
       const src = btn.dataset.src;
@@ -1269,6 +1268,8 @@
   // Line Schematic — LINE
   schematicLineBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      resetOtherGroups('schematic');
+
       const lineKey = btn.getAttribute('data-line');
       if (!lineKey) return;
 
@@ -1295,6 +1296,7 @@
   // Line Schematic — SECTION
   schematicSecBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      resetOtherGroups('schematic');
       const sectionKey   = btn.getAttribute('data-section');
       const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
       if (!sectionKey) return;
@@ -1321,6 +1323,8 @@
   // Calibration Procedure — PDF
   maintenanceSecBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      resetOtherGroups('maintenance');
+
       const key   = btn.getAttribute('data-pdf-key');
       const label = btn.getAttribute('data-label') || key || '';
       if (!key) return;
@@ -1360,6 +1364,8 @@
   // ★ SCADA 子選項 — Inventory / Records / Report
   scadaSecBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      resetOtherGroups('scada');
+      
       const key = btn.dataset.scada;
       if (!key) return;
 
