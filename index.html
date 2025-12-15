@@ -690,14 +690,15 @@
             class="nav-item-btn"
             type="button"
             data-role="schematic-parent"
-            data-title="Line Updated Schematic"
+            data-title="Updated Schematic"
             data-sub="Select section (F12/F13/F16/F201) then line (1~4).">
             <span class="nav-icon">📊</span>
-            <span class="nav-label">Line Updated Schematic</span>
+            <span class="nav-label">Updated Schematic</span>
             <span class="nav-chevron" aria-hidden="true">▾</span>
           </button>
 
-          <div class="schematic-panel" id="schematicPanel" aria-label="Line Updated schematic selector">
+
+          <div class="schematic-panel" id="schematicPanel" aria-label="Updated schematic selector">
             <div class="schematic-title">SECTION</div>
             <div class="schematic-sec-row">
               <button class="schematic-sec-btn" type="button" data-section="F12" data-label="F12">
@@ -1179,7 +1180,7 @@
 
   function buildSchematicFileName(lineKey, sectionKey){
     const n = lineKey.replace('Line','');
-    return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
+    return 'Updated Schematic.html?line=' + n + '&sec=' + sectionKey;
   }
 
   function openSchematicParent(btn){
@@ -1188,7 +1189,7 @@
     maintenancePanel && maintenancePanel.classList.remove('open');
     scadaPanel       && scadaPanel.classList.remove('open');
     setModule(
-      btn.dataset.title || 'Line Schematic',
+      btn.dataset.title || 'Updated Schematic'
       btn.dataset.sub   || 'Select section (F12/F13/F16/F201) then line (1~4).'
     );
   }
@@ -1287,7 +1288,7 @@
 
       const lineLabel = formatLineLabel(currentSchematicLine);
       setModule(
-        'Line Schematic – ' + lineLabel + ' – ' + currentSchematicSection,
+        'Updated Schematic – ' + lineLabel + ' – ' + currentSchematicSection
         'Schematic file: ' + file
       );
     });
@@ -1312,7 +1313,7 @@
       schematicLineBtns.forEach(b=>b.classList.remove('active'));
 
       setModule(
-        'Line Schematic – ' + sectionLabel,
+        'Updated Schematic – ' + sectionLabel
         'Select LINE to open schematic.'
       );
 
