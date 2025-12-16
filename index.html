@@ -1262,6 +1262,15 @@ function collapseParent(which){
     if (scadaPanel)       scadaPanel.classList.remove('open');
   }
   
+  function closeModules(){
+  // 收起 Modules 主清單
+  if (panel) panel.classList.remove('open');
+  if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+
+  // 收起右側子面板
+  closeAllSubPanels();
+}
+
   function resetOtherGroups(activeGroup){
     if (activeGroup !== 'schematic')   resetSchematicSelection();
     if (activeGroup !== 'maintenance') resetMaintenanceSelection();
@@ -1304,38 +1313,50 @@ function collapseParent(which){
   }
 
   function openSchematicParent(btn){
-    activateNav(btn);
-    schematicPanel.classList.add('open');
-    maintenancePanel && maintenancePanel.classList.remove('open');
-    scadaPanel       && scadaPanel.classList.remove('open');
+  activateNav(btn);
+  schematicPanel.classList.add('open');
+  maintenancePanel && maintenancePanel.classList.remove('open');
+  scadaPanel       && scadaPanel.classList.remove('open');
+
+  // ✅ 手機/平板：只展開，不改左上 title/sub（避免誤導）
+  if (!isTouchDevice){
     setModule(
       btn.dataset.title || 'Updated Schematic',
       btn.dataset.sub   || 'Select section (F12/F13/F16/F201) then line (1~4).'
     );
   }
+}
+
 
   function openMaintenanceParent(btn){
-    activateNav(btn);
-    maintenancePanel.classList.add('open');
-    schematicPanel && schematicPanel.classList.remove('open');
-    scadaPanel     && scadaPanel.classList.remove('open');
+  activateNav(btn);
+  maintenancePanel.classList.add('open');
+  schematicPanel && schematicPanel.classList.remove('open');
+  scadaPanel     && scadaPanel.classList.remove('open');
+
+  if (!isTouchDevice){
     setModule(
       btn.dataset.title || 'Maintenance',
       btn.dataset.sub   || 'Open maintenance SOP PDFs.'
     );
   }
+}
 
-  // ★ 新增：SCADA parent 展開
+
   function openScadaParent(btn){
-    activateNav(btn);
-    scadaPanel.classList.add('open');
-    schematicPanel   && schematicPanel.classList.remove('open');
-    maintenancePanel && maintenancePanel.classList.remove('open');
+  activateNav(btn);
+  scadaPanel.classList.add('open');
+  schematicPanel   && schematicPanel.classList.remove('open');
+  maintenancePanel && maintenancePanel.classList.remove('open');
+
+  if (!isTouchDevice){
     setModule(
       btn.dataset.title || 'SCADA PC',
       btn.dataset.sub   || 'SCADA PC tools: Inventory / Records / Report.'
     );
   }
+}
+
 
   // 主模組切換
   buttons.forEach(btn => {
@@ -1417,7 +1438,6 @@ if (roleClick === 'scada-parent'){
       btn.classList.add('active');
 
       if (!currentSchematicSection) return;
-
       const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
       if (frame) frame.src = file;
 
@@ -1425,6 +1445,10 @@ if (roleClick === 'scada-parent'){
       setModule(
         'Updated Schematic – ' + lineLabel + ' – ' + currentSchematicSection,
         'Schematic file: ' + file
+      );
+
+// ✅ 新增：點到 LINE 真正開啟頁面後，自動收起 Modules
+closeModules();
       );
     });
   });
@@ -1548,6 +1572,7 @@ if (maintenancePanel){
     // active 樣式
     maintenancePanel.querySelectorAll('.maintenance-sec-btn').forEach(b=>b.classList.remove('active'));
     pdfBtn.classList.add('active');
+    closeModules();
   });
 }
 
@@ -1566,6 +1591,7 @@ if (maintenancePanel){
         `I/O LIST – ${sec}`,
         `I/O Reference for ${sec}`
       );
+      closeModules();
     });
   }
 
@@ -1606,6 +1632,8 @@ if (maintenancePanel){
 
       scadaSecBtns.forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
+
+      closeModules();
     });
   });
 })();  /* ✅ 到這裡結束「切換模組 + 選單」那個大 IIFE */
