@@ -381,24 +381,33 @@
       subEl.textContent = `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
     }
     // ===== 裝置偵測 =====
-    const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    const isSmallScreen = window.innerWidth <= 1024;
-    const isMobileOrTablet = isTouch && isSmallScreen;
+    // ===== 裝置偵測 =====
+// ✅ iPad / iPadOS 偵測（含 iPadOS 桌面模式：MacIntel + touch）
+function isIPadOS(){
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
 
-    if (isMobileOrTablet) {
-      // 手機 / iPad：只顯示一顆按鈕，用瀏覽器開 PDF
-      if (openNewTab) openNewTab.style.display = 'none';
-      if (viewer) {
-        viewer.innerHTML = `
-          <div class="fallback">
-            Tap the button below to open PDF.<br><br>
-            <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
-              Open PDF ↗
-            </a>
-          </div>`;
-      }
-      return;
-    }
+const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+const isSmallScreen = window.innerWidth <= 1024;
+
+// ✅ iPad 一律當作「不要用 PDF.js」
+const isMobileOrTablet = isIPadOS() || (isTouch && isSmallScreen);
+
+if (isMobileOrTablet) {
+  if (openNewTab) openNewTab.style.display = 'none';
+  if (viewer) {
+    viewer.innerHTML = `
+      <div class="fallback">
+        Tap the button below to open PDF.<br><br>
+        <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
+          Open PDF ↗
+        </a>
+      </div>`;
+  }
+  return;
+}
+
 
     // ===== 桌機：內嵌 pdf.js viewer =====
     if (frame) {
