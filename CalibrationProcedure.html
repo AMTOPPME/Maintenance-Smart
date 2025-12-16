@@ -401,29 +401,48 @@
     }
 
     const isTouch          = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    const isSmallScreen    = window.innerWidth <= 1024;
-    const isMobileOrTablet = isTouch && isSmallScreen;
+const isSmallScreen    = window.innerWidth <= 1024;
+const isMobileOrTablet = isTouch && isSmallScreen;
 
-    if (isMobileOrTablet) {
-      if (openNewTab) openNewTab.style.display = 'none';
-      if (viewer) {
-        viewer.innerHTML = `
-          <div class="fallback">
-            Tap the button below to open<br><strong>${docInfo.title}</strong> PDF.<br><br>
-            <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
-              Open PDF ↗
-            </a>
-          </div>`;
-      }
-      return;
-    }
+// ✅ iPad / iPadOS 偵測（含 iPad 開「桌面版」的情況）
+function isIPadOS(){
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
 
-    if (frame) {
-      frame.src = viewerUrl;
-    }
-    if (openNewTab) {
-      openNewTab.href = viewerUrl;
-    }
+// ✅ 核心：iPad 一律不用 PDF.js，直接走 Safari 原生 PDF
+if (isIPadOS()){
+  if (openNewTab) openNewTab.style.display = 'none';
+  if (viewer) {
+    viewer.innerHTML = `
+      <div class="fallback">
+        iPad detected. Opening with Safari PDF viewer.<br>
+        <strong>${docInfo.title}</strong><br><br>
+        <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
+          Open PDF ↗
+        </a>
+      </div>`;
+  }
+  return;
+}
+
+if (isMobileOrTablet) {
+  if (openNewTab) openNewTab.style.display = 'none';
+  if (viewer) {
+    viewer.innerHTML = `
+      <div class="fallback">
+        Tap the button below to open<br><strong>${docInfo.title}</strong> PDF.<br><br>
+        <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
+          Open PDF ↗
+        </a>
+      </div>`;
+  }
+  return;
+}
+
+// 🖥️ 其他桌機/一般瀏覽器 → 用 PDF.js viewer
+if (frame) frame.src = viewerUrl;
+if (openNewTab) openNewTab.href = viewerUrl;
   })();
   </script>
 </body>
