@@ -1444,31 +1444,31 @@ closeModules();
   });
 
   // Line Schematic — SECTION
-  schematicSecBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      resetOtherGroups('schematic');
-      const sectionKey   = btn.getAttribute('data-section');
-      const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-      if (!sectionKey) return;
+schematicSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    resetOtherGroups('schematic');
 
-      activateNav(schematicParentBtn);
+    const sectionKey   = btn.getAttribute('data-section');
+    const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+    if (!sectionKey) return;
 
-      currentSchematicSection = sectionKey;
-      currentSchematicLine = null;
+    activateNav(schematicParentBtn);
 
-      schematicSecBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    currentSchematicSection = sectionKey;
+    currentSchematicLine = null;
 
-      schematicLineBtns.forEach(b=>b.classList.remove('active'));
+    schematicSecBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
 
-      setModule(
-        'Updated Schematic – ' + sectionLabel,
-        'Select LINE to open schematic.'
-      );
+    schematicLineBtns.forEach(b=>b.classList.remove('active'));
 
-      updateSchematicChildrenVisibility();
-    });
+    // ❌ 不再 setModule（手機 & 電腦都不改 Title）
+    // Title 只在 LINE / I/O / PDF / SCADA 真正切頁時才改
+
+    updateSchematicChildrenVisibility();
   });
+});
+
 
 // ✅ Maintenance 2nd layer: desktop hover open + mobile click open + 3rd layer PDF click
 if (maintenancePanel){
