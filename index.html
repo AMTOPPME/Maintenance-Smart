@@ -344,6 +344,25 @@
       color:#111827;
       margin-bottom:8px;
     }
+    
+/* ✅ Calibration PDF 這一列：panel 展開時也變藍 */
+#maintenancePanel.open .maintenance-title{
+  width:100%;
+  padding:10px 13px;
+  border-radius:999px;
+  background:var(--accent);
+  color:#fff;
+  box-shadow:0 4px 10px rgba(37,99,235,.35);
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+/* 讓字看起來更像選單項目 */
+#maintenancePanel.open .maintenance-title{
+  letter-spacing:.12em;
+}
 
     /* 3rd level buttons (Maintenance / SCADA) */
     .maintenance-sec-row,
