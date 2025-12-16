@@ -1458,7 +1458,7 @@ closeModules();
     });
   });
 
-  // Line Schematic — SECTION
+// Line Schematic — SECTION
 schematicSecBtns.forEach(btn=>{
   btn.addEventListener('click', ()=>{
     resetOtherGroups('schematic');
@@ -1518,157 +1518,87 @@ if (maintenancePanel){
       const group = e.target.closest('.maintenance-group');
       if (!group) return;
 
-      // 只有滑到該項目按鈕時才打開
       const onBtn = e.target.closest('.maintenance-group-btn');
       if (!onBtn && !group.classList.contains('open')) return;
 
       cancelClose();
       openGroup(group);
+
+      // ✅ 桌機 hover 時第二層也變藍
+      maintenancePanel.querySelectorAll('.maintenance-group-btn')
+        .forEach(b => b.classList.remove('active'));
+      onBtn.classList.add('active');
     });
 
-    // 滑出 maintenancePanel → 延遲關閉（讓你能滑去右邊 pop-out）
     maintenancePanel.addEventListener('mouseleave', ()=>{
       scheduleCloseAll();
     });
 
-    // 滑回來（含 pop-out 內）→ 不關
     maintenancePanel.addEventListener('mouseenter', ()=>{
       cancelClose();
     });
   }
 
   // 📱 手機：點第二層展開/收起；點第三層開 PDF
-  maintenancePanel.addEventListener('click', (e)=>{
+  maintenancePanel.addEventListener('click', (e) => {
 
-    // 2nd layer toggle
+    // 2nd layer toggle (Raw Material / Extruder ...)
     const groupBtn = e.target.closest('.maintenance-group-btn');
-    if (groupBtn){
+    if (groupBtn) {
       const group = groupBtn.closest('.maintenance-group');
       if (!group) return;
 
-      // 只開一個（要多開就拿掉這段）
       if (!group.classList.contains('open')) closeAllGroups(group);
-
       group.classList.toggle('open');
-      return;
+
+      // ✅ 點第二層本身也變藍
+      maintenancePanel.querySelectorAll('.maintenance-group-btn')
+        .forEach(b => b.classList.remove('active'));
+      groupBtn.classList.add('active');
+
+      return; // ✅ 很重要：第二層處理完就結束
     }
 
     // 3rd layer pdf buttons
     const pdfBtn = e.target.closest('.maintenance-sec-btn');
     if (!pdfBtn) return;
 
-// 3rd layer pdf buttons
-const pdfBtn = e.target.closest('.maintenance-sec-btn');
-if (!pdfBtn) return;
+    // ✅ 點第三層 PDF 時：第二層也變藍 + 保持 open
+    maintenancePanel.querySelectorAll('.maintenance-group-btn')
+      .forEach(b => b.classList.remove('active'));
 
-// ✅ 點第三層 PDF 時：
-// 1) 第二層分類保持 open（藍）
-// 2) 第二層分類按鈕加上 active（藍，即使之後 hover 關掉也能保持）
-// 3) 第三層 PDF 按鈕 active
+    const groupOfPdf = pdfBtn.closest('.maintenance-group');
+    if (groupOfPdf) {
+      maintenancePanel.querySelectorAll('.maintenance-group')
+        .forEach(g => g.classList.remove('open'));
 
-// 先把所有第二層 active 清掉
-maintenancePanel
-  .querySelectorAll('.maintenance-group-btn')
-  .forEach(b => b.classList.remove('active'));
+      groupOfPdf.classList.add('open');
 
-// 找到這顆 PDF 所屬的 group
-const group = pdfBtn.closest('.maintenance-group');
+      const groupBtnEl = groupOfPdf.querySelector('.maintenance-group-btn');
+      if (groupBtnEl) groupBtnEl.classList.add('active');
+    }
 
-// 只開一個分類（可選，但建議）
-if (group) {
-  // 關掉其他分類 open
-  maintenancePanel.querySelectorAll('.maintenance-group')
-    .forEach(g => g.classList.remove('open'));
+    resetOtherGroups('maintenance');
 
-  // 打開目前分類
-  group.classList.add('open');
+    const key   = pdfBtn.getAttribute('data-pdf-key');
+    const label = pdfBtn.getAttribute('data-label') || pdfBtn.textContent.trim() || key || '';
+    if (!key) return;
 
-  // 把目前分類按鈕設成 active（注意：名字不要叫 groupBtn，避免重複宣告）
-  const groupBtnEl = group.querySelector('.maintenance-group-btn');
-  if (groupBtnEl) groupBtnEl.classList.add('active');
-}
+    activateNav(maintenanceParentBtn);
 
-resetOtherGroups('maintenance');
+    const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
+    if (frame) frame.src = viewerUrl;
 
-const key   = pdfBtn.getAttribute('data-pdf-key');
-const label = pdfBtn.getAttribute('data-label') || pdfBtn.textContent.trim() || key || '';
-if (!key) return;
+    setModule('Calibration Procedure – ' + label, 'PDF: ' + label);
 
-activateNav(maintenanceParentBtn);
+    // 第三層 active
+    maintenancePanel.querySelectorAll('.maintenance-sec-btn')
+      .forEach(b => b.classList.remove('active'));
+    pdfBtn.classList.add('active');
 
-const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
-if (frame) frame.src = viewerUrl;
-
-setModule('Calibration Procedure – ' + label, 'PDF: ' + label);
-
-// 第三層 active
-maintenancePanel.querySelectorAll('.maintenance-sec-btn').forEach(b=>b.classList.remove('active'));
-pdfBtn.classList.add('active');
-
-closeModules();
-
-
-
-  // I/O LIST
-  const ioLink = document.getElementById('ioListLink');
-  if (ioLink) {
-    ioLink.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (!currentSchematicSection) return;
-
-      const sec = currentSchematicSection;
-      if (frame) frame.src = `IOLIST.html?sec=${encodeURIComponent(sec)}`;
-
-      setModule(
-        `I/O LIST – ${sec}`,
-        `I/O Reference for ${sec}`
-      );
-      closeModules();
-    });
-  }
-
-  // ★ SCADA 子選項 — Inventory / Records / Report
-  scadaSecBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      resetOtherGroups('scada');
-      
-      const key = btn.dataset.scada;
-      if (!key) return;
-
-      activateNav(scadaParentBtn);
-
-      let src='', title='', sub='';
-
-      switch(key){
-        case 'inventory':
-          src='SCADA PC Inventory.html';
-          title='SCADA PC – Inventory';
-          sub='SCADA PC inventory list.';
-          break;
-
-        case 'records':
-          src='Maintenance_Records.html';
-          title='SCADA PC – Records';
-          sub='View and edit SCADA PC maintenance records.';
-          break;
-
-               case 'report':
-          src='New_Report.html';
-          title='SCADA PC – Report';
-          sub='Submit and export SCADA PC maintenance report.';
-          break;
-      }
-
-      if (frame && src) frame.src = src;
-      setModule(title, sub);
-
-      scadaSecBtns.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-
-      closeModules();
-    });
+    closeModules();
   });
-})();  /* ✅ 到這裡結束「切換模組 + 選單」那個大 IIFE */
+}
 
 /* =========================
    Style Theme (blue / panther / hangyodon)
