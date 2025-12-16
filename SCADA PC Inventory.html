@@ -2,19 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Maintenance Smart | BOPP1 PC Manager</title>
+  <title>Maintenance Smart | SCADA PC Inventory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  
   <!-- Apply theme & style from portal -->
   <script>
     (function () {
-      // light / dark
       const storedTheme = localStorage.getItem('ms-theme');
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       const theme = storedTheme || (prefersDark ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
 
-      // style: blue / panther / hangyodon
       const style = localStorage.getItem('ms-style') || 'blue';
       document.documentElement.setAttribute('data-style', style);
     })();
@@ -35,7 +33,6 @@
       --xsmall-font: 11px;
     }
 
-    /* Dark mode */
     html[data-theme="dark"] {
       --bg: #020617;
       --card-bg: #020617;
@@ -62,7 +59,6 @@
       transition: background .25s ease, color .25s ease;
     }
 
-    /* style 背景：跟首頁一致 */
     html[data-style="panther"] body {
       background:
         radial-gradient(circle at top, rgba(244,114,182,.28), transparent),
@@ -96,7 +92,6 @@
     html[data-style="panther"] .side-panther{display:block;}
     html[data-style="hangyodon"] .side-hangyodon{display:block;}
 
-    /* 手機 / 平板：只保留右邊大圖並置中 */
     @media (max-width: 900px){
       html[data-style="panther"] .side-panther.left,
       html[data-style="hangyodon"] .side-hangyodon.left{
@@ -315,14 +310,20 @@
 
     tbody tr {
       transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-      cursor: pointer; /* 點整列跳 Maintenance Records */
+      cursor: pointer;
     }
 
-    tbody tr:nth-child(even) { background: #ffffff; }
-    tbody tr:nth-child(odd)  { background: #fdfdfd; }
+    /* 一深一淺的列背景（light mode） */
+    tbody tr:nth-child(even){
+      background:#ffffff;
+    }
+    tbody tr:nth-child(odd){
+      background:#f3f4f6;
+    }
 
+    /* dark mode 仍維持透明，由 hover 顏色對比 */
     html[data-theme="dark"] tbody tr:nth-child(even),
-    html[data-theme="dark"] tbody tr:nth-child(odd) {
+    html[data-theme="dark"] tbody tr:nth-child(odd){
       background:transparent;
     }
 
@@ -415,7 +416,6 @@
       box-shadow: 0 10px 28px rgba(0,0,0,0.30);
     }
 
-    /* panther → 使用粉紅角色圖片 */
     html[data-style="panther"] #backToTop {
       background: transparent;
       background-image: url("pinkpanther2.png");
@@ -425,7 +425,6 @@
       border: none;
     }
 
-    /* hangyodon → 使用魚丁角色圖片 */
     html[data-style="hangyodon"] #backToTop {
       background: transparent;
       background-image: url("hangyodon2.png");
@@ -489,7 +488,7 @@
   <img src="hangyodon2.png" alt="Hangyodon Right" class="side-hangyodon right">
 
   <div class="page">
-    <!-- 給 JS 用的 hidden lastSync，畫面不顯示 -->
+    <!-- 給 JS 用的 hidden lastSync -->
     <span id="lastSync" style="display:none"></span>
 
     <!-- Filters (collapsible) -->
@@ -499,8 +498,8 @@
         <span id="toggleIcon" class="filter-toggle-icon">▲</span>
       </div>
       <div class="card-subtitle">
-        This page is read-only. To update data, edit the Excel file and export
-        <strong>inventory.csv</strong> to overwrite the existing file.
+        This page is read-only. Data is loaded from
+        <strong>Google Sheets (Apps Script Web App)</strong>.
       </div>
 
       <div class="filters collapsible open" id="filtersBox">
@@ -514,7 +513,7 @@
           <option value="test">Test</option>
         </select>
         <input type="text" id="deptFilter" placeholder="Department">
-        <button class="btn" id="reloadBtn">🔄 Reload CSV</button>
+        <button class="btn" id="reloadBtn">🔄 Reload data</button>
         <button class="btn btn-primary" id="printBtn">🖨 Print list</button>
       </div>
     </div>
@@ -549,7 +548,7 @@
   <button id="backToTop" title="Back to Top">↑</button>
 
 <script>
-  // Back to Top：滾動超過一定高度才顯示
+  // Back to Top
   (function(){
     const btn = document.getElementById('backToTop');
     if (!btn) return;
@@ -565,91 +564,65 @@
     }
 
     function scrollToTop() {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     window.addEventListener('scroll', updateVisibility);
     btn.addEventListener('click', scrollToTop);
-
-    // 初始化判斷一次
     updateVisibility();
   })();
 </script>
 
 <script>
+  // ✅ 用 Google Sheet Web App
+  const PC_SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzLVvEXLjs4a-A___KO-XdJGt2OJE8Nve7dN0-AVqP1gXdKkG1dRt98WMsRQRaCx7OXig/exec';
+
   let computers = [];
   let currentSortKey = "asset_id";
   let currentSortAsc = true;
   let inventoryLowNotified = false;
 
-  const tbody = document.querySelector("#pcTable tbody");
-  const searchInput = document.getElementById("searchInput");
+  const tbody        = document.querySelector("#pcTable tbody");
+  const searchInput  = document.getElementById("searchInput");
   const statusFilter = document.getElementById("statusFilter");
-  const deptFilter = document.getElementById("deptFilter");
-  const reloadBtn = document.getElementById("reloadBtn");
-  const printBtn = document.getElementById("printBtn");
-  const lastSyncEl = document.getElementById("lastSync");
-  const countInfoEl = document.getElementById("countInfo");
+  const deptFilter   = document.getElementById("deptFilter");
+  const reloadBtn    = document.getElementById("reloadBtn");
+  const printBtn     = document.getElementById("printBtn");
+  const lastSyncEl   = document.getElementById("lastSync");
+  const countInfoEl  = document.getElementById("countInfo");
 
-  async function loadCSV() {
+  // 🔄 從 Google Sheet 抓資料（Apps Script 回傳：{ ok: true, data: [...] }）
+  async function loadFromSheet() {
     try {
-      const res = await fetch("inventory.csv?" + Date.now());
-      if (!res.ok) throw new Error("CSV not found");
-      const text = await res.text();
-      computers = parseCSV(text);
+      const res = await fetch(PC_SHEET_API_URL, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!res.ok) throw new Error('PC Sheet API error: ' + res.status);
+
+      const data = await res.json();
+
+      // ⬇⬇ 這裡多做 ok 檢查 & 錯誤處理
+      if (!data.ok) {
+        console.error('PC Sheet API returned ok=false:', data.error);
+        throw new Error(data.error || 'PC Sheet API returned ok=false');
+      }
+
+      if (!data || !Array.isArray(data.data)) {
+        console.warn('Unexpected PC Sheet response:', data);
+        computers = [];
+      } else {
+        computers = data.data;
+      }
+
       updateLastSync();
       renderTable();
     } catch (e) {
       console.error(e);
-      if (lastSyncEl) lastSyncEl.textContent = "Loading error (please check inventory.csv)";
+      if (lastSyncEl) lastSyncEl.textContent = "Loading error (please check PC_SHEET_API_URL)";
       tbody.innerHTML = "";
-      countInfoEl.textContent = "Total: 0 records";
+      countInfoEl.textContent = "Total: 0 records (load failed)";
     }
-  }
-
-  function parseCSV(csvText) {
-    const lines = csvText.trim().split(/\r?\n/);
-    if (lines.length <= 1) return [];
-    const header = splitCSVLine(lines[0]).map(h => h.trim());
-    const data = [];
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
-      const cols = splitCSVLine(line);
-      const row = {};
-      header.forEach((key, idx) => {
-        row[key] = (cols[idx] || "").trim();
-      });
-      data.push(row);
-    }
-    return data;
-  }
-
-  function splitCSVLine(line) {
-    const result = [];
-    let cur = "";
-    let inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i];
-      if (c === '"') {
-        if (inQ && line[i + 1] === '"') {
-          cur += '"';
-          i++;
-        } else {
-          inQ = !inQ;
-        }
-      } else if (c === "," && !inQ) {
-        result.push(cur);
-        cur = "";
-      } else {
-        cur += c;
-      }
-    }
-    result.push(cur);
-    return result;
   }
 
   function updateLastSync() {
@@ -663,14 +636,14 @@
     });
     if (lastSyncEl) {
       lastSyncEl.textContent =
-        latest !== "0000-00-00" ? latest : "Managed by Excel";
+        latest !== "0000-00-00" ? latest : "Managed by Google Sheet";
     }
   }
 
   function renderTable() {
     const keyword = searchInput.value.trim().toLowerCase();
     const fStatus = statusFilter.value.trim().toLowerCase();
-    const fDept = deptFilter.value.trim();
+    const fDept   = deptFilter.value.trim();
 
     let data = [...computers];
 
@@ -678,12 +651,12 @@
     data = data.filter(c => {
       const cStatus = (c.status || "").toLowerCase();
       if (fStatus && cStatus !== fStatus) return false;
-      if (fDept && c.department !== fDept) return false;
+      if (fDept && (c.department || "") !== fDept) return false;
       if (keyword) {
         const text = (
-          (c.asset_id || "") +
-          (c.hostname || "") +
-          (c.computer || "") +
+          (c.asset_id   || "") +
+          (c.hostname   || "") +
+          (c.computer   || "") +
           (c.department || "")
         ).toLowerCase();
         if (!text.includes(keyword)) return false;
@@ -705,10 +678,10 @@
     data.forEach(c => {
       const status = (c.status || "").toLowerCase();
       const stClass =
-        status === "using" ? "status-using" :
-        status === "spare" ? "status-spare" :
+        status === "using"  ? "status-using"  :
+        status === "spare"  ? "status-spare"  :
         status === "broken" ? "status-broken" :
-        status === "test" ? "status-test" :
+        status === "test"   ? "status-test"   :
         "";
 
       const tr = document.createElement("tr");
@@ -718,43 +691,36 @@
 
       tr.innerHTML = `
         <td>${assetId}</td>
-        <td>${c.hostname || ""}</td>
-        <td>${c.computer || ""}</td>
+        <td>${c.hostname   || ""}</td>
+        <td>${c.computer   || ""}</td>
         <td>${c.department || ""}</td>
-        <td>${c.location || ""}</td>
+        <td>${c.location   || ""}</td>
         <td>${c.status ? `<span class="${stClass}">${c.status}</span>` : ""}</td>
-        <td>${c.spec || ""}</td>
-        <td>${c.os || ""}</td>
+        <td>${c.spec  || ""}</td>
+        <td>${c.os    || ""}</td>
         <td>${c.owner || ""}</td>
         <td class="note">${c.note || ""}</td>
       `;
 
-      // ★ 點整列 → 開 Maintenance_Records.html 並帶 asset 參數
+      // 點整列 → 開 Maintenance_Records.html 並帶 asset 參數
       tr.addEventListener("click", () => {
         const id = tr.dataset.assetId;
         if (!id) return;
         const url = "Maintenance_Records.html?asset=" + encodeURIComponent(id);
-        window.open(url, "_blank");  // 如果要同頁開，用 "_self"
+        window.open(url, "_blank");
       });
 
       tbody.appendChild(tr);
     });
 
-    const totalCount = computers.length;
-    const usingCount = computers.filter(c =>
-      (c.status || "").toLowerCase() === "using"
-    ).length;
-    const spareCount = computers.filter(c =>
-      (c.status || "").toLowerCase() === "spare"
-    ).length;
-    const testCount = computers.filter(c =>
-      (c.status || "").toLowerCase() === "test"
-    ).length;
-
-    const filteredCount = data.length;
+    const totalCount  = computers.length;
+    const usingCount  = computers.filter(c => (c.status || "").toLowerCase() === "using").length;
+    const spareCount  = computers.filter(c => (c.status || "").toLowerCase() === "spare").length;
+    const testCount   = computers.filter(c => (c.status || "").toLowerCase() === "test").length;
+    const filteredCnt = data.length;
 
     countInfoEl.textContent =
-      `Filter: ${filteredCount} / Total: ${totalCount} | Using: ${usingCount} | Spare: ${spareCount} | Test: ${testCount}`;
+      `Filter: ${filteredCnt} / Total: ${totalCount} | Using: ${usingCount} | Spare: ${spareCount} | Test: ${testCount}`;
 
     checkInventoryLow();
   }
@@ -781,7 +747,7 @@
   }
 
   function toggleFilters() {
-    const box = document.getElementById("filtersBox");
+    const box  = document.getElementById("filtersBox");
     const icon = document.getElementById("toggleIcon");
     const isOpen = !box.classList.contains("closed");
     if (isOpen) {
@@ -793,10 +759,11 @@
     }
   }
 
+  // 事件綁定
   searchInput.addEventListener("input", renderTable);
   statusFilter.addEventListener("change", renderTable);
   deptFilter.addEventListener("input", renderTable);
-  reloadBtn.addEventListener("click", loadCSV);
+  reloadBtn.addEventListener("click", loadFromSheet);
   printBtn.addEventListener("click", () => window.print());
 
   document.querySelectorAll("th[data-sort]").forEach(th => {
@@ -812,7 +779,8 @@
     });
   });
 
-  loadCSV();
+  // 初始化
+  loadFromSheet();
 </script>
 </body>
 </html>

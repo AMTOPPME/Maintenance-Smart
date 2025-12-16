@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Maintenance | Maintenance Smart</title>
+  <title>I/O LIST Viewer | Maintenance Smart</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- 套用主題（blue / panther / hangyodon） -->
@@ -235,8 +235,8 @@
   <img src="hangyodon1.png" alt="" class="side-hangyodon left">
   <img src="hangyodon2.png" alt="" class="side-hangyodon right">
 
-  <h1 id="pageTitle">Maintenance</h1>
-  <div class="subtitle" id="pageSub">Maintenance SOP – PDF Viewer</div>
+  <h1 id="pageTitle">I/O LIST</h1>
+  <div class="subtitle" id="pageSub">PLC / SCADA I/O Reference</div>
 
   <div class="toolbar">
     <a class="btn" id="openNewTab" href="#" target="_blank" rel="noopener noreferrer">
@@ -246,7 +246,7 @@
 
   <div class="viewer" id="viewer">
     <!-- 電腦：pdf.js viewer；手機 / iPad：會被 JS 改成按鈕 -->
-    <iframe id="pdfFrame" title="PDF viewer"></iframe>
+    <iframe id="pdfFrame" title="I/O LIST PDF viewer"></iframe>
   </div>
 
   <!-- Back to Top 按鈕 -->
@@ -259,28 +259,21 @@
       const frame = document.getElementById('pdfFrame');
       if (!btn) return;
 
-      const MAIN_THRESHOLD = 120;   // 主頁捲動多少才出現
-      const PDF_THRESHOLD  = 80;    // PDF viewer 捲動多少才出現
+      const MAIN_THRESHOLD = 120;
+      const PDF_THRESHOLD  = 80;
 
-      function showBtn() {
-        btn.style.display = 'flex';
-      }
-      function hideBtn() {
-        btn.style.display = 'none';
-      }
+      function showBtn() { btn.style.display = 'flex'; }
+      function hideBtn() { btn.style.display = 'none'; }
 
-      // ① 監聽主頁 window scroll
       function handleMainScroll() {
         if (window.scrollY > MAIN_THRESHOLD) {
           showBtn();
         } else {
-          // 如果 PDF 那邊沒捲動，也一起隱藏
           hideBtn();
         }
       }
       window.addEventListener('scroll', handleMainScroll);
 
-      // ② PDF viewer 回到最上方
       function scrollPdfToTop() {
         if (!frame || !frame.contentWindow) return;
         try{
@@ -293,18 +286,14 @@
           } else if (typeof cw.scrollTo === 'function') {
             cw.scrollTo(0, 0);
           }
-        }catch(e){
-          // 若跨網域或其他錯誤，就安靜失敗，不影響主頁
-        }
+        }catch(e){}
       }
 
-      // ③ BackToTop 點擊：主頁 + PDF 一起回頂部
       btn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         scrollPdfToTop();
       });
 
-      // ④ 監聽 pdf.js viewer 的捲動（讓 iframe 捲動也能顯示按鈕）
       function attachPdfScrollListener() {
         if (!frame || !frame.contentWindow) return;
         try{
@@ -321,19 +310,15 @@
               if (top > PDF_THRESHOLD) {
                 showBtn();
               } else if (window.scrollY <= MAIN_THRESHOLD) {
-                // 主頁也沒捲動，就隱藏
                 hideBtn();
               }
             }catch(e){}
           });
-        }catch(e){
-          // 不能存取（跨網域）就略過，只用主頁的 scroll 邏輯
-        }
+        }catch(e){}
       }
 
       if (frame){
         frame.addEventListener('load', () => {
-          // 等 pdf.js 初始化後再掛 scroll（稍微 delay）
           setTimeout(attachPdfScrollListener, 800);
         });
       }
@@ -343,56 +328,41 @@
   <!-- PDF 載入 / pdf.js viewer 切換 -->
   <script>
   (function () {
-    // key 對應：從 URL ?key=SiemensS7 / ?key=ABPLCPlan
-    const DocMap = {
-      SiemensS7: {
-        file: 'Siemens S7 Procedures.pdf',
-        title: 'Siemens S7 Procedures',
-        desc: 'Siemens S7 Backup Procedures – Maintenance SOP'
-      },
-      ABPLCPlan: {
-        file: 'AB PLC Plan.pdf',
-        title: 'AB PLC Plan',
-        desc: 'Allen-Bradley PLC Maintenance Plan – Maintenance SOP'
-      }
-    };
+    const allowedSecs  = ['F12','F13','F16','F201'];
 
     const params = new URLSearchParams(window.location.search);
-    let key = params.get('key') || 'SiemensS7';
-    if (!DocMap[key]) key = 'SiemensS7';
+    let sec  = (params.get('sec')  || 'F13').toUpperCase();
+    if (!allowedSecs.includes(sec))  sec  = 'F13';
 
-    const docInfo = DocMap[key];
+    // ===== PDF 檔名：F12_IOLIST.pdf / F13_IOLIST.pdf ... =====
+    const pdfFileName = `${sec}_IOLIST.pdf`;
 
-    // ===== PDF 檔名 =====
-    const pdfFileName = docInfo.file;
-
-    // 手機 / iPad 直接開用（Maintenance.html 與 PDF 同一層）
+    // 直接開啟 PDF 用（和 IOLIST.html 在同一層）
     const pdfUrlForDirect = pdfFileName;
 
-    // 給 pdf.js viewer 用（viewer.html 在 /pdfjs/web/，PDF 在網站根目錄）
+    // pdf.js viewer 看的路徑（從 pdfjs/web/viewer.html 回到根目錄）
     const pdfUrlForViewer = `../../${pdfFileName}`;
 
-    // pdf.js viewer 路徑
     const pdfjsViewerBase = 'pdfjs/web/viewer.html';
     const viewerUrl = `${pdfjsViewerBase}?file=${encodeURIComponent(pdfUrlForViewer)}#zoom=page-fit`;
 
-    const titleEl    = document.getElementById('pageTitle');
-    const subEl      = document.getElementById('pageSub');
-    const viewer     = document.getElementById('viewer');
-    const frame      = document.getElementById('pdfFrame');
-    const openNewTab = document.getElementById('openNewTab');
+    const titleEl   = document.getElementById('pageTitle');
+    const subEl     = document.getElementById('pageSub');
+    const viewer    = document.getElementById('viewer');
+    const frame     = document.getElementById('pdfFrame');
+    const openNewTab= document.getElementById('openNewTab');
 
-    // ===== 更新標題 =====
+    // 更新標題
     if (titleEl){
-      titleEl.textContent = `Maintenance – ${docInfo.title}`;
+      titleEl.textContent = `I/O LIST – ${sec}`;
     }
     if (subEl){
-      subEl.textContent = docInfo.desc;
+      subEl.textContent = `PLC / SCADA I/O list for section ${sec}`;
     }
 
-    // ===== 裝置偵測 =====
-    const isTouch          = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    const isSmallScreen    = window.innerWidth <= 1024;
+    // 裝置偵測
+    const isTouch       = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const isSmallScreen = window.innerWidth <= 1024;
     const isMobileOrTablet = isTouch && isSmallScreen;
 
     if (isMobileOrTablet) {
@@ -401,16 +371,16 @@
       if (viewer) {
         viewer.innerHTML = `
           <div class="fallback">
-            Tap the button below to open<br><strong>${docInfo.title}</strong> PDF.<br><br>
+            Tap the button below to open I/O LIST PDF.<br><br>
             <a class="btn" href="${pdfUrlForDirect}" target="_blank" rel="noopener">
-              Open PDF ↗
+              Open I/O LIST PDF ↗
             </a>
           </div>`;
       }
       return;
     }
 
-    // ===== 桌機：內嵌 pdf.js viewer =====
+    // 桌機：內嵌 pdf.js viewer
     if (frame) {
       frame.src = viewerUrl;
     }

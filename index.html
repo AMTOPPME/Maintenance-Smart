@@ -21,12 +21,8 @@
     }
 
     /* style 主題底色（index 用純色，不用圖） */
-    html[data-style="panther"]{
-      --bg:#ffe4ec;   /* 淡粉 */
-    }
-    html[data-style="hangyodon"]{
-      --bg:#dbeafe;   /* 淡藍 */
-    }
+    html[data-style="panther"]{ --bg:#ffe4ec; }   /* 淡粉 */
+    html[data-style="hangyodon"]{ --bg:#dbeafe; } /* 淡藍 */
 
     *{box-sizing:border-box}
     body{
@@ -34,7 +30,7 @@
       font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
       font-size:15px;
       color:var(--text);
-      background:var(--bg); /* 純顏色背景 */
+      background:var(--bg);
       min-height:100vh;
       overflow-x:hidden;
       transition:background .25s ease,color .25s ease;
@@ -63,24 +59,21 @@
       transition:background .25s ease,box-shadow .25s ease,border-color .25s ease;
     }
 
-    /* 左側：品牌 + Modules 按鈕（上下排列） */
     .top-left{
       display:flex;
       flex-direction:column;
-      justify-content:space-between;  /* 上 logo、下按鈕 */
+      justify-content:space-between;
       gap:10px;
       align-items:flex-start;
-      min-height:72px;                /* 讓按鈕靠左下 */
+      min-height:72px;
     }
-
     .brand-wrap{display:flex;align-items:center;gap:10px}
 
-    /* 左上主題 icon：藍色主題用漸層方塊，其他主題顯示角色頭像 */
     .mascot{
       width:28px;
       height:28px;
       border-radius:9px;
-      background:radial-gradient(circle at 30% 0,#bfdbfe,#2563eb); /* 藍色預設漸層 */
+      background:radial-gradient(circle at 30% 0,#bfdbfe,#2563eb);
       box-shadow:0 0 10px rgba(37,99,235,0.35);
       flex-shrink:0;
       object-fit:cover;
@@ -100,7 +93,26 @@
     }
     .brand-sub{font-size:13px;color:var(--text-soft)}
 
-    /* Modules 按鈕（topbar 左下角） */
+    .top-quote{ text-align:center; justify-self:center; }
+    .quote-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--text-soft);
+      margin-bottom:4px;
+    }
+    .quote-text{
+      font-size:18px;
+      font-weight:500;
+      color:#3b82f6;
+      font-style:italic;
+      max-width:720px;
+      margin:0 auto;
+      text-align:left;
+      white-space:normal;
+      word-wrap:break-word;
+    }
+
     .menu-button{
       border-radius:999px;
       border:1px solid #e5e7eb;
@@ -156,15 +168,8 @@
       color:var(--text);
     }
 
-    /* 整體 workspace：只剩右側內容 */
-    .workspace{
-      min-height:60vh;
-    }
-
-    .main{
-      flex:1;
-      min-width:0;
-    }
+    .workspace{ min-height:60vh; }
+    .main{ flex:1; min-width:0; }
 
     .section-head{
       margin-bottom:10px;
@@ -177,7 +182,6 @@
     .section-title{font-size:18px;font-weight:600;color:var(--text);margin:0}
     .section-sub{font-size:var(--small-font);color:var(--text-soft);margin:2px 0 0}
 
-    /* iframe 區域 */
     .iframe-wrap{
       background:var(--card-bg);
       border-radius:var(--radius-xl);
@@ -195,11 +199,11 @@
       background:#111827;
     }
 
-    /* Modules 展開面板（按鈕打開的功能列） */
+    /* Modules 主面板 */
     .nav-panel{
       position:absolute;
       left:24px;
-      top:calc(24px + 72px); /* 大約在 topbar 下方 */
+      top:calc(24px + 72px);
       max-width:260px;
       background:rgba(255,255,255,0.97);
       border-radius:18px;
@@ -209,12 +213,10 @@
       backdrop-filter:blur(12px);
       z-index:10;
       display:none;
-      max-height: 70vh;
-      overflow-y: auto;
+      max-height:70vh;
+      overflow:visible; /* 讓右邊 pop-out 不被裁掉 */
     }
-    .nav-panel.open{
-      display:block;
-    }
+    .nav-panel.open{ display:block; }
 
     .nav-list{
       list-style:none;
@@ -229,28 +231,21 @@
       width:100%;
       border:none;
       border-radius:999px;
-      padding:8px 10px;
+      padding:10px 13px;
       background:transparent;
       display:flex;
       align-items:center;
       gap:8px;
       cursor:pointer;
-      font-size:13px;
+      font-size:15px;
       color:var(--text-soft);
       transition:background .15s ease,color .15s ease,transform .1s ease;
       text-align:left;
       white-space:nowrap;
       overflow:hidden;
     }
-    .nav-icon{
-      font-size:18px;
-      flex-shrink:0;
-    }
-    .nav-label{
-      flex:1;
-      text-overflow:ellipsis;
-      overflow:hidden;
-    }
+    .nav-icon{font-size:18px;flex-shrink:0;}
+    .nav-label{flex:1;text-overflow:ellipsis;overflow:hidden;}
     .nav-item-btn:hover{
       background:var(--accent-soft);
       color:var(--accent);
@@ -262,136 +257,206 @@
       box-shadow:0 4px 10px rgba(37,99,235,.35);
     }
 
-    /* ==== 兩層子列表共用樣式 ==== */
     .nav-group-schematic .nav-item-btn,
-    .nav-group-backup .nav-item-btn,
-    .nav-group-maintenance .nav-item-btn{
+    .nav-group-maintenance .nav-item-btn,
+    .nav-group-scada .nav-item-btn{
       justify-content:space-between;
     }
-    .nav-chevron{
-      font-size:14px;
-      opacity:.7;
+    .nav-chevron{font-size:14px;opacity:.7;}
+
+    .nav-group-schematic,
+    .nav-group-maintenance,
+    .nav-group-scada{
+      position:relative;
     }
 
+    /* unified sub-list pill btn */
+    .sub-pill-btn{
+      width:100%;
+      border:none;
+      border-radius:999px;
+      padding:10px 13px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      background:transparent;
+      cursor:pointer;
+      font-size:14px;
+      color:var(--text-soft);
+      text-align:left;
+      white-space:nowrap;
+      transition:background .15s ease,color .15s ease,transform .1s ease,box-shadow .15s ease;
+    }
+    .sub-pill-btn:hover{
+      background:var(--accent-soft);
+      color:var(--accent);
+      transform:translateY(-1px);
+    }
+    .sub-pill-btn.active{
+      background:var(--accent);
+      color:#fff;
+      box-shadow:0 4px 10px rgba(37,99,235,.35);
+    }
+    .sub-pill-btn .nav-label{flex:1;overflow:hidden;text-overflow:ellipsis;}
+    .sub-pill-btn .nav-chevron{
+      font-size:14px;
+      opacity:.7;
+      transition:transform .18s ease;
+    }
+    .sub-pill-btn.active .nav-chevron{ transform:rotate(180deg); }
+
+    /* 2nd-level open pill style */
+    .maintenance-group.open > .maintenance-group-btn{
+      background:var(--accent);
+      color:#fff;
+      box-shadow:0 4px 10px rgba(37,99,235,.35);
+    }
+    .maintenance-group.open > .maintenance-group-btn .nav-chevron{ transform:rotate(180deg); }
+
+    /* 子面板（Schematic / Maintenance / SCADA） */
     .schematic-panel,
-    .backup-panel,
-    .maintenance-panel{
-      margin-top:4px;
-      margin-left:26px;
-      padding:8px 10px 10px;
+    .maintenance-panel,
+    .scada-panel{
+      position:absolute;
+      top:0;
+      left:100%;
+      min-width:220px;
+      margin-left:8px;
       background:rgba(249,250,251,0.98);
       border-radius:14px;
       border:1px solid var(--border-subtle);
-      box-shadow:0 8px 18px rgba(15,23,42,.04);
+      padding:8px 10px 10px;
+      box-shadow:0 8px 18px rgba(15,23,42,.12);
       display:none;
+      z-index:99;
     }
     .schematic-panel.open,
-    .backup-panel.open,
-    .maintenance-panel.open{
-      display:block;
-    }
+    .maintenance-panel.open,
+    .scada-panel.open{ display:block; }
 
     .schematic-title,
-    .backup-title,
-    .maintenance-title{
-      font-size:11px;
-      font-weight:600;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      color:var(--text-soft);
-      margin-bottom:6px;
+    .maintenance-title,
+    .scada-title{
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.12em;
+      color:#111827;
+      margin-bottom:8px;
     }
 
-    .schematic-line-row,
-    .backup-line-row{
+    /* 3rd level buttons (Maintenance / SCADA) */
+    .maintenance-sec-row,
+    .scada-sec-row{
       display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-bottom:6px;
+      flex-direction:column;
+      gap:8px;
     }
-    .schematic-line-btn,
-    .backup-line-btn{
-      border-radius:999px;
-      border:1px solid transparent;
-      background:#eff6ff;
-      padding:4px 9px;
-      font-size:11px;
-      cursor:pointer;
-      color:#1d4ed8;
-      display:inline-flex;
-      align-items:center;
-      gap:4px;
-      transition:background .15s,border-color .15s,color .15s,transform .1s;
-    }
-    .schematic-line-btn:hover,
-    .backup-line-btn:hover{
-      background:#dbeafe;
-      transform:translateY(-1px);
-    }
-    .schematic-line-btn.active,
-    .backup-line-btn.active{
-      background:#1d4ed8;
-      border-color:#1d4ed8;
-      color:#fff;
-      box-shadow:0 3px 8px rgba(37,99,235,.4);
-    }
-
-    .schematic-sec-row,
-    .backup-sec-row,
-    .maintenance-sec-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-    }
-    .schematic-sec-btn,
-    .backup-sec-btn,
-    .maintenance-sec-btn{
-      border-radius:999px;
+    .maintenance-sec-btn,
+    .scada-sec-btn{
+      width:100%;
       border:1px solid var(--border-subtle);
       background:#f9fafb;
-      padding:4px 10px;
-      font-size:11px;
-      cursor:pointer;
       color:var(--text-soft);
-      display:inline-flex;
+      border-radius:12px;
+      padding:10px 14px;
+      min-height:38px;
+      display:flex;
       align-items:center;
-      gap:4px;
-      transition:background .15s,border-color .15s,color .15s,transform .1s;
+      justify-content:center;
+      text-align:center;
+      cursor:pointer;
+      transition:background .15s ease,border-color .15s ease,color .15s ease,transform .12s ease,box-shadow .15s ease;
     }
-    .schematic-sec-btn span.code,
-    .backup-sec-btn span.code,
-    .maintenance-sec-btn span.code{
-      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:11px;
+    .maintenance-sec-btn span.code,
+    .scada-sec-btn span.code{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:12px;
     }
-    .schematic-sec-btn:hover,
-    .backup-sec-btn:hover,
-    .maintenance-sec-btn:hover{
+    .maintenance-sec-btn:hover,
+    .scada-sec-btn:hover{
       background:#fff;
       border-color:var(--accent-soft);
       color:var(--accent);
       transform:translateY(-1px);
+      box-shadow:0 6px 16px rgba(15,23,42,.08);
     }
-    .maintenance-sec-btn.active{
+    .maintenance-sec-btn.active,
+    .scada-sec-btn.active{
+      background:var(--accent);
+      border-color:var(--accent);
+      color:#fff;
+      font-weight:600;
+      box-shadow:0 8px 20px rgba(37,99,235,.35);
+    }
+    .maintenance-sec-btn:focus-visible,
+    .scada-sec-btn:focus-visible{
+      outline:2px solid rgba(37,99,235,.45);
+      outline-offset:2px;
+    }
+
+    /* Schematic SECTION + LINE unify */
+    .schematic-sec-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+    .schematic-line-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-bottom:8px;
+    }
+    .schematic-sec-btn,
+    .schematic-line-btn{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:10px 16px;
+      min-height:36px;
+      font-size:13px;
+      line-height:1.2;
+      border-radius:12px;
+      border:1px solid var(--border-subtle);
+      background:#f9fafb;
+      color:var(--text-soft);
+      cursor:pointer;
+      transition:background .15s ease,border-color .15s ease,color .15s ease,transform .12s ease,box-shadow .15s ease;
+    }
+    .schematic-sec-btn span.code{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:12px;
+    }
+    .schematic-sec-btn:hover,
+    .schematic-line-btn:hover{
+      background:#fff;
+      border-color:var(--accent-soft);
+      color:var(--accent);
+      transform:translateY(-1px);
+      box-shadow:0 6px 16px rgba(15,23,42,.08);
+    }
+    .schematic-sec-btn.active,
+    .schematic-line-btn.active{
       background:#1d4ed8;
       border-color:#1d4ed8;
       color:#fff;
-      box-shadow:0 3px 8px rgba(37,99,235,.4);
+      font-weight:600;
+      box-shadow:0 8px 20px rgba(37,99,235,.35);
+    }
+    .schematic-sec-btn:focus-visible,
+    .schematic-line-btn:focus-visible{
+      outline:2px solid rgba(37,99,235,.45);
+      outline-offset:2px;
     }
 
-    .schematic-hint,
-    .backup-hint{
-      margin-top:6px;
-      font-size:10px;
-      color:var(--text-soft);
-    }
-
-    /* Line Schematic → Tags list 區塊 */
+    /* I/O list tags */
     .ls-tags{
       margin-top:6px;
       padding-top:6px;
       border-top:1px dashed rgba(148,163,184,.7);
-      font-size:11px;
+      font-size:12px;
     }
     .ls-tags .ls-label{
       font-size:10px;
@@ -420,11 +485,44 @@
       transform:translateY(-1px);
     }
 
+    /* ===== Maintenance: 2nd level pill + 3rd level pop-out ===== */
+    .nav-group-maintenance{ position:relative; }
+    .maintenance-group{ position:relative; }
+
+    .maintenance-third-panel{
+      position:absolute;
+      top:0;
+      left:100%;
+      margin-left:8px;
+      min-width:260px;
+      background:rgba(249,250,251,0.98);
+      border-radius:14px;
+      border:1px solid var(--border-subtle);
+      padding:10px 10px 12px;
+      box-shadow:0 10px 22px rgba(15,23,42,.14);
+      display:none;
+      z-index:120;
+    }
+    .maintenance-group.open .maintenance-third-panel{ display:block; }
+
+    .maintenance-third-title{
+      font-size:11px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--text-soft);
+      margin-bottom:8px;
+    }
+
+    #maintenancePanel{
+      max-height:70vh;
+      overflow:visible;
+      padding-right:4px;
+    }
+
+    /* 手機版：子列表改成在下面展開 */
     @media (max-width:900px){
-      .page{
-        padding-top:16px;
-        padding-bottom:24px;
-      }
+      .page{ padding-top:16px; padding-bottom:24px; }
 
       .topbar{
         display:flex;
@@ -434,36 +532,27 @@
         padding:14px 14px 18px;
       }
 
-      /* 手機版：把 top-left 展開，裡面的東西當成 topbar 直列項目 */
-      .top-left{
-        display:contents;
-        min-height:0;        /* 原本的 min-height 取消 */
-      }
+      .top-left{ display:contents; min-height:0; }
+      .brand-main{ font-size:17px; letter-spacing:.10em; }
+      .brand-sub{ font-size:12px; }
 
-      .brand-main{
-        font-size:17px;
-        letter-spacing:.10em;
+      .top-quote{
+        width:100%;
+        text-align:left;
+        padding:4px 0 0;
+        order:3;
       }
-
-      .brand-sub{
-        font-size:12px;
-      }
-
       .top-meta{
         width:100%;
         justify-content:flex-start;
         gap:6px;
         flex-wrap:wrap;
-        order:2;             /* 在品牌之後、Modules 之前 */
+        order:2;
       }
+      .top-meta .pill{ flex-shrink:0; }
 
-      .top-meta .pill{
-        flex-shrink:0;
-      }
-
-      /* 手機版 Modules 按鈕：放在 topbar 最下面，佔滿一行 */
       .menu-button{
-        order:3;             /* 整個 topbar 的最後一個 */
+        order:4;
         align-self:stretch;
         justify-content:center;
         text-align:center;
@@ -480,17 +569,30 @@
       }
 
       .schematic-panel,
-      .backup-panel,
-      .maintenance-panel{
+      .maintenance-panel,
+      .scada-panel{
+        position:static;
+        left:auto;
         margin-left:0;
+        width:100%;
+        min-width:0;
       }
 
-      .iframe-wrap{
-        height:calc(100vh - 220px);
+      .iframe-wrap{ height:calc(100vh - 220px); }
+
+      .maintenance-third-panel{
+        position:static;
+        left:auto;
+        margin-left:0;
+        min-width:0;
+        margin-top:8px;
+        display:none;
       }
+      .maintenance-group.open .maintenance-third-panel{ display:block; }
     }
   </style>
 </head>
+
 <body>
   <div class="page">
     <div class="topbar">
@@ -499,14 +601,21 @@
           <div class="mascot"></div>
           <div>
             <div class="brand-main">MAINTENANCE SMART</div>
-            <div class="brand-sub">Smarter maintenance, easier life.</div>
+            <div class="brand-sub">Make an easy life.</div>
           </div>
         </div>
+
         <button id="menuButton" class="menu-button" type="button" aria-expanded="false" aria-controls="navPanel">
           <span class="menu-icon">☰</span>
           <span class="menu-label">Modules</span>
         </button>
       </div>
+
+      <div class="top-quote">
+        <div class="quote-label">Quote of the celebrities</div>
+        <div class="quote-text" id="topQuote">Loading…</div>
+      </div>
+
       <div class="top-meta">
         <div class="pill designer">
           <span class="pill-label">Designed by</span>
@@ -519,12 +628,12 @@
       </div>
     </div>
 
-    <!-- Modules 功能列 -->
+    <!-- Modules -->
     <nav class="nav-panel" id="navPanel" aria-label="Module navigation">
       <ul class="nav-list">
+
         <li>
-          <button
-            class="nav-item-btn active"
+          <button class="nav-item-btn active"
             data-src="Home.html"
             data-title="Home"
             data-sub="Welcome to Maintenance Smart.">
@@ -533,210 +642,259 @@
           </button>
         </li>
 
-        <li>
-          <button
-            class="nav-item-btn"
-            data-src="PC Manager.html"
-            data-title="PC Manager"
-            data-sub="BOPP1 computer asset list from inventory.csv.">
+        <!-- SCADA PC -->
+        <li class="nav-group-scada">
+          <button class="nav-item-btn" type="button"
+            data-role="scada-parent"
+            data-title="SCADA PC"
+            data-sub="SCADA PC tools: Inventory / Records / Report.">
             <span class="nav-icon">💻</span>
-            <span class="nav-label">PC Manager</span>
-          </button>
-        </li>
-
-        <!-- Line Schematic：兩層列表 -->
-        <li class="nav-group-schematic">
-          <button
-            class="nav-item-btn"
-            type="button"
-            data-role="schematic-parent"
-            data-title="Line Schematic"
-            data-sub="Select line (1~4) and section F12/F13/F16/F201.">
-            <span class="nav-icon">📊</span>
-            <span class="nav-label">Line Schematic</span>
+            <span class="nav-label">SCADA PC</span>
             <span class="nav-chevron" aria-hidden="true">▾</span>
           </button>
 
-          <div class="schematic-panel" id="schematicPanel" aria-label="Line schematic selector">
-            <div class="schematic-title">LINE</div>
-            <div class="schematic-line-row">
-              <button class="schematic-line-btn active" type="button" data-line="Line1">Line 1</button>
+          <div class="scada-panel" id="scadaPanel" aria-label="SCADA PC selector">
+            <div class="scada-title">SCADA PC</div>
+            <div class="scada-sec-row">
+              <button class="scada-sec-btn sub-pill-btn" type="button" data-scada="inventory">
+                <span class="nav-label">Inventory</span>
+              </button>
+              <button class="scada-sec-btn sub-pill-btn" type="button" data-scada="records">
+                <span class="nav-label">Records</span>
+              </button>
+              <button class="scada-sec-btn sub-pill-btn" type="button" data-scada="report">
+                <span class="nav-label">Report</span>
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <!-- Updated Schematic -->
+        <li class="nav-group-schematic">
+          <button class="nav-item-btn" type="button"
+            data-role="schematic-parent"
+            data-title="Updated Schematic"
+            data-sub="Select section (F12/F13/F16/F201) then line (1~4).">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Updated Schematic</span>
+            <span class="nav-chevron" aria-hidden="true">▾</span>
+          </button>
+
+          <div class="schematic-panel" id="schematicPanel" aria-label="Updated schematic selector">
+            <div class="schematic-title">SECTION</div>
+
+            <div class="schematic-sec-row">
+              <button class="schematic-sec-btn" type="button" data-section="F12" data-label="F12"><span class="code">F12</span></button>
+              <button class="schematic-sec-btn" type="button" data-section="F13" data-label="F13"><span class="code">F13</span></button>
+              <button class="schematic-sec-btn" type="button" data-section="F16" data-label="F16"><span class="code">F16</span></button>
+              <button class="schematic-sec-btn" type="button" data-section="F201" data-label="F201"><span class="code">F201</span></button>
+            </div>
+
+            <div class="schematic-title line-title" style="margin-top:8px; display:none;">LINE</div>
+            <div class="schematic-line-row" style="display:none;">
+              <button class="schematic-line-btn" type="button" data-line="Line1">Line 1</button>
               <button class="schematic-line-btn" type="button" data-line="Line2">Line 2</button>
               <button class="schematic-line-btn" type="button" data-line="Line3">Line 3</button>
               <button class="schematic-line-btn" type="button" data-line="Line4">Line 4</button>
             </div>
 
-            <div class="schematic-title">SECTION</div>
-            <div class="schematic-sec-row">
-              <button class="schematic-sec-btn" type="button" data-section="F12" data-label="F12">
-                <span class="code">F12</span>
-              </button>
-              <button class="schematic-sec-btn" type="button" data-section="F13" data-label="F13">
-                <span class="code">F13</span>
-              </button>
-              <button class="schematic-sec-btn" type="button" data-section="F16" data-label="F16">
-                <span class="code">F16</span>
-              </button>
-              <button class="schematic-sec-btn" type="button" data-section="F201" data-label="F201">
-                <span class="code">F201</span>
-              </button>
-            </div>
-
-            <div class="schematic-hint">
-              Default file rule:
-              <code>Line-[lineNumber]-Schematic.html?sec=[section]</code>
-              (e.g. <code>Line-1-Schematic.html?sec=F13</code>)
-            </div>
-            <div class="ls-tags">
-              <div class="ls-label">TAGS LIST</div>
-              <a class="ls-tag-link" href="#" id="tagsListLink">
-                Open Tags List
-              </a>
+            <div class="ls-tags" style="display:none;">
+              <div class="ls-label">I/O LIST</div>
+              <a class="ls-tag-link" href="#" id="ioListLink">Open I/O List</a>
             </div>
           </div>
         </li>
 
-        <!-- Program Backup：兩層列表 -->
-        <li class="nav-group-backup">
-          <button
-            class="nav-item-btn"
-            type="button"
-            data-role="backup-parent"
-            data-title="Program Backup"
-            data-sub="Select line (Line 1~4 / Reclaim) and section to open backup.">
-            <span class="nav-icon">📁</span>
-            <span class="nav-label">Program Backup</span>
-            <span class="nav-chevron" aria-hidden="true">▾</span>
-          </button>
-
-          <div class="backup-panel" id="backupPanel" aria-label="Program backup selector">
-            <div class="backup-title">LINE</div>
-            <div class="backup-line-row">
-              <button class="backup-line-btn active" type="button" data-line="Line1">Line 1</button>
-              <button class="backup-line-btn" type="button" data-line="Line2">Line 2</button>
-              <button class="backup-line-btn" type="button" data-line="Line3">Line 3</button>
-              <button class="backup-line-btn" type="button" data-line="Line4">Line 4</button>
-              <button class="backup-line-btn" type="button" data-line="Reclaim">Reclaim</button>
-            </div>
-
-            <div class="backup-title">SECTION</div>
-            <div class="backup-sec-row">
-              <button class="backup-sec-btn" type="button" data-section="F12" data-label="F12">
-                <span class="code">F12</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="F13" data-label="F13">
-                <span class="code">F13</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="F16" data-label="F16">
-                <span class="code">F16</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="F42" data-label="F42">
-                <span class="code">F42</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="F55" data-label="F55">
-                <span class="code">F55</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="F201" data-label="F201">
-                <span class="code">F201</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="FlameTreater" data-label="Flame Treater">
-                <span class="code">Flame Treater</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="MainBlending" data-label="Main Blending">
-                <span class="code">Main Blending</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="MainLoading" data-label="Main Loading">
-                <span class="code">Main Loading</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="ScadaPC1PC2" data-label="Scada PC1 PC2">
-                <span class="code">Scada PC1 PC2</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="SoftalTreater" data-label="Softal Treater">
-                <span class="code">Softal Treater</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="TDOBruckpanel" data-label="TDO Bruckpanel">
-                <span class="code">TDO Bruckpanel</span>
-              </button>
-              <button class="backup-sec-btn" type="button" data-section="WinderCarrgeBruckpanel" data-label="Winder Carrge Bruckpanel">
-                <span class="code">Winder Carrge Bruckpanel</span>
-              </button>
-            </div>
-
-            <div class="backup-hint">
-              Open backups from Google Drive (Line / Section → URL).
-            </div>
-          </div>
-        </li>
-        <!-- Maintenance：可展開子列表，直接打開 PDF -->
+        <!-- Calibration Procedure -->
         <li class="nav-group-maintenance">
-          <button
-            class="nav-item-btn"
-            type="button"
+          <button class="nav-item-btn" type="button"
             data-role="maintenance-parent"
-            data-title="Maintenance"
-            data-sub="Open maintenance SOP PDFs.">
+            data-title="Calibration Procedure"
+            data-sub="Open calibration SOP PDFs.">
             <span class="nav-icon">🔧</span>
-            <span class="nav-label">Maintenance</span>
+            <span class="nav-label">Calibration Procedure</span>
             <span class="nav-chevron" aria-hidden="true">▾</span>
           </button>
 
           <div class="maintenance-panel" id="maintenancePanel" aria-label="Maintenance PDF selector">
-            <div class="maintenance-title">PDF</div>
-            <div class="maintenance-sec-row">
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="SiemensS7"
-                data-label="Siemens S7 Procedures">
-                <span class="code">Siemens S7 Procedures</span>
+            <div class="maintenance-title">Calibration PDF</div>
+
+            <!-- Raw Material -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">Raw Material</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
               </button>
-              <button
-                class="maintenance-sec-btn"
-                type="button"
-                data-pdf-key="ABPLCPlan"
-                data-label="AB PLC Plan">
-                <span class="code">AB PLC Plan</span>
-              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">Raw Material</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="HardDrivesBackup" data-label="Hard Drives Backup"><span class="code">Hard Drives Backup</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ReclaimSC" data-label="Reclaim Screenchanger PLC Download Procedures"><span class="code">Reclaim SC PLC Procedure</span></button>
+                </div>
+              </div>
             </div>
+
+            <!-- Extruder -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">Extruder</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">Extruder</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures"><span class="code">Siemens S7 Procedures</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Die -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">Die</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">Die</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures"><span class="code">Siemens S7 Procedures</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chill Roll -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">Chill Roll</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">Chill Roll</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures"><span class="code">Siemens S7 Procedures</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- MDO -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">MDO</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">MDO</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures"><span class="code">Siemens S7 Procedures</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- TDO -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">TDO</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">TDO</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures"><span class="code">Siemens S7 Procedures</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PRS -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">PRS</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">PRS</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures"><span class="code">Siemens S7 Procedures</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Treaters -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">Treaters</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">Treaters</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures"><span class="code">Siemens S7 Procedures</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Winder -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">Winder</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">Winder</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures"><span class="code">Siemens S7 Procedures</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grinder -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">Grinder</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">Grinder</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="SiemensS7" data-label="Siemens S7 Procedures"><span class="code">Siemens S7 Procedures</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reclaim -->
+            <div class="maintenance-group">
+              <button class="maintenance-group-btn sub-pill-btn" type="button">
+                <span class="nav-label">Reclaim</span>
+                <span class="nav-chevron" aria-hidden="true">▾</span>
+              </button>
+              <div class="maintenance-third-panel">
+                <div class="maintenance-third-title">Reclaim</div>
+                <div class="maintenance-sec-row">
+                  <button class="maintenance-sec-btn" data-pdf-key="ReclaimSC" data-label="Reclaim Screenchanger PLC Download Procedures"><span class="code">Reclaim SC PLC Procedure</span></button>
+                  <button class="maintenance-sec-btn" data-pdf-key="ABPLCProcedure" data-label="Allen Bradley PLC Procedures"><span class="code">AB PLC Procedure</span></button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </li>
-        
-        <!-- Maintenance Records：檢視 & 編輯維修紀錄 -->
-        <li>
-          <button
-            class="nav-item-btn"
-            data-src="Maintenance_Records.html"
-            data-title="Maintenance Records"
-            data-sub="View and edit maintenance logs stored in this browser.">
-            <span class="nav-icon">📋</span>
-            <span class="nav-label">Maintenance Records</span>
-          </button>
-        </li>
-
-        <!-- Maintenance Report：開啟維修報表表單 -->
-        <li>
-          <button
-            class="nav-item-btn"
-            data-src="New_Report.html"
-            data-title="Maintenance Report"
-            data-sub="Submit and export maintenance records.">
-            <span class="nav-icon">📝</span>
-            <span class="nav-label">Maintenance Report</span>
-          </button>
-        </li>
-
       </ul>
     </nav>
-
 
     <div class="workspace">
       <main class="main">
         <div class="section-head">
           <div>
             <h2 class="section-title" id="moduleTitle">Home</h2>
-            <p class="section-sub" id="moduleSub">
-              Welcome to Maintenance Smart.
-            </p>
+            <p class="section-sub" id="moduleSub">Welcome to Maintenance Smart.</p>
           </div>
         </div>
 
@@ -747,35 +905,105 @@
     </div>
   </div>
 
-<script>
-  /* ---------- Modified Date：用這個 HTML 檔最後修改時間 ---------- */
-  (function () {
-    function updateModDate() {
-      var el = document.getElementById('modDate');
-      if (!el) return;
+  <script>
+    /* ---------- helpers ---------- */
+    const isTouchDevice =
+      ('ontouchstart' in window) ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-      var d = new Date(document.lastModified);
-      if (isNaN(d.getTime())) {
-        el.textContent = 'N/A';
-        return;
+    /* ---------- Modified Date ---------- */
+    (function () {
+      function updateModDate() {
+        const el = document.getElementById('modDate');
+        if (!el) return;
+        const d = new Date(document.lastModified);
+        el.textContent = isNaN(d.getTime())
+          ? 'N/A'
+          : d.toLocaleString([], { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
       }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateModDate);
+      else updateModDate();
+    })();
+  
+  // 名言輪播：50 句，每 2 分鐘換一個
+  (function(){
+    const QUOTE_INTERVAL_MS = 120000; // 2 分鐘
+    const el = document.getElementById('topQuote');
+    if (!el) return;
 
-      el.textContent = d.toLocaleString([], {
-        year:   'numeric',
-        month:  '2-digit',
-        day:    '2-digit',
-        hour:   '2-digit',
-        minute: '2-digit'
-      });
+    const quotes = [
+      `Tell me and I forget. Teach me and I remember. Involve me and I learn. — Benjamin Franklin`,
+      `A pessimist is one who makes difficulties of his opportunities and an optimist is one who makes opportunities of his difficulties. — Harry S. Truman`,
+      `Always remember that you are absolutely unique. Just like everyone else. — Margaret Mead`,
+      `An unexamined life is not worth living. — Socrates`,
+      `Challenges are what make life interesting and overcoming them is what makes life meaningful. — Joshua J. Marine`,
+      `Don’t judge each day by the harvest you reap but by the seeds that you plant. — Robert Louis Stevenson`,
+      `Education is not the filling of a pail but the lighting of a fire. — William Butler Yeats`,
+      `Every man is a poet when he is in love. — Plato`,
+      `Genius only means hard-working all one’s life. — Mendeleyev`,
+      `Happiness lies not in the mere possession of money; it lies in the joy of achievement, in the thrill of creative effort. — Franklin Roosevelt`,
+      `I am a slow walker, but I never walk backwards. — Abraham Lincoln`,
+      `I can’t change the direction of the wind, but I can adjust my sails to always reach my destination. — Jimmy Dean`,
+      `I didn’t fail the test. I just found 100 ways to do it wrong. — Benjamin Franklin`,
+      `I disapprove of what you say, but I will defend to the death your right to say it. — Voltaire`,
+      `If I looked compared to others far, is because I stand on giant’s shoulder. — Newton`,
+      `If you can’t fly, then run; if you can’t run, then walk; if you can’t walk, then crawl; but whatever you do, you have to keep moving forward. — Martin Luther King`,
+      `If you don’t like something, change it; if you can’t change it, change the way you think about it. — Mary Engelbreit`,
+      `If you have no critics, you will likely have no success. — Malcolm S. Forbes`,
+      `If you judge people, you have no time to love them. — Mother Teresa`,
+      `If you look at what you have in life, you’ll always have more. If you look at what you don’t have in life, you’ll never have enough. — Oprah Winfrey`,
+      `Imagination is more important than knowledge. — Albert Einstein`,
+      `Intelligence plus character – that is the goal of real education. — Martin Luther King`,
+      `It is not how much you do, but how much love you put into the doing that matters. — Mother Teresa`,
+      `Knowledge is a treasure, but practice is the key to it. — Thomas Fuller`,
+      `Knowledge is power. — Francis Bacon`,
+      `Life is like riding a bicycle. To keep your balance you must keep moving. — Albert Einstein`,
+      `Living without an aim is like sailing without a compass. — Alexandre Dumas`,
+      `Love the life you live. Live the life you love. — Bob Marley`,
+      `Love well, whip well. — Benjamin Franklin`,
+      `Never argue with stupid people, they will drag you down to their level and then beat you with experience. — Mark Twain`,
+      `Success is not final, failure is not fatal: it is the courage to continue that counts. — Winston Churchill`,
+      `The best and most beautiful things in the world cannot be seen or even touched. They must be felt with the heart. — Helen Keller`,
+      `The first wealth is health. — Ralph Waldo Emerson`,
+      `The greatest glory in living lies not in never falling, but in rising every time we fall. — Nelson Mandela`,
+      `The only thing we have to fear is fear itself. — Franklin Roosevelt`,
+      `The only way to do great work is to love what you do. If you haven’t found it yet, keep looking. Don’t settle. — Steve Jobs`,
+      `The ordinary focus on what they’re getting. The extraordinary think about who they’re becoming. — Robin Sharma`,
+      `The past cannot be changed. The future is yet in your power. — Mary Pickford`,
+      `The purpose of our lives is to be happy. — Dalai Lama`,
+      `The way to get started is to quit talking and begin doing. — Walt Disney`,
+      `There are seven things that will destroy us: wealth without work; pleasure without conscience; knowledge without character; religion without sacrifice; politics without principle; science without humanity; business without ethics. — Mahatma Gandhi`,
+      `Those who dare to fail miserably can achieve greatly. — John F. Kennedy`,
+      `Try not to become a man of success but rather try to become a man of value. — Albert Einstein`,
+      `Until we can manage time, we can manage nothing else. — Peter F. Drucker`,
+      `We must accept finite disappointment, but we must never lose infinite hope. — Martin Luther King`,
+      `When the whole world is silent, even one voice becomes powerful. — Malala`,
+      `When we are saying this cannot be accomplished, this cannot be done, then we are short-changing ourselves. My brain, it cannot process failure. It will not process failure. — Kobe Bryant`,
+      `Where there is a will, there is a way. — Thomas Edison`,
+      `You have to believe in yourself. That’s the secret of success. — Charles Chaplin`,
+      `You must be the change you want to see in the world. — Gandhi`
+    ];
+
+    let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
+    if (isNaN(index) || index < 0 || index >= quotes.length) {
+      index = 0;
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', updateModDate);
-    } else {
-      updateModDate();
+    function showQuote() {
+      el.textContent = quotes[index];
+      localStorage.setItem('ms-quote-idx', String(index));
     }
+
+    showQuote();
+
+    setInterval(function(){
+      index = (index + 1) % quotes.length;
+      showQuote();
+    }, QUOTE_INTERVAL_MS);
   })();
+</script>
 
+<script>
   // ---- 子頁面同步主頁 style ----
   (function syncStyleToIframe(){
     const frame = document.getElementById("mainFrame");
@@ -796,416 +1024,597 @@
     window._msSyncFrameStyle = applyStyleToFrame;
   })();
 
-  // Modules 面板開關
+ // Modules 面板開關
   (function(){
     const menuBtn = document.getElementById('menuButton');
-    const panel = document.getElementById('navPanel');
+    const panel   = document.getElementById('navPanel');
+    if (!menuBtn || !panel) return;
+
+    const isTouchDevice =
+      ('ontouchstart' in window) ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+    let mainHideTimer = null;
+
+    function openPanel(){
+      panel.classList.add('open');
+      menuBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closePanel(){
+      panel.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    function clearMainHideTimer(){
+      if (mainHideTimer){
+        clearTimeout(mainHideTimer);
+        mainHideTimer = null;
+      }
+    }
+
+    // 👇 Modules List 離開後 2 秒才關閉
+    function scheduleMainHide(){
+      clearMainHideTimer();
+      mainHideTimer = setTimeout(closePanel, 2000); // 2 秒
+    }
 
     function togglePanel(){
-      const isOpen = panel.classList.toggle('open');
-      menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) closePanel(); else openPanel();
     }
 
-    if (menuBtn && panel){
-      menuBtn.addEventListener('click', togglePanel);
-    }
+    // 📱 手機 / 平板：點一下展開 / 收起
+    menuBtn.addEventListener('click', togglePanel);
 
-    // 點擊頁面其他地方就關閉（桌機用，比較乾淨）
+    // 點擊頁面其他地方就關閉（立刻關）
     document.addEventListener('click', (e)=>{
       if (!panel.classList.contains('open')) return;
       const insidePanel = panel.contains(e.target);
       const insideBtn   = menuBtn.contains(e.target);
       if (!insidePanel && !insideBtn){
-        panel.classList.remove('open');
-        menuBtn.setAttribute('aria-expanded','false');
+        closePanel();
       }
     });
-  })();
 
-  // 切換模組 + Line Schematic / Program Backup / Maintenance 兩層選單
-  (function(){
-    const frame   = document.getElementById('mainFrame');
-    const titleEl = document.getElementById('moduleTitle');
-    const subEl   = document.getElementById('moduleSub');
-    const panel   = document.getElementById('navPanel');
-    const menuBtn = document.getElementById('menuButton');
-    const buttons = document.querySelectorAll('.nav-item-btn');
-
-    const schematicPanel   = document.getElementById('schematicPanel');
-    const schematicLineBtns= document.querySelectorAll('.schematic-line-btn');
-    const schematicSecBtns = document.querySelectorAll('.schematic-sec-btn');
-    let currentSchematicLine = 'Line1';
-
-    const backupPanel   = document.getElementById('backupPanel');
-    const backupLineBtns= document.querySelectorAll('.backup-line-btn');
-    const backupSecBtns = document.querySelectorAll('.backup-sec-btn');
-    let currentBackupLine = 'Line1';
-
-    const maintenancePanel = document.getElementById('maintenancePanel');
-    const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
-
-    // 🔹 共用 helper：active + 收起所有 sub panel
-    function activateNav(btn){
-      buttons.forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-    }
-
-    function closeAllSubPanels(){
-      if (schematicPanel)   schematicPanel.classList.remove('open');
-      if (backupPanel)      backupPanel.classList.remove('open');
-      if (maintenancePanel) maintenancePanel.classList.remove('open');
-    }
-
-    // 🔹 Program Backup → Google Drive URL 對應表
-    const BackupUrlMap = {
-      Line1: {
-        F12:  'https://drive.google.com/drive/folders/1v6Ceoo7Wh9aty0tDBdt8CkwoJedd-bbi?usp=sharing',
-        F13:  'https://drive.google.com/drive/folders/14i873c0LQENb_O_6vsGISQsxonO1BEDj?usp=sharing',
-        F16:  'https://drive.google.com/drive/folders/12fY1QcORExwPcFH_GVZhM8FcTimul-jU?usp=sharing',
-        F42:  'https://drive.google.com/drive/folders/12EhLZW0etEC2eX3t1QPSlOQI86v3YBJh?usp=sharing',
-        F55:  'https://drive.google.com/drive/folders/1hNL663CCzPXi6uChKaXEVf3yc6VpBST8?usp=sharing',
-        F201: 'https://drive.google.com/drive/folders/19fiHd3JljzATXPGSb944Ob8O0C-6qGWD?usp=sharing',
-        FlameTreater:  'https://drive.google.com/drive/folders/1SNnpyf1PDYRcZAoSDNYBmPTchnuvSYmR?usp=sharing',
-        MainBlending:  'https://drive.google.com/drive/folders/1VAsJrBLZshXFI_6HzhCIL9SjqbGqP7E2?usp=sharing',
-        MainLoading:   'https://drive.google.com/drive/folders/1ppVLuY4cHoSJq12iq9_cEPDWaoR6VUei?usp=sharing',
-        ScadaPC1PC2:   'https://drive.google.com/drive/folders/1Lp0bYwOoRJnCxE1WcPonfHgVf5RSH6u5?usp=sharing',
-        SoftalTreater: 'https://drive.google.com/drive/folders/1qEx6-8WRo4QEKsjO5wmtHlPoPfTN5HR9?usp=sharing',
-        TDOBruckpanel: 'https://drive.google.com/drive/folders/1mlAJeh3JdacXibpfr9NBGspvtNSpoxcZ?usp=sharing',
-        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1xqzHfOX-2xa5iCWIigus_ZtSfPK37pnP?usp=sharing'
-      },
-      Line2: {
-        F12:  'https://drive.google.com/drive/folders/1MOg8It7DghhjMPjUdPTeyjbts-K7RCj3?usp=sharing',
-        F13:  'https://drive.google.com/drive/folders/1cw7rWWhM-h1Q_fNGW5l6IzNWttKb91mS?usp=sharing',
-        F16:  'https://drive.google.com/drive/folders/1rjGW78fMciI3ZhbjT_JU5PhRj79BHNJj?usp=sharing',
-        F42:  'https://drive.google.com/drive/folders/1OttyO_Uk4rQisi_M8UwYHe7ZgGzErf5r?usp=sharing',
-        F55:  'https://drive.google.com/drive/folders/1I8XypN9MpQuxRWKMiZi612gc9iL6w5Ds?usp=sharing',
-        F201: 'https://drive.google.com/drive/folders/1bK9TyVJYjDO4CQXpAJgpQpLyNAKw6w54?usp=sharing',
-        FlameTreater:  'https://drive.google.com/drive/folders/1S9Mzbx7r46z0GAk7h7R5YD0TCSG8gQWk?usp=sharing',
-        MainBlending:  'https://drive.google.com/drive/folders/1KywwO5cSHbrM9GhllLpIg-1NQZ2krp6H?usp=sharing',
-        MainLoading:   'https://drive.google.com/drive/folders/1aCY1gUZyfNaVAzFaU43cvv5V3MZUmxe7?usp=sharing',
-        ScadaPC3PC4:   'https://drive.google.com/drive/folders/1QVcuAic2-Ga2s5Pb_RdWOjrpsEIxoSYA?usp=sharing',
-        SoftalTreater: 'https://drive.google.com/drive/folders/1IxbErY8lF8IpV97Y6HtL2STe99dpFHVR?usp=sharing',
-        TDOBruckpanel: 'https://drive.google.com/drive/folders/1FbXqingTcAdaIa7pj3fIBhseShuHQ1rs?usp=sharing',
-        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1_yZfO4H7qoHHL6D8E9x0I6Z_fjpp4l7q?usp=sharing'
-      },
-      Line3: {
-        F12:  'https://drive.google.com/drive/folders/1J1FDGMU1oSsFXBQYwYNQnsnETmgMqzIF?usp=sharing',
-        F13:  'https://drive.google.com/drive/folders/1AuHXv1zkGWq1alUudBpqtTKL5afj3dww?usp=sharing',
-        F16:  'https://drive.google.com/drive/folders/1EI3PvRbv-iIGRb-sX1sqMjBAataaxpkO?usp=sharing',
-        F42:  'https://drive.google.com/drive/folders/1XRi0Tw6f2oq_x_d4QNcslHp-jZ__OVH_?usp=sharing',
-        F55:  'https://drive.google.com/drive/folders/1Qj0sMFX8r4Ma6mdZOfUwN1idFUj3N_M1?usp=sharing',
-        F201: 'https://drive.google.com/drive/folders/1KgV_VN0XlqmdnIM5vbPifdiPMWYpvWmc?usp=sharing',
-        FlameTreater:  'https://drive.google.com/drive/folders/1kybXlTN449z2TGa55acsASTntk1oMMRt?usp=sharing',
-        MainBlending:  'https://drive.google.com/drive/folders/1HO4VvGrlizBuxDQt2-aHLgGe7HTxBFjR?usp=sharing',
-        MainLoading:   'https://drive.google.com/drive/folders/1i-7ih-rfeHT5snZLu5oId6sT2BG9xj52?usp=sharing',
-        ScadaPC5PC6:   'https://drive.google.com/drive/folders/1CeaMxupbXTmQ4GZbuogEIAjBB6uCLnAb?usp=sharing',
-        SoftalTreater: 'https://drive.google.com/drive/folders/18S8v2Xh4xJZyiHm_9uwMm6-k39xa-Db_?usp=sharing',
-        TDOBruckpanel: 'https://drive.google.com/drive/folders/1RwLyQ-6CYFMbqiTbQnXvllQCx18BkSua?usp=sharing',
-        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1qSb8IUbyskgrQt8jj8i_FVgbSaqTMyw8?usp=sharing'
-      },
-      Line4: {
-        F12:  'https://drive.google.com/drive/folders/1jr7GiTRAq-x5jU4_xJS0Mm8jFJ_pjviL?usp=sharing',
-        F13:  'https://drive.google.com/drive/folders/1KxYwuqPNMjR4Yx1hez1XKDAmJ75O6ms7?usp=sharing',
-        F16:  'https://drive.google.com/drive/folders/1TucxT8luoPl3bt-ZB-V_-jGyAjVEYBiV?usp=sharing',
-        F42:  'https://drive.google.com/drive/folders/1GhbC4C6VbbnRivOC7nLqyx3MHxrVojpl?usp=sharing',
-        F55:  'https://drive.google.com/drive/folders/1DZ2cwLgLjWbtq3UDzbIqWQPOkwc5B2tV?usp=sharing',
-        F201: 'https://drive.google.com/drive/folders/12AtVUT5m6b4tYhNDuTyHTQG7bqkQsC-K?usp=sharing',
-        FlameTreater:  'https://drive.google.com/drive/folders/1tJa6cidGd_jnyQFv4tAWsdb-GQeVtsFF?usp=sharing',
-        MainBlending:  'https://drive.google.com/drive/folders/1JKBYVve6DpdDXW4GXjx0ccMLU9TEj-Fw?usp=sharing',
-        MainLoading:   'https://drive.google.com/drive/folders/1bIcOGqr9r-xRwEQf6GXb_n-p4KeX7u7_?usp=sharing',
-        ScadaPC7PC8:   'https://drive.google.com/drive/folders/1gCwSkxVAg-64tlLRMHvDhNWgoQYmKRTK?usp=sharing',
-        SoftalTreater: 'https://drive.google.com/drive/folders/14WMNIQ3TwQ_e0DaSDZ2MS9yrZKIKfuNX?usp=sharing',
-        TDOBruckpanel: 'https://drive.google.com/drive/folders/1vevMWNfXb_RZq1ur8_avkUe9xamveNvz?usp=sharing',
-        WinderCarrgeBruckpanel: 'https://drive.google.com/drive/folders/1imnJYm7Zq4eOFPpECu21_NtoKKLOdpjG?usp=sharing'
-      },
-      Reclaim: {
-        XRO1: 'https://drive.google.com/drive/folders/16UrOueEYpUX0sCJy9ofQnchOHuRd00KI?usp=sharing',
-        XRO2: 'https://drive.google.com/drive/folders/1tZQuk9hzqUrxxf1H3rjti5KxP1bj9iSy?usp=sharing',
-        XRO3: 'https://drive.google.com/drive/folders/1g8cdW0StRIGv2fHt_iQnUOagFejsIrlP?usp=sharing'
-      }
-    };
-   
-
-    function setModule(title, sub){
-      if (titleEl) titleEl.textContent = title;
-      if (subEl)   subEl.textContent   = sub;
-    }
-
-    function formatLineLabel(lineKey){
-      if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
-      return lineKey;
-    }
-
-    // Schematic 檔名規則：Line-1-4-Schematic.html?line=1&sec=F13
-    function buildSchematicFileName(lineKey, sectionKey){
-      const n = lineKey.replace('Line',''); // Line1 -> 1
-      return 'Line-1-4-Schematic.html?line=' + n + '&sec=' + sectionKey;
-    }
-
-    // 預設主模組切換（Home / PC Manager 等）
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const role = btn.dataset.role || '';
-
-        // Line Schematic parent
-        if (role === 'schematic-parent'){
-          if (!schematicPanel) return;
-          const wasOpen = schematicPanel.classList.contains('open');
-
-          activateNav(btn);
-          closeAllSubPanels();
-
-          if (!wasOpen) {
-            schematicPanel.classList.add('open');
-          }
-
-          setModule(
-            btn.dataset.title || 'Line Schematic',
-            btn.dataset.sub   || 'Select line and section.'
-          );
-          return;
-        }
-
-        // Program Backup parent
-        if (role === 'backup-parent'){
-          if (!backupPanel) return;
-          const wasOpen = backupPanel.classList.contains('open');
-
-          activateNav(btn);
-          closeAllSubPanels();
-
-          if (!wasOpen) {
-            backupPanel.classList.add('open');
-          }
-
-          setModule(
-            btn.dataset.title || 'Program Backup',
-            btn.dataset.sub   || 'Select line and section to open backup.'
-          );
-          return;
-        }
-
-        // Maintenance parent
-        if (role === 'maintenance-parent'){
-          if (!maintenancePanel) return;
-          const wasOpen = maintenancePanel.classList.contains('open');
-
-          activateNav(btn);
-          closeAllSubPanels();
-
-          if (!wasOpen) {
-            maintenancePanel.classList.add('open');
-          }
-
-          setModule(
-            btn.dataset.title || 'Maintenance',
-            btn.dataset.sub   || 'Open maintenance SOP PDFs.'
-          );
-          return;
-        }
-
-        // 其他一般按鈕：Home / PC Manager
-        const src = btn.dataset.src;
-        if (!src) return;
-
-        activateNav(btn);
-
-        const title = btn.dataset.title || 'Module';
-        const sub   = btn.dataset.sub || '';
-        if (frame && src) frame.src = src;
-        setModule(title, sub);
-
-        if (panel && panel.classList.contains('open')){
-          panel.classList.remove('open');
-          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-        }
-
-        closeAllSubPanels();
+    // 🖥️ 桌機：hover 展開，移出 2 秒後關閉
+    if (!isTouchDevice){
+      // 滑到「Modules」→ 展開
+      menuBtn.addEventListener('mouseenter', ()=>{
+        clearMainHideTimer();
+        openPanel();
       });
-    });
 
-    // Line Schematic：Line 1~4
-    schematicLineBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const lineKey = btn.getAttribute('data-line') || 'Line1';
-        currentSchematicLine = lineKey;
-        schematicLineBtns.forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
+      // 從 Modules 離開，看是不是跑到 panel 裡
+      menuBtn.addEventListener('mouseleave', (e)=>{
+        const toElement = e.relatedTarget;
+        if (toElement && panel.contains(toElement)) return; // 進入 panel，不關
+        scheduleMainHide();
       });
-    });
 
-    // Line Schematic：Section F12/F13/F16/F201
-    schematicSecBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const sectionKey   = btn.getAttribute('data-section');
-        const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-        if (!sectionKey) return;
-
-        const file = buildSchematicFileName(currentSchematicLine, sectionKey);
-        if (frame){
-          frame.src = file;
-        }
-
-        const lineLabel = formatLineLabel(currentSchematicLine);
-        setModule(
-          'Line Schematic – ' + lineLabel + ' – ' + sectionLabel,
-          'Schematic file: ' + file
-        );
-
-        if (panel && panel.classList.contains('open')){
-          panel.classList.remove('open');
-          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-        }
+      // 滑到 panel → 保持開啟
+      panel.addEventListener('mouseenter', ()=>{
+        clearMainHideTimer();
       });
-    });
 
-    // Program Backup：Line1~4 / Reclaim
-    backupLineBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const lineKey = btn.getAttribute('data-line') || 'Line1';
-        currentBackupLine = lineKey;
-        backupLineBtns.forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-
-    // Program Backup：Section / System → 偽 iframe + 實際開 Google Drive
-    backupSecBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const sectionKey   = btn.getAttribute('data-section');
-        const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-        if (!sectionKey) return;
-
-        const lineMap = BackupUrlMap[currentBackupLine] || {};
-        const driveUrl = lineMap[sectionKey];
-
-        if (!driveUrl) {
-          alert('No backup URL for ' + currentBackupLine + ' / ' + sectionKey);
-          return;
-        }
-
-        const loaderUrl =
-          'GoogleDriveLoader.html'
-          + '?line=' + encodeURIComponent(currentBackupLine)
-          + '&section=' + encodeURIComponent(sectionKey)
-          + '&url=' + encodeURIComponent(driveUrl);
-
-        if (frame) {
-          frame.src = loaderUrl;
-        }
-
-        const lineLabel = formatLineLabel(currentBackupLine);
-        setModule(
-          'Program Backup – ' + lineLabel + ' – ' + sectionLabel,
-          'Opening Google Drive backup…'
-        );
-
-        if (panel && panel.classList.contains('open')){
-          panel.classList.remove('open');
-          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-        }
-      });
-    });
-    
-    // 🔹 Maintenance：改成開 Maintenance.html（裡面再用 pdf.js）
-    maintenanceSecBtns.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const key   = btn.getAttribute('data-pdf-key');   // SiemensS7 / ABPLCPlan
-        const label = btn.getAttribute('data-label') || key || '';
-        if (!key) return;
-
-        const viewerUrl = 'Maintenance.html?key=' + encodeURIComponent(key);
-
-        if (frame){
-          frame.src = viewerUrl;
-        }
-
-        setModule(
-          'Maintenance – ' + label,
-          'PDF: ' + label
-        );
-
-        maintenanceSecBtns.forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-
-        if (panel && panel.classList.contains('open')){
-          panel.classList.remove('open');
-          if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-        }
-      });
-    });
-
-    // 🔹 Tags list：載入到右側 iframe，不開新分頁
-    const tagsLink = document.getElementById('tagsListLink');
-    if (tagsLink) {
-      tagsLink.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        if (frame) {
-          frame.src = 'F13_PLC_Tags list.html';
-        }
-
-        setModule('Tags List', 'PLC / SCADA Tag Reference');
-
-        if (panel && panel.classList.contains('open')) {
-          panel.classList.remove('open');
-          if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
-        }
+      // 從 panel 離開 → 開始 2 秒倒數
+      panel.addEventListener('mouseleave', (e)=>{
+        const toElement = e.relatedTarget;
+        if (toElement && menuBtn.contains(toElement)) return; // 回到按鈕，不關
+        scheduleMainHide();
       });
     }
   })();
+  
+// 切換模組 + Line Schematic / Maintenance 兩層選單
+(function(){
+  const frame   = document.getElementById('mainFrame');
+  const titleEl = document.getElementById('moduleTitle');
+  const subEl   = document.getElementById('moduleSub');
+  const panel   = document.getElementById('navPanel');
+  const menuBtn = document.getElementById('menuButton');
+  const buttons = document.querySelectorAll('.nav-item-btn');
 
-  // Style Theme (blue / panther / hangyodon) – 點左上 icon 切換
-  (function(){
-    const STYLE_KEY = 'ms-style';
-    const root = document.documentElement;
-    const mascot = document.querySelector('.mascot');
-    const styles = ['blue', 'panther', 'hangyodon'];
+  // 父按鈕：Line Schematic / Maintenance / SCADA
+  const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
+  const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
+  const scadaParentBtn       = document.querySelector('[data-role="scada-parent"]');
 
-    const themeConfig = {
-      blue: {
-        bgImage: ''                  // 用預設 CSS 漸層
-      },
-      panther: {
-        bgImage: 'url("pinkpanther.png")'
-      },
-      hangyodon: {
-        bgImage: 'url("hangyodon.png")'
+  const schematicPanel     = document.getElementById('schematicPanel');
+  const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
+  const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
+  let currentSchematicLine    = null;
+  let currentSchematicSection = null;
+
+  // 🔹 LINE 標題 + LINE 按鈕 + TAGS：只有選到 SECTION 才顯示
+  const schematicLineRow    = document.querySelector('.schematic-line-row');
+  const schematicTagsBlock  = document.querySelector('.ls-tags');
+  const schematicLineTitle  = document.querySelector('.line-title');
+
+  function updateSchematicChildrenVisibility(){
+    const hasSection = !!currentSchematicSection;
+    if (schematicLineTitle) schematicLineTitle.style.display = hasSection ? '' : 'none';
+    if (schematicLineRow)   schematicLineRow.style.display   = hasSection ? '' : 'none';
+    if (schematicTagsBlock) schematicTagsBlock.style.display = hasSection ? '' : 'none';
+  }
+
+  const maintenancePanel   = document.getElementById('maintenancePanel');
+  const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
+
+  const scadaPanel   = document.getElementById('scadaPanel');
+  const scadaSecBtns = document.querySelectorAll('.scada-sec-btn');
+
+
+  const isTouchDevice =
+    ('ontouchstart' in window) ||
+    (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+  // ★ 目前 active 的父選項：'schematic' / 'maintenance' / 'scada' / null
+  let currentParent = null;
+
+
+  // 進入頁面先收起 LINE & TAGS
+  updateSchematicChildrenVisibility();
+
+  // --- 子列表 hover 開關（0.1 秒後關閉），同時照顧到「移進子面板」的情況 ---
+  if (!isTouchDevice){
+    let schematicTimer = null;
+    let maintenanceTimer = null;
+    let scadaTimer = null;
+
+    function setupHover(parentBtn, panelEl, which){
+      if (!parentBtn || !panelEl) return;
+
+      function clearTimer(){
+        if (which === 'schematic' && schematicTimer){
+          clearTimeout(schematicTimer);
+          schematicTimer = null;
+        }
+        if (which === 'maintenance' && maintenanceTimer){
+          clearTimeout(maintenanceTimer);
+          maintenanceTimer = null;
+        }
+         if (which === 'scada' && scadaTimer){
+          clearTimeout(scadaTimer);
+          scadaTimer = null;
+        }
       }
-    };
 
-    function applyStyle(style){
-      const s = themeConfig[style] ? style : 'blue';
-      root.setAttribute('data-style', s);
-      const cfg = themeConfig[s];
-
-      if (mascot){
-        mascot.style.backgroundImage = cfg.bgImage || '';
+      function scheduleClose(){
+        clearTimer();
+        const t = setTimeout(()=>{
+          panelEl.classList.remove('open');
+        }, 100);
+        if (which === 'schematic')      schematicTimer = t;
+        else if (which === 'maintenance') maintenanceTimer = t;
+        else if (which === 'scada')       scadaTimer = t;
       }
 
-      localStorage.setItem(STYLE_KEY, s);
 
-      if (window._msSyncFrameStyle){
-        setTimeout(window._msSyncFrameStyle, 30);
-      }
+      parentBtn.addEventListener('mouseenter', ()=> {
+        clearTimer();
+
+        // ✅ hover 只切換目前父群組，不重置任何 active
+        currentParent = which;
+
+        panelEl.classList.add('open');
+      });
+
+
+
+      parentBtn.addEventListener('mouseleave', (e)=> {
+        if (e.relatedTarget && panelEl.contains(e.relatedTarget)) return;
+        scheduleClose();
+      });
+
+      panelEl.addEventListener('mouseenter', ()=> {
+        clearTimer();
+        panelEl.classList.add('open');
+      });
+
+      panelEl.addEventListener('mouseleave', (e)=> {
+        if (e.relatedTarget && parentBtn.contains(e.relatedTarget)) return;
+        scheduleClose();
+      });
     }
 
-    function cycleStyle(){
-      const current = root.getAttribute('data-style') || 'blue';
-      const idx = styles.indexOf(current);
-      const next = styles[(idx + 1) % styles.length];
-      applyStyle(next);
+    setupHover(schematicParentBtn,   schematicPanel,   'schematic');
+    setupHover(maintenanceParentBtn, maintenancePanel, 'maintenance');
+    setupHover(scadaParentBtn,       scadaPanel,       'scada');
+  }
+
+  // 共用 helper
+  function activateNav(btn){
+    buttons.forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+  }
+
+  function closeAllSubPanels(){
+    if (schematicPanel)   schematicPanel.classList.remove('open');
+    if (maintenancePanel) maintenancePanel.classList.remove('open');
+    if (scadaPanel)       scadaPanel.classList.remove('open');
+  }
+  
+  function resetOtherGroups(activeGroup){
+    if (activeGroup !== 'schematic')   resetSchematicSelection();
+    if (activeGroup !== 'maintenance') resetMaintenanceSelection();
+    if (activeGroup !== 'scada')       resetScadaSelection();
+    currentParent = activeGroup;
+  }
+
+  // ★ Line Schematic 子選項 reset
+  function resetSchematicSelection(){
+    currentSchematicLine    = null;
+    currentSchematicSection = null;
+    schematicSecBtns.forEach(b => b.classList.remove('active'));
+    schematicLineBtns.forEach(b => b.classList.remove('active'));
+    updateSchematicChildrenVisibility();
+  }
+
+  // ★ Maintenance 子選項 reset
+  function resetMaintenanceSelection(){
+    maintenanceSecBtns.forEach(b => b.classList.remove('active'));
+  }
+
+  // ★ SCADA 子選項 reset
+  function resetScadaSelection(){
+    scadaSecBtns.forEach(b => b.classList.remove('active'));
+  }
+
+  function setModule(title, sub){
+    if (titleEl) titleEl.textContent = title;
+    if (subEl)   subEl.textContent   = sub;
+  }
+
+  function formatLineLabel(lineKey){
+    if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
+    return lineKey;
+  }
+
+  function buildSchematicFileName(lineKey, sectionKey){
+    const n = lineKey.replace('Line','');
+    return 'Updated Schematic.html?line=' + n + '&sec=' + sectionKey;
+  }
+
+  function openSchematicParent(btn){
+    activateNav(btn);
+    schematicPanel.classList.add('open');
+    maintenancePanel && maintenancePanel.classList.remove('open');
+    scadaPanel       && scadaPanel.classList.remove('open');
+    setModule(
+      btn.dataset.title || 'Updated Schematic',
+      btn.dataset.sub   || 'Select section (F12/F13/F16/F201) then line (1~4).'
+    );
+  }
+
+  function openMaintenanceParent(btn){
+    activateNav(btn);
+    maintenancePanel.classList.add('open');
+    schematicPanel && schematicPanel.classList.remove('open');
+    scadaPanel     && scadaPanel.classList.remove('open');
+    setModule(
+      btn.dataset.title || 'Maintenance',
+      btn.dataset.sub   || 'Open maintenance SOP PDFs.'
+    );
+  }
+
+  // ★ 新增：SCADA parent 展開
+  function openScadaParent(btn){
+    activateNav(btn);
+    scadaPanel.classList.add('open');
+    schematicPanel   && schematicPanel.classList.remove('open');
+    maintenancePanel && maintenancePanel.classList.remove('open');
+    setModule(
+      btn.dataset.title || 'SCADA PC',
+      btn.dataset.sub   || 'SCADA PC tools: Inventory / Records / Report.'
+    );
+  }
+
+  // 主模組切換
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const roleClick = btn.dataset.role || '';
+
+     if (roleClick === 'schematic-parent'){
+      resetOtherGroups('schematic');
+      openSchematicParent(btn);
+      return;
     }
 
-    const saved = localStorage.getItem(STYLE_KEY) || 'blue';
-    applyStyle(saved);
-
-    if (mascot){
-      mascot.style.cursor = 'pointer';
-      mascot.title = 'Click to change style';
-      mascot.addEventListener('click', cycleStyle);
+    if (roleClick === 'maintenance-parent'){
+      resetOtherGroups('maintenance');
+      openMaintenanceParent(btn);
+      return;
     }
-  })();
+
+    if (roleClick === 'scada-parent'){
+      resetOtherGroups('scada');
+      openScadaParent(btn);
+      return;
+    }
+
+
+      // 一般 module 按鈕
+      const src = btn.dataset.src;
+      if (!src) return;
+
+      if (currentParent === 'schematic')     resetSchematicSelection();
+      else if (currentParent === 'maintenance') resetMaintenanceSelection();
+      else if (currentParent === 'scada')       resetScadaSelection();
+
+      currentParent = null;
+
+      activateNav(btn);
+
+      const title = btn.dataset.title || 'Module';
+      const sub   = btn.dataset.sub || '';
+      if (frame) frame.src = src;
+      setModule(title, sub);
+
+      if (panel) panel.classList.remove('open');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+
+      closeAllSubPanels();
+
+    });
+  });
+
+  // Line Schematic — LINE
+  schematicLineBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      resetOtherGroups('schematic');
+
+      const lineKey = btn.getAttribute('data-line');
+      if (!lineKey) return;
+
+      activateNav(schematicParentBtn);
+
+      currentSchematicLine = lineKey;
+
+      schematicLineBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (!currentSchematicSection) return;
+
+      const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
+      if (frame) frame.src = file;
+
+      const lineLabel = formatLineLabel(currentSchematicLine);
+      setModule(
+        'Updated Schematic – ' + lineLabel + ' – ' + currentSchematicSection,
+        'Schematic file: ' + file
+      );
+    });
+  });
+
+  // Line Schematic — SECTION
+  schematicSecBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      resetOtherGroups('schematic');
+      const sectionKey   = btn.getAttribute('data-section');
+      const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
+      if (!sectionKey) return;
+
+      activateNav(schematicParentBtn);
+
+      currentSchematicSection = sectionKey;
+      currentSchematicLine = null;
+
+      schematicSecBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      schematicLineBtns.forEach(b=>b.classList.remove('active'));
+
+      setModule(
+        'Updated Schematic – ' + sectionLabel,
+        'Select LINE to open schematic.'
+      );
+
+      updateSchematicChildrenVisibility();
+    });
+  });
+
+// ✅ Maintenance 2nd layer: desktop hover open + mobile click open + 3rd layer PDF click
+if (maintenancePanel){
+
+  const isTouchDevice =
+    ('ontouchstart' in window) ||
+    (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+  let hoverCloseTimer = null;
+
+  function closeAllGroups(except){
+    maintenancePanel.querySelectorAll('.maintenance-group').forEach(g=>{
+      if (g !== except) g.classList.remove('open');
+    });
+  }
+
+  function openGroup(group){
+    if (!group) return;
+    closeAllGroups(group);
+    group.classList.add('open');
+  }
+
+  function scheduleCloseAll(){
+    clearTimeout(hoverCloseTimer);
+    hoverCloseTimer = setTimeout(()=> closeAllGroups(null), 180);
+  }
+
+  function cancelClose(){
+    clearTimeout(hoverCloseTimer);
+    hoverCloseTimer = null;
+  }
+
+  // 🖥️ 桌機：hover 2nd level item 就展開第三層（在旁邊 pop-out）
+  if (!isTouchDevice){
+    maintenancePanel.addEventListener('mouseover', (e)=>{
+      const group = e.target.closest('.maintenance-group');
+      if (!group) return;
+
+      // 只有滑到該項目按鈕時才打開
+      const onBtn = e.target.closest('.maintenance-group-btn');
+      if (!onBtn && !group.classList.contains('open')) return;
+
+      cancelClose();
+      openGroup(group);
+    });
+
+    // 滑出 maintenancePanel → 延遲關閉（讓你能滑去右邊 pop-out）
+    maintenancePanel.addEventListener('mouseleave', ()=>{
+      scheduleCloseAll();
+    });
+
+    // 滑回來（含 pop-out 內）→ 不關
+    maintenancePanel.addEventListener('mouseenter', ()=>{
+      cancelClose();
+    });
+  }
+
+  // 📱 手機：點第二層展開/收起；點第三層開 PDF
+  maintenancePanel.addEventListener('click', (e)=>{
+
+    // 2nd layer toggle
+    const groupBtn = e.target.closest('.maintenance-group-btn');
+    if (groupBtn){
+      const group = groupBtn.closest('.maintenance-group');
+      if (!group) return;
+
+      // 只開一個（要多開就拿掉這段）
+      if (!group.classList.contains('open')) closeAllGroups(group);
+
+      group.classList.toggle('open');
+      return;
+    }
+
+    // 3rd layer pdf buttons
+    const pdfBtn = e.target.closest('.maintenance-sec-btn');
+    if (!pdfBtn) return;
+
+    resetOtherGroups('maintenance');
+
+    const key   = pdfBtn.getAttribute('data-pdf-key');
+    const label = pdfBtn.getAttribute('data-label') || pdfBtn.textContent.trim() || key || '';
+    if (!key) return;
+
+    activateNav(maintenanceParentBtn);
+
+    const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
+    if (frame) frame.src = viewerUrl;
+
+    setModule('Calibration Procedure – ' + label, 'PDF: ' + label);
+
+    // active 樣式
+    maintenancePanel.querySelectorAll('.maintenance-sec-btn').forEach(b=>b.classList.remove('active'));
+    pdfBtn.classList.add('active');
+  });
+}
+
+
+  // I/O LIST
+  const ioLink = document.getElementById('ioListLink');
+  if (ioLink) {
+    ioLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (!currentSchematicSection) return;
+
+      const sec = currentSchematicSection;
+      if (frame) frame.src = `IOLIST.html?sec=${encodeURIComponent(sec)}`;
+
+      setModule(
+        `I/O LIST – ${sec}`,
+        `I/O Reference for ${sec}`
+      );
+    });
+  }
+
+  // ★ SCADA 子選項 — Inventory / Records / Report
+  scadaSecBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      resetOtherGroups('scada');
+      
+      const key = btn.dataset.scada;
+      if (!key) return;
+
+      activateNav(scadaParentBtn);
+
+      let src='', title='', sub='';
+
+      switch(key){
+        case 'inventory':
+          src='SCADA PC Inventory.html';
+          title='SCADA PC – Inventory';
+          sub='SCADA PC inventory list.';
+          break;
+
+        case 'records':
+          src='Maintenance_Records.html';
+          title='SCADA PC – Records';
+          sub='View and edit SCADA PC maintenance records.';
+          break;
+
+               case 'report':
+          src='New_Report.html';
+          title='SCADA PC – Report';
+          sub='Submit and export SCADA PC maintenance report.';
+          break;
+      }
+
+      if (frame && src) frame.src = src;
+      setModule(title, sub);
+
+      scadaSecBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+})();  /* ✅ 到這裡結束「切換模組 + 選單」那個大 IIFE */
+
+/* =========================
+   Style Theme (blue / panther / hangyodon)
+========================= */
+(function () {
+  const STYLE_KEY = 'ms-style';
+  const root   = document.documentElement;
+  const mascot = document.querySelector('.mascot');
+
+  const styles = ['blue', 'panther', 'hangyodon'];
+
+  const themeConfig = {
+    blue: { bgImage: '' },
+    panther: { bgImage: 'url("pinkpanther.png")' },
+    hangyodon: { bgImage: 'url("hangyodon.png")' }
+  };
+
+  function applyStyle(style) {
+    const s = themeConfig[style] ? style : 'blue';
+    const cfg = themeConfig[s];
+
+    root.setAttribute('data-style', s);
+
+    if (mascot) mascot.style.backgroundImage = cfg.bgImage || '';
+
+    localStorage.setItem(STYLE_KEY, s);
+
+    if (window._msSyncFrameStyle) {
+      setTimeout(window._msSyncFrameStyle, 30);
+    }
+  }
+
+  function cycleStyle() {
+    const current = root.getAttribute('data-style') || 'blue';
+    const idx = styles.indexOf(current);
+    const next = styles[(idx + 1) % styles.length];
+    applyStyle(next);
+  }
+
+  const saved = localStorage.getItem(STYLE_KEY) || 'blue';
+  applyStyle(saved);
+
+  if (mascot) {
+    mascot.style.cursor = 'pointer';
+    mascot.title = 'Click to change style';
+    mascot.addEventListener('click', cycleStyle);
+  }
+})();
 </script>
 </body>
 </html>
