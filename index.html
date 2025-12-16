@@ -610,41 +610,60 @@
 .nav-group-maintenance{ position:relative; }
 
 /* 第二層：膠囊標題 */
+/* ===== Maintenance 2nd level (same as nav-item-btn, no icon) ===== */
 .maintenance-group-btn{
   width:100%;
+  border:none;
+  border-radius:999px;
+  padding:10px 13px;
+
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
+  gap:8px;
 
-  padding:10px 12px;
-  border-radius:999px;
-  border:1px solid rgba(37,99,235,.22);
-  background:linear-gradient(0deg, rgba(37,99,235,.06), rgba(37,99,235,.06)), #fff;
-  color:var(--text);
+  background:transparent;
   cursor:pointer;
 
-  box-shadow:0 8px 18px rgba(15,23,42,.10);
-  transition:transform .12s ease, box-shadow .15s ease, border-color .15s ease;
+  font-size:14px;
+  color:var(--text-soft);
+  text-align:left;
+  white-space:nowrap;
+
+  transition:
+    background .15s ease,
+    color .15s ease,
+    transform .1s ease,
+    box-shadow .15s ease;
 }
+
 .maintenance-group-btn:hover{
+  background:var(--accent-soft);
+  color:var(--accent);
   transform:translateY(-1px);
-  border-color:rgba(37,99,235,.35);
-  box-shadow:0 12px 26px rgba(15,23,42,.14);
 }
-.maintenance-group-btn .chev{
-  opacity:.75;
+
+.maintenance-group-btn .nav-label{
+  flex:1;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.maintenance-group-btn .nav-chevron{
+  font-size:14px;
+  opacity:.7;
   transition:transform .18s ease;
 }
+
 
 /* 開啟狀態（第二層） */
 .maintenance-group.open .maintenance-group-btn{
   background:var(--accent);
-  border-color:var(--accent);
   color:#fff;
-  box-shadow:0 10px 22px rgba(37,99,235,.35);
+  box-shadow:0 4px 10px rgba(37,99,235,.35);
 }
-.maintenance-group.open .maintenance-group-btn .chev{
+
+.maintenance-group.open .maintenance-group-btn .nav-chevron{
   transform:rotate(180deg);
 }
 
@@ -679,11 +698,12 @@
   margin-bottom:8px;
 }
 
-/* 讓 maintenance 主面板可以滾動、但 pop-out 不被裁切 */
 #maintenancePanel{
-  overflow:visible;
   max-height:70vh;
+  overflow:auto;              /* ✅ 讓第二層清單可滾 */
+  padding-right:4px;          /* 可選：避免滾動條壓到字 */
 }
+
 
 /* 手機：第三層改成往下展開（不要側邊 pop-out） */
 @media (max-width:900px){
@@ -848,8 +868,10 @@
   <!-- Raw Material -->
   <div class="maintenance-group">
     <button class="maintenance-group-btn" type="button">
-      <span>Raw Material</span><span class="chev">▾</span>
+      <span class="nav-label">Raw Material</span>
+      <span class="nav-chevron" aria-hidden="true">▾</span>
     </button>
+
     <div class="maintenance-third-panel">
       <div class="maintenance-third-title">Raw Material</div>
       <div class="maintenance-sec-row">
