@@ -1201,7 +1201,6 @@
       });
 
 
-
       parentBtn.addEventListener('mouseleave', (e)=> {
         if (e.relatedTarget && panelEl.contains(e.relatedTarget)) return;
         scheduleClose();
@@ -1229,6 +1228,34 @@
     if (btn) btn.classList.add('active');
   }
 
+  function deactivateNav(btn){
+  if (btn) btn.classList.remove('active');
+}
+
+// 收起某個父群組（panel + active 全清）
+function collapseParent(which){
+  if (which === 'schematic'){
+    if (schematicPanel) schematicPanel.classList.remove('open');
+    resetSchematicSelection();
+    deactivateNav(schematicParentBtn);
+  } else if (which === 'maintenance'){
+    if (maintenancePanel) maintenancePanel.classList.remove('open');
+    // 也把第三層 pop-out 關掉
+    if (maintenancePanel){
+      maintenancePanel.querySelectorAll('.maintenance-group').forEach(g=>g.classList.remove('open'));
+      maintenancePanel.querySelectorAll('.maintenance-sec-btn').forEach(b=>b.classList.remove('active'));
+    }
+    resetMaintenanceSelection();
+    deactivateNav(maintenanceParentBtn);
+  } else if (which === 'scada'){
+    if (scadaPanel) scadaPanel.classList.remove('open');
+    resetScadaSelection();
+    deactivateNav(scadaParentBtn);
+  }
+
+  currentParent = null;
+}
+  
   function closeAllSubPanels(){
     if (schematicPanel)   schematicPanel.classList.remove('open');
     if (maintenancePanel) maintenancePanel.classList.remove('open');
@@ -1316,22 +1343,38 @@
       const roleClick = btn.dataset.role || '';
 
      if (roleClick === 'schematic-parent'){
-      resetOtherGroups('schematic');
-      openSchematicParent(btn);
-      return;
-    }
+  // ✅ 第二次點：收起 + 取消 active
+  if (currentParent === 'schematic' && schematicPanel && schematicPanel.classList.contains('open')){
+    collapseParent('schematic');
+    return;
+  }
+  resetOtherGroups('schematic');
+  openSchematicParent(btn);
+  return;
+}
 
-    if (roleClick === 'maintenance-parent'){
-      resetOtherGroups('maintenance');
-      openMaintenanceParent(btn);
-      return;
-    }
+if (roleClick === 'maintenance-parent'){
+  // ✅ 第二次點：收起 + 取消 active
+  if (currentParent === 'maintenance' && maintenancePanel && maintenancePanel.classList.contains('open')){
+    collapseParent('maintenance');
+    return;
+  }
+  resetOtherGroups('maintenance');
+  openMaintenanceParent(btn);
+  return;
+}
 
-    if (roleClick === 'scada-parent'){
-      resetOtherGroups('scada');
-      openScadaParent(btn);
-      return;
-    }
+if (roleClick === 'scada-parent'){
+  // ✅ 第二次點：收起 + 取消 active
+  if (currentParent === 'scada' && scadaPanel && scadaPanel.classList.contains('open')){
+    collapseParent('scada');
+    return;
+  }
+  resetOtherGroups('scada');
+  openScadaParent(btn);
+  return;
+}
+
 
 
       // 一般 module 按鈕
