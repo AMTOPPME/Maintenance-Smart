@@ -306,6 +306,17 @@
     }
     .sub-pill-btn.active .nav-chevron{ transform:rotate(180deg); }
 
+    /* ✅ 2nd level (Extruder / Raw Material...) active = blue */
+.maintenance-group-btn.active{
+  background: var(--accent);
+  color:#fff;
+  box-shadow:0 4px 10px rgba(37,99,235,.35);
+}
+.maintenance-group-btn.active .nav-chevron{
+  transform:rotate(180deg);
+}
+
+    
     /* 2nd-level open pill style */
     .maintenance-group.open > .maintenance-group-btn{
       background:var(--accent);
@@ -1546,6 +1557,16 @@ if (maintenancePanel){
     const pdfBtn = e.target.closest('.maintenance-sec-btn');
     if (!pdfBtn) return;
 
+    // ✅ 點第三層 PDF 時，第二層分類同步 active（變藍）
+maintenancePanel
+  .querySelectorAll('.maintenance-group-btn')
+  .forEach(b => b.classList.remove('active'));
+
+const group = pdfBtn.closest('.maintenance-group');
+const groupBtn = group && group.querySelector('.maintenance-group-btn');
+if (groupBtn) groupBtn.classList.add('active');
+
+    
     resetOtherGroups('maintenance');
 
     const key   = pdfBtn.getAttribute('data-pdf-key');
