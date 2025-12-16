@@ -1574,24 +1574,22 @@ let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
 
     // 桌機 hover 開 3rd
     if (!isTouchDevice){
-      maintenancePanel.addEventListener('mouseover', (e)=>{
-        const group = e.target.closest('.maintenance-group');
-        if (!group) return;
+  maintenancePanel.addEventListener('mouseover', (e)=>{
+    const group = e.target.closest('.maintenance-group');
+    if (!group) return;
 
-        const onBtn = e.target.closest('.maintenance-group-btn');
-        if (!onBtn && !group.classList.contains('open')) return;
+    const onBtn = e.target.closest('.maintenance-group-btn');
+    if (!onBtn && !group.classList.contains('open')) return;
 
-        cancelClose();
-        openGroup(group);
+    cancelClose();
+    openGroup(group);
 
-        maintenancePanel.querySelectorAll('.maintenance-group-btn')
-          .forEach(b=>b.classList.remove('active'));
-        if (onBtn) onBtn.classList.add('active');
-      });
+    // ✅ hover 只開 panel，不改 active
+  });
 
-      maintenancePanel.addEventListener('mouseleave', scheduleCloseAll);
-      maintenancePanel.addEventListener('mouseenter', cancelClose);
-    }
+  maintenancePanel.addEventListener('mouseleave', scheduleCloseAll);
+  maintenancePanel.addEventListener('mouseenter', cancelClose);
+}
 
     // 手機 click toggle 2nd + click 3rd open pdf
     maintenancePanel.addEventListener('click', (e)=>{
