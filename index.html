@@ -1343,8 +1343,8 @@ function collapseParent(which){
       const roleClick = btn.dataset.role || '';
 
      if (roleClick === 'schematic-parent'){
-  // ✅ 第二次點：收起 + 取消 active
-  if (currentParent === 'schematic' && schematicPanel && schematicPanel.classList.contains('open')){
+  // ✅ 只有手機/平板才允許「再點一次收起 + 取消 active」
+  if (isTouchDevice && currentParent === 'schematic' && schematicPanel?.classList.contains('open')){
     collapseParent('schematic');
     return;
   }
@@ -1354,8 +1354,7 @@ function collapseParent(which){
 }
 
 if (roleClick === 'maintenance-parent'){
-  // ✅ 第二次點：收起 + 取消 active
-  if (currentParent === 'maintenance' && maintenancePanel && maintenancePanel.classList.contains('open')){
+  if (isTouchDevice && currentParent === 'maintenance' && maintenancePanel?.classList.contains('open')){
     collapseParent('maintenance');
     return;
   }
@@ -1365,8 +1364,7 @@ if (roleClick === 'maintenance-parent'){
 }
 
 if (roleClick === 'scada-parent'){
-  // ✅ 第二次點：收起 + 取消 active
-  if (currentParent === 'scada' && scadaPanel && scadaPanel.classList.contains('open')){
+  if (isTouchDevice && currentParent === 'scada' && scadaPanel?.classList.contains('open')){
     collapseParent('scada');
     return;
   }
@@ -1374,6 +1372,7 @@ if (roleClick === 'scada-parent'){
   openScadaParent(btn);
   return;
 }
+
 
 
 
