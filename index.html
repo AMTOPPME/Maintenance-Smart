@@ -933,29 +933,29 @@
     </div>
   </div>
 
-  <script>
-    /* ---------- helpers ---------- */
-    const isTouchDevice =
-      ('ontouchstart' in window) ||
-      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+<script>
+  /* ---------- helpers ---------- */
+  const isTouchDevice =
+    ('ontouchstart' in window) ||
+    (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-    /* ---------- Modified Date ---------- */
-    (function () {
-      function updateModDate() {
-        const el = document.getElementById('modDate');
-        if (!el) return;
-        const d = new Date(document.lastModified);
-        el.textContent = isNaN(d.getTime())
-          ? 'N/A'
-          : d.toLocaleString([], { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
-      }
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateModDate);
-      else updateModDate();
-    })();
-  
-  // 名言輪播：50 句，每 2 分鐘換一個
+  /* ---------- Modified Date ---------- */
+  (function () {
+    function updateModDate() {
+      const el = document.getElementById('modDate');
+      if (!el) return;
+      const d = new Date(document.lastModified);
+      el.textContent = isNaN(d.getTime())
+        ? 'N/A'
+        : d.toLocaleString([], { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateModDate);
+    else updateModDate();
+  })();
+
+  // Quote rotate
   (function(){
-    const QUOTE_INTERVAL_MS = 120000; // 2 分鐘
+    const QUOTE_INTERVAL_MS = 120000;
     const el = document.getElementById('topQuote');
     if (!el) return;
 
@@ -1011,11 +1011,8 @@
       `You have to believe in yourself. That’s the secret of success. — Charles Chaplin`,
       `You must be the change you want to see in the world. — Gandhi`
     ];
-
     let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
-    if (isNaN(index) || index < 0 || index >= quotes.length) {
-      index = 0;
-    }
+    if (isNaN(index) || index < 0 || index >= quotes.length) index = 0;
 
     function showQuote() {
       el.textContent = quotes[index];
@@ -1023,8 +1020,7 @@
     }
 
     showQuote();
-
-    setInterval(function(){
+    setInterval(()=>{
       index = (index + 1) % quotes.length;
       showQuote();
     }, QUOTE_INTERVAL_MS);
@@ -1052,7 +1048,7 @@
     window._msSyncFrameStyle = applyStyleToFrame;
   })();
 
- // Modules 面板開關
+  // Modules 面板開關
   (function(){
     const menuBtn = document.getElementById('menuButton');
     const panel   = document.getElementById('navPanel');
@@ -1064,34 +1060,27 @@
       panel.classList.add('open');
       menuBtn.setAttribute('aria-expanded', 'true');
     }
-
     function closePanel(){
       panel.classList.remove('open');
       menuBtn.setAttribute('aria-expanded', 'false');
     }
-
     function clearMainHideTimer(){
       if (mainHideTimer){
         clearTimeout(mainHideTimer);
         mainHideTimer = null;
       }
     }
-
-    // 👇 Modules List 離開後 2 秒才關閉
     function scheduleMainHide(){
       clearMainHideTimer();
-      mainHideTimer = setTimeout(closePanel, 2000); // 2 秒
+      mainHideTimer = setTimeout(closePanel, 2000);
     }
-
     function togglePanel(){
       const isOpen = panel.classList.contains('open');
       if (isOpen) closePanel(); else openPanel();
     }
 
-    // 📱 手機 / 平板：點一下展開 / 收起
     menuBtn.addEventListener('click', togglePanel);
 
-    // 點擊頁面其他地方就關閉（立刻關）
     document.addEventListener('click', (e)=>{
       if (!panel.classList.contains('open')) return;
       const insidePanel = panel.contains(e.target);
@@ -1101,35 +1090,143 @@
       }
     });
 
-    // 🖥️ 桌機：hover 展開，移出 2 秒後關閉
     if (!isTouchDevice){
-      // 滑到「Modules」→ 展開
       menuBtn.addEventListener('mouseenter', ()=>{
         clearMainHideTimer();
         openPanel();
       });
 
-      // 從 Modules 離開，看是不是跑到 panel 裡
       menuBtn.addEventListener('mouseleave', (e)=>{
         const toElement = e.relatedTarget;
-        if (toElement && panel.contains(toElement)) return; // 進入 panel，不關
+        if (toElement && panel.contains(toElement)) return;
         scheduleMainHide();
       });
 
-      // 滑到 panel → 保持開啟
       panel.addEventListener('mouseenter', ()=>{
         clearMainHideTimer();
       });
 
-      // 從 panel 離開 → 開始 2 秒倒數
       panel.addEventListener('mouseleave', (e)=>{
         const toElement = e.relatedTarget;
-        if (toElement && menuBtn.contains(toElement)) return; // 回到按鈕，不關
+        if (toElement && menuBtn.contains(toElement)) return;
         scheduleMainHide();
       });
     }
   })();
-  
+
+  // 切換模組 + Line Schematic / Maintenance 兩層選單（✅ 你整段 logic 在這裡）
+  (function(){
+    /* 你原本那整大段 code 그대로放這裡
+       只要注意：最後一定要有 `})();`
+    */
+
+    // ...（你原本那整段）
+
+    // ✅ 這個一定要有：結束大 IIFE
+  })();
+let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
+    if (isNaN(index) || index < 0 || index >= quotes.length) index = 0;
+
+    function showQuote() {
+      el.textContent = quotes[index];
+      localStorage.setItem('ms-quote-idx', String(index));
+    }
+
+    showQuote();
+    setInterval(()=>{
+      index = (index + 1) % quotes.length;
+      showQuote();
+    }, QUOTE_INTERVAL_MS);
+  })();
+</script>
+
+<script>
+  // ---- 子頁面同步主頁 style ----
+  (function syncStyleToIframe(){
+    const frame = document.getElementById("mainFrame");
+
+    function applyStyleToFrame(){
+      if (!frame || !frame.contentDocument) return;
+      const style = document.documentElement.getAttribute("data-style") || "blue";
+      const frameHtml = frame.contentDocument.documentElement;
+      frameHtml.setAttribute("data-style", style);
+    }
+
+    if (frame){
+      frame.addEventListener("load", function(){
+        setTimeout(applyStyleToFrame, 30);
+      });
+    }
+
+    window._msSyncFrameStyle = applyStyleToFrame;
+  })();
+
+  // Modules 面板開關
+  (function(){
+    const menuBtn = document.getElementById('menuButton');
+    const panel   = document.getElementById('navPanel');
+    if (!menuBtn || !panel) return;
+
+    let mainHideTimer = null;
+
+    function openPanel(){
+      panel.classList.add('open');
+      menuBtn.setAttribute('aria-expanded', 'true');
+    }
+    function closePanel(){
+      panel.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+    function clearMainHideTimer(){
+      if (mainHideTimer){
+        clearTimeout(mainHideTimer);
+        mainHideTimer = null;
+      }
+    }
+    function scheduleMainHide(){
+      clearMainHideTimer();
+      mainHideTimer = setTimeout(closePanel, 2000);
+    }
+    function togglePanel(){
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) closePanel(); else openPanel();
+    }
+
+    menuBtn.addEventListener('click', togglePanel);
+
+    document.addEventListener('click', (e)=>{
+      if (!panel.classList.contains('open')) return;
+      const insidePanel = panel.contains(e.target);
+      const insideBtn   = menuBtn.contains(e.target);
+      if (!insidePanel && !insideBtn){
+        closePanel();
+      }
+    });
+
+    if (!isTouchDevice){
+      menuBtn.addEventListener('mouseenter', ()=>{
+        clearMainHideTimer();
+        openPanel();
+      });
+
+      menuBtn.addEventListener('mouseleave', (e)=>{
+        const toElement = e.relatedTarget;
+        if (toElement && panel.contains(toElement)) return;
+        scheduleMainHide();
+      });
+
+      panel.addEventListener('mouseenter', ()=>{
+        clearMainHideTimer();
+      });
+
+      panel.addEventListener('mouseleave', (e)=>{
+        const toElement = e.relatedTarget;
+        if (toElement && menuBtn.contains(toElement)) return;
+        scheduleMainHide();
+      });
+    }
+  })();
+
 // 切換模組 + Line Schematic / Maintenance 兩層選單
 (function(){
   const frame   = document.getElementById('mainFrame');
@@ -1599,54 +1696,54 @@ if (maintenancePanel){
     closeModules();
   });
 }
-
-/* =========================
-   Style Theme (blue / panther / hangyodon)
-========================= */
-(function () {
-  const STYLE_KEY = 'ms-style';
-  const root   = document.documentElement;
-  const mascot = document.querySelector('.mascot');
-
-  const styles = ['blue', 'panther', 'hangyodon'];
-
-  const themeConfig = {
-    blue: { bgImage: '' },
-    panther: { bgImage: 'url("pinkpanther.png")' },
-    hangyodon: { bgImage: 'url("hangyodon.png")' }
-  };
-
-  function applyStyle(style) {
-    const s = themeConfig[style] ? style : 'blue';
-    const cfg = themeConfig[s];
-
-    root.setAttribute('data-style', s);
-
-    if (mascot) mascot.style.backgroundImage = cfg.bgImage || '';
-
-    localStorage.setItem(STYLE_KEY, s);
-
-    if (window._msSyncFrameStyle) {
-      setTimeout(window._msSyncFrameStyle, 30);
-    }
-  }
-
-  function cycleStyle() {
-    const current = root.getAttribute('data-style') || 'blue';
-    const idx = styles.indexOf(current);
-    const next = styles[(idx + 1) % styles.length];
-    applyStyle(next);
-  }
-
-  const saved = localStorage.getItem(STYLE_KEY) || 'blue';
-  applyStyle(saved);
-
-  if (mascot) {
-    mascot.style.cursor = 'pointer';
-    mascot.title = 'Click to change style';
-    mascot.addEventListener('click', cycleStyle);
-  }
 })();
 </script>
-</body>
+<script>
+  /* =========================
+     Style Theme (blue / panther / hangyodon)
+  ========================= */
+  (function () {
+    const STYLE_KEY = 'ms-style';
+    const root   = document.documentElement;
+    const mascot = document.querySelector('.mascot');
+
+    const styles = ['blue', 'panther', 'hangyodon'];
+
+    const themeConfig = {
+      blue: { bgImage: '' },
+      panther: { bgImage: 'url("pinkpanther.png")' },
+      hangyodon: { bgImage: 'url("hangyodon.png")' }
+    };
+
+    function applyStyle(style) {
+      const s = themeConfig[style] ? style : 'blue';
+      const cfg = themeConfig[s];
+
+      root.setAttribute('data-style', s);
+      if (mascot) mascot.style.backgroundImage = cfg.bgImage || '';
+      localStorage.setItem(STYLE_KEY, s);
+
+      if (window._msSyncFrameStyle) {
+        setTimeout(window._msSyncFrameStyle, 30);
+      }
+    }
+
+    function cycleStyle() {
+      const current = root.getAttribute('data-style') || 'blue';
+      const idx = styles.indexOf(current);
+      const next = styles[(idx + 1) % styles.length];
+      applyStyle(next);
+    }
+
+    const saved = localStorage.getItem(STYLE_KEY) || 'blue';
+    applyStyle(saved);
+
+    if (mascot) {
+      mascot.style.cursor = 'pointer';
+      mascot.title = 'Click to change style';
+      mascot.addEventListener('click', cycleStyle);
+    }
+  })();
+</script> 
+</body> 
 </html>
