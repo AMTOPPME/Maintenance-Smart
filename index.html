@@ -1030,10 +1030,6 @@
     const panel   = document.getElementById('navPanel');
     if (!menuBtn || !panel) return;
 
-    const isTouchDevice =
-      ('ontouchstart' in window) ||
-      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
-
     let mainHideTimer = null;
 
     function openPanel(){
@@ -1143,11 +1139,6 @@
 
   const scadaPanel   = document.getElementById('scadaPanel');
   const scadaSecBtns = document.querySelectorAll('.scada-sec-btn');
-
-
-  const isTouchDevice =
-    ('ontouchstart' in window) ||
-    (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
   // ★ 目前 active 的父選項：'schematic' / 'maintenance' / 'scada' / null
   let currentParent = null;
@@ -1449,7 +1440,6 @@ if (roleClick === 'scada-parent'){
 
 // ✅ 新增：點到 LINE 真正開啟頁面後，自動收起 Modules
 closeModules();
-      );
     });
   });
 
@@ -1482,10 +1472,6 @@ closeModules();
 
 // ✅ Maintenance 2nd layer: desktop hover open + mobile click open + 3rd layer PDF click
 if (maintenancePanel){
-
-  const isTouchDevice =
-    ('ontouchstart' in window) ||
-    (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
   let hoverCloseTimer = null;
 
