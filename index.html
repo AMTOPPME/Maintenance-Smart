@@ -947,14 +947,20 @@
       const d = new Date(document.lastModified);
       el.textContent = isNaN(d.getTime())
         ? 'N/A'
-        : d.toLocaleString([], { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+        : d.toLocaleString([], {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit'
+          });
     }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateModDate);
-    else updateModDate();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', updateModDate);
+    } else {
+      updateModDate();
+    }
   })();
 
-  // Quote rotate
-  (function(){
+  /* ---------- Quote rotate ---------- */
+  (function () {
     const QUOTE_INTERVAL_MS = 120000;
     const el = document.getElementById('topQuote');
     if (!el) return;
@@ -1148,14 +1154,11 @@ let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
     function applyStyleToFrame(){
       if (!frame || !frame.contentDocument) return;
       const style = document.documentElement.getAttribute("data-style") || "blue";
-      const frameHtml = frame.contentDocument.documentElement;
-      frameHtml.setAttribute("data-style", style);
+      frame.contentDocument.documentElement.setAttribute("data-style", style);
     }
 
     if (frame){
-      frame.addEventListener("load", function(){
-        setTimeout(applyStyleToFrame, 30);
-      });
+      frame.addEventListener("load", ()=> setTimeout(applyStyleToFrame, 30));
     }
 
     window._msSyncFrameStyle = applyStyleToFrame;
@@ -1188,47 +1191,33 @@ let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
       mainHideTimer = setTimeout(closePanel, 2000);
     }
     function togglePanel(){
-      const isOpen = panel.classList.contains('open');
-      if (isOpen) closePanel(); else openPanel();
+      panel.classList.contains('open') ? closePanel() : openPanel();
     }
 
     menuBtn.addEventListener('click', togglePanel);
 
     document.addEventListener('click', (e)=>{
       if (!panel.classList.contains('open')) return;
-      const insidePanel = panel.contains(e.target);
-      const insideBtn   = menuBtn.contains(e.target);
-      if (!insidePanel && !insideBtn){
-        closePanel();
-      }
+      if (!panel.contains(e.target) && !menuBtn.contains(e.target)) closePanel();
     });
 
     if (!isTouchDevice){
-      menuBtn.addEventListener('mouseenter', ()=>{
-        clearMainHideTimer();
-        openPanel();
-      });
-
+      menuBtn.addEventListener('mouseenter', ()=>{ clearMainHideTimer(); openPanel(); });
       menuBtn.addEventListener('mouseleave', (e)=>{
-        const toElement = e.relatedTarget;
-        if (toElement && panel.contains(toElement)) return;
+        if (e.relatedTarget && panel.contains(e.relatedTarget)) return;
         scheduleMainHide();
       });
 
-      panel.addEventListener('mouseenter', ()=>{
-        clearMainHideTimer();
-      });
-
+      panel.addEventListener('mouseenter', clearMainHideTimer);
       panel.addEventListener('mouseleave', (e)=>{
-        const toElement = e.relatedTarget;
-        if (toElement && menuBtn.contains(toElement)) return;
+        if (e.relatedTarget && menuBtn.contains(e.relatedTarget)) return;
         scheduleMainHide();
       });
     }
   })();
 
-// 切換模組 + Line Schematic / Maintenance 兩層選單
-(function(){
+  // ✅ 切換模組 + Line Schematic / Maintenance / SCADA（你這段完整 logic）
+  (function(){
   const frame   = document.getElementById('mainFrame');
   const titleEl = document.getElementById('moduleTitle');
   const subEl   = document.getElementById('moduleSub');
@@ -1236,156 +1225,79 @@ let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
   const menuBtn = document.getElementById('menuButton');
   const buttons = document.querySelectorAll('.nav-item-btn');
 
-  // 父按鈕：Line Schematic / Maintenance / SCADA
+  // 父按鈕
   const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
   const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
   const scadaParentBtn       = document.querySelector('[data-role="scada-parent"]');
 
-  const schematicPanel     = document.getElementById('schematicPanel');
-  const schematicLineBtns  = document.querySelectorAll('.schematic-line-btn');
-  const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
-  let currentSchematicLine    = null;
+  // Panels
+  const schematicPanel   = document.getElementById('schematicPanel');
+  const maintenancePanel = document.getElementById('maintenancePanel');
+  const scadaPanel       = document.getElementById('scadaPanel');
+
+  // Schematic
+  const schematicLineBtns = document.querySelectorAll('.schematic-line-btn');
+  const schematicSecBtns  = document.querySelectorAll('.schematic-sec-btn');
+  const schematicLineRow   = document.querySelector('.schematic-line-row');
+  const schematicTagsBlock = document.querySelector('.ls-tags');
+  const schematicLineTitle = document.querySelector('.line-title');
+  const ioListLink         = document.getElementById('ioListLink');
+
+  let currentSchematicLine = null;
   let currentSchematicSection = null;
 
-  // 🔹 LINE 標題 + LINE 按鈕 + TAGS：只有選到 SECTION 才顯示
-  const schematicLineRow    = document.querySelector('.schematic-line-row');
-  const schematicTagsBlock  = document.querySelector('.ls-tags');
-  const schematicLineTitle  = document.querySelector('.line-title');
-
-  function updateSchematicChildrenVisibility(){
-    const hasSection = !!currentSchematicSection;
-    if (schematicLineTitle) schematicLineTitle.style.display = hasSection ? '' : 'none';
-    if (schematicLineRow)   schematicLineRow.style.display   = hasSection ? '' : 'none';
-    if (schematicTagsBlock) schematicTagsBlock.style.display = hasSection ? '' : 'none';
-  }
-
-  const maintenancePanel   = document.getElementById('maintenancePanel');
+  // Maintenance / SCADA buttons
   const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
+  const scadaSecBtns       = document.querySelectorAll('.scada-sec-btn');
 
-  const scadaPanel   = document.getElementById('scadaPanel');
-  const scadaSecBtns = document.querySelectorAll('.scada-sec-btn');
-
-  // ★ 目前 active 的父選項：'schematic' / 'maintenance' / 'scada' / null
+  // 目前 active 父群組
   let currentParent = null;
 
-
-  // 進入頁面先收起 LINE & TAGS
-  updateSchematicChildrenVisibility();
-
-  // --- 子列表 hover 開關（0.1 秒後關閉），同時照顧到「移進子面板」的情況 ---
-  if (!isTouchDevice){
-    let schematicTimer = null;
-    let maintenanceTimer = null;
-    let scadaTimer = null;
-
-    function setupHover(parentBtn, panelEl, which){
-      if (!parentBtn || !panelEl) return;
-
-      function clearTimer(){
-        if (which === 'schematic' && schematicTimer){
-          clearTimeout(schematicTimer);
-          schematicTimer = null;
-        }
-        if (which === 'maintenance' && maintenanceTimer){
-          clearTimeout(maintenanceTimer);
-          maintenanceTimer = null;
-        }
-         if (which === 'scada' && scadaTimer){
-          clearTimeout(scadaTimer);
-          scadaTimer = null;
-        }
-      }
-
-      function scheduleClose(){
-        clearTimer();
-        const t = setTimeout(()=>{
-          panelEl.classList.remove('open');
-        }, 100);
-        if (which === 'schematic')      schematicTimer = t;
-        else if (which === 'maintenance') maintenanceTimer = t;
-        else if (which === 'scada')       scadaTimer = t;
-      }
-
-
-      parentBtn.addEventListener('mouseenter', ()=> {
-        clearTimer();
-
-        // ✅ hover 只切換目前父群組，不重置任何 active
-        currentParent = which;
-
-        panelEl.classList.add('open');
-      });
-
-
-      parentBtn.addEventListener('mouseleave', (e)=> {
-        if (e.relatedTarget && panelEl.contains(e.relatedTarget)) return;
-        scheduleClose();
-      });
-
-      panelEl.addEventListener('mouseenter', ()=> {
-        clearTimer();
-        panelEl.classList.add('open');
-      });
-
-      panelEl.addEventListener('mouseleave', (e)=> {
-        if (e.relatedTarget && parentBtn.contains(e.relatedTarget)) return;
-        scheduleClose();
-      });
-    }
-
-    setupHover(schematicParentBtn,   schematicPanel,   'schematic');
-    setupHover(maintenanceParentBtn, maintenancePanel, 'maintenance');
-    setupHover(scadaParentBtn,       scadaPanel,       'scada');
+  function setModule(title, sub){
+    if (titleEl) titleEl.textContent = title || '';
+    if (subEl)   subEl.textContent   = sub   || '';
   }
 
-  // 共用 helper
   function activateNav(btn){
     buttons.forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
   }
 
   function deactivateNav(btn){
-  if (btn) btn.classList.remove('active');
-}
-
-// 收起某個父群組（panel + active 全清）
-function collapseParent(which){
-  if (which === 'schematic'){
-    if (schematicPanel) schematicPanel.classList.remove('open');
-    resetSchematicSelection();
-    deactivateNav(schematicParentBtn);
-  } else if (which === 'maintenance'){
-    if (maintenancePanel) maintenancePanel.classList.remove('open');
-    // 也把第三層 pop-out 關掉
-    if (maintenancePanel){
-      maintenancePanel.querySelectorAll('.maintenance-group').forEach(g=>g.classList.remove('open'));
-      maintenancePanel.querySelectorAll('.maintenance-sec-btn').forEach(b=>b.classList.remove('active'));
-    }
-    resetMaintenanceSelection();
-    deactivateNav(maintenanceParentBtn);
-  } else if (which === 'scada'){
-    if (scadaPanel) scadaPanel.classList.remove('open');
-    resetScadaSelection();
-    deactivateNav(scadaParentBtn);
+    if (btn) btn.classList.remove('active');
   }
 
-  currentParent = null;
-}
-  
   function closeAllSubPanels(){
-    if (schematicPanel)   schematicPanel.classList.remove('open');
-    if (maintenancePanel) maintenancePanel.classList.remove('open');
-    if (scadaPanel)       scadaPanel.classList.remove('open');
+    schematicPanel   && schematicPanel.classList.remove('open');
+    maintenancePanel && maintenancePanel.classList.remove('open');
+    scadaPanel       && scadaPanel.classList.remove('open');
   }
-  
-  function closeModules(){
-  // 收起 Modules 主清單
-  if (panel) panel.classList.remove('open');
-  if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
 
-  // 收起右側子面板
-  closeAllSubPanels();
-}
+  function closeModules(){
+    if (panel) panel.classList.remove('open');
+    if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+    closeAllSubPanels();
+  }
+
+  function resetSchematicSelection(){
+    currentSchematicLine = null;
+    currentSchematicSection = null;
+    schematicSecBtns.forEach(b => b.classList.remove('active'));
+    schematicLineBtns.forEach(b => b.classList.remove('active'));
+    updateSchematicChildrenVisibility();
+  }
+
+  function resetMaintenanceSelection(){
+    maintenanceSecBtns.forEach(b => b.classList.remove('active'));
+    if (maintenancePanel){
+      maintenancePanel.querySelectorAll('.maintenance-group').forEach(g => g.classList.remove('open'));
+      maintenancePanel.querySelectorAll('.maintenance-group-btn').forEach(b => b.classList.remove('active'));
+    }
+  }
+
+  function resetScadaSelection(){
+    scadaSecBtns.forEach(b => b.classList.remove('active'));
+  }
 
   function resetOtherGroups(activeGroup){
     if (activeGroup !== 'schematic')   resetSchematicSelection();
@@ -1394,310 +1306,346 @@ function collapseParent(which){
     currentParent = activeGroup;
   }
 
-  // ★ Line Schematic 子選項 reset
-  function resetSchematicSelection(){
-    currentSchematicLine    = null;
-    currentSchematicSection = null;
-    schematicSecBtns.forEach(b => b.classList.remove('active'));
-    schematicLineBtns.forEach(b => b.classList.remove('active'));
-    updateSchematicChildrenVisibility();
+  function collapseParent(which){
+    if (which === 'schematic'){
+      schematicPanel && schematicPanel.classList.remove('open');
+      resetSchematicSelection();
+      deactivateNav(schematicParentBtn);
+    } else if (which === 'maintenance'){
+      maintenancePanel && maintenancePanel.classList.remove('open');
+      resetMaintenanceSelection();
+      deactivateNav(maintenanceParentBtn);
+    } else if (which === 'scada'){
+      scadaPanel && scadaPanel.classList.remove('open');
+      resetScadaSelection();
+      deactivateNav(scadaParentBtn);
+    }
+    currentParent = null;
   }
 
-  // ★ Maintenance 子選項 reset
-  function resetMaintenanceSelection(){
-    maintenanceSecBtns.forEach(b => b.classList.remove('active'));
-  }
-
-  // ★ SCADA 子選項 reset
-  function resetScadaSelection(){
-    scadaSecBtns.forEach(b => b.classList.remove('active'));
-  }
-
-  function setModule(title, sub){
-    if (titleEl) titleEl.textContent = title;
-    if (subEl)   subEl.textContent   = sub;
+  function updateSchematicChildrenVisibility(){
+    const hasSection = !!currentSchematicSection;
+    if (schematicLineTitle) schematicLineTitle.style.display = hasSection ? '' : 'none';
+    if (schematicLineRow)   schematicLineRow.style.display   = hasSection ? '' : 'none';
+    if (schematicTagsBlock) schematicTagsBlock.style.display = hasSection ? '' : 'none';
   }
 
   function formatLineLabel(lineKey){
-    if (lineKey.startsWith('Line')) return lineKey.replace('Line','Line ');
-    return lineKey;
+    if (!lineKey) return '';
+    return lineKey.startsWith('Line') ? lineKey.replace('Line','Line ') : lineKey;
   }
 
   function buildSchematicFileName(lineKey, sectionKey){
-    const n = lineKey.replace('Line','');
-    return 'Updated Schematic.html?line=' + n + '&sec=' + sectionKey;
+    const n = (lineKey || '').replace('Line','');
+    return 'Updated Schematic.html?line=' + encodeURIComponent(n) + '&sec=' + encodeURIComponent(sectionKey || '');
   }
 
-  function openSchematicParent(btn){
-  activateNav(btn);
-  schematicPanel.classList.add('open');
-  maintenancePanel && maintenancePanel.classList.remove('open');
-  scadaPanel       && scadaPanel.classList.remove('open');
-
-  // ✅ 不要 setModule：父選單只是展開，不代表切頁
-}
-
-
-
-  function openMaintenanceParent(btn){
-  activateNav(btn);
-  maintenancePanel.classList.add('open');
-  schematicPanel && schematicPanel.classList.remove('open');
-  scadaPanel     && scadaPanel.classList.remove('open');
-
-  // ✅ 不要 setModule
-}
-
-
-
-  function openScadaParent(btn){
-  activateNav(btn);
-  scadaPanel.classList.add('open');
-  schematicPanel   && schematicPanel.classList.remove('open');
-  maintenancePanel && maintenancePanel.classList.remove('open');
-
-  // ✅ 不要 setModule
-}
-
-
-
-  // 主模組切換
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const roleClick = btn.dataset.role || '';
-
-     if (roleClick === 'schematic-parent'){
-  // ✅ 只有手機/平板才允許「再點一次收起 + 取消 active」
-  if (isTouchDevice && currentParent === 'schematic' && schematicPanel?.classList.contains('open')){
-    collapseParent('schematic');
-    return;
+  function buildIoListUrl(sectionKey){
+    // ✅ 這裡你可以換成你真正的 I/O List 頁面或 pdf viewer
+    // 先給一個預設：同一個 viewer 依 key 開
+    return 'CalibrationProcedure.html?key=' + encodeURIComponent('IO_LIST_' + sectionKey);
   }
-  resetOtherGroups('schematic');
-  openSchematicParent(btn);
-  return;
-}
 
-if (roleClick === 'maintenance-parent'){
-  if (isTouchDevice && currentParent === 'maintenance' && maintenancePanel?.classList.contains('open')){
-    collapseParent('maintenance');
-    return;
+  // 初始收起
+  updateSchematicChildrenVisibility();
+
+  // 桌機 hover 開子面板（schematic/maintenance/scada）
+  if (!isTouchDevice){
+    let t1=null,t2=null,t3=null;
+
+    function setupHover(parentBtn, panelEl, which){
+      if (!parentBtn || !panelEl) return;
+
+      function clearTimer(){
+        if (which==='schematic' && t1){clearTimeout(t1); t1=null;}
+        if (which==='maintenance' && t2){clearTimeout(t2); t2=null;}
+        if (which==='scada' && t3){clearTimeout(t3); t3=null;}
+      }
+      function scheduleClose(){
+        clearTimer();
+        const t=setTimeout(()=> panelEl.classList.remove('open'), 100);
+        if (which==='schematic') t1=t;
+        if (which==='maintenance') t2=t;
+        if (which==='scada') t3=t;
+      }
+
+      parentBtn.addEventListener('mouseenter', ()=>{
+        clearTimer();
+        currentParent = which;
+        panelEl.classList.add('open');
+      });
+
+      parentBtn.addEventListener('mouseleave', (e)=>{
+        if (e.relatedTarget && panelEl.contains(e.relatedTarget)) return;
+        scheduleClose();
+      });
+
+      panelEl.addEventListener('mouseenter', ()=>{
+        clearTimer();
+        panelEl.classList.add('open');
+      });
+
+      panelEl.addEventListener('mouseleave', (e)=>{
+        if (e.relatedTarget && parentBtn.contains(e.relatedTarget)) return;
+        scheduleClose();
+      });
+    }
+
+    setupHover(schematicParentBtn, schematicPanel, 'schematic');
+    setupHover(maintenanceParentBtn, maintenancePanel, 'maintenance');
+    setupHover(scadaParentBtn, scadaPanel, 'scada');
   }
-  resetOtherGroups('maintenance');
-  openMaintenanceParent(btn);
-  return;
-}
 
-if (roleClick === 'scada-parent'){
-  if (isTouchDevice && currentParent === 'scada' && scadaPanel?.classList.contains('open')){
-    collapseParent('scada');
-    return;
-  }
-  resetOtherGroups('scada');
-  openScadaParent(btn);
-  return;
-}
+  // 點 nav item（Home/父群組）
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const role = btn.dataset.role || '';
 
+      if (role === 'schematic-parent'){
+        if (isTouchDevice && currentParent==='schematic' && schematicPanel?.classList.contains('open')){
+          collapseParent('schematic'); return;
+        }
+        resetOtherGroups('schematic');
+        activateNav(btn);
+        schematicPanel && schematicPanel.classList.add('open');
+        maintenancePanel && maintenancePanel.classList.remove('open');
+        scadaPanel && scadaPanel.classList.remove('open');
+        return;
+      }
 
+      if (role === 'maintenance-parent'){
+        if (isTouchDevice && currentParent==='maintenance' && maintenancePanel?.classList.contains('open')){
+          collapseParent('maintenance'); return;
+        }
+        resetOtherGroups('maintenance');
+        activateNav(btn);
+        maintenancePanel && maintenancePanel.classList.add('open');
+        schematicPanel && schematicPanel.classList.remove('open');
+        scadaPanel && scadaPanel.classList.remove('open');
+        return;
+      }
 
+      if (role === 'scada-parent'){
+        if (isTouchDevice && currentParent==='scada' && scadaPanel?.classList.contains('open')){
+          collapseParent('scada'); return;
+        }
+        resetOtherGroups('scada');
+        activateNav(btn);
+        scadaPanel && scadaPanel.classList.add('open');
+        schematicPanel && schematicPanel.classList.remove('open');
+        maintenancePanel && maintenancePanel.classList.remove('open');
+        return;
+      }
 
-      // 一般 module 按鈕
+      // 一般 module
       const src = btn.dataset.src;
       if (!src) return;
 
-      if (currentParent === 'schematic')     resetSchematicSelection();
-      else if (currentParent === 'maintenance') resetMaintenanceSelection();
-      else if (currentParent === 'scada')       resetScadaSelection();
-
       currentParent = null;
+      resetSchematicSelection();
+      resetMaintenanceSelection();
+      resetScadaSelection();
 
       activateNav(btn);
-
-      const title = btn.dataset.title || 'Module';
-      const sub   = btn.dataset.sub || '';
       if (frame) frame.src = src;
-      setModule(title, sub);
-
-      if (panel) panel.classList.remove('open');
-      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+      setModule(btn.dataset.title || 'Module', btn.dataset.sub || '');
 
       closeAllSubPanels();
-
+      if (panel) panel.classList.remove('open');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
     });
   });
 
-  // Line Schematic — LINE
+  // SCADA 3 buttons
+  scadaSecBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      resetOtherGroups('scada');
+      activateNav(scadaParentBtn);
+
+      scadaSecBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const which = btn.getAttribute('data-scada');
+      let src=''; let title='SCADA PC'; let sub='';
+      switch(which){
+        case 'inventory':
+          src='PC inventory.html';
+          title='SCADA PC – Inventory';
+          sub='View and manage SCADA PC inventory.';
+          break;
+        case 'records':
+          src='PC Records.html';
+          title='SCADA PC – Records';
+          sub='Browse SCADA PC records.';
+          break;
+        case 'report':
+          src='New_Report.html';
+          title='SCADA PC – Report';
+          sub='Submit and export SCADA PC maintenance report.';
+          break;
+        default:
+          return;
+      }
+
+      if (frame) frame.src = src;
+      setModule(title, sub);
+      closeModules();
+    });
+  });
+
+  // Schematic SECTION
+  schematicSecBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      resetOtherGroups('schematic');
+      activateNav(schematicParentBtn);
+
+      const sec = btn.getAttribute('data-section');
+      if (!sec) return;
+
+      currentSchematicSection = sec;
+      currentSchematicLine = null;
+
+      schematicSecBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+
+      schematicLineBtns.forEach(b=>b.classList.remove('active'));
+      updateSchematicChildrenVisibility();
+
+      // I/O link 更新
+      if (ioListLink){
+        ioListLink.onclick = (e)=>{
+          e.preventDefault();
+          if (!currentSchematicSection) return;
+          const url = buildIoListUrl(currentSchematicSection);
+          if (frame) frame.src = url;
+          setModule('I/O List – ' + currentSchematicSection, 'I/O list for ' + currentSchematicSection);
+          closeModules();
+        };
+      }
+    });
+  });
+
+  // Schematic LINE（真正切頁才改 Title）
   schematicLineBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
       resetOtherGroups('schematic');
+      activateNav(schematicParentBtn);
 
       const lineKey = btn.getAttribute('data-line');
-      if (!lineKey) return;
-
-      activateNav(schematicParentBtn);
+      if (!lineKey || !currentSchematicSection) return;
 
       currentSchematicLine = lineKey;
 
       schematicLineBtns.forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
 
-      if (!currentSchematicSection) return;
       const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
       if (frame) frame.src = file;
 
       const lineLabel = formatLineLabel(currentSchematicLine);
-      setModule(
-        'Updated Schematic – ' + lineLabel + ' – ' + currentSchematicSection,
-        'Schematic file: ' + file
-      );
+      setModule('Updated Schematic – ' + lineLabel + ' – ' + currentSchematicSection, 'Schematic file: ' + file);
 
-// ✅ 新增：點到 LINE 真正開啟頁面後，自動收起 Modules
-closeModules();
+      closeModules();
     });
   });
 
-// Line Schematic — SECTION
-schematicSecBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    resetOtherGroups('schematic');
+  // Maintenance：2nd/3rd layer
+  if (maintenancePanel){
+    let hoverCloseTimer = null;
 
-    const sectionKey   = btn.getAttribute('data-section');
-    const sectionLabel = btn.getAttribute('data-label') || sectionKey || '';
-    if (!sectionKey) return;
-
-    activateNav(schematicParentBtn);
-
-    currentSchematicSection = sectionKey;
-    currentSchematicLine = null;
-
-    schematicSecBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    schematicLineBtns.forEach(b=>b.classList.remove('active'));
-
-    // ❌ 不再 setModule（手機 & 電腦都不改 Title）
-    // Title 只在 LINE / I/O / PDF / SCADA 真正切頁時才改
-
-    updateSchematicChildrenVisibility();
-  });
-});
-
-
-// ✅ Maintenance 2nd layer: desktop hover open + mobile click open + 3rd layer PDF click
-if (maintenancePanel){
-
-  let hoverCloseTimer = null;
-
-  function closeAllGroups(except){
-    maintenancePanel.querySelectorAll('.maintenance-group').forEach(g=>{
-      if (g !== except) g.classList.remove('open');
-    });
-  }
-
-  function openGroup(group){
-    if (!group) return;
-    closeAllGroups(group);
-    group.classList.add('open');
-  }
-
-  function scheduleCloseAll(){
-    clearTimeout(hoverCloseTimer);
-    hoverCloseTimer = setTimeout(()=> closeAllGroups(null), 180);
-  }
-
-  function cancelClose(){
-    clearTimeout(hoverCloseTimer);
-    hoverCloseTimer = null;
-  }
-
-  // 🖥️ 桌機：hover 2nd level item 就展開第三層（在旁邊 pop-out）
-  if (!isTouchDevice){
-    maintenancePanel.addEventListener('mouseover', (e)=>{
-      const group = e.target.closest('.maintenance-group');
+    function closeAllGroups(except){
+      maintenancePanel.querySelectorAll('.maintenance-group').forEach(g=>{
+        if (g !== except) g.classList.remove('open');
+      });
+    }
+    function openGroup(group){
       if (!group) return;
-
-      const onBtn = e.target.closest('.maintenance-group-btn');
-      if (!onBtn && !group.classList.contains('open')) return;
-
-      cancelClose();
-      openGroup(group);
-
-      // ✅ 桌機 hover 時第二層也變藍
-      maintenancePanel.querySelectorAll('.maintenance-group-btn')
-        .forEach(b => b.classList.remove('active'));
-      onBtn.classList.add('active');
-    });
-
-    maintenancePanel.addEventListener('mouseleave', ()=>{
-      scheduleCloseAll();
-    });
-
-    maintenancePanel.addEventListener('mouseenter', ()=>{
-      cancelClose();
-    });
-  }
-
-  // 📱 手機：點第二層展開/收起；點第三層開 PDF
-  maintenancePanel.addEventListener('click', (e) => {
-
-    // 2nd layer toggle (Raw Material / Extruder ...)
-    const groupBtn = e.target.closest('.maintenance-group-btn');
-    if (groupBtn) {
-      const group = groupBtn.closest('.maintenance-group');
-      if (!group) return;
-
-      if (!group.classList.contains('open')) closeAllGroups(group);
-      group.classList.toggle('open');
-
-      // ✅ 點第二層本身也變藍
-      maintenancePanel.querySelectorAll('.maintenance-group-btn')
-        .forEach(b => b.classList.remove('active'));
-      groupBtn.classList.add('active');
-
-      return; // ✅ 很重要：第二層處理完就結束
+      closeAllGroups(group);
+      group.classList.add('open');
+    }
+    function scheduleCloseAll(){
+      clearTimeout(hoverCloseTimer);
+      hoverCloseTimer = setTimeout(()=> closeAllGroups(null), 180);
+    }
+    function cancelClose(){
+      clearTimeout(hoverCloseTimer);
+      hoverCloseTimer = null;
     }
 
-    // 3rd layer pdf buttons
-    const pdfBtn = e.target.closest('.maintenance-sec-btn');
-    if (!pdfBtn) return;
+    // 桌機 hover 開 3rd
+    if (!isTouchDevice){
+      maintenancePanel.addEventListener('mouseover', (e)=>{
+        const group = e.target.closest('.maintenance-group');
+        if (!group) return;
 
-    // ✅ 點第三層 PDF 時：第二層也變藍 + 保持 open
-    maintenancePanel.querySelectorAll('.maintenance-group-btn')
-      .forEach(b => b.classList.remove('active'));
+        const onBtn = e.target.closest('.maintenance-group-btn');
+        if (!onBtn && !group.classList.contains('open')) return;
 
-    const groupOfPdf = pdfBtn.closest('.maintenance-group');
-    if (groupOfPdf) {
-      maintenancePanel.querySelectorAll('.maintenance-group')
-        .forEach(g => g.classList.remove('open'));
+        cancelClose();
+        openGroup(group);
 
-      groupOfPdf.classList.add('open');
+        maintenancePanel.querySelectorAll('.maintenance-group-btn')
+          .forEach(b=>b.classList.remove('active'));
+        if (onBtn) onBtn.classList.add('active');
+      });
 
-      const groupBtnEl = groupOfPdf.querySelector('.maintenance-group-btn');
-      if (groupBtnEl) groupBtnEl.classList.add('active');
+      maintenancePanel.addEventListener('mouseleave', scheduleCloseAll);
+      maintenancePanel.addEventListener('mouseenter', cancelClose);
     }
 
-    resetOtherGroups('maintenance');
+    // 手機 click toggle 2nd + click 3rd open pdf
+    maintenancePanel.addEventListener('click', (e)=>{
+      const groupBtn = e.target.closest('.maintenance-group-btn');
+      if (groupBtn){
+        const group = groupBtn.closest('.maintenance-group');
+        if (!group) return;
 
-    const key   = pdfBtn.getAttribute('data-pdf-key');
-    const label = pdfBtn.getAttribute('data-label') || pdfBtn.textContent.trim() || key || '';
-    if (!key) return;
+        if (!group.classList.contains('open')) closeAllGroups(group);
+        group.classList.toggle('open');
 
-    activateNav(maintenanceParentBtn);
+        maintenancePanel.querySelectorAll('.maintenance-group-btn')
+          .forEach(b=>b.classList.remove('active'));
+        groupBtn.classList.add('active');
+        return;
+      }
 
-    const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
-    if (frame) frame.src = viewerUrl;
+      const pdfBtn = e.target.closest('.maintenance-sec-btn');
+      if (!pdfBtn) return;
 
-    setModule('Calibration Procedure – ' + label, 'PDF: ' + label);
+      // 讓第二層保持藍色 + open
+      maintenancePanel.querySelectorAll('.maintenance-group-btn')
+        .forEach(b=>b.classList.remove('active'));
 
-    // 第三層 active
-    maintenancePanel.querySelectorAll('.maintenance-sec-btn')
-      .forEach(b => b.classList.remove('active'));
-    pdfBtn.classList.add('active');
+      const groupOfPdf = pdfBtn.closest('.maintenance-group');
+      if (groupOfPdf){
+        maintenancePanel.querySelectorAll('.maintenance-group').forEach(g=>g.classList.remove('open'));
+        groupOfPdf.classList.add('open');
+        const groupBtnEl = groupOfPdf.querySelector('.maintenance-group-btn');
+        if (groupBtnEl) groupBtnEl.classList.add('active');
+      }
 
-    closeModules();
-  });
-}
+      resetOtherGroups('maintenance');
+      activateNav(maintenanceParentBtn);
+
+      const key   = pdfBtn.getAttribute('data-pdf-key');
+      const label = pdfBtn.getAttribute('data-label') || pdfBtn.textContent.trim() || key || '';
+      if (!key) return;
+
+      const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
+      if (frame) frame.src = viewerUrl;
+
+      setModule('Calibration Procedure – ' + label, 'PDF: ' + label);
+
+      maintenancePanel.querySelectorAll('.maintenance-sec-btn')
+        .forEach(b=>b.classList.remove('active'));
+      pdfBtn.classList.add('active');
+
+      closeModules();
+    });
+  }
 })();
 </script>
+  
 <script>
   /* =========================
      Style Theme (blue / panther / hangyodon)
