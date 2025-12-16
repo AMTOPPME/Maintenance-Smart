@@ -327,53 +327,205 @@
   <script>
   (function () {
     // key 對應：從 URL ?key=SiemensS7 / ?key=MitsubishiPLC ... 等
-    const DocMap = {
-      SiemensS7: {
-        file: 'Siemens S7 Procedures.pdf',
-        title: 'Siemens S7 Procedures',
-        desc: 'Siemens S7 Backup Procedures – Calibration SOP'
-      },
-      SiemensS7_Old: {
-        file: 'Siemens S7 (old) Procedure.pdf',
-        title: 'Siemens S7 (Old) Procedure',
-        desc: 'Siemens S7 (Old Version) Backup Procedures – Calibration SOP'
-      },
-      MitsubishiPLC: {
-        file: 'Mitsubishi PLC Procedure.pdf',
-        title: 'Mitsubishi PLC Procedure',
-        desc: 'Mitsubishi PLC Procedures – Calibration SOP'
-      },
-      SiemensS5: {
-        file: 'Siemens S5 Procedure.pdf',
-        title: 'Siemens S5 Procedure',
-        desc: 'Siemens S5 Backup/Restore Procedures – Calibration SOP'
-      },
-      BardacDrive: {
-        file: 'Bardac Drive Procedure.pdf',
-        title: 'Bardac Drive Procedure',
-        desc: 'Bardac Drive Parameters & Backup Procedures – Calibration SOP'
-      },
-      ReclaimSC: {
-        file: 'Reclaim SC PLC Procedure.pdf',
-        title: 'Reclaim SC PLC Procedure',
-        desc: 'Reclaim Line Screenchanger PLC Procedures – Calibration SOP'
-      },
-      ABPLCProcedure: {
-        file: 'AB PLC Procedure.pdf',
-        title: 'AB PLC Procedure',
-        desc: 'Allen-Bradley PLC Upload/Download Procedures – Calibration SOP'
-      },
-      ABPLCPlan: {
-        file: 'AB PLC Plan.pdf',
-        title: 'AB PLC Plan',
-        desc: 'Allen-Bradley PLC Maintenance Plan – Calibration SOP'
-      },
-      HardDrivesBackup: {
-        file: 'Hard Drives Backup.pdf',
-        title: 'Hard Drives Backup',
-        desc: 'Hard Drives Backup Procedure – Calibration SOP'
-      }
-    };
+const DocMap = {
+  SiemensS7: {
+    file: 'Siemens S7 Procedures.pdf',
+    title: 'Siemens S7 Procedures',
+    desc: 'Siemens S7 Backup Procedures – Calibration SOP'
+  },
+  SiemensS7_Old: {
+    file: 'Siemens S7 (old) Procedure.pdf',
+    title: 'Siemens S7 (Old) Procedure',
+    desc: 'Siemens S7 (Old Version) Backup Procedures – Calibration SOP'
+  },
+  MitsubishiPLC: {
+    file: 'Mitsubishi PLC Procedure.pdf',
+    title: 'Mitsubishi PLC Procedure',
+    desc: 'Mitsubishi PLC Procedures – Calibration SOP'
+  },
+  SiemensS5: {
+    file: 'Siemens S5 Procedure.pdf',
+    title: 'Siemens S5 Procedure',
+    desc: 'Siemens S5 Backup/Restore Procedures – Calibration SOP'
+  },
+  BardacDrive: {
+    file: 'Bardac Drive Procedure.pdf',
+    title: 'Bardac Drive Procedure',
+    desc: 'Bardac Drive Parameters & Backup Procedures – Calibration SOP'
+  },
+  ReclaimSC: {
+    file: 'Reclaim SC PLC Procedure.pdf',
+    title: 'Reclaim SC PLC Procedure',
+    desc: 'Reclaim Line Screenchanger PLC Procedures – Calibration SOP'
+  },
+  ABPLCProcedure: {
+    file: 'AB PLC Procedure.pdf',
+    title: 'AB PLC Procedure',
+    desc: 'Allen-Bradley PLC Upload/Download Procedures – Calibration SOP'
+  },
+  ABPLCPlan: {
+    file: 'AB PLC Plan.pdf',
+    title: 'AB PLC Plan',
+    desc: 'Allen-Bradley PLC Maintenance Plan – Calibration SOP'
+  },
+  HardDrivesBackup: {
+    file: 'Hard Drives Backup.pdf',
+    title: 'Hard Drives Backup',
+    desc: 'Hard Drives Backup Procedure – Calibration SOP'
+  },
+
+  /* ===== Added files ===== */
+  AB_PLC_500_500_Upload_download_text: {
+    file: 'AB PLC 500,500 Upload_download-text.pdf',
+    title: 'AB PLC 500,500 Upload/Download (text)',
+    desc: 'AB PLC 500/500 Upload/Download – text'
+  },
+  Bardac_Drive_Download_Procedur: {
+    file: 'Bardac Drive Download Procedur.pdf',
+    title: 'Bardac Drive Download Procedur',
+    desc: 'Bardac Drive Download Procedure'
+  },
+  Bardac_Drive_Download_Procedure_SimpleVersion: {
+    file: 'Bardac Drive Download Procedure_SimpleVersion.pdf',
+    title: 'Bardac Drive Download Procedure (Simple Version)',
+    desc: 'Bardac Drive Download Procedure – Simple Version'
+  },
+  Bardac_Drive_DownloadProcedure: {
+    file: 'Bardac Drive DownloadProcedure.pdf',
+    title: 'Bardac Drive DownloadProcedure',
+    desc: 'Bardac Drive Download Procedure'
+  },
+  Bardac_dc_drive_parameter_procedure: {
+    file: 'Bardac_dc_drive_parameter_procedure.pdf',
+    title: 'Bardac DC Drive Parameter Procedure',
+    desc: 'Bardac DC drive parameter procedure'
+  },
+  BLENDING_SYSTEM_FOREMOST: {
+    file: 'BLENDING SYSTEM-FOREMOST.pdf',
+    title: 'BLENDING SYSTEM – FOREMOST',
+    desc: 'Blending system (Foremost)'
+  },
+  Calibration_procedures_of_line3_contact_roll_position: {
+    file: 'Calibration procedures of line3 contact roll position.pdf',
+    title: 'Calibration procedures of line3 contact roll position',
+    desc: 'Calibration procedure – Line 3 contact roll position'
+  },
+  Calibration_Load_cell_Amplifier_for_Winder_ISO: {
+    file: 'Calibration_Load_cell_Amplifier_for_Winder_ISO.pdf',
+    title: 'Calibration Load cell Amplifier for Winder (ISO)',
+    desc: 'Load cell amplifier calibration for winder (ISO)'
+  },
+  Check_the_Primary_syristors: {
+    file: 'Check the Primary syristors.pdf',
+    title: 'Check the Primary syristors',
+    desc: 'Check the Primary syristors'
+  },
+  Die_Probe_Calibration_with_UCAL_400_plus: {
+    file: 'Die Probe Calibration with UCAL 400+.pdf',
+    title: 'Die Probe Calibration with UCAL 400+',
+    desc: 'Die probe calibration using UCAL 400+'
+  },
+  Entering_Parameters_for_UPR_900: {
+    file: 'Entering Parameters for UPR 900.pdf',
+    title: 'Entering Parameters for UPR 900',
+    desc: 'Entering Parameters for UPR 900'
+  },
+  Entering_Parameters_Into_Dynisco_UPR_900_Controller: {
+    file: 'Entering Parameters Into Dynisco UPR 900 Controller.pdf',
+    title: 'Entering Parameters Into Dynisco UPR 900 Controller',
+    desc: 'Dynisco UPR 900 controller parameters'
+  },
+  How_to_set_magelis_EN: {
+    file: 'How to set magelis_EN.pdf',
+    title: 'How to set Magelis (EN)',
+    desc: 'How to set Magelis HMI – English'
+  },
+  How_to_set_magelis_TW: {
+    file: 'How to set magelis_TW.pdf',
+    title: 'How to set Magelis (TW)',
+    desc: 'How to set Magelis HMI – Traditional Chinese'
+  },
+  How_to_set_plc_EN: {
+    file: 'How to set plc_EN.pdf',
+    title: 'How to set PLC (EN)',
+    desc: 'How to set PLC – English'
+  },
+  How_to_set_plc_TW: {
+    file: 'How to set plc_TW.pdf',
+    title: 'How to set PLC (TW)',
+    desc: 'How to set PLC – Traditional Chinese'
+  },
+  How_to_set_siemens_hmi_EN: {
+    file: 'How to set siemens_hmi_EN.pdf',
+    title: 'How to set Siemens HMI (EN)',
+    desc: 'How to set Siemens HMI – English'
+  },
+  Maguire: {
+    file: 'Maguire.pdf',
+    title: 'Maguire',
+    desc: 'Maguire document'
+  },
+  Measurex_Profile_Correction_Procedure_V2_0: {
+    file: 'Measurex Profile Correction_Procedure V2 0.pdf',
+    title: 'Measurex Profile Correction Procedure V2 0',
+    desc: 'Measurex profile correction procedure'
+  },
+  mitsubishi_plc_processdure_upload_download_icon: {
+    file: 'mitsubishi plc processdure-upload_download_icon.pdf',
+    title: 'Mitsubishi PLC procedure upload/download (icon)',
+    desc: 'Mitsubishi PLC upload/download icon document'
+  },
+  Mitsubishi_PLC_Upload_download_text: {
+    file: 'Mitsubishi PLC Upload_download-text.pdf',
+    title: 'Mitsubishi PLC Upload/Download (text)',
+    desc: 'Mitsubishi PLC Upload/Download – text'
+  },
+  Mitsubishi_PLCUpload_Download_doc_pdf: {
+    file: 'Mitsubishi PLCUpload-Download.doc.pdf',
+    title: 'Mitsubishi PLCUpload-Download (doc.pdf)',
+    desc: 'Mitsubishi PLC upload/download document (as named)'
+  },
+  Mitsubishi_PLCUpload_Download_pdf: {
+    file: 'Mitsubishi PLCUpload-Download.pdf',
+    title: 'Mitsubishi PLCUpload-Download',
+    desc: 'Mitsubishi PLC upload/download'
+  },
+  Monitoring_of_web_break_detectors: {
+    file: 'Monitoring of web break detectors.pdf',
+    title: 'Monitoring of web break detectors',
+    desc: 'Web break detectors monitoring'
+  },
+  PLC_S5_upload_download_procedure: {
+    file: 'PLC S5 -upload-download -procedure.pdf',
+    title: 'PLC S5 upload/download procedure',
+    desc: 'Siemens PLC S5 upload/download procedure'
+  },
+  procedure_if_cooling_fan_of_Aux3_motor_went_out: {
+    file: 'procedure if cooling fan of Aux3 motor went out.pdf',
+    title: 'Procedure if cooling fan of Aux3 motor went out',
+    desc: 'Cooling fan (Aux3 motor) troubleshooting procedure'
+  },
+  Procedure_for_Up_or_Downloading_Siemens_S5_program_for_Reclaim: {
+    file: 'Procedure for Up or Downloading Siemens S5 program for Reclaim.pdf',
+    title: 'Procedure for Up or Downloading Siemens S5 program for Reclaim',
+    desc: 'Siemens S5 program upload/download for Reclaim'
+  },
+  Procedure_to_setup_IP_address_on_1756_ENBT_Ethernet_card: {
+    file: 'Procedure to setup IP address on 1756 ENBT Ethernet card.pdf',
+    title: 'Procedure to setup IP address on 1756 ENBT Ethernet card',
+    desc: 'Set IP address on 1756-ENBT Ethernet card'
+  },
+  Procedure_to_Transfer_Telemechanique_V4_plc_to_V5_version: {
+    file: 'Procedure to Transfer Telemechanique V4 plc to V5 version.pdf',
+    title: 'Procedure to Transfer Telemechanique V4 plc to V5 version',
+    desc: 'Telemechanique PLC transfer V4 → V5'
+  },
+  TSM_Load_Cell_Calibration_Sheet: {
+    file: 'TSM Load Cell Calibration Sheet.pdf',
+    title: 'TSM Load Cell Calibration Sheet',
+    desc: 'TSM load cell calibration sheet'
+  }
+};
 
     const params = new URLSearchParams(window.location.search);
     let key = params.get('key') || 'SiemensS7';
@@ -429,7 +581,7 @@ if (useFallback) {
 // 🖥️ 桌機/一般瀏覽器 → 用 PDF.js viewer
 if (frame) frame.src = viewerUrl;
 if (openNewTab) openNewTab.href = viewerUrl;
-
+})();
   </script>
 </body>
 </html>
