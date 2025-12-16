@@ -1557,35 +1557,56 @@ if (maintenancePanel){
     const pdfBtn = e.target.closest('.maintenance-sec-btn');
     if (!pdfBtn) return;
 
-    // ✅ 點第三層 PDF 時，第二層分類同步 active（變藍）
+// 3rd layer pdf buttons
+const pdfBtn = e.target.closest('.maintenance-sec-btn');
+if (!pdfBtn) return;
+
+// ✅ 點第三層 PDF 時：
+// 1) 第二層分類保持 open（藍）
+// 2) 第二層分類按鈕加上 active（藍，即使之後 hover 關掉也能保持）
+// 3) 第三層 PDF 按鈕 active
+
+// 先把所有第二層 active 清掉
 maintenancePanel
   .querySelectorAll('.maintenance-group-btn')
   .forEach(b => b.classList.remove('active'));
 
+// 找到這顆 PDF 所屬的 group
 const group = pdfBtn.closest('.maintenance-group');
-const groupBtn = group && group.querySelector('.maintenance-group-btn');
-if (groupBtn) groupBtn.classList.add('active');
 
-    
-    resetOtherGroups('maintenance');
+// 只開一個分類（可選，但建議）
+if (group) {
+  // 關掉其他分類 open
+  maintenancePanel.querySelectorAll('.maintenance-group')
+    .forEach(g => g.classList.remove('open'));
 
-    const key   = pdfBtn.getAttribute('data-pdf-key');
-    const label = pdfBtn.getAttribute('data-label') || pdfBtn.textContent.trim() || key || '';
-    if (!key) return;
+  // 打開目前分類
+  group.classList.add('open');
 
-    activateNav(maintenanceParentBtn);
-
-    const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
-    if (frame) frame.src = viewerUrl;
-
-    setModule('Calibration Procedure – ' + label, 'PDF: ' + label);
-
-    // active 樣式
-    maintenancePanel.querySelectorAll('.maintenance-sec-btn').forEach(b=>b.classList.remove('active'));
-    pdfBtn.classList.add('active');
-    closeModules();
-  });
+  // 把目前分類按鈕設成 active（注意：名字不要叫 groupBtn，避免重複宣告）
+  const groupBtnEl = group.querySelector('.maintenance-group-btn');
+  if (groupBtnEl) groupBtnEl.classList.add('active');
 }
+
+resetOtherGroups('maintenance');
+
+const key   = pdfBtn.getAttribute('data-pdf-key');
+const label = pdfBtn.getAttribute('data-label') || pdfBtn.textContent.trim() || key || '';
+if (!key) return;
+
+activateNav(maintenanceParentBtn);
+
+const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
+if (frame) frame.src = viewerUrl;
+
+setModule('Calibration Procedure – ' + label, 'PDF: ' + label);
+
+// 第三層 active
+maintenancePanel.querySelectorAll('.maintenance-sec-btn').forEach(b=>b.classList.remove('active'));
+pdfBtn.classList.add('active');
+
+closeModules();
+
 
 
   // I/O LIST
