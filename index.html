@@ -1309,14 +1309,9 @@ function collapseParent(which){
   maintenancePanel && maintenancePanel.classList.remove('open');
   scadaPanel       && scadaPanel.classList.remove('open');
 
-  // ✅ 手機/平板：只展開，不改左上 title/sub（避免誤導）
-  if (!isTouchDevice){
-    setModule(
-      btn.dataset.title || 'Updated Schematic',
-      btn.dataset.sub   || 'Select section (F12/F13/F16/F201) then line (1~4).'
-    );
-  }
+  // ✅ 不要 setModule：父選單只是展開，不代表切頁
 }
+
 
 
   function openMaintenanceParent(btn){
@@ -1325,13 +1320,9 @@ function collapseParent(which){
   schematicPanel && schematicPanel.classList.remove('open');
   scadaPanel     && scadaPanel.classList.remove('open');
 
-  if (!isTouchDevice){
-    setModule(
-      btn.dataset.title || 'Maintenance',
-      btn.dataset.sub   || 'Open maintenance SOP PDFs.'
-    );
-  }
+  // ✅ 不要 setModule
 }
+
 
 
   function openScadaParent(btn){
@@ -1340,13 +1331,9 @@ function collapseParent(which){
   schematicPanel   && schematicPanel.classList.remove('open');
   maintenancePanel && maintenancePanel.classList.remove('open');
 
-  if (!isTouchDevice){
-    setModule(
-      btn.dataset.title || 'SCADA PC',
-      btn.dataset.sub   || 'SCADA PC tools: Inventory / Records / Report.'
-    );
-  }
+  // ✅ 不要 setModule
 }
+
 
 
   // 主模組切換
