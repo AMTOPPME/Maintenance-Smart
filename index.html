@@ -654,7 +654,17 @@
   opacity:.7;
   transition:transform .18s ease;
 }
+/* ✅ 每個 2nd level item 當定位點，第三層才會貼著該 item */
+.maintenance-group{
+  position:relative;
+}
 
+/* 讓第三層 pop-out 對齊「該 item」的頂部 */
+.maintenance-group .maintenance-third-panel{
+  top:0;            /* 你原本就有 top:0，這裡確保是對 group 對齊 */
+}
+
+.maintenance-group{ position: relative; }
 
 /* 開啟狀態（第二層） */
 .maintenance-group.open .maintenance-group-btn{
@@ -1584,19 +1594,73 @@
     });
   });
 
-  // Maintenance 2nd layer open/close + 3rd layer PDF click (event delegation)
+// ✅ Maintenance 2nd layer: desktop hover open + mobile click open + 3rd layer PDF click
 if (maintenancePanel){
-  // 2nd layer toggle
+
+  const isTouchDevice =
+    ('ontouchstart' in window) ||
+    (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+  let hoverCloseTimer = null;
+
+  function closeAllGroups(except){
+    maintenancePanel.querySelectorAll('.maintenance-group').forEach(g=>{
+      if (g !== except) g.classList.remove('open');
+    });
+  }
+
+  function openGroup(group){
+    if (!group) return;
+    closeAllGroups(group);
+    group.classList.add('open');
+  }
+
+  function scheduleCloseAll(){
+    clearTimeout(hoverCloseTimer);
+    hoverCloseTimer = setTimeout(()=> closeAllGroups(null), 180);
+  }
+
+  function cancelClose(){
+    clearTimeout(hoverCloseTimer);
+    hoverCloseTimer = null;
+  }
+
+  // 🖥️ 桌機：hover 2nd level item 就展開第三層（在旁邊 pop-out）
+  if (!isTouchDevice){
+    maintenancePanel.addEventListener('mouseover', (e)=>{
+      const group = e.target.closest('.maintenance-group');
+      if (!group) return;
+
+      // 只有滑到該項目按鈕時才打開
+      const onBtn = e.target.closest('.maintenance-group-btn');
+      if (!onBtn && !group.classList.contains('open')) return;
+
+      cancelClose();
+      openGroup(group);
+    });
+
+    // 滑出 maintenancePanel → 延遲關閉（讓你能滑去右邊 pop-out）
+    maintenancePanel.addEventListener('mouseleave', ()=>{
+      scheduleCloseAll();
+    });
+
+    // 滑回來（含 pop-out 內）→ 不關
+    maintenancePanel.addEventListener('mouseenter', ()=>{
+      cancelClose();
+    });
+  }
+
+  // 📱 手機：點第二層展開/收起；點第三層開 PDF
   maintenancePanel.addEventListener('click', (e)=>{
+
+    // 2nd layer toggle
     const groupBtn = e.target.closest('.maintenance-group-btn');
     if (groupBtn){
       const group = groupBtn.closest('.maintenance-group');
       if (!group) return;
 
-      // 只開一個（要多開就把這段拿掉）
-      maintenancePanel.querySelectorAll('.maintenance-group').forEach(g=>{
-        if (g !== group) g.classList.remove('open');
-      });
+      // 只開一個（要多開就拿掉這段）
+      if (!group.classList.contains('open')) closeAllGroups(group);
 
       group.classList.toggle('open');
       return;
@@ -1609,7 +1673,7 @@ if (maintenancePanel){
     resetOtherGroups('maintenance');
 
     const key   = pdfBtn.getAttribute('data-pdf-key');
-    const label = pdfBtn.getAttribute('data-label') || key || '';
+    const label = pdfBtn.getAttribute('data-label') || pdfBtn.textContent.trim() || key || '';
     if (!key) return;
 
     activateNav(maintenanceParentBtn);
@@ -1624,6 +1688,7 @@ if (maintenancePanel){
     pdfBtn.classList.add('active');
   });
 }
+
 
   // I/O LIST
   const ioLink = document.getElementById('ioListLink');
