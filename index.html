@@ -421,34 +421,35 @@
     }
 
     /* Maintenance & SCADA 子按鈕（灰色） */
-    .maintenance-sec-row,
-    .scada-sec-row{
-      display:flex;
-      flex-direction: column;
-      flex-wrap:wrap;
-      gap:6px;
-    }
-    
-  /* layout */
-  display:flex;                 /* 比 inline-flex 穩 */
-  align-items:center;
-  justify-content:center;       /* 文字置中 */
-  text-align:center;
+    /* ===============================
+   3rd level buttons (Maintenance / SCADA) - clean version
+================================= */
 
-  /* spacing / size */
-  padding:10px 16px;            /* 不會窄 */
-  min-height:36px;              /* 更好按 */
-  font-size:13px;
-  line-height:1.2;
+/* 第三層容器：直排 */
+.maintenance-sec-row,
+.scada-sec-row{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
 
-  /* style */
-  border-radius:12px;
+/* 第三層按鈕：方形卡片風格（好按、好看、可 active） */
+.maintenance-sec-btn,
+.scada-sec-btn{
+  width:100%;
   border:1px solid var(--border-subtle);
   background:#f9fafb;
-  color:#6b7280;                /* 先固定灰色，避免 var(--text-soft) 失效變黑 */
-  cursor:pointer;
+  color:var(--text-soft);
+  border-radius:12px;
+  padding:10px 14px;
+  min-height:38px;
 
-  /* interaction */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+
+  cursor:pointer;
   transition: background .15s ease,
               border-color .15s ease,
               color .15s ease,
@@ -462,7 +463,6 @@
   font-size:12px;
 }
 
-/* hover */
 .maintenance-sec-btn:hover,
 .scada-sec-btn:hover{
   background:#fff;
@@ -472,17 +472,15 @@
   box-shadow:0 6px 16px rgba(15,23,42,.08);
 }
 
-/* active */
 .maintenance-sec-btn.active,
 .scada-sec-btn.active{
-  background:#1d4ed8;
-  border-color:#1d4ed8;
+  background:var(--accent);
+  border-color:var(--accent);
   color:#fff;
   font-weight:600;
   box-shadow:0 8px 20px rgba(37,99,235,.35);
 }
 
-/* keyboard focus (可用 Tab 操作更舒服) */
 .maintenance-sec-btn:focus-visible,
 .scada-sec-btn:focus-visible{
   outline:2px solid rgba(37,99,235,.45);
@@ -495,7 +493,6 @@
   font-size:10px;
   color:var(--text-soft);
 }
-
 
     /* Line Schematic → Tags list 區塊（顯示由 JS 控制） */
     .ls-tags{
@@ -704,17 +701,6 @@
 }
 
 .maintenance-group{ position: relative; }
-
-/* 開啟狀態（第二層） */
-.maintenance-group.open .maintenance-group-btn{
-  background:var(--accent);
-  color:#fff;
-  box-shadow:0 4px 10px rgba(37,99,235,.35);
-}
-
-.maintenance-group.open .maintenance-group-btn .nav-chevron{
-  transform:rotate(180deg);
-}
 
 /* 第三層：右側 pop-out（你原本 maintenance-panel 那種邏輯） */
 .maintenance-third-panel{
