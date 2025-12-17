@@ -439,6 +439,14 @@
   <img src="assets/hangyodon2.png" alt="Hangyodon Right" class="side-hangyodon right">
 
   <div class="page">
+    
+  <!-- Page Title -->
+  <div class="card" style="padding:12px 14px;">
+    <h2 style="margin:0;">IO Description List – <span id="secTitle">F12</span></h2>
+    <div class="card-subtitle" style="margin:4px 0 0;">
+      Browse I/O description CSV tables for <span id="secTitle2">F12</span>.
+    </div>
+  </div>
 
     <!-- Filters (collapsible) -->
     <div class="card">
@@ -517,6 +525,22 @@
   let sortAsc = true;
 
   const $ = (s)=>document.querySelector(s);
+  
+function updateSectionUI(sec){
+  const a = document.getElementById("secTitle");
+  const b = document.getElementById("secTitle2");
+  if (a) a.textContent = sec;
+  if (b) b.textContent = sec;
+
+  // ✅ 同步網址，方便分享連結
+  const u = new URL(location.href);
+  u.searchParams.set("section", sec);
+  history.replaceState(null, "", u.toString());
+  
+  if (window.parent && window.parent !== window) {
+  window.parent.postMessage({ type:"ms-section-change", section: sec }, "*");
+  }
+}
 
   function showError(msg){
     const el = $("#errBox");
@@ -714,11 +738,13 @@
       const preSection = params.get("section");
       if(preSection && (modules.length ? modules.includes(preSection) : Object.keys(indexData).includes(preSection))){
         $("#modSel").value = preSection;
+        updateSectionUI(preSection);
       }
 
 
       $("#modSel").addEventListener("change", ()=>{
         const m = $("#modSel").value;
+        updateSectionUI(m);
         const cats = Object.keys(indexData[m] || {});
         fillSelect($("#catSel"), cats);
 
