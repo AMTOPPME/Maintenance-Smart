@@ -1,0 +1,177 @@
+{
+  "F12": {
+    "BIT": {
+      "ORIGINAL": "IODescriptionList/F12/BIT/F12 - 11 - BIT - ORIGINAL.csv",
+      "XE01":     "IODescriptionList/F12/BIT/F12 - 11 - BIT - XE01.csv"
+    },
+    "INPUTBIT": {
+      "ORIGINAL": "IODescriptionList/F12/INPUTBIT/F12 - 1 - INPUTBIT - ORIGINAL.csv",
+      "XE01":     "IODescriptionList/F12/INPUTBIT/F12 - 1 - INPUTBIT - XE01.csv",
+      "XE02":     "IODescriptionList/F12/INPUTBIT/F12 - 1 - INPUTBIT - XE02.csv",
+      "XE03":     "IODescriptionList/F12/INPUTBIT/F12 - 1 - INPUTBIT - XE03.csv",
+      "XE04":     "IODescriptionList/F12/INPUTBIT/F12 - 1 - INPUTBIT - XE04.csv"
+    },
+    "INPUTWD": {
+      "ORIGINAL": "IODescriptionList/F12/INPUTWD/F12 - 3 - INPUTWD - ORIGINAL.csv",
+      "XE01":     "IODescriptionList/F12/INPUTWD/F12 - 3 - INPUTWD - XE01.csv",
+      "XE02":     "IODescriptionList/F12/INPUTWD/F12 - 3 - INPUTWD - XE02.csv"
+    },
+    "OUTPUT": {
+      "ORIGINAL": "IODescriptionList/F12/OUTPUT/F12 - 2 - OUTPUT - ORIGINAL.csv",
+      "XE01":     "IODescriptionList/F12/OUTPUT/F12 - 2 - OUTPUT - XE01.csv",
+      "XE02":     "IODescriptionList/F12/OUTPUT/F12 - 2 - OUTPUT - XE02.csv",
+      "XE03":     "IODescriptionList/F12/OUTPUT/F12 - 2 - OUTPUT - XE03.csv",
+      "XE04":     "IODescriptionList/F12/OUTPUT/F12 - 2 - OUTPUT - XE04.csv"
+    },
+    "TIMER": {
+      "ORIGINAL": "IODescriptionList/F12/TIMER/F12 - 6 - TIMER - ORIGINAL.csv",
+      "XE01":     "IODescriptionList/F12/TIMER/F12 - 6 - TIMER - XE01.csv",
+      "XE02":     "IODescriptionList/F12/TIMER/F12 - 6 - TIMER - XE02.csv",
+      "XE03":     "IODescriptionList/F12/TIMER/F12 - 6 - TIMER - XE03.csv",
+      "XE04":     "IODescriptionList/F12/TIMER/F12 - 6 - TIMER - XE04.csv"
+    },
+    "WORD1": {
+      "ORIGINAL": "IODescriptionList/F12/WORD1/F12 - 7 - WORD1 - ORIGINAL.csv",
+      "XE01":     "IODescriptionList/F12/WORD1/F12 - 7 - WORD1 - XE01.csv",
+      "XE02":     "IODescriptionList/F12/WORD1/F12 - 7 - WORD1 - XE02.csv",
+      "XE03":     "IODescriptionList/F12/WORD1/F12 - 7 - WORD1 - XE03.csv",
+      "XE04":     "IODescriptionList/F12/WORD1/F12 - 7 - WORD1 - XE04.csv"
+    },
+    "WORD2 - W4600,0 - W4984,F": {
+      "ORIGINAL": "IODescriptionList/F12/WORD2 - W4600,0 - W4984,F/F12 - 9 - WORD2 - W4600,0 - W4984,F - ORIGINAL.csv",
+      "XE01":     "IODescriptionList/F12/WORD2 - W4600,0 - W4984,F/F12 - 9 - WORD2 - W4600,0 - W4984,F - XE01.csv"
+    },
+    "WORD3": {
+      "ORIGINAL": "IODescriptionList/F12/WORD3/F12 - 10 - WORD3 - ORIGINAL.csv",
+      "XE01":     "IODescriptionList/F12/WORD3/F12 - 10 - WORD3 - XE01.csv"
+    },
+    "WORD4": {
+      "CSV": "IODescriptionList/F12/WORD4/F12 - 4 - WORD4.csv"
+    },
+    "WORD1BIT1 - missing pg 6": {
+      "ORIGINAL": "IODescriptionList/F12/WORD1BIT1 - missing pg 6/F12 - 8 - WORD1BIT1 - missing pg 6 - ORIGINAL.csv",
+      "XE01":     "IODescriptionList/F12/WORD1BIT1 - missing pg 6/F12 - 8 - WORD1BIT1 - missing pg 6 - XE01.csv",
+      "XE02":     "IODescriptionList/F12/WORD1BIT1 - missing pg 6/F12 - 8 - WORD1BIT1 - missing pg 6 - XE02.csv",
+      "XE03":     "IODescriptionList/F12/WORD1BIT1 - missing pg 6/F12 - 8 - WORD1BIT1 - missing pg 6 - XE03.csv",
+      "XE04":     "IODescriptionList/F12/WORD1BIT1 - missing pg 6/F12 - 8 - WORD1BIT1 - missing pg 6 - XE04.csv"
+    },
+    "TXT": {
+      "CSV": "IODescriptionList/F12/TXT/F12 - 5 - TXT.csv"
+    }
+  },
+"F13": {
+  "MODULELIST": {
+    "CSV": "IODescriptionList/F13/MODULELIST/F13 - 1 - MODULELIST.csv"
+  },
+  "INPUTBIT": {
+    "ORIGINAL": "IODescriptionList/F13/INPUTBIT/F13 - 2 - INPUTBIT - ORIGINAL.csv",
+    "XE01": "IODescriptionList/F13/INPUTBIT/F13 - 2 - INPUTBIT - XE01.csv",
+    "XE02": "IODescriptionList/F13/INPUTBIT/F13 - 2 - INPUTBIT - XE02.csv",
+    "XE03": "IODescriptionList/F13/INPUTBIT/F13 - 2 - INPUTBIT - XE03.csv",
+    "XE04": "IODescriptionList/F13/INPUTBIT/F13 - 2 - INPUTBIT - XE04.csv"
+  },
+  "OUTPUTBIT": {
+    "ORIGINAL": "IODescriptionList/F13/OUTPUTBIT/F13 - 3 - OUTPUTBIT - ORIGINAL.csv",
+    "XE01": "IODescriptionList/F13/OUTPUTBIT/F13 - 3 - OUTPUTBIT - XE01.csv",
+    "XE02": "IODescriptionList/F13/OUTPUTBIT/F13 - 3 - OUTPUTBIT - XE02.csv",
+    "XE03": "IODescriptionList/F13/OUTPUTBIT/F13 - 3 - OUTPUTBIT - XE03.csv",
+    "XE04": "IODescriptionList/F13/OUTPUTBIT/F13 - 3 - OUTPUTBIT - XE04.csv"
+  },
+  "INPUTWD": {
+    "CSV": "IODescriptionList/F13/INPUTWD/F13 - 4 - INPUTWD.csv"
+  },
+  "OUTPUTWD": {
+    "CSV": "IODescriptionList/F13/OUTPUTWD/F13 - 5 - OUTPUTWD.csv"
+  },
+  "BIT": {
+    "CSV": "IODescriptionList/F13/BIT/F13 - 6 - BIT.csv"
+  },
+  "WORD": {
+    "WORD-4000": "IODescriptionList/F13/WORD/F13 - 7 - WORD - WORD-4000.csv",
+    "WORD-4600": "IODescriptionList/F13/WORD/F13 - 7 - WORD - WORD-4600.csv",
+    "WORD-6000": "IODescriptionList/F13/WORD/F13 - 7 - WORD - WORD-6000.csv",
+    "WORD-650":  "IODescriptionList/F13/WORD/F13 - 7 - WORD - WORD-650.csv"
+  },
+  "WORDBIT": {
+    "4400-4420": "IODescriptionList/F13/WORDBIT/F13 - 8 - WORDBIT - 4400-4420.csv",
+    "454-538":   "IODescriptionList/F13/WORDBIT/F13 - 8 - WORDBIT - 454-538.csv",
+    "4750-4808": "IODescriptionList/F13/WORDBIT/F13 - 8 - WORDBIT - 4750-4808.csv",
+    "9000-9999": "IODescriptionList/F13/WORDBIT/F13 - 8 - WORDBIT - 9000-9999.csv"
+  },
+  "WORD6": {
+    "CSV": "IODescriptionList/F13/WORD6/F13 - 9 - WORD6.csv"
+  },
+  "TIMER": {
+    "CSV": "IODescriptionList/F13/TIMER/F13 - 10 - TIMER.csv"
+  },
+  "TXT": {
+    "CSV": "IODescriptionList/F13/TXT/F13 - 11 - TXT.csv"
+  },
+  "TEMP CONTROL": {
+    "DATA":        "IODescriptionList/F13/TEMP CONTROL/F13 - 12 - TEMP CONTROL - DATA.csv",
+    "TC 16 BIT":   "IODescriptionList/F13/TEMP CONTROL/F13 - 12 - TEMP CONTROL - TC 16 BIT.csv",
+    "TC 50":       "IODescriptionList/F13/TEMP CONTROL/F13 - 12 - TEMP CONTROL - TC 50.csv",
+    "TEMP RANGE":  "IODescriptionList/F13/TEMP CONTROL/F13 - 12 - TEMP CONTROL - TEMP RANGE.csv"
+  }
+},
+"F16": {
+  "INPUT": {
+    "ORIGINAL": "IODescriptionList/F16/INPUT/F16 - 1 - INPUT - ORIGINAL.csv",
+    "XE03": "IODescriptionList/F16/INPUT/F16 - 1 - INPUT - XE03.csv",
+    "XE04": "IODescriptionList/F16/INPUT/F16 - 1 - INPUT - XE04.csv"
+  },
+  "INPUTOUTPUT": {
+    "ORIGINAL": "IODescriptionList/F16/INPUTOUTPUT/F16 - 1 - INPUTOUTPUT - ORIGINAL.csv"
+  },
+  "OUTPUT": {
+    "XE03": "IODescriptionList/F16/OUTPUT/F16 - 1 - OUTPUT - XE03.csv",
+    "XE04": "IODescriptionList/F16/OUTPUT/F16 - 1 - OUTPUT - XE04.csv"
+  },
+  "BIT": {
+    "CSV": "IODescriptionList/F16/BIT/F16 - 2 - BIT.csv"
+  },
+  "GoOnline - Master Form": {
+    "01": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - 01.csv",
+    "02": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - 02.csv",
+    "03": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - 03.csv"
+  },
+  "GoOnline - Master Form Updated": {
+    "01": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - 01.csv",
+    "02": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - 02.csv",
+    "03": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - 03.csv"
+  }
+},
+"F201": {
+  "NEWWINDER": {
+    "CSV": "IODescriptionList/F201/NEWWINDER/F201 - 1 - NEWWINDER.csv"
+  },
+  "INPUTOUTPUT": {
+    "ORIGINAL": "IODescriptionList/F201/INPUTOUTPUT/F201 - 2 - INPUTOUTPUT - ORIGINAL.csv",
+    "XE01": "IODescriptionList/F201/INPUTOUTPUT/F201 - 2 - INPUTOUTPUT - XE01.csv",
+    "XE03": "IODescriptionList/F201/INPUTOUTPUT/F201 - 2 - INPUTOUTPUT - XE03.csv",
+    "XE04": "IODescriptionList/F201/INPUTOUTPUT/F201 - 2 - INPUTOUTPUT - XE04.csv"
+  },
+  "BIT": {
+    "CSV": "IODescriptionList/F201/BIT/F201 - 3 - BIT.csv"
+  },
+  "CW": {
+    "CW assign for winder": "IODescriptionList/F201/CW/F201 - 4 - CW - CW assign for winder.csv",
+    "cdw": "IODescriptionList/F201/CW/F201 - 4 - CW - cdw.csv",
+    "cw": "IODescriptionList/F201/CW/F201 - 4 - CW - cw.csv"
+  },
+  "WORD": {
+    "DW": "IODescriptionList/F201/WORD/F201 - 5 - WORD - DW.csv",
+    "LINE 1": "IODescriptionList/F201/WORD/F201 - 5 - WORD - LINE 1.csv",
+    "WORD": "IODescriptionList/F201/WORD/F201 - 5 - WORD - WORD.csv"
+  },
+  "TIMER": {
+    "CSV": "IODescriptionList/F201/TIMER/F201 - 6 - TIMER.csv"
+  },
+  "PLC LIST": {
+    "CSV": "IODescriptionList/F201/PLC - LIST/F201 - PLC - LIST.csv"
+  },
+  "STRUCTURE PROGRAMME": {
+    "PDF": "IODescriptionList/F201/STRUCTURE PROGRAMME/F201 - STRUCTURE PROGRAMME.pdf"
+  }
+}
+}
