@@ -523,6 +523,8 @@ td:empty::before {
   let indexData = null;
   let rowsAll = [];
   let header = [];
+  let titleText = "";      // 例如 F16\BIT.DOC
+  let bodyRows2D = [];     // 真正資料（含空白列）
   let sortKey = null;
   let sortAsc = true;
 
@@ -683,40 +685,32 @@ function updateSectionUI(sec){
     else if(items.length) selectEl.value = items[0];
   }
 
-  // CSV parser (supports quotes)
-  function parseCsv(text){
-    const rows = [];
-    let row = [], cur = "", inQ = false;
+// CSV parser -> 回傳原始 2D rows（保留空白列）
+function parseCsvRows(text){
+  const rows = [];
+  let row = [], cur = "", inQ = false;
 
-    for(let i=0;i<text.length;i++){
-      const c = text[i], n = text[i+1];
+  for(let i=0;i<text.length;i++){
+    const c = text[i], n = text[i+1];
 
-      if(c === '"'){
-        if(inQ && n === '"'){ cur += '"'; i++; }
-        else inQ = !inQ;
-      } else if(!inQ && c === ','){
-        row.push(cur); cur="";
-      } else if(!inQ && (c === '\n' || c === '\r')){
-        if(c === '\r' && n === '\n') i++;
-        row.push(cur); rows.push(row);
-        row=[]; cur="";
-      } else {
-        cur += c;
-      }
+    if(c === '"'){
+      if(inQ && n === '"'){ cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if(!inQ && c === ','){
+      row.push(cur); cur="";
+    } else if(!inQ && (c === '\n' || c === '\r')){
+      if(c === '\r' && n === '\n') i++;
+      row.push(cur); rows.push(row);
+      row=[]; cur="";
+    } else {
+      cur += c;
     }
-    if(cur.length || row.length){ row.push(cur); rows.push(row); }
-
-    const header = (rows.shift() || []).map(h => String(h).trim());
-    const data = rows
-      .filter(r => r.some(x => String(x).trim() !== ""))
-      .map(r => {
-        const obj = {};
-        header.forEach((k,idx)=> obj[k] = (r[idx] ?? "").trim());
-        return obj;
-      });
-
-    return { header, data };
   }
+  if(cur.length || row.length){ row.push(cur); rows.push(row); }
+
+  // ❗不做 filter，不刪空白列
+  return rows;
+}
 
   async function fetchJson(url){
     const r = await fetch(url, {cache:"no-store"});
@@ -724,12 +718,13 @@ function updateSectionUI(sec){
     return r.json();
   }
 
-  async function loadCsv(path){
-    const r = await fetch(path, {cache:"no-store"});
-    if(!r.ok) throw new Error("CSV load failed: " + r.status + " | " + path);
-    const text = await r.text();
-    return parseCsv(text);
-  }
+async function loadCsv(path){
+  const r = await fetch(path, {cache:"no-store"});
+  if(!r.ok) throw new Error("CSV load failed: " + r.status + " | " + path);
+  const text = await r.text();
+  return parseCsvRows(text);
+}
+
 
   function getCsvPath(){
     const m = $("#modSel").value;
@@ -769,39 +764,41 @@ function updateSectionUI(sec){
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
     }[m]));
   }
+function render(){
+  const q = ($("#searchInput").value || "").trim().toLowerCase();
 
-  function render(){
-    const q = ($("#searchInput").value || "").trim().toLowerCase();
-    let data = [...rowsAll];
+  // 建一份可排序/可搜尋的索引
+  let idxs = rowsAll.map((_, i) => i);
 
-    // search
-    if(q){
-      data = data.filter(obj=>{
-        const text = header.map(h=>obj[h] ?? "").join(" ").toLowerCase();
-        return text.includes(q);
-      });
-    }
-
-    // sort
-    if(sortKey){
-      data.sort((a,b)=>{
-        const x = (a[sortKey] ?? "").toString();
-        const y = (b[sortKey] ?? "").toString();
-        if(x === y) return 0;
-        return sortAsc ? x.localeCompare(y, "en") : y.localeCompare(x, "en");
-      });
-    }
-
-    const tbody = $("#ioTable tbody");
-    tbody.innerHTML = "";
-    data.forEach(obj=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = header.map(h => `<td title="${escapeHtml(obj[h] ?? "")}">${escapeHtml(obj[h] ?? "")}</td>`).join("");
-      tbody.appendChild(tr);
+  // search（用 object 搜尋，但顯示要回去 2D row）
+  if(q){
+    idxs = idxs.filter(i=>{
+      const obj = rowsAll[i];
+      const text = header.map(h=>obj[h] ?? "").join(" ").toLowerCase();
+      return text.includes(q);
     });
-
-    setCountInfo(data.length, rowsAll.length);
   }
+
+  // sort（排序索引）
+  if(sortKey){
+    idxs.sort((ia, ib)=>{
+      const a = (rowsAll[ia][sortKey] ?? "").toString();
+      const b = (rowsAll[ib][sortKey] ?? "").toString();
+      if(a === b) return 0;
+      return sortAsc ? a.localeCompare(b, "en") : b.localeCompare(a, "en");
+    });
+  }
+
+  // 組回 2D rows：標題列 + 表頭列 + 篩選/排序後的 body rows
+  const tableRows = [];
+  if(titleText) tableRows.push([titleText]);           // 第1列
+  tableRows.push(header);                              // 第2列
+  idxs.forEach(i => tableRows.push(bodyRows2D[i]));    // 第3列起（含空白列）
+
+  renderLikeExcel(tableRows, $("#ioTable"));
+
+  setCountInfo(idxs.length, rowsAll.length);
+}
 
   async function refresh(){
     clearError();
@@ -822,12 +819,32 @@ function updateSectionUI(sec){
       return;
     }
 
-    const parsed = await loadCsv("./" + path);
-    header = parsed.header;
-    rowsAll = parsed.data;
+   const rows2d = await loadCsv("./" + path);
 
-    buildThead();
-    render();
+// 用你已經有的 helper：padRows / detectTitleRowIndex / detectHeaderRowIndex
+const padded = padRows(rows2d);
+const tIdx = detectTitleRowIndex(padded);
+const hIdx = detectHeaderRowIndex(padded, tIdx === 0 ? 1 : 0);
+
+// title
+titleText = (tIdx === 0) ? (padded[0].find(c => !isEmptyCell(c)) || "") : "";
+
+// header row（第2列）
+header = padded[hIdx].map(x => String(x ?? "").trim());
+
+// body（第3列開始）✅ 保留空白列
+bodyRows2D = padded.slice(hIdx + 1);
+
+// 同時準備給 search/sort 用的 rowsAll（object陣列）✅ 空白列也保留
+rowsAll = bodyRows2D.map(r => {
+  const obj = {};
+  header.forEach((k, idx) => obj[k] = String(r[idx] ?? "").trim());
+  return obj;
+});
+
+sortKey = null; sortAsc = true;
+render(); // 走你原本 filter/sort，再用 renderLikeExcel 畫表格
+
   }
 
   async function init(){
