@@ -451,7 +451,7 @@
       </div>
 
       <div class="filters collapsible open" id="filtersBox">
-        <span class="filters-label">Module:</span>
+        <span class="filters-label">Section:</span>
         <select id="modSel"></select>
 
         <span class="filters-label">File:</span>
@@ -709,12 +709,13 @@
       const modules = wantModules.filter(m => indexData[m]);
       fillSelect($("#modSel"), modules.length ? modules : Object.keys(indexData));
 
-      // ✅ support ?module=F12
+      // ✅ support ?section=F12
       const params = new URLSearchParams(location.search);
-      const preMod = params.get("module");
-      if(preMod && (modules.length ? modules.includes(preMod) : Object.keys(indexData).includes(preMod))){
-        $("#modSel").value = preMod;
+      const preSection = params.get("section");
+      if(preSection && (modules.length ? modules.includes(preSection) : Object.keys(indexData).includes(preSection))){
+        $("#modSel").value = preSection;
       }
+
 
       $("#modSel").addEventListener("change", ()=>{
         const m = $("#modSel").value;
