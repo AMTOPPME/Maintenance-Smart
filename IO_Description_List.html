@@ -427,6 +427,16 @@
         color: #000 !important;
       }
     }
+     /* === 強制表格每一列都有高度（即使是空白） === */
+tbody tr {
+  height: 44px;              /* 你想要的列高，可調 */
+}
+
+/* === 空白 cell 也撐高度，不影響內容 === */
+td:empty::before {
+  content: "\00a0";          /* 不換行空白字元 */
+}
+
   </style>
 </head>
 
