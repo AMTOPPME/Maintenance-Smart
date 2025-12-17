@@ -1139,6 +1139,22 @@
     if (subEl)   subEl.textContent   = sub   || '';
   }
 
+  // ✅ 接收 IO_Description_List.html 用 postMessage 通知的 section 變更
+  window.addEventListener("message", (e) => {
+    if (!e.data || e.data.type !== "ms-section-change") return;
+
+    const sec = e.data.section;
+
+    // 只在「目前 iframe 正在顯示 IO Description List」時才改標題，避免影響其他頁
+    const src = frame?.getAttribute("src") || "";
+    if (!/IO_Description_List\.html/i.test(src)) return;
+
+    setModule(
+      "IO Description List – " + sec,
+      "Browse I/O description CSV tables for " + sec + "."
+    );
+  });
+
   function activateNav(btn){
     buttons.forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
@@ -1397,7 +1413,7 @@
         ioDescBtn.addEventListener('click', ()=>{
           if (!currentSchematicSection) return;
 
-          const url = 'IO_Description_List.html?module=' + encodeURIComponent(currentSchematicSection);
+          const url = 'IO_Description_List.html?section=' + encodeURIComponent(currentSchematicSection);
           if (frame) frame.src = url;
 
           setModule('IO Description List – ' + currentSchematicSection,
