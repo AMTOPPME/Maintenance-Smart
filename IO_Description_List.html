@@ -283,19 +283,38 @@
       border-color: #1f2937;       /* ✅ dark mode 用你原本的顏色 */
     }
 
-    th {
-      font-size: var(--xsmall-font);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-soft);
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      cursor: pointer;
-      user-select: none;
-      background: #f9fafb;
-    }
+th{
+  font-size: var(--xsmall-font);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+  cursor: pointer;
+  user-select: none;
+  background: #f9fafb;
+}
+
+/* 只有 header row sticky */
+.ms-header-row th{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* title row 不要 sticky + 樣式像 Excel 標題 */
+.ms-title-row th{
+  position: static;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  background: #ffffff;
+}
+html[data-theme="dark"] .ms-title-row th{
+  background:#020617;
+}
+
 
     th[data-col]:hover {
       color: var(--accent);
