@@ -527,7 +527,110 @@ td:empty::before {
   let sortAsc = true;
 
   const $ = (s)=>document.querySelector(s);
-  
+
+  function isEmptyCell(v){
+  return v == null || String(v).trim() === "";
+}
+function countNonEmpty(row){
+  return row.reduce((n, c) => n + (!isEmptyCell(c) ? 1 : 0), 0);
+}
+function padRows(rows){
+  const maxCols = Math.max(...rows.map(r => r.length));
+  return rows.map(r => {
+    const rr = r.slice();
+    while (rr.length < maxCols) rr.push("");
+    return rr;
+  });
+}
+
+// ✅ 找標題列（像：F16\BIT.DOC、只有一格有內容）
+function detectTitleRowIndex(rows){
+  if (!rows.length) return -1;
+  const r0 = rows[0];
+  const nonEmpty = r0.filter(c => !isEmptyCell(c));
+  if (nonEmpty.length === 1) {
+    const t = String(nonEmpty[0]).trim();
+    // 你這種標題常見特徵：含 \ 或 .DOC/.XLS/…
+    if (/\\|\.doc|\.xls|\.csv|\.txt/i.test(t)) return 0;
+  }
+  return -1;
+}
+
+// ✅ 找表頭列（通常是 PLC ADR / COMMENT 那一列）
+function detectHeaderRowIndex(rows, startIdx){
+  for (let i = startIdx; i < rows.length; i++){
+    const row = rows[i];
+    // 至少兩個非空欄位，且不像純資料(B0,B1...)那樣
+    if (countNonEmpty(row) >= 2) return i;
+  }
+  return startIdx; // fallback
+}
+
+/**
+ * rows: 2D array (已經 parse 好 CSV 的結果)
+ * tableEl: <table> element
+ */
+function renderLikeExcel(rows, tableEl){
+  if (!rows || !rows.length || !tableEl) return;
+
+  const padded = padRows(rows);
+
+  const titleIdx = detectTitleRowIndex(padded);
+  const headerIdx = detectHeaderRowIndex(padded, titleIdx === 0 ? 1 : 0);
+
+  const maxCols = padded[0].length;
+
+  // title text（取那列唯一非空 cell）
+  let titleText = "";
+  if (titleIdx === 0){
+    titleText = padded[0].find(c => !isEmptyCell(c)) || "";
+  }
+
+  const headers = padded[headerIdx];
+  const bodyRows = padded.slice(headerIdx + 1);
+
+  // build THEAD
+  const thead = document.createElement("thead");
+
+  if (titleIdx === 0 && titleText){
+    const trTitle = document.createElement("tr");
+    trTitle.className = "ms-title-row";
+    const th = document.createElement("th");
+    th.colSpan = maxCols;
+    th.textContent = titleText;
+    trTitle.appendChild(th);
+    thead.appendChild(trTitle);
+  }
+
+  const trHead = document.createElement("tr");
+  trHead.className = "ms-header-row";
+  headers.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = String(h || "").trim();
+    trHead.appendChild(th);
+  });
+  thead.appendChild(trHead);
+
+  // build TBODY
+  const tbody = document.createElement("tbody");
+  bodyRows.forEach(r => {
+    const tr = document.createElement("tr");
+    r.forEach(c => {
+      const td = document.createElement("td");
+      const txt = String(c ?? "");
+      td.textContent = txt;
+      // ✅ 保留空白列高度（不用改 table 結構）
+      if (isEmptyCell(txt)) td.innerHTML = "&nbsp;";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  tableEl.innerHTML = "";
+  tableEl.appendChild(thead);
+  tableEl.appendChild(tbody);
+}
+
 function updateSectionUI(sec){
   const a = document.getElementById("secTitle");
   const b = document.getElementById("secTitle2");
