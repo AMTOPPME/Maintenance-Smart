@@ -130,15 +130,27 @@
   "BIT": {
     "CSV": "IODescriptionList/F16/BIT/F16 - 2 - BIT.csv"
   },
+
   "GoOnline - Master Form": {
-    "01": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - 01.csv",
-    "02": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - 02.csv",
-    "03": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - 03.csv"
+    "ANA INPUT": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - ANA INPUT.csv",
+    "ANA OUTPUT": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - ANA OUTPUT.csv",
+    "BIT": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - BIT.csv",
+    "CONSTANT WORD": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - CONSTANT WORD.csv",
+    "INPUT": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - INPUT.csv",
+    "OUTPUT": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - OUTPUT.csv",
+    "TIMER": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - TIMER.csv",
+    "WORD": "IODescriptionList/F16/GoOnline/Master Form/F16 - GoOnline - Tags - Master Form - WORD.csv"
   },
+
   "GoOnline - Master Form Updated": {
-    "01": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - 01.csv",
-    "02": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - 02.csv",
-    "03": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - 03.csv"
+    "ANA INPUT": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - ANA INPUT.csv",
+    "ANA OUTPUT": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - ANA OUTPUT.csv",
+    "BIT": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - BIT.csv",
+    "CONSTANT WORD": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - CONSTANT WORD.csv",
+    "INPUT": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - INPUT.csv",
+    "OUTPUT": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - OUTPUT.csv",
+    "TIMER": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - TIMER.csv",
+    "WORD": "IODescriptionList/F16/GoOnline/Master Form Updated/F16 - GoOnline - Tags - Master Form Updated - WORD.csv"
   }
 },
 "F201": {
