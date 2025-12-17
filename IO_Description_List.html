@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Maintenance Smart | IO Description List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Apply theme & style from portal -->
+  <script>
+    (function () {
+      const storedTheme = localStorage.getItem('ms-theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+
+      const style = localStorage.getItem('ms-style') || 'blue';
+      document.documentElement.setAttribute('data-style', style);
+    })();
+  </script>
+
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --card-bg:#fff;
+      --border-subtle:#e5e7eb;
+      --accent:#2563eb;
+      --accent-hover:#1d4ed8;
+      --text:#111827;
+      --text-soft:#6b7280;
+      --radius-xl:16px;
+      --shadow-soft-sm:0 8px 20px rgba(15,23,42,.06);
+      --small-font:13px; --xsmall-font:11px;
+    }
+    html[data-theme="dark"]{
+      --bg:#020617;
+      --card-bg:#020617;
+      --border-subtle:#1f2937;
+      --accent:#60a5fa;
+      --accent-hover:#3b82f6;
+      --text:#e5e7eb;
+      --text-soft:#9ca3af;
+      --shadow-soft-sm:0 8px 20px rgba(0,0,0,.75);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      font-size:15px;
+      background:
+        radial-gradient(circle at top, rgba(129,140,248,0.14), transparent),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      transition: background .25s ease, color .25s ease;
+    }
+    html[data-style="panther"] body{
+      background: radial-gradient(circle at top, rgba(244,114,182,.28), transparent), var(--bg);
+    }
+    html[data-style="hangyodon"] body{
+      background: radial-gradient(circle at top, rgba(56,189,248,.35), transparent), var(--bg);
+    }
+
+    /* Side characters (optional, matches your portal style) */
+    .side-panther,.side-hangyodon{
+      position:fixed; top:50%; transform:translateY(-50%);
+      width:360px; opacity:.9; z-index:1; pointer-events:none; user-select:none;
+      display:none;
+    }
+    .side-panther.left{left:1.5%}
+    .side-panther.right{right:1.5%}
+    .side-hangyodon.left{left:1.5%; transform:translateY(-50%) scaleX(-1)}
+    .side-hangyodon.right{right:1.5%; transform:translateY(-50%) scaleX(-1)}
+    html[data-style="panther"] .side-panther{display:block;}
+    html[data-style="hangyodon"] .side-hangyodon{display:block;}
+
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{display:none!important;}
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block!important;
+        left:50%!important; right:auto!important;
+        transform:translate(-50%,-50%)!important;
+        width:260px;
+      }
+    }
+
+    .page{
+      position:relative;
+      max-width:1200px;
+      margin:0 auto;
+      padding:20px 16px 32px;
+      z-index:2;
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      margin-bottom:10px;
+    }
+    .title h1{
+      margin:0;
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .title p{
+      margin:0;
+      font-size:13px;
+      color:var(--text-soft);
+    }
+
+    .card{
+      background:var(--card-bg);
+      border-radius:var(--radius-xl);
+      border:1px solid var(--border-subtle);
+      padding:14px;
+      box-shadow:var(--shadow-soft-sm);
+      margin-bottom:14px;
+      transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+    .card h2{
+      margin:0 0 4px;
+      font-size:17px;
+      font-weight:600;
+    }
+    .card-subtitle{
+      font-size:var(--small-font);
+      color:var(--text-soft);
+      margin-bottom:8px;
+    }
+
+    .filter-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+      gap:8px;
+    }
+    .filter-toggle-icon{
+      font-size:16px;
+      color:var(--text-soft);
+    }
+
+    .collapsible{
+      overflow:hidden;
+      max-height:500px;
+      opacity:1;
+      transition:max-height .3s ease, opacity .25s ease;
+    }
+    .collapsible.closed{
+      max-height:0;
+      opacity:0;
+      margin-top:0;
+      pointer-events:none;
+    }
+
+    .filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      margin-top:6px;
+    }
+    .filters-label{
+      font-size:var(--xsmall-font);
+      color:var(--text-soft);
+      margin-right:2px;
+    }
+    .filters input,
+    .filters select{
+      font-size:var(--small-font);
+      padding:7px 9px;
+      border-radius:8px;
+      border:1px solid #d1d5db;
+      background:#fff;
+      color:var(--text);
+      min-width:160px;
+      transition:all .15s ease;
+    }
+    html[data-theme="dark"] .filters input,
+    html[data-theme="dark"] .filters select{
+      background:#020617;
+      border-color:#1f2937;
+      color:var(--text);
+    }
+    .filters input:focus,
+    .filters select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 2px rgba(37,99,235,.14);
+      outline:none;
+      transform:translateY(-1px);
+    }
+
+    .btn{
+      cursor:pointer;
+      border-radius:999px;
+      padding:7px 13px;
+      font-size:var(--xsmall-font);
+      border:none;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      transition:all .15s ease;
+      background:#e5e7eb;
+      color:#111827;
+    }
+    .btn:hover{
+      background:#d1d5db;
+      transform:translateY(-1px);
+      box-shadow:0 3px 8px rgba(148,163,253,.35);
+    }
+    .btn-primary{
+      background:var(--accent);
+      color:#fff;
+      box-shadow:0 4px 12px rgba(37,99,235,.35);
+    }
+    .btn-primary:hover{background:var(--accent-hover);}
+
+    .hint{
+      font-size:var(--xsmall-font);
+      color:var(--text-soft);
+      margin-left:auto;
+    }
+
+    .table-wrap{
+      margin-top:4px;
+      border-radius:14px;
+      border:1px solid #e5e7eb;
+      overflow-x:auto;
+      background:#fff;
+      box-shadow:var(--shadow-soft-sm);
+    }
+    html[data-theme="dark"] .table-wrap{
+      background:#020617;
+      border-color:#1f2937;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:var(--small-font);
+    }
+    thead{background:#f9fafb}
+    html[data-theme="dark"] thead{background:#020617}
+    th,td{
+      padding:8px 9px;
+      border-bottom:1px solid #e5e7eb;
+      text-align:left;
+      white-space:nowrap;
+    }
+    html[data-theme="dark"] th,
+    html[data-theme="dark"] td{
+      border-bottom-color:#1f2937;
+    }
+    th{
+      font-size:var(--xsmall-font);
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      color:var(--text-soft);
+      position:sticky;
+      top:0;
+      z-index:5;
+      background:#f9fafb;
+    }
+    tbody tr:nth-child(odd){background:#f3f4f6}
+    tbody tr:nth-child(even){background:#fff}
+    html[data-theme="dark"] tbody tr:nth-child(odd),
+    html[data-theme="dark"] tbody tr:nth-child(even){background:transparent}
+    tbody tr:hover{
+      background:#eff6ff;
+      transform:translateY(-1px);
+      box-shadow:0 4px 10px rgba(148,163,253,.25);
+    }
+    html[data-theme="dark"] tbody tr:hover{background:rgba(37,99,235,.25)}
+    td{
+      color:var(--text);
+      max-width:340px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .error{
+      font-size:var(--small-font);
+      color:#b91c1c;
+      margin-top:6px;
+      display:none;
+    }
+
+    /* Print */
+    @media print{
+      body{background:#fff!important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+      .page{max-width:100%; padding:0;}
+      .card{box-shadow:none; border-radius:0; margin:0 0 8px 0;}
+      .filters, #reloadBtn, #printBtn, .filter-header,
+      .side-panther, .side-hangyodon {display:none!important;}
+      .table-wrap{box-shadow:none; border-radius:0; border:1px solid #000;}
+      th,td{border-color:#000!important; color:#000!important;}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- side characters -->
+  <img src="pinkpanther1.png" alt="Pink Panther Left" class="side-panther left">
+  <img src="pinkpanther2.png" alt="Pink Panther Right" class="side-panther right">
+  <img src="hangyodon1.png" alt="Hangyodon Left" class="side-hangyodon left">
+  <img src="hangyodon2.png" alt="Hangyodon Right" class="side-hangyodon right">
+
+  <div class="page">
+    <div class="title">
+      <h1>IO Description List</h1>
+      <p>Select module → file category → version, then browse/search the table.</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="card">
+      <div class="filter-header" onclick="toggleFilters()">
+        <h2>Filter conditions</h2>
+        <span id="toggleIcon" class="filter-toggle-icon">▲</span>
+      </div>
+      <div class="card-subtitle">
+        Data is loaded from <strong>CSV files in GitHub Pages</strong> (via index.json mapping).
+      </div>
+
+      <div class="filters collapsible open" id="filtersBox">
+        <span class="filters-label">Module:</span>
+        <select id="modSel"></select>
+
+        <span class="filters-label">File:</span>
+        <select id="catSel"></select>
+
+        <span class="filters-label">Version:</span>
+        <select id="verSel"></select>
+
+        <span class="filters-label">Search:</span>
+        <input type="text" id="searchInput" placeholder="Search address / tag / description...">
+
+        <button class="btn" id="reloadBtn">🔄 Reload data</button>
+        <button class="btn btn-primary" id="printBtn">🖨 Print list</button>
+
+        <span class="hint" id="fileHint"></span>
+        <div class="error" id="errBox"></div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <h2>Table</h2>
+      <div class="card-subtitle" id="countInfo">Total: 0 records</div>
+      <div class="table-wrap">
+        <table id="pcTable">
+          <thead><tr><th>Loading...</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // ====== Config ======
+  const INDEX_URL = "./IODescriptionList/index.json"; // <-- 改路徑只改這行
+
+  // ====== State ======
+  let indexData = null;
+  let currentRows = [];
+  let currentHeader = [];
+
+  const $ = (s)=>document.querySelector(s);
+
+  // ====== UI helpers ======
+  function toggleFilters(){
+    const box = $("#filtersBox");
+    const icon = $("#toggleIcon");
+    const isOpen = !box.classList.contains("closed");
+    if(isOpen){ box.classList.add("closed"); icon.textContent = "▼"; }
+    else { box.classList.remove("closed"); icon.textContent = "▲"; }
+  }
+
+  function showError(msg){
+    const el = $("#errBox");
+    if(!el) return;
+    el.style.display = "block";
+    el.textContent = msg;
+  }
+  function clearError(){
+    const el = $("#errBox");
+    if(!el) return;
+    el.style.display = "none";
+    el.textContent = "";
+  }
+
+  function fillSelect(selectEl, items, keepValue=false){
+    const old = selectEl.value;
+    selectEl.innerHTML = "";
+    items.forEach(v=>{
+      const opt = document.createElement("option");
+      opt.value = v; opt.textContent = v;
+      selectEl.appendChild(opt);
+    });
+    if(keepValue && items.includes(old)) selectEl.value = old;
+    else if(items.length) selectEl.value = items[0];
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[m]));
+  }
+
+  // ====== Fetch ======
+  async function fetchJson(url){
+    const r = await fetch(url, {cache:"no-store"});
+    if(!r.ok) throw new Error("Index load failed: "+r.status);
+    return r.json();
+  }
+
+  // CSV parser (supports quotes)
+  function parseCsv(text){
+    const rows = [];
+    let row = [], cur = "", inQ = false;
+
+    for(let i=0;i<text.length;i++){
+      const c = text[i], n = text[i+1];
+
+      if(c === '"'){
+        if(inQ && n === '"'){ cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if(!inQ && c === ','){
+        row.push(cur); cur="";
+      } else if(!inQ && (c === '\n' || c === '\r')){
+        if(c === '\r' && n === '\n') i++;
+        row.push(cur); rows.push(row);
+        row=[]; cur="";
+      } else {
+        cur += c;
+      }
+    }
+    if(cur.length || row.length){ row.push(cur); rows.push(row); }
+
+    const header = (rows.shift() || []).map(h => String(h).trim());
+    const data = rows
+      .filter(r => r.some(x => String(x).trim() !== ""))
+      .map(r => {
+        const obj = {};
+        header.forEach((k,idx)=> obj[k] = (r[idx] ?? "").trim());
+        return obj;
+      });
+
+    return { header, data };
+  }
+
+  async function loadCsv(path){
+    const r = await fetch(path, {cache:"no-store"});
+    if(!r.ok) throw new Error("CSV load failed: "+r.status+"\n"+path);
+    const text = await r.text();
+    return parseCsv(text);
+  }
+
+  // ====== Render ======
+  function renderTable(rows, header){
+    const tbody = $("#pcTable tbody");
+    const theadTr = $("#pcTable thead tr");
+    const countInfo = $("#countInfo");
+
+    theadTr.innerHTML = header.map(h=>`<th>${escapeHtml(h)}</th>`).join("");
+
+    tbody.innerHTML = "";
+    rows.forEach(obj=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = header.map(h => `<td>${escapeHtml(obj[h] ?? "")}</td>`).join("");
+      tbody.appendChild(tr);
+    });
+
+    if(countInfo) countInfo.textContent = `Total: ${rows.length} records`;
+  }
+
+  function applySearch(){
+    const q = ($("#searchInput")?.value || "").trim().toLowerCase();
+    if(!q){
+      renderTable(currentRows, currentHeader);
+      return;
+    }
+    const filtered = currentRows.filter(obj=>{
+      const text = currentHeader.map(h=>obj[h] ?? "").join(" ").toLowerCase();
+      return text.includes(q);
+    });
+    renderTable(filtered, currentHeader);
+    $("#countInfo").textContent = `Filter: ${filtered.length} / Total: ${currentRows.length}`;
+  }
+
+  function currentCsvPath(){
+    const module = $("#modSel").value;
+    const category = $("#catSel").value;
+    const version = $("#verSel").value;
+
+    const node = indexData?.[module]?.[category];
+    if(!node) return null;
+
+    // some categories use CSV only
+    return node[version] || node["CSV"] || null;
+  }
+
+  async function refresh(){
+    clearError();
+
+    const path = currentCsvPath();
+    if(!path){
+      showError("No file mapping found. Please check index.json for this selection.");
+      return;
+    }
+
+    // show selected file hint
+    $("#fileHint").textContent = path;
+
+    const {header, data} = await loadCsv("./" + path);
+    currentHeader = header;
+    currentRows = data;
+
+    renderTable(currentRows, currentHeader);
+    applySearch();
+  }
+
+  // ====== Init ======
+  async function init(){
+    try{
+      indexData = await fetchJson(INDEX_URL);
+
+      // Only show these modules in dropdown (as you requested)
+      const wantModules = ["F12","F13","F16","F201"];
+      const modules = wantModules.filter(m => indexData[m]);
+      fillSelect($("#modSel"), modules.length ? modules : Object.keys(indexData));
+
+      $("#modSel").addEventListener("change", ()=>{
+        const m = $("#modSel").value;
+        const cats = Object.keys(indexData[m] || {});
+        fillSelect($("#catSel"), cats);
+
+        const c = $("#catSel").value;
+        const vers = Object.keys(indexData[m][c] || {});
+        fillSelect($("#verSel"), vers);
+
+        refresh();
+      });
+
+      $("#catSel").addEventListener("change", ()=>{
+        const m = $("#modSel").value;
+        const c = $("#catSel").value;
+        const vers = Object.keys(indexData[m][c] || {});
+        fillSelect($("#verSel"), vers);
+        refresh();
+      });
+
+      $("#verSel").addEventListener("change", refresh);
+      $("#reloadBtn").addEventListener("click", refresh);
+      $("#printBtn").addEventListener("click", ()=>window.print());
+      $("#searchInput").addEventListener("input", applySearch);
+
+      // trigger initial load
+      $("#modSel").dispatchEvent(new Event("change"));
+    }catch(err){
+      showError(String(err));
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
