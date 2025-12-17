@@ -738,11 +738,24 @@ function parseCsvRows(text){
   }
 
 async function loadCsv(path){
-  const r = await fetch(path, {cache:"no-store"});
+  const r = await fetch(path, { cache:"no-store" });
   if(!r.ok) throw new Error("CSV load failed: " + r.status + " | " + path);
-  const text = await r.text();
+
+  const buf = await r.arrayBuffer();
+
+  let text;
+
+  try {
+    // ✅ 優先用 ANSI / Windows-1252（最符合你現在的 CSV 來源）
+    text = new TextDecoder("windows-1252").decode(buf);
+  } catch(e){
+    // fallback（極少數瀏覽器）
+    text = new TextDecoder("utf-8").decode(buf);
+  }
+
   return parseCsvRows(text);
 }
+
 
 
   function getCsvPath(){
