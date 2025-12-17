@@ -701,8 +701,11 @@
             </div>
 
             <div class="ls-tags" style="display:none;">
-              <div class="ls-label">I/O LIST</div>
-              <a class="ls-tag-link" href="#" id="ioListLink">Open I/O List</a>
+              <div class="ls-label">TOOLS</div>
+
+              <button class="schematic-line-btn" type="button" id="ioDescBtn" style="grid-column:1 / -1;">
+                IO Description List
+              </button>
             </div>
           </div>
         </li>
@@ -1119,7 +1122,7 @@
   const schematicLineRow   = document.querySelector('.schematic-line-row');
   const schematicTagsBlock = document.querySelector('.ls-tags');
   const schematicLineTitle = document.querySelector('.line-title');
-  const ioListLink         = document.getElementById('ioListLink');
+  const ioDescBtn          = document.getElementById('ioDescBtn');
 
   let currentSchematicLine = null;
   let currentSchematicSection = null;
@@ -1389,16 +1392,19 @@
       schematicLineBtns.forEach(b=>b.classList.remove('active'));
       updateSchematicChildrenVisibility();
 
-      // I/O link 更新
-      if (ioListLink){
-        ioListLink.onclick = (e)=>{
-          e.preventDefault();
+      // IO Description List button
+      if (ioDescBtn){
+        ioDescBtn.addEventListener('click', ()=>{
           if (!currentSchematicSection) return;
-          const url = buildIoListUrl(currentSchematicSection);
+
+          const url = 'IO_Description_List.html?module=' + encodeURIComponent(currentSchematicSection);
           if (frame) frame.src = url;
-          setModule('I/O List – ' + currentSchematicSection, 'I/O list for ' + currentSchematicSection);
+
+          setModule('IO Description List – ' + currentSchematicSection,
+                    'Browse I/O description CSV tables for ' + currentSchematicSection + '.');
+
           closeModules();
-        };
+        });
       }
     });
   });
