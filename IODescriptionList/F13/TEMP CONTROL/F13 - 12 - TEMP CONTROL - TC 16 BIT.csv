@@ -1,0 +1,34 @@
+,TEMPERATURE CONTROL 16BIT
+,
+"**21,0","AUTO/MANU (MANU -> ""1"")"
+"**71,0",
+"**21,1",TEMPERATURE CONTROL LOCKED
+"**71,1",
+"**21,2",ALARM H+ OR L- (TEMP OUT OF RANGE)
+"**71,2",
+"**21,3",ALARM H
+"**71,3",
+"**21,4",ALARM L
+"**71,4",
+"**21,5",DEFECT MEASURE
+"**71,5",
+"**21,6","ALL ALARM (**21, 2+**21, 4+**21, 5)"
+"**71,6",
+"**21,7",FAULT CONTROL LOOP
+"**71,7",
+"**21,8",HEATING => ON
+"**71,8",
+"**21,9",SAMPLE TIME SELECT
+"**71,9",
+"**21,A",START CONTROL LOOP
+"**71,A",
+"**21,B",REVERSE CONTROL LOOP
+"**71,B",
+"**21,C",COOLING VALVE => ON
+"**71,C",
+"**21,D",BIT OUTPUT 100; -100
+"**71,D",
+"**21,E",
+"**71,E",
+"**21,F",TEMPERATURE NOT DEFECT (O.K.)
+"**71,F",

@@ -1,0 +1,900 @@
+,F12 I/O LIST,,
+,,,
+,F12\OUTPUT.DOC,,
+I/O,DESCRIPTION,SYMBOL,PAGE #
+WORD,,,(DRAW')
+"OW65,3","2ND MELT LINE 1ST PART, CTRL VALVE",TV1240-03,63
+"OW65,4","2ND MELT LINE 2ND PART, CTRL VALVE",TV1240-04,63
+"OW65,5","MELT LINE SAT. EXT. 1, CTRL VALVE",TV1245-01,63
+"OW65,6","MELT LINE SAT. EXT. 2, CTRL VALVE",TV1245-02,63
+,,,
+"OW66,3",CURRENT WEIGHT SENT TO FOREMOST BLENDER,,64
+"OW66,4",WEIGHT SETPOINT TO FOREMOST BLENDER,M1106-02,64
+"OW66,5","MAIN AUGUR 1, SPEED REF. (ADDITIVE)",M1112-01,64
+"OW66,6",MANUAL START MOTOR SPEED,,64
+,,,
+"OW67,3",MANUAL START MOTOR SPEED,,65
+"OW67,4",MANUAL START MOTOR SPEED,,
+"OW67,5",MANUAL START MOTOR SPEED,,
+"OW67,6",MANUAL START MOTOR SPEED,,
+,,,
+"OW80,3",,,67
+"OW80,4",,,67
+"OW80,5",,,67
+"OW80,6",,,67
+,,,
+,,,
+,,,
+"OA0,0",EXT. 1 INTERLOCK TO F16                          F16,B362,97
+"OA0,1",EXT. 2 INTERLOCK TO F16                          F16,B470,97
+"OA0,2",SAT. 1 INTERLOCK TO F16                          F16,B159,97
+"OA0,3",SAT. 2 INTERLOCK TO F16                          F16,B259,97
+"OA0,4",MELT LINE OIL SKID PUMP INTERLOCK,C1240,97
+"OA0,5",MELT LINE OIL SKID PUMP START HEATER,C1240,97
+"OA0,6",MELT LINE OIL SKID INTERLOCK,C1240,97
+"OA0,7",MELT LINE OIL SKID START/STOP,C1240,97
+"OA0,8",FOREMOST RUN & STOP                         (Line1),,97
+"OA0,9",FOREMOST INTERLOCK                          (Line1),,97
+"OA0,A",LOW LEVEL SIGNAL - FOREMOST                 (Line1),,97
+"OA0,B",LOW LEVEL SIGNAL - FOREMOST                 (Line1),,98
+"OA0,C",KLAXON,,98
+"OA0,D",ROTATING LIGHT,,98
+"OA0,E",RELEASE KLAXON,,98
+"OA0,F",RELEASE DEFECT,,98
+,,,
+"OA1,0",HEATER ZONE 1 EXT. 1                             F21,H1200-01,101
+"OA1,1",HEATER ZONE 1 EXT. 2                             F21,H1200-02,101
+"OA1,2",HEATER ZONE 1 EXT. 3                             F21,H1200-03,101
+"OA1,3",HEATER ZONE 1 EXT. 4                             F21,H1200-04,101
+"OA1,4",COOLING PUMP EXT. 1                              F21,M1200-05,101
+"OA1,5",MIXING SCREW                                     F21,M1114-01,101
+"OA1,6",ROTARY ARM                                       F21,M1114-02,101
+"OA1,7",HEATER ZONE 1 EXT. 2                             F21,H1200-06,101
+"OA1,8",HEATER ZONE 2 EXT. 2                             F21,H1200-07,102
+"OA1,9",HEATER ZONE 3 EXT. 2                             F21,H1200-08,102
+"OA1,A",HEATER ZONE 4 EXT. 2                             F21,H1200-09,102
+"OA1,B",COOLING PUMP EXT. 2                              F21,M1200-11,102
+"OA1,C",ADDITIVE VACUUM PUMP                              F8,M1107-01,102
+"OA1,D",SIGNAL TO F13/WATER BATH THAT SEC. EXT. RUNNING,,102
+"OA1,E",MELT LINE 1 ZONE 1                               F21,H1200-12,102
+"OA1,F",MELT LINE 1 ZONE 2                               F21,H1200-13,102
+,,,
+"OA2,0",SAT. EXT. 1 HEATER Z1                            F22,H1210-01,105
+"OA2,1",SAT. EXT. 1 HEATER Z2                            F22,H1210-02,105
+"OA2,2",SAT. EXT. 1 HEATER Z3                            F22,H1210-03,105
+"OA2,3",SAT. EXT. 1 HEATER Z4                            F22,H1210-04,105
+"OA2,4",SAT. EXT. 1 HEATER Z5                            F22,H1210-05,105
+"OA2,5",SAT. EXT. 1 HEATER Z6                            F22,H1210-06,105
+"OA2,6",SAT. EXT. 1 HEATER Z7                            F22,H1210-07,105
+"OA2,7",ADAPTER SAT. EXT. 1                              F22,H1210-29,105
+"OA2,8",COOLING FAN Z1                                   F22,M1210-08,106
+"OA2,9",COOLING FAN Z2                                   F22,M1210-09,106
+"OA2,A",COOLING FAN Z3                                   F22,M1210-10,106
+"OA2,B",COOLING FAN Z4                                   F22,M1210-11,106
+"OA2,C",COOLING FAN Z5                                   F22,M1210-12,106
+"OA2,D",COOLING FAN Z6                                   F22,M1210-13,106
+"OA2,E",COOLING FAN Z7                                   F22,M1210-14,106
+"OA2,F",(FREE),,106
+"OA3,0",HEATING OF DIVERTER                              F23,H1250-01,109
+"OA3,1",DIE HEATER Z1                                    F23,H1260-01,109
+"OA3,2",DIE HEATER Z2                                    F23,H1260-02,109
+"OA3,3",DIE HEATER Z3                                    F23,H1260-03,109
+"OA3,4",DIE HEATER Z4                                    F23,H1260-04,109
+"OA3,5",DIE HEATER Z5                                    F23,H1260-05,109
+"OA3,6",DIE HEATER Z6                                    F23,H1260-06,109
+"OA3,7",DIE HEATER Z7                                    F23,H1260-07,109
+"OA3,8",(FREE),,110
+"OA3,9",(FREE),,110
+"OA3,A",(FREE),,110
+"OA3,B",(FREE),,110
+"OA3,C",(FREE),,110
+"OA3,D",STATIC MIXER HEATING                             F23,H1251-01,110
+"OA3,E",STATIC MIXER CONNECTIONS                         F23,H1251-02,110
+"OA3,F",SAT. 1 HEATING FILTER                            F23,H1232-01,110
+,,,
+"OA4,0",HEATER ZONE 1 EXT. 1                             F21,H1200-01,113
+"OA4,1",HEATER ZONE 2 EXT. 1                             F21,H1200-02,113
+"OA4,2",HEATER ZONE 3 EXT. 1                             F21,H1200-03,113
+"OA4,3",HEATER ZONE 4 EXT. 1                             F21,H1200-04,113
+"OA4,4",HEATER ZONE 1 EXT. 2                             F21,H1200-06,113
+"OA4,5",HEATER ZONE 2 EXT. 2                             F21,H1200-07,113
+"OA4,6",HEATER ZONE 3 EXT. 2                             F21,H1200-08,113
+"OA4,7",HEATER ZONE 4 EXT. 2                             F21,H1200-09,113
+"OA4,8",MELT LINE 1 Z1                                   F21,H1200-12,114
+"OA4,9",MELT LINE 1 Z2                                   F21,H1200-13,114
+"OA4,A",MELT LINE 1 Z3                                   F21,H1200-14,114
+"OA4,B",MELT LINE 1 Z4                                   F21,H1200-15,114
+"OA4,C",FILTER ZONE 1                                    F21,H1230-02,114
+"OA4,D",FILTER ZONE 1                                    F21,H1230-03,114
+"OA4,E",FILTER ZONE 1                                    F21,H1230-04,114
+"OA4,F",ADAPTER                                          F21,H1230-05,114
+,,,
+"OA5,0",SAT. EXT. 2 Z1                                   F22,H1210-15,117
+"OA5,1",SAT. EXT. 2 Z2                                   F22,H1210-16,117
+"OA5,2",SAT. EXT. 2 Z3                                   F22,H1210-17,117
+"OA5,3",SAT. EXT. 2 Z4                                   F22,H1210-18,117
+"OA5,4",SAT. EXT. 2 Z5                                   F22,H1210-19,117
+"OA5,5",SAT. EXT. 2 Z6                                   F22,H1210-20,117
+"OA5,6",SAT. EXT. 2 Z7                                   F22,H1210-21,117
+"OA5,7",ADAPTER SAT. EXT. 2                              F22,H1210-30,117
+"OA5,8",(FREE),,118
+"OA5,9",(FREE),,
+"OA5,A",(FREE),,
+"OA5,B",(FREE),,
+"OA5,C",HEATING OF DIVERTER                              F23,H1250-01,118
+"OA5,D",DIE HEATER Z1                                    F23,H1260-01,118
+"OA5,E",DIE HEATER Z2                                    F23,H1260-02,118
+"OA5,F",DIE HEATER Z3                                    F23,H1260-03,118
+,,,
+"OA6,0",FREE                                      HOMO DRYER,C1103-01,121
+"OA6,1",FREE                                   RECLAIM DRYER,C1103-02,121
+"OA6,2",FREE                                    SAT. 1 DRYER,C1122-01,121
+"OA6,3",FREE                                    SAT. 2 DRYER,C1122-02,121
+"OA6,4",HOMO DRYING HOPPER HI LEVEL TO PCC                4A,LSH1104-02,121
+"OA6,5",RECLAIM DRYING HOPPER HI LEVEL TO PCC             4A,LSH1104-04,121
+"OA6,6",SAT. 1 DRYING HOPPER LOW LEVEL TO PCC             4A,LSL1123-01,121
+"OA6,7",SAT. 1 DRYING HOPPER HI LEVEL TO PCC              4A,LSH1123-02,121
+"OA6,8",HOPPER LOW LEVEL                         SAT. EXT. 1,LSL1124-01,122
+"OA6,9",HOPPER HIGH LEVEL (CANCELLED)            SAT. EXT. 1,LSH1124-02,122
+"OA6,A",HOPPER LOW LEVEL                        SAT. 2 DRYER,LSL1123-03,122
+,TO PCC 4A,,
+"OA6,B",HOPPER HIGH LEVEL                       SAT. 2 DRYER,LSH1123-04,122
+,TO PCC 4A,,
+"OA6,C",HOPPER LOW LEVEL                         SAT. EXT. 2,LSL1124-03,122
+,4A,,
+"OA6,D",HOPPER HIGH LEVEL (CANCELLED)            SAT. EXT. 2,LSH1124-04,122
+"OA6,E",LOW LEVEL                                 HOMO DRYER,LSL1104-01,122
+,TO PCC 4A,,
+"OA6,F",LOW LEVEL                              RECLAIM DRYER,LSL1104-03,122
+,TO PCC,,
+,,,
+"OA7,0",FEEDING VALVE OPEN – LIGHT                       F29,1.25E+13,125
+"OA7,1",HIGH LEVEL HOMO SILO – LIGHT                     F26,1.25E+16,125
+"OA7,2",HIGH LEVEL RECLAIM MAT – LIGHT                   F26,1.25E+19,125
+"OA7,3",HIGH LEVEL COPOL. SAT. 1 – LIGHT                 F26,1.25E+22,125
+"OA7,4",HIGH LEVEL COPOL. SAT. 2 – LIGHT                 F26,1.25E+25,125
+"OA7,5",FEEDING ZONE COOLING VALVE                    EXT. 1,SV1200.10,125
+"OA7,6",EXHAUST VALV FOR MAIN EXT.                    CONAIR,125Y29,125
+,ADDITIVE VACUUM PUMP,,
+"OA7,7",ALARM LIGHT IN CTRL ROOM (EXCEPT LINE #1),,
+"OA7,8",START                                     HOMO DRYER,C1103-01,126
+"OA7,9",STOP                                      HOMO DRYER,C1103-01,126
+"OA7,A",START                                  RECLAIM DRYER,C1103-02,126
+"OA7,B",STOP                                   RECLAIM DRYER,C1103-02,126
+"OA7,C",START                                   SAT. 1 DRYER,C1122-01,126
+"OA7,D",STOP                                    SAT. 1 DRYER,C1122-01,126
+"OA7,E",START                                   SAT. 2 DRYER,C1122-02,126
+"OA7,F",STOP                                    SAT. 2 DRYER,C1122-02,126
+,,,
+"OB0,0",(FREE),,99
+"OB0,1",DEFECT FOR M1107.01 HOMO/RECLAIM PUMP,,99
+"OB0,2",FREE                                            HOMO,,99
+"OB0,3",START/STOP AUGER 2                              HOMO,,99
+"OB0,4",FREE                                         RECLAIM,,99
+"OB0,5",START/STOP AUGER 3                           RECLAIM,,99
+"OB0,6",FREE                                        ADDITIVE,,99
+"OB0,7",START/STOP AUGER 1                          ADDITIVE,,99
+"OB0,8",HOPPER MOTOR #1 RUN,,100
+"OB0,9",HOPPER MOTOR #2 RUN,,100
+"OB0,A",HOPPER MOTOR #3 RUN,,100
+"OB0,B",HOPPER MOTOR #4 RUN,,100
+"OB0,C",HOPPER MOTOR #5 RUN,,100
+,,,
+,,,
+,,,
+"OB0,D",MIXER MOTOR RUN,,100
+"OB0,E",FREE,,100
+"OB0,F",FREE,,100
+,,,
+"OB1,0",MELT LINE 1 ZONE 3                               F21,H1200-14,103
+"OB1,1",MELT LINE 1 ZONE 4                               F21,H1200-15,103
+"OB1,2",(FREE),,103
+"OB1,3",(FREE),,
+"OB1,4",MOTOR CHANGE FILTER EXT. 1                       F21,M1230-01,103
+"OB1,5",FILTER ZONE 1                                    F21,H1230-02,103
+"OB1,6",FILTER ZONE 2                                    F21,H1230-03,103
+"OB1,7",FILTER ZONE 3                                    F21,H1230-04,103
+"OB1,8",ADAPTER                                          F21,H1230-05,104
+"OB1,9",(FREE),,104
+"OB1,A",(FREE),,
+"OB1,B",EXT. 2 SCREEN CHANGER                            F21,M1231-01,104
+"OB1,C",FILTER ZONE 1                                    F21,H1231-02,104
+"OB1,D",FILTER ZONE 2                                    F21,H1231-03,104
+"OB1,E",FILTER ZONE 3                                    F21,H1231-04,104
+"OB1,F",ADAPTER                                          F21,H1231-05,104
+,,,
+"OB2,0",(FREE),,107
+"OB2,1",SAT. EXT. 2 HEATER Z1                            F22,H1210-15,107
+"OB2,2",SAT. EXT. 2 HEATER Z2                            F22,H1210-16,107
+"OB2,3",SAT. EXT. 2 HEATER Z3                            F22,H1210-17,107
+"OB2,4",SAT. EXT. 2 HEATER Z4                            F22,H1210-18,107
+"OB2,5",SAT. EXT. 2 HEATER Z5                            F22,H1210-19,107
+"OB2,6",SAT. EXT. 2 HEATER Z6                            F22,H1210-20,107
+"OB2,7",SAT. EXT. 2 HEATER Z7                            F22,H1210-21,107
+"OB2,8",ADAPTER SAT. EXT. 2                              F22,H1210-30,108
+"OB2,9",COOLING FAN Z1                                   F22,M1210-22,108
+"OB2,A",COOLING FAN Z2                                   F22,M1210-23,108
+"OB2,B",COOLING FAN Z3                                   F22,M1210-24,108
+"OB2,C",COOLING FAN Z4                                   F22,M1210-25,108
+"OB2,D",COOLING FAN Z5                                   F22,M1210-26,108
+"OB2,E",COOLING FAN Z6                                   F22,M1210-27,108
+"OB2,F",COOLING FAN Z7                                   F22,M1210-28,108
+,,,
+"OB3,0",SAT. 2 HEATING FILTER                            F23,H1232-32,111
+"OB3,1",HYDRAULIC PUMP SAT. 1 SCREEN CHANGER             F23,M1232-03,111
+"OB3,2",HYDRAULIC PUMP SAT. 2 SCREEN CHANGER             F23,M1232-04,111
+"OB3,3",FREE,,
+"OB3,4",(FREE),,111
+"OB3,5",(FREE),,111
+"OB3,6",#1 HOPPER VACUUM VALVE                        CONAIR,,
+,“1” ? VACUUM,,
+"OB3,7",#1 HOPPER DUMP VALVE                          CONAIR,,
+,“1” ? OPEN,,
+"OB3,8",#2 HOPPER VACUUM VALVE                        CONAIR,,
+,,,
+,,,
+,,,
+"OB3,9",#2 HOPPER DUMP VALVE                          CONAIR,,
+"OB3,A",#3 HOPPER VACUUM VALVE                        CONAIR,,
+"OB3,B",#3 HOPPER DUMP VALVE                          CONAIR,,
+"OB3,C",#4 HOPPER VACUUM VALVE                        CONAIR,,
+"OB3,D",#4 HOPPER DUMP VALVE                          CONAIR,,
+"OB3,E",#5 HOPPER VACUUM VALVE                        CONAIR,,
+"OB3,F",#5 HOPPER DUMP VALVE                          CONAIR,,
+,,,
+"OB4,0",FILTER ZONE 1                                    F21,H1231-02,115
+"OB4,1",FILTER ZONE 2                                    F21,H1231-03,115
+"OB4,2",FILTER ZONE 3                                    F21,H1231-04,115
+"OB4,3",ADAPTER                                          F21,H1231-05,115
+"OB4,4",(FREE),,115
+"OB4,5",(FREE),,
+"OB4,6",FREE,,115
+"OB4,7",(FREE),,115
+"OB4,8",SAT. EXT. 1 Z1                                   F22,H1210-01,116
+"OB4,9",SAT. EXT. 1 Z2                                   F22,H1210-02,116
+"OB4,A",SAT. EXT. 1 Z3                                   F22,H1210-03,116
+"OB4,B",SAT. EXT. 1 Z4                                   F22,H1210-04,116
+"OB4,C",SAT. EXT. 1 Z5                                   F22,H1210-05,116
+"OB4,D",SAT. EXT. 1 Z6                                   F22,H1210-06,116
+"OB4,E",SAT. EXT. 1 Z7                                   F22,H1210-07,116
+"OB4,F",ADAPTER SAT. EXT. 1                              F22,H1210-29,116
+,,,
+"OB5,0",DIE HEATER Z4                                    F23,H1260-04,119
+"OB5,1",DIE HEATER Z5                                    F23,H1260-05,119
+"OB5,2",DIE HEATER Z6                                    F23,H1260-06,119
+"OB5,3",DIE HEATER Z7                                    F23,H1260-07,119
+"OB5,4",STATIC MIXER CONNECTIONS                         F23,H1251-01,119
+"OB5,5",STATIC MIXER CONNECTIONS                         F23,H1251-02,119
+"OB5,6",SAT. 1 HEATING FILTER                            F23,H1232-01,119
+"OB5,7",SAT. 2 HEATING FILTER                            F23,H1232-02,119
+"OB5,8",MAIN EXTRUDER STATIC MIXER,,120
+"OB5,9",(FREE),,120
+"OB5,A",(FREE),,120
+"OB5,B",(FREE),,120
+"OB5,C",(FREE),,120
+"OB5,D",(FREE),,120
+"OB5,E",(FREE),,120
+"OB5,F",(FREE),,120
+,,,
+"OB6,0",FOREMOST SYSTEM ALARM,,123
+"OB6,1",(FREE),,123
+"OB6,2",(FREE),,123
+"OB6,3",(FREE),,123
+"OB6,4",(FREE),,123
+"OB6,5",(FREE),,123
+"OB6,6",(FREE),,123
+"OB6,7",(FREE),,123
+"OB6,8",(FREE),,124
+"OB6,9",(FREE),,124
+"OB6,A",(FREE),,124
+"OB6,B",(FREE),,124
+"OB6,C",(FREE),,124
+"OB6,D",(FREE),,124
+"OB6,E",(FREE),,124
+"OB6,F",(FREE),,124
+,,,
+"OB7,0",FEEDING VALVE,SV1114-01,127
+"OB7,1",ADDITIVE VACUUM PUMP FILTER RIGHT BAG ? OPEN,SV10,127
+"OB7,2",2ND MELT LINE 1 PART,SV1240-03,127
+"OB7,3",2ND MELT LINE 2 PART,SV1240-04,127
+"OB7,4",MELT LINE SAT. EXT. 1,SV1245-01,127
+"OB7,5",MELT LINE SAT. EXT. 2,SV1245-02,127
+"OB7,6",EXT. 1 FEEDING ZONE COOLING,SV1200-00,127
+"OB7,7",EXT. 1 Z1 COOLING,SV1200-01,127
+"OB7,8",EXT. 1 Z2 COOLING,SV1200-02,128
+"OB7,9",EXT. 1 Z3 COOLING,SV1200-03,128
+"OB7,A",EXT. 1 Z4 COOLING,SV1200-04,128
+"OB7,B",ADDITIVE VACUUM PUMP FILTER LEFT BAG ? OPEN,SV11,128
+"OB7,C",COOLING EXT. 2 Z1,SV1200-06,128
+"OB7,D",COOLING EXT. 2 Z2,SV1200-07,128
+"OB7,E",COOLING EXT. 2 Z3,SV1200-08,128
+"OB7,F",COOLING EXT. 2 Z4,SV1200-09,128
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,
+,,,

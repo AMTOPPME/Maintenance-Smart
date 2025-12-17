@@ -1,0 +1,522 @@
+,F13 I/O LIST,,
+,,,
+,F13\INPUTBIT.DOC,,
+I/O,DESCRIPTION,SYMBOL,PAGE #
+WORD,,,(DRAW')
+"I80,0",FAN FOR EXHAUST HOOD                     F23,M1263-01,64
+"I80,1",AIR KNIFE BLOWER                         F23,M1310-01,64
+"I80,2",FILM WATER REMOVAL BLOWER #1             F23,M1310-02,64
+"I80,3",FILM WATER REMOVAL BLOWER #2             F23,M1310-03,64
+"I80,4",C. R. DRYING BLOWER                      F23,M1330-01,64
+"I80,5",C. R. BRAKE ELECTRON MAGNETIC BRAKE      F23,Y1302-01,64
+"I80,6",(FREE),,64
+"I80,7",AUX. WINDER #1                           F23,M1360-01 & 02,64
+"I80,8",(FREE),,65
+"I80,9",(FREE),,65
+"I80,A",(FREE),,65
+"I80,B",(FREE),,65
+"I80,C","AUX. WINDER #2          (W506,A)         F23",M1450-01 & 02,65
+"I80,D","MDO PUMP, ROLL #1&2 (Z1)                 F23",M1430-01,65
+"I80,E","MDO PUMP, ROLL #3&4 (Z2)                 F23",M1430-02,65
+"I80,F","MDO PUMP, ROLL #5&6 (Z3)                 F23",M1430-03,65
+,,,
+"I81,0",TDO CENT. EXHAUST AIR FAN                F24,M1525-01,68
+"I81,1",TDO CLIPS COOLING FAN (INLET)            F24,M1528-01,68
+"I81,2",TDO CLIPS COOLING FAN (MIDDLE)           F24,M1528-02,68
+"I81,3",TDO CLIPS COOLING FAN (INTERVAL)         F24,M1528-03,68
+"I81,4",TDO EXHAUST AIR FAN (OUTLET)             F24,M1530-01,68
+"I81,5",(FREE),,68
+"I81,6",(FREE),,68
+"I81,7",TDO FAN ZONE 1 (H.S) - E185              F24,M1520-01,68
+"I81,8",TDO FAN ZONE 1 (L.S) - E185              F24,M1520-01,69
+"I81,9",TDO FAN ZONE 2 (H.S) - E187              F24,M1520-02,69
+"I81,A",TDO FAN ZONE 2 (L.S) - E187              F24,M1520-02,69
+"I81,B",TDO FAN ZONE 3 (H.S) - E188              F24,M1520-03,69
+"I81,C",TDO FAN ZONE 3 (L.S) - E188              F24,M1520-03,69
+"I81,D",TDO FAN ZONE 4 (H.S) - E189              F24,M1520-04,69
+"I81,E",TDO FAN ZONE 4 (L.S) - E189              F24,M1520-04,69
+"I81,F",TDO FAN ZONE 5 (H.S) - E190              F24,M1520-05,69
+,,,
+"I82,0",TDO FAN 2 ZONE 11 (L.S) - E198           F24 ,M1520-13,72
+"I82,1",TDO FAN 1 ZONE 12 (H.S) - E199           F24,M1520-14,72
+"I82,2",TDO FAN 1 ZONE 12 (L.S) - E199           F24,M1520-14,72
+"I82,3",TDO FAN 2 ZONE 12 (H.S) - E200           F24,M1520-15,72
+"I82,4",TDO FAN 2 ZONE 12 (L.S) - E200           F24,M1520-15,72
+"I82,5",TDO FAN 1 ZONE 13 (H.S) - E201           F24,M1520-16,72
+"I82,6",TDO FAN 1 ZONE 13 (L.S) - E201           F24,M1520-16,72
+"I82,7",TDO FAN 2 ZONE 13 (H.S) - E202           F24,M1520-17,72
+"I82,8",TDO FAN 2 ZONE 13 (L.S) - E202           F24,M1520-17,73
+"I82,9",TDO FAN 1 ZONE 14 (H.S) - E203           F24,M1520-18,73
+"I82,A",TDO FAN 1 ZONE 14 (L.S) - E203           F24,M1520-18,73
+"I82,B",TDO FAN 2 ZONE 14 (H.S) - E204           F24,M1520-19,73
+"I82,C",TDO FAN 2 ZONE 14 (L.S) - E204           F24,M1520-19,73
+"I82,D",TDO FAN 1 ZONE 15 (H.S) - E205           F24,M1520-20,73
+"I82,E",TDO FAN 1 ZONE 15 (L.S) - E205           F24,M1520-20,73
+"I82,F",TDO FAN 2 ZONE 15 (H.S) - E206           F24,M1520-21,73
+,,,
+"I83,0",TDO FAN 2 ZONE 19 (L.S) - E214           F24,M1520-29,76
+"I83,1",TDO FAN 1 ZONE 20 (H.S) - E215           F24,M1520-30,76
+"I83,2",TDO FAN 1 ZONE 20 (L.S) - E215           F24,M1520-30,76
+"I83,3",TDO FAN 2 ZONE 20 (H.S) - E216           F24,M1520-31,76
+"I83,4",TDO FAN 2 ZONE 20 (L.S) - E216           F24,M1520-31,76
+"I83,5",TDO FAN 1 COOLING ZONE (H.S) - E217      F24,M1520-32,76
+"I83,6",TDO FAN 1 COOLING ZONE (L.S) - E217      F24,M1520-32,76
+"I83,7",TDO FAN 2 COOLING ZONE (H.S) - E218      F24,M1520-33,76
+"I83,8",TDO FAN 2 COOLING ZONE (L.S) - E218      F24,M1520-33,77
+"I83,9",TDO FAN 3 COOLING ZONE (H.S) - E219      F24,M1520-34,77
+"I83,A",TDO FAN 3 COOLING ZONE (L.S) - E219      F24,M1520-34,77
+"I83,B",TDO FAN 4 COOLING ZONE (H.S) - E220      F24,M1520-35,77
+"I83,C",TDO FAN 4 COOLING ZONE (L.S) - E220      F24,M1520-35,77
+"I83,D",(FREE),,77
+"I83,E",(FREE),,77
+"I83,F",FAN FOR VACUUM ROLL                      F24,M1812-01,77
+,,,
+"I84,0",C. R. HAND CRANK                        C. R,ZS1301-03,80
+"I84,1",C. R. HOME POS.                         C. R,ZS1301-04,80
+"I84,2",C. R. HIGH/LOW SPEED                    C. R,ZS1301-05,80
+"I84,3",C. R. WORKING POS.                      C. R,ZS1301-06,80
+"I84,4",AIR KNIFE IN WORK POS. (DRIVING SIDE)   C. R,ZSH1310-05,80
+"I84,5",AIR KNIFE IN WORK POS. (OPERATING SIDE) C. R,ZSH1310-06,80
+"I84,6",AIR KNIFE IN HOME POS. (DRIVING SIDE)   C. R,ZSH1310-07,80
+"I84,7",AIR KNIFE IN HOME POS. (OPERATING SIDE) C. R,ZSH1310-08,80
+"I84,8",ROLL #1 LOW POS.                         MDO,ZSL1402-04,81
+"I84,9",ROLL #1 MIDDLE POS.                      MDO,ZSM1402-05,81
+"I84,A",ROLL #1 INTER POS.                       MDO,ZSI1402-06,81
+"I84,B",ROLL #1 HIGH POS.                        MDO,ZSH1402-07,81
+"I84,C",ROLL #2 LOW POS.                         MDO,ZSL1402-08,81
+"I84,D",ROLL #2 MIDDLE POS.                      MDO,ZSM1402-09,81
+"I84,E",ROLL #2 INTER POS.                       MDO,ZSI1402-10,81
+"I84,F",ROLL #2 HIGH POS.                        MDO,ZSH1402-11,81
+,,,
+"I85,0","COR. ELECTRODE 1 IN POS., R SIDE         PRS",ZSH1820-08,84
+"I85,1",FREE,PSL1820-09,84
+,,,
+"I85,2","COR. ELECTRODE 1 IN POS., L SIDE         PRS",ZSH1820-10,84
+"I85,3","COR. ELECTRODE 3 IN POS., R SIDE         PRS",ZSH1820-12,84
+"I85,4",COR. ELECTRODE 3 PRESSURE                PRS,PSL1820-14,84
+,"(INSTALLED, BUT DOESN'T WORK)",,
+"I85,5","COR. ELECTRODE 3 IN POS., L SIDE         PRS",ZSH1820-13,84
+,PRS WEB DETECTOR,,
+"I85,6","COR. ELECTRODE 2 IN POS., R SIDE         PRS",ZSL1820-17,84
+,PRS WEB DETECTOR,,
+"I85,7","COR. ELECTRODE 2 IN POS., L SIDE         PRS",ZSL1820-18,84
+"I85,8",COR. ELECTRODE 2 PRESSURE PRS,PSL1820-19,85
+,"(INSTALLED, BUT DOESN'T WORK)",,
+"I85,9",EXTRAC. FLOW #1                          PRS,FSL1831-06,85
+"I85,A",EXTRAC. FLOW #3                          PRS,FSL1831-07,85
+"I85,B",FREE,PSL1860-,85
+"I85,C",BRUCKNER TDO STOP,,85
+"I85,D",WEB BREAK DETECTOR                       PRS,ZT1840-10,85
+"I85,E",FLOW ALARM,FAL1831.07,85
+"I85,F",FREE,,85
+,,,
+"I86,0",EXHAUST HOOD - START                     F32,,88
+"I86,1",EXHAUST HOOD - STOP                      F32,,88
+"I86,2",EDGE PINNING - START                     F32,,88
+"I86,3",EDGE PINNING - STOP                      F32,,88
+"I86,4",C. R. FORWARD                            F32,,88
+"I86,5",C. R. BACKWARD                           F32,,88
+"I86,6",C. R. STOP                               F32,,88
+"I86,7",AIR KNIFE - ENGAGE                       F32,,88
+"I86,8",AIR KNIFE - RETRACT                      F32,,89
+"I86,9",AIR KNIFE BLOWER - START                 F32,,89
+"I86,A",AIR KNIFE BLOWER - STOP                  F32,,89
+"I86,B",FILM REMOVAL POS. ENGAGE                 F32,,89
+"I86,C",FILM REMOVAL POS. RETRACT                F32,,89
+"I86,D",RUBBER ROLL - ENGAGE                     F32,,89
+"I86,E",RUBBER ROLL - RETRACT                    F32,,89
+"I86,F",CHROMED ROLL - ENGAGE                    F32,,89
+,,,
+"I87,0",MDO STOP                                 F40,,92
+"I87,1",THREADING SYSTEM - START                 F40,,92
+"I87,2",THREADING SYSTEM - STOP                  F40,,92
+"I87,3",(FREE),,92
+"I87,4",TREADING SYSTEM - STOP                   F41,,92
+"I87,5",MDO STOP                                 F41,,92
+"I87,6",PRESS ROLL INLET - ENGAGE                F42,,92
+"I87,7",PRESS ROLL INLET - RETRACT               F42,,92
+"I87,8",PRESS ROLL OUTLET - ENGAGE               F42,,93
+"I87,9",PRESS ROLL OUTLET - RETRACT              F42,,93
+"I87,A",NIP ROLL 1 - ENGAGE                      F42,,93
+"I87,B",NIP ROLL 1 - RETRACT                     F42,,93
+"I87,C",NIP ROLL 2 - ENGAGE                      F42,,93
+"I87,D",NIP ROLL 2 - RETRACT                     F42,,93
+"I87,E",NIP ROLL 3 - ENGAGE                      F42,,93
+"I87,F",NIP ROLL 3 - RETRACT                     F42,,93
+,,,
+"I90,0",PUMP ROLL #7&8                           F23,M1430-04,66
+"I90,1",PUMP ROLL #9&10                          F23,M1430-05,66
+"I90,2",PUMP ROLL #11&12                         F23,M1430-06,66
+"I90,3",PUMP ROLL #13&14                         F23,M1430-07,66
+"I90,4",PUMP ROLL #15&16                         F23,M1430-08,66
+"I90,5",PUMP ROLL #17&18                         F23,M1430-09,66
+"I90,6",PUMP ROLL #19&20                         F23,M1430-10,66
+"I90,7",PUMP ROLL #21&22                         F23,M1430-11,66
+"I90,8",PUMP ROLL #23&24                         F23,M1430-12,67
+"I90,9",(FREE),,67
+"I90,A",(FREE),,67
+"I90,B",(FREE),,67
+"I90,C",(FREE),,67
+"I90,D",WATER BATH,,67
+"I90,E",(FREE),,67
+"I90,F",(FREE),,67
+,,,
+"I91,0",AIR FAN ZONE 5 (L.S)                     F24,M1520-05,70
+"I91,1",AIR FAN ZONE 6 (H.S)                     F24,M1520-06,70
+"I91,2",AIR FAN ZONE 6 (L.S)                     F24,M1520-06,70
+"I91,3",AIR FAN ZONE 7 (H.S)                     F24,M1520-07,70
+"I91,4",AIR FAN ZONE 7 (L.S)                     F24,M1520-07,70
+"I91,5",AIR FAN ZONE 8 (H.S)                     F24,M1520-08,70
+"I91,6",AIR FAN ZONE 8 (L.S)                     F24,M1520-08,70
+"I91,7",AIR FAN ZONE 9 (H.S)                     F24,M1520-09,70
+"I91,8",AIR FAN ZONE 9 (L.S)                     F24,M1520-09,71
+"I91,9",AIR FAN 1 ZONE 10 (H.S)                  F24,M1520-10,71
+"I91,A",AIR FAN 1 ZONE 10 (L.S)                  F24,M1520-10,71
+"I91,B",AIR FAN 2 ZONE 10 (H.S)                  F24,M1520-11,71
+"I91,C",AIR FAN 2 ZONE 10 (L.S)                  F24,M1520-11,71
+"I91,D",AIR FAN 1 ZONE 11 (H.S)                  F24,M1520-12,71
+"I91,E",AIR FAN 1 ZONE 11 (L.S)                  F24,M1520-12,71
+"I91,F",AIR FAN 2 ZONE 11 (H.S)                  F24,M1520-13,71
+,,,
+"I92,0",AIR FAN 2 ZONE 15 (L.S)                  F24,M1520-21,74
+"I92,1",AIR FAN 1 ZONE 16 (H.S)                  F24,M1520-22,74
+"I92,2",AIR FAN 1 ZONE 16 (L.S)                  F24,M1520-22,74
+"I92,3",AIR FAN 2 ZONE 16 (H.S)                  F24,M1520-23,74
+"I92,4",AIR FAN 2 ZONE 16 (L.S)                  F24,M1520-23,74
+"I92,5",AIR FAN 1 ZONE 17 (H.S)                  F24,M1520-24,74
+"I92,6",AIR FAN 1 ZONE 17 (L.S)                  F24,M1520-24,74
+"I92,7",AIR FAN 2 ZONE 17 (H.S)                  F24,M1520-25,74
+"I92,8",AIR FAN 2 ZONE 17 (L.S)                  F24,M1520-25,75
+"I92,9",AIR FAN 1 ZONE 18 (H.S)                  F24,M1520-26,75
+"I92,A",AIR FAN 1 ZONE 18 (L.S)                  F24 ,M1520-26,75
+"I92,B",AIR FAN 2 ZONE 18 (H.S)                  F24,M1520-27,75
+"I92,C",AIR FAN 2 ZONE 18 (L.S)                  F24,M1520-27,75
+"I92,D",AIR FAN 1 ZONE 19 (H.S)                  F24,M1520-28,75
+"I92,E",AIR FAN 1 ZONE 19 (L.S)                  F24,M1520-28,75
+"I92,F",AIR FAN 2 ZONE 19 (H.S)                  F24,M1520-29,75
+,,,
+"I93,0",FAN FOR VACUUM ROLL                      F24,M1825-01,78
+"I93,1",OZONE EXHAUST 1                          F24,M1831-01,78
+"I93,2",OZONE EXHAUST 2                          F24,M1831-02,78
+"I93,3",OZONE EXHAUST 3                          F24,M1831-03,78
+"I93,4",OZONE TREATER FAN 1                      F24,,78
+"I93,5",OZONE TREATER FAN 2                      F24,,78
+"I93,6",OZONE TREATER FAN 3                      F24,,78
+"I93,7",OZONE TREATER FAN 4                      F24,,78
+"I93,8",(FREE),,79
+"I93,9",(FREE),,79
+"I93,A",(FREE),,79
+"I93,B",CHAIN TENSION - HYDRAULIC PUMP           F24,M1515-01,79
+"I93,C",(FREE),,79
+"I93,D",(FREE),,79
+"I93,E",(FREE),,79
+"I93,F",(FREE),,79
+,,,
+"I94,0",STRETCHING ROLL #3 LOW POS.              MDO,ZSL1402-12,82
+"I94,1",STRETCHING ROLL #3 MIDDLE POS.           MDO,ZSM1402-13,82
+"I94,2",STRETCHING ROLL #3 INTER. POS.           MDO,ZSI1402-14,82
+"I94,3",STRETCHING ROLL #3 HIGH POS.             MDO,ZSH1402-15,82
+"I94,4",MDO WEB BREAK OCT.                       MDO,ZT1420-01,82
+"I94,5",MDO WEB BREAK OCT.                       MDO,ZT1420-02,82
+"I94,6",TDO FAULT ALARM                          TDO ,,82
+"I94,7","TDO FAST STOP , CRITICAL ALARM           TDO",,82
+"I94,8",CHAIN TENSION OIL PUMP LOW LEVEL         TDO,LSL1515-02,83
+"I94,9",CHAIN TENSION PUMP PRESSURE LOW          TDO,PSL1515-03,83
+"I94,A",WEB BREAK FILM (F149) TDO EXIT           TDO,ZT1531-01,83
+"I94,B",WEB BREAK FILM (F148) COOLING ZONE       TDO,ZT1531-02,83
+"I94,C",ANTENNA SENSOR O.S-WEST,ZS1515-06,83
+"I94,D",ANTENNA SENSOR D.S-EAST,ZS1515-07,83
+"I94,E",DRIVE SIDE COUNTER                       TDO,ZS1550-01,83
+,(TDO OUTLET SPROCKET),,
+"I94,F",OPERATOR SIDE COUNTER MDO WEB DET.       MDO,ZS1550-02,83
+,(TDO OUTLET SPROCKET),,
+,,,
+"I95,0",AUX. WINDER 1 THERMOSTAT,TSH1360-03,86
+"I95,1",AUX. WINDER 2 THERMOSTAT,TSH1450-03,86
+"I95,2",C. R. WATER BATH LEVEL SWITCH           C. R,LSL1350-03,86
+"I95,3",NIP ROLL 1 IN POS.                       MDO,ZSH1404-06,86
+"I95,4",NIP ROLL 1 IN POS.                       MDO,ZSH1404-07,86
+"I95,5",NIP ROLL 2 IN POS.                       MDO,ZSH1404-08,86
+"I95,6",NIP ROLL 2 IN POS.                       MDO,ZSH1404-09,86
+"I95,7",NIP ROLL 3 IN POS.                       MDO,ZSH1404-10,86
+"I95,8",NIP ROLL 3 IN POS.                       MDO,ZSH1404-11,87
+"I95,9",PRESS ROLL INLET IN POS.                 MDO,ZSH1404-12,87
+"I95,A",PRESS ROLL INLET IN POS.                 MDO,ZSH1404-13,87
+"I95,B",PRESS ROLL OUTLET IN POS.                MDO,ZSH1404-14,87
+"I95,C",PRESS ROLL OUTLET IN POS.                MDO,ZSH1404-15,87
+"I95,D",(FREE)   ,,87
+"I95,E",(FREE),,87
+"I95,F",(FREE),,87
+,,,
+"I96,0",CHROMED ROLL - RETRACT                   F32,,90
+"I96,1",C. R. WATER REMOVAL - START              F32,,90
+"I96,2",C. R. WATER REMOVAL - STOP               F32,,90
+"I96,3","FILM WATER REMOVAL - START, 1            F32",,90
+"I96,4","FILM WATER REMOVAL - STOP, 1             F32",,90
+"I96,5","FILM WATER REMOVAL - START, 2            F32",,90
+"I96,6","FILM WATER REMOVAL - STOP, 2             F32",,90
+"I96,7",WATER BATH LEVEL - ON                    F32,90S32,90
+"I96,8",WATER BATH LEVEL - AUTO                  F32,90S32,91
+"I96,9",C. R. STOP                               F32,,91
+"I96,A",INST. AIR START (NO USE)                 F32,,91
+"I96,B",INST. AIR STOP (NO USE)                  F32,,91
+"I96,C",TEST LAMPS                               F32,,91
+"I96,D",(FREE),,91
+"I96,E",(FREE),,91
+"I96,F",(FREE),,91
+,,,
+"I97,0",STRETCHING ROLL 1 - UP,,94
+"I97,1",STRETCHING ROLL 1 - DOWN,,94
+"I97,2",STRETCHING ROLL 2 - UP                   F42,,94
+"I97,3",STRETCHING ROLL 2 - DOWN                 F42,,94
+"I97,4",STRETCHING ROLL 3 - UP                   F42,,94
+"I97,5",STRETCHING ROLL 3 - DOWN                 F42,,94
+"I97,6",GENERAL STRETCHING ROLL - UP             F42,,94
+"I97,7",GENERAL STRETCHING ROLL - DOWN           F42,,94
+"I97,8",FILM <> 60 MICRO-M                       F42,,95
+"I97,9",WEB BREAK DETECTOR MDO                   F42,,95
+"I97,A",MDO STOP                                 F42,,95
+"I97,B",(FREE),,95
+"I97,C",LAMPS TEST                               F42,,95
+"I97,D",(FREE),,95
+"I97,E",(FREE),,95
+"I97,F",(FREE),,95
+,,,
+"IA0,0",AUX. WINDER 2 MOTOR - START              F46,,97
+"IA0,1",AUX. WINDER 2 MOTOR - STOP               F46,,97
+"IA0,2",AUX. WINDER 2 SPINDLE - ENGAGE           F46,,97
+"IA0,3",AUX. WINDER 2 SPINDLE - RETRACT          F46,,97
+"IA0,4",AUX. WINDER 2 FOOT SWITCH                F46,,97
+"IA0,5",AUX. WINDER 1 MOTOR - START              F36,,97
+"IA0,6",AUX. WINDER 1 MOTOR - STOP               F36,,97
+"IA0,7",AUX. WINDER 1 SPINDLE - ENGAGE           F36,,97
+"IA0,8",AUX. WINDER 1 SPINDLE - RETRACT          F36,,98
+"IA0,9",PROCESS STOP @ AUX. 1 WINDER,,98
+"IA0,A",FREE,,98
+"IA0,B",TDO DEFECT TO F13 SHUT OFF BLOWER        F50,,98
+"IA0,C",CLIPS OPENING/CLOSING                    F50,,98
+"IA0,D",CHAIN TENSION START                      F50,,98
+"IA0,E",CHAIN TENSION STOP                       F50,,98
+"IA0,F",TDO STOP                                 F50,,98
+,,,
+"IA1,0",VACUUM ROLL 1 - START                    F55,,101
+"IA1,1",VACUUM ROLL 1 - STOP                     F55,,101
+"IA1,2",WEB BREAK PRS BYPASS / ON                F55,,101
+"IA1,3",OZONE EXHAUST FAN 1 - START              F55,,101
+"IA1,4",OZONE EXHAUST FAN 1 - STOP               F55,,101
+"IA1,5",OZONE EXHAUST FAN 2 - START              F55,,101
+"IA1,6",OZONE EXHAUST FAN 2 - STOP               F55,,101
+"IA1,7",OZONE EXHAUST FAN 3 - START              F55,,101
+"IA1,8",OZONE EXHAUST FAN 3 - STOP               F55,,102
+"IA1,9",VACUUM ROLL 2 - START                    F55,,102
+"IA1,A",VACUUM ROLL 2 - STOP                     F55,,102
+"IA1,B",NIP ROLL FOR CORONA #1 - ENGAGE          F55,,102
+"IA1,C",NIP ROLL FOR CORONA #1 - RETRACT         F55,,102
+"IA1,D",COR. ELECTRODE 1 ENGAGE                  F55,,102
+"IA1,E",COR. ELECTRODE 1 RETRACT                 F55,,102
+"IA1,F",NIP ROLL FOR CORONA #3 - ENGAGE          F55,,102
+,,,
+"IA2,0",NIP ROLL FOR CORONA #1 - ENGAGE          F56,,105
+"IA2,1",NIP ROLL FOR CORONA #1 - RETRACT         F56,,105
+"IA2,2",NIP ROLL FOR CORONA #3 - ENGAGE          F56,,105
+"IA2,3",NIP ROLL FOR CORONA #3 - RETRACT         F56,,105
+"IA2,4",SPREADER ROLL 2 ENGAGE                   F56,,105
+"IA2,5",SPREADER ROLL 2 RETRACT                  F56,,105
+"IA2,6",SPREADER ROLL 3 ENGAGE                   F56,,105
+"IA2,7",SPREADER ROLL 3 RETRACT                  F56,,105
+"IA2,8",OP. SPREADER ROLL 2 ENGAGE               F66,,106
+"IA2,9",OP. SPREADER ROLL 2 RETRACT              F66,,106
+"IA2,A",DRIVE SPREADER ROLL 2 ENGAGE             F66,,106
+"IA2,B",DRIVE SPREADER ROLL 2 RETRACT            F66,,106
+"IA2,C",OP. SPREADER ROLL 3 ENGAGE               F68,,106
+"IA2,D",OP. SPREADER ROLL 3 RETRACT              F68,,106
+"IA2,E",DRIVE SPREADER ROLL 3 ENGAGE             F68,,106
+"IA2,F",DRIVE SPREADER ROLL 3 RETRACT            F68,,106
+,,,
+"IA3,0",BURNER 1 ON                             F151,,109
+"IA3,1",BURNER 1 DEFECT                         F151,,109
+"IA3,2",BURNER 2 ON                             F152,,109
+"IA3,3",BURNER 2 DEFECT                         F152,,109
+"IA3,4",BURNER 3 ON                             F153,,109
+"IA3,5",BURNER 3 DEFECT                         F153,,109
+"IA3,6",BURNER 4 ON                             F154,,109
+"IA3,7",BURNER 4 DEFECT                         F154,,109
+"IA3,8",BURNER 5 ON                             F155,,110
+"IA3,9",BURNER 5 DEFECT                         F155,,110
+"IA3,A",BURNER 6 ON                             F156,,110
+"IA3,B",BURNER 6 DEFECT                         F156,,110
+"IA3,C",BURNER 7 ON                             F157,,110
+"IA3,D",BURNER 7 DEFECT                         F157,,110
+"IA3,E",BURNER 8 ON                             F158,,110
+"IA3,F",BURNER 8 DEFECT                         F158,,110
+,,,
+"IA4,0",BURNER 17 ON                            F167,,113
+"IA4,1",BURNER 17 DEFECT                        F167,,113
+"IA4,2",BURNER 18 ON                            F168,,113
+"IA4,3",BURNER 18 DEFECT                        F168,,113
+"IA4,4",BURNER 19 ON                            F169,,113
+"IA4,5",BURNER 19 DEFECT                        F169,,113
+"IA4,6",BURNER 20 ON                            F170,,113
+"IA4,7",BURNER 20 DEFECT                        F170,,113
+"IA4,8",RELEASE DEFECT                           F12,,114
+"IA4,9",RELEASE KLAXON (ALARM)                   F12,,114
+"IA4,A",FREE,,114
+"IA4,B",(FREE)  ,,114
+"IA4,C",(FREE)  INTRO STRETCH SIGNAL FOR PRS BARRIER,,114
+"IA4,D",(FREE)  LOW STRETCH SIGNAL FOR PRS BARRIER ,,114
+"IA4,E",(FREE),,114
+"IA4,F",(FREE),,114
+,,,
+"IA5,0","UP TO SPEED FOR TREATERS FROM F16 (075,A) - XE01",,117
+"IA5,1",(FREE),,117
+"IA5,2",(FREE),,117
+"IA5,3",(FREE),,117
+"IA5,4",(FREE),,117
+"IA5,5",(FREE),,117
+"IA5,6",(FREE),,117
+"IA5,7",(FREE),,117
+"IA5,8",(FREE),,118
+"IA5,9",(FREE),,118
+"IA5,A",(FREE),,118
+"IA5,B",(FREE),,118
+"IA5,C",(FREE),,118
+"IA5,D",(FREE),,118
+"IA5,E",(FREE),,118
+"IA5,F",(FREE),,118
+,,,
+"IA7,0",C. R. RUNNING                            F16,,125
+"IA7,1",MDO 1 RUNNING                            F16,,125
+"IA7,2",MDO 2 RUNNING                            F16,,125
+"IA7,3",MDO 3 RUNNING                            F16,,125
+"IA7,4",TDO RUNNING                              F16,,125
+"IA7,5",PRS 1 RUNNING                            F16,,125
+"IA7,6",PRS 2 RUNNING                            F16,,125
+"IA7,7",AUX. 1 RUNNING                           F16,,125
+"IA7,8",AUX. 2 RUNNING                           F16,,126
+"IA7,9",AUX. WINDER RUNNING                      F16,,126
+"IA7,A",PRODUCTION STRETCHING                    F16,,126
+"IA7,B",C. R. ROTATION                           F16,,126
+"IA7,C",MDO 1 ROTATION                           F16,,126
+"IA7,D",MDO 2 ROTATION                           F16,,126
+"IA7,E",MDO 3 ROTATION                           F16,,126
+"IA7,F",TDO ROTATION                             F16,,126
+,,,
+"IB0,0",AIR ON CLIPS - ON,,99
+"IB0,1",AIR ON CLIPS - AUTO,,99
+"IB0,2",TDO STOP                                 F52,,99
+"IB0,3",TDO STOP                                 F53,,99
+"IB0,4",OP. TRIM NIP ROLL ENGAGE                 F62,,99
+"IB0,5",OP. NIP ROLL RETRACT                     F62,,99
+"IB0,6",DRIVE NIP ROLL ENGAGE                    F62,,99
+"IB0,7",DRIVE NIP ROLL RETRACT                   F62,,99
+"IB0,8",OP. KNIFE - ENGAGE                       F62,,100
+"IB0,9",OP. KNIFE - RETRACT                      F62,,100
+"IB0,A",DRIVE KNIFE - ENGAGE                     F62,,100
+"IB0,B",DRIVE KNIFE - RETRACT                    F62,,100
+"IB0,C",OP. SPREADER ROLL 1 ENGAGE               F62,,100
+"IB0,D",OP. SPREADER ROLL 1 RETRACT              F62,,100
+"IB0,E",DRIVE SPREADER ROLL 1 ENGAGE             F62,,100
+"IB0,F",DRIVE SPREADER ROLL 1 RETRACT            F62,,100
+,,,
+"IB1,0",NIP ROLL FOR CORONA #3 - RETRACT         F55,,103
+"IB1,1",COR. ELECTRODE 3 ENGAGE                  F55,,103
+"IB1,2",COR. ELECTRODE 3 RETRACT                 F55,,103
+"IB1,3",COR. ELECTRODE 2 ENGAGE                  F55,,103
+"IB1,4",COR. ELECTRODE 2 RETRACT                 F55,,103
+"IB1,5",PRS STOP                                 F55,,103
+"IB1,6",(FREE),,103
+"IB1,7",LAMPS TEST                               F55,,103
+"IB1,8",WEB BREAK TDO BYPASS / ON                F55,,104
+"IB1,9",INDEPENDENT MODE PRS - CORONA TREATERS,,104
+"IB1,A",(FREE),,104
+"IB1,B",(FREE),,104
+"IB1,C",(FREE),,104
+"IB1,D",(FREE),,104
+"IB1,E",FREE,,104
+"IB1,F",FREE,,104
+,,,
+"IB2,0",NIP ROLL ENGAGE                          F63,,107
+"IB2,1",NIP ROLL RETRACT                         F63,,107
+"IB2,2",KNIFE ENGAGE                             F63,,107
+"IB2,3",KNIFE RETRACT                            F63,,107
+"IB2,4",SPREADER ROLL 1 ENGAGE                   F63,,107
+"IB2,5",SPREADER ROLL 1 RETRACT                  F63,,107
+"IB2,6",PRS STOP E                               F95,,107
+"IB2,7",PRS STOP E                               F63,,107
+"IB2,8",AUX 3 SAFETY SENSORS,,108
+"IB2,9",AUX. WINDER 3 START                      F70,,108
+"IB2,A",AUX. WINDER 3 STOP                       F70,,108
+"IB2,B",AUX. WINDER 3 ENGAGE                     F70,,108
+"IB2,C",AUX. WINDER 3 RETRACT                    F70,,108
+"IB2,D",TAH 1450.03 ALARM,,108
+"IB2,E",C. R. COOLING STOP,,108
+"IB2,F",WATER BATH COOLING STOP,,108
+,,,
+"IB3,0",BURNER 9 ON                             F159,,111
+"IB3,1",BURNER 9 DEFECT                         F159,,111
+"IB3,2",BURNER 10 ON                            F160,,111
+"IB3,3",BURNER 10 DEFECT                        F160,,111
+"IB3,4",BURNER 11 ON                            F161,,111
+"IB3,5",BURNER 11 DEFECT                        F161,,111
+"IB3,6",BURNER 12 ON                            F162,,111
+"IB3,7",BURNER 12 DEFECT                        F162,,111
+"IB3,8",BURNER 13 ON                            F163,,112
+"IB3,9",BURNER 13 DEFECT                        F163,,112
+"IB3,A",BURNER 14 ON                            F164,,112
+"IB3,B",BURNER 14 DEFECT                        F164,,112
+"IB3,C",BURNER 15 ON                            F165,,112
+"IB3,D",BURNER 15 DEFECT                        F165,,112
+"IB3,E",BURNER 16 ON                            F166,,112
+"IB3,F",BURNER 16 DEFECT                        F166,,112
+,,,
+"IB4,0",(FREE),,115
+"IB4,1",(FREE),,115
+"IB4,2",(FREE),,115
+"IB4,3",(FREE),,115
+"IB4,4",(FREE),,115
+"IB4,5",(FREE),,115
+"IB4,6",(FREE),,115
+"IB4,7",(FREE),,115
+"IB4,8",FREE,,116
+"IB4,9",FREE,,116
+"IB4,A",FREE,,116
+"IB4,B",FREE,,116
+"IB4,C",WEB BREAK -> B1211                      F201,,116
+"IB4,D",FREE,,116
+"IB4,E",ROLL 2 RUNNING                     CANCELLED,,116
+"IB4,F",LIGHT BARRIER                            PRS,,116
+,,,
+"IB5,0",(FREE),,119
+"IB5,1",(FREE),,119
+"IB5,2",(FREE),,119
+"IB5,3",(FREE),,119
+"IB5,4",(FREE),,119
+"IB5,5",(FREE),,119
+"IB5,6",(FREE),,119
+"IB5,7",(FREE),,119
+"IB5,8",(FREE),,119
+"IB5,9",(FREE),,119
+"IB5,A",(FREE),,119
+"IB5,B",(FREE),,119
+"IB5,C",(FREE),,119
+"IB5,D",(FREE),,119
+"IB5,E",(FREE),,119
+"IB5,F",(FREE),,119
+,,,
+"IB7,0",C. R. COOLING ON                       C1340,C1340,127
+"IB7,1",C. R. COOLING DEFECT                   C1340,C1340,127
+"IB7,2",WATER BATH ON                          C1350,C1350,127
+"IB7,3",WATER BATH DEFECT                      C1350,C1350,127
+"IB7,4",MDO OIL SKID ON                        C1430,C1430,127
+"IB7,5",MDO OIL SKID DEFECT                    C1430,C1430,127
+"IB7,6","WATER BATH ""ON"" AFTER EXTRUDER ON 5 MINUTES",,127
+"IB7,7",CORONA 1 ON                              F75,G1820-01,127
+"IB7,8",CORONA 1 DEFECT                          F75,G1820-01,128
+"IB7,9",CORONA 2 ON                              F76,G1820-02,128
+"IB7,A",CORONA 2 DEFECT                          F76,G1820-02,128
+"IB7,B",CORONA 3 ON                              F77,G1820-03,128
+"IB7,C",CORONA 3 DEFECT                          F77,G1820-03,128
+"IB7,D",CORONA 4 ON                              F78,G1820-04,128
+"IB7,E",CORONA 4 DEFECT                          F78,G1820-04,128
+"IB7,F",EMERGENCY STOP,,128
+,,,

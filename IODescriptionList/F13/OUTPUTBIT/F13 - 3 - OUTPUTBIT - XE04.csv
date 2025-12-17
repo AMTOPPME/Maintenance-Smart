@@ -1,0 +1,382 @@
+, F13 IO LIST,,
+,,,
+,F13\OUTPUTBIT.DOC,,
+I/O,DESCRIPTION,SYMBOL,PAGE #
+WORD,,,(DRAW')
+"OC4,0",FAN FOR DIE EXHAUST HOOD                        F23,M1260-01,146
+"OC4,1",AIR KNIFE BLOWER                                F23,M1310-01,146
+"OC4,2",FILM WATER REMOVAL BLOWER #1                    F23,M1310-02,146
+"OC4,3",FILM WATER REMOVAL BLOWER #2                    F23,M1330-01,146
+"OC4,4",C. R. DRYING BLOWER                             F23,M1330-01,146
+"OC4,5",C. R. BRAKE                                     F23,Y1302-01,146
+"OC4,6",AUX. WINDER 1 BRAKE (NOT USED)                  F23,,146
+"OC4,7",AUX. WINDER #1                                  F23,M1360-01 & 02,146
+"OC4,8",WYE DELTA FILM DRYING BLOWER,,147
+"OC4,9",WYE DELTA FILM DRYING BLOWER,,147
+"OC4,A",THREAD UP MOTOR - FAST ROLLS MUST BE UP POSITION,,147
+"OC4,B",AUX. WINDER 2 BRAKE (NOT USED)                  F23,,147
+"OC4,C",AUX. WINDER #2                                  F23,M1450-01 & 02,147
+"OC4,D",MDO PUMP PREHEATING ROLL #1 & 2                 F23,M1430-01,147
+"OC4,E",MDO PUMP STRETCHING ROLL #3 & 4                 F23,M1430-02,147
+"OC4,F",MDO PUMP STRETCHING ROLL #5 & 6                 F23,M1430-03,147
+,,,
+"OC5,0",CENT. EXHAUST AIR FAN                           F24,M1525-01,150
+"OC5,1",CLIPS COOLING FAN - INLET                       F24,M1520-01,150
+"OC5,2",CLIPS COOLING FAN - MIDDLE                      F24,M1520-02,150
+"OC5,3",CLIPS COOLING FAN - INTERVAL                    F24,M1520-03,150
+"OC5,4",TDO EXHAUST FAN - OUTLET                        F24,M1530-01,150
+"OC5,5",(FREE),,150
+"OC5,6",(FREE),,150
+"OC5,7",TDO FAN ZONE 1 (H.S) - E185                     F24,M1520-01,150
+"OC5,8",TDO FAN ZONE 1 (L.S) - E185                     F24,M1520-01,151
+"OC5,9",TDO FAN ZONE 2 (H.S) - E187                     F24,M1520-02,151
+"OC5,A",TDO FAN ZONE 2 (L.S) - E187                     F24,M1520-02,151
+"OC5,B",TDO FAN ZONE 3 (H.S) - E188                     F24,M1520-03,151
+"OC5,C",TDO FAN ZONE 3 (L.S) - E188                     F24,M1520-03,151
+"OC5,D",TDO FAN ZONE 4 (H.S) - E189                     F24,M1520-04,151
+"OC5,E",TDO FAN ZONE 4 (L.S) - E189                     F24,M1520-04,151
+"OC5,F",TDO FAN ZONE 5 (H.S) - E190                     F24,M1520-05,151
+,,,
+"OC6,0",TDO FAN W. ZONE 11 (L.S) - E198                 F24,M1520-13,154
+"OC6,1",TDO FAN E. ZONE 12 (H.S) - E199                 F24,M1520-14,154
+"OC6,2",TDO FAN E. ZONE 12 (L.S) - E199                 F24,M1520-14,154
+"OC6,3",TDO FAN W. ZONE 12 (H.S) - E200                 F24,M1520-15,154
+"OC6,4",TDO FAN W. ZONE 12 (L.S) - E200                 F24,M1520-15,154
+"OC6,5",TDO FAN E. ZONE 13 (H.S) - E201                 F24,M1520-16,154
+"OC6,6",TDO FAN E. ZONE 13 (L.S) - E201                 F24,M1520-16,154
+"OC6,7",TDO FAN W. ZONE 13 (H.S) - E202                 F24,M1520-17,154
+"OC6,8",TDO FAN W. ZONE 13 (L.S) - E202                 F24,M1520-17,155
+"OC6,9",TDO FAN E. ZONE 14 (H.S) - E203                 F24,M1520-18,155
+"OC6,A",TDO FAN E. ZONE 14 (L.S) - E203                 F24,M1520-18,155
+"OC6,B",TDO FAN W. ZONE 14 (H.S) - E204                 F24,M1520-19,155
+"OC6,C",TDO FAN W. ZONE 14 (L.S) - E204                 F24,M1520-19,155
+"OC6,D",TDO FAN E. ZONE 15 (H.S) - E205                 F24,M1520-20,155
+"OC6,E",TDO FAN E. ZONE 15 (L.S) - E205                 F24,M1520-20,155
+"OC6,F",TDO FAN W. ZONE 15 (H.S) - E206                 F24,M1520-21,155
+,,,
+"OC7,0",TDO FAN 2. ZONE 19 (L.S) - E214                 F24,M1520-29,158
+"OC7,1",TDO FAN E. ZONE 20 (H.S) - E215                 F24,M1520-30,158
+"OC7,2",TDO FAN E. ZONE 20 (L.S) - E215                 F24,M1520-30,158
+"OC7,3",TDO FAN W. ZONE 20 (H.S) - E216                 F24,M1520-31,158
+"OC7,4",TDO FAN W. ZONE 20 (L.S) - E216                 F24,M1520-31,158
+"OC7,5",TDO FAN E. COOLING ZONE (H.S) - E217            F24,M1520-32,158
+"OC7,6",TDO FAN E. COOLING ZONE (L.S) - E217            F24,M1520-32,158
+"OC7,7",TDO FAN W. COOLING ZONE (H.S) - E218            F24,M1520-33,158
+"OC7,8",TDO FAN W. COOLING ZONE (L.S) - E218            F24,M1520-33,159
+"OC7,9",TDO FAN 3 COOLING ZONE (H.S) - E219             F24,M1520-34,159
+"OC7,A",TDO FAN 3 COOLING ZONE (L.S) - E219             F24,M1520-34,159
+"OC7,B",TDO FAN 4 COOLING ZONE (H.S) - E220             F24,M1520-35,159
+"OC7,C",TDO FAN 4 COOLING ZONE (L.S) - E220             F24,M1520-35,159
+"OC7,D",(FREE),,159
+"OC7,E",(FREE),,159
+"OC7,F",FAN FOR PRS1 VACUUM ROLL                        F23,M1812-01,159
+,,,
+"OD4,0",MDO PUMP ROLL #7 & 8                            F23,M1430-04,148
+"OD4,1",MDO PUMP ROLL #9 & 10                           F23,M1430-05,148
+"OD4,2",MDO PUMP ROLL #11 & 12                          F23,M1430-06,148
+"OD4,3",MDO PUMP ROLL #13 & 14                          F23,M1430-07,148
+"OD4,4",MDO PUMP ROLL #15 & 16                          F23,M1430-08,148
+"OD4,5",MDO PUMP ROLL #17 & 18                          F23,M1430-09,148
+"OD4,6",MDO PUMP ROLL #19 & 20                          F23,M1430-10,148
+"OD4,7",MDO PUMP ROLL #21 & 22                          F23,M1430-11,148
+"OD4,8",MDO PUMP ROLL #23 & 24                          F23,M1430-12,149
+"OD4,9",LI1 (AUX. WINDER 1)                             F23,M1360-01,149
+"OD4,A",LI2 (AUX. WINDER 1)                             F23,M1360-01,149
+"OD4,B",FW (AUX. WINDER 1)                              F23,M1360-01,149
+"OD4,C",LI1 (AUX. WINDER 2)                             F23,M1450-01,149
+"OD4,D",LI2 (AUX. WINDER 2)                             F23,M1450-01,149
+"OD4,E",FW (AUX. WINDER 2)                              F23,M1450-01,149
+"OD4,F",(FREE),,149
+,,,
+"OD5,0",TDO FAN ZONE 5 (L.S) - E190                     F24,M1520-05,152
+"OD5,1",TDO FAN ZONE 6 (H.S) - E191                     F24,M1520-06,152
+"OD5,2",TDO FAN ZONE 6 (L.S) - E191                     F24,M1520-06,152
+"OD5,3",TDO FAN ZONE 7 (H.S) - E192                     F24,M1520-07,152
+"OD5,4",TDO FAN ZONE 7 (L.S) - E192                     F24,M1520-07,152
+"OD5,5",TDO FAN ZONE 8 (H.S) - E193                     F24,M1520-08,152
+"OD5,6",TDO FAN ZONE 8 (L.S) - E193                     F24,M1520-08,152
+"OD5,7",TDO FAN ZONE 9 (H.S) - E194                     F24,M1520-09,152
+"OD5,8",TDO FAN ZONE 9 (L.S) - E194                     F24,M1520-09,153
+"OD5,9",TDO FAN ZONE 10 (H.S) - E195                    F24,M1520-10,153
+"OD5,A",TDO FAN ZONE 10 (L.S) - E195                    F24,M1520-10,153
+"OD5,B",TDO FAN W. ZONE 10 (H.S) - E196                 F24,M1520-11,153
+"OD5,C",TDO FAN W. ZONE 10 (L.S) - E196                 F24,M1520-11,153
+"OD5,D",TDO FAN E. ZONE 11 (H.S) - E197                 F24,M1520-12,153
+"OD5,E",TDO FAN E. ZONE 11 (L.S) - E197                 F24,M1520-12,153
+"OD5,F",TDO FAN W. ZONE 11 (H.S) - E198                 F24,M1520-13,153
+,,,
+"OD6,0",TDO FAN W. ZONE 15 (L.S) - E206                 F24,M1520-21,156
+"OD6,1",TDO FAN E. ZONE 16 (H.S) - E207                 F24,M1520-22,156
+"OD6,2",TDO FAN E. ZONE 16 (L.S) - E207                 F24,M1520-22,156
+"OD6,3",TDO FAN W. ZONE 16 (H.S) - E208                 F24,M1520-23,156
+"OD6,4",TDO FAN W. ZONE 16 (L.S) - E208                 F24,M1520-23,156
+"OD6,5",TDO FAN E. ZONE 17 (H.S) - E209                 F24,M1520-24,156
+"OD6,6",TDO FAN E. ZONE 17 (L.S) - E209                 F24,M1520-24,156
+"OD6,7",TDO FAN W. ZONE 17 (H.S) - E210                 F24,M1520-25,156
+"OD6,8",TDO FAN W. ZONE 17 (L.S) - E210                 F24,M1520-25,157
+"OD6,9",TDO FAN E. ZONE 18 (H.S) - E211                 F24,M1520-26,157
+"OD6,A",TDO FAN E. ZONE 18 (L.S) - E211                 F24,M1520-26,157
+"OD6,B",TDO FAN W. ZONE 18 (H.S) - E212                 F24,M1520-27,157
+"OD6,C",TDO FAN W. ZONE 18 (L.S) - E212                 F24,M1520-27,157
+"OD6,D",TDO FAN E. ZONE 19 (H.S) - E213                 F24,M1520-28,157
+"OD6,E",TDO FAN E. ZONE 19 (L.S) - E213                 F24,M1520-28,157
+"OD6,F",TDO FAN W. ZONE 19 (H.S) - E214                 F24,M1520-29,157
+,,,
+"OD7,0",FAN FOR PRS2 VACUUM ROLL                        F24,M1825-01,160
+"OD7,1",OZONE EXHAUST 1 (NOT USED),M1831-01,160
+"OD7,2",OZONE EXHAUST 2 (NOT USED),M1831-02,160
+"OD7,3",OZONE EXHAUST 3 (NOT USED),M1831-03,160
+"OD7,4",OZONE TREATER 1                                 F24,,160
+"OD7,5",OZONE TREATER 2                                 F24,,160
+"OD7,6",OZONE TREATER 3                                 F24,,160
+"OD7,7",OZONE TREATER 4                                 F24,,160
+"OD7,8",RELEASE DEFECT,,161
+"OD7,9",TDO ROTATION,,161
+"OD7,A",FREE,,161
+"OD7,B",CHAIN TENSION PUMP,M1515-01,161
+"OD7,C",CLIP CLEANING AIR OUTPUT,,161
+"OD7,D",(FREE),,161
+"OD7,E",(FREE),,161
+"OD7,F",(FREE),,161
+,,,
+"OE0,0",C. R. BRAKE                                     F23,Y1301-02,163
+"OE0,1",C. R. HOR. MOV. (BACKWARD)                      F23,M1301-01,163
+"OE0,2",C. R. HOR. MOV. (FORWARD)                       F23,M1301-01,163
+"OE0,3",C. R. HOR. MOV. (H.S)                           F23,M1301-01,163
+"OE0,4",C. R. HOR. MOV. (L.S)                           F23,M1301-01,163
+"OE0,5",STRETCHING ROLL #1 UP                           F23,M1402-01,163
+"OE0,6",STRETCHING ROLL #1 DOWN                         F23,M1402-01,163
+"OE0,7",STRETCHING ROLL #2 UP                           F23,M1402-02,163
+"OE0,8",STRETCHING ROLL #2 DOWN                         F23,M1402-02,164
+"OE0,9",STRETCHING ROLL #3 UP                           F23,M1402-03,164
+"OE0,A",STRETCHING ROLL #3 DOWN                         F23,M1402-03,164
+"OE0,B",MDO THREADING CLUTCH                            F23,Y1410-01,164
+"OE0,C",CHILL ROLL IN WORKING POSITION,,164
+"OE0,D",CHILL ROLL IN HOME POSITION,,164
+"OE0,E",(FREE),,164
+"OE0,F",(FREE),,164
+,,,
+"OE1,0",AIR KNIFE POS. TO POSITION                      F23,SV1310-09,167
+"OE1,1",ROLL POS. FOR WATER REMOVAL CARRIAGE            F23,SV1310-11,167
+"OE1,2",CHROMEO ROLL TO POSITION                        F23,SV1310-12,167
+"OE1,3",RUBBER ROLL TO POSITION                         F23,SV1310-13,167
+"OE1,4",COOLING WATER VALVE FOR WATER BATH              F23,SV1350-03,167
+"OE1,5",AUX. WINDER #1 ENGAGE                           F23,SV1360-04,167
+"OE1,6",AUX. WINDER #1 RETRACT                          F23,SV1360-05,167
+"OE1,7",EDGE PINNING TO POSITION                        F23,SV1310-10,167
+"OE1,8",INST. AIR OPEN (NOT USED),SV1310-14,168
+"OE1,9",MDO NIP ROLL 1 SOLENOID                         F23,SV1404-01,168
+"OE1,A",MDO NIP ROLL 2 SOLENOID                         F23,SV1404-02,168
+"OE1,B",MDO NIP ROLL 3 SOLENOID                         F23,SV1404-03,168
+"OE1,C",MDO PRESS ROLL INLET                            F23,SV1404-04,168
+"OE1,D",MDO PRESS ROLL OUTLET                           F23,SV1404-05,168
+"OE1,E",AUX. WINDER 2 RETRACT                           F23,SV1450-04,168
+"OE1,F",AUX. WINDER 2 ENGAGE                            F23,SV1450-05,168
+,,,
+"OE2,0",NIP ROLL FOR CORONA #3                          F23,SV1820-15,171
+"OE2,1",AUX #3 SAFETY SENSORS TO F16?,,171
+"OE2,2",OP. SPREADER ROLL 1                             F23,SV1840-01,171
+"OE2,3",DRIVE SPREADER ROLL 1                           F23,SV1840-02,171
+"OE2,4",OP. SPREADER ROLL 2                             F23,SV1840-03,171
+"OE2,5",DRIVE SPREADER ROLL 2                           F23,SV1840-04,171
+"OE2,6",OP. SPREADER ROLL 3                             F23,SV1840-05,171
+"OE2,7",DRIVE SPREADER ROLL 3                           F23,SV1840-06,171
+"OE2,8",OP. NIP ROLL FOR EDGE TRIM                      F23,SV1850-01,172
+"OE2,9",DRIVE NIP ROLL FOR EDGE TRIM                    F23,SV1850-02,172
+"OE2,A",OP. KNIFE FOR EDGE TRIM                         F23,SV1850-03,172
+"OE2,B",DRIVE KNIFE FOR EDGE TRIM                       F23,SV1850-04,172
+"OE2,C",AUX. WINDER 3 ENGAGE                            F23,SV1860-01,172
+"OE2,D",AUX. WINDER 3 RETRACT                           F23,SV1860-02,172
+"OE2,E",AUX. WINDER 3 LOCKING                           F23,SV1860-03,172
+"OE2,F",TDO GAS SUPPLY OPEN/CLOSE                       F23,SV1500-00,172
+,,,
+"OE3,0",WEB BREAK MDO LAMP                              F42,,175
+"OE3,1",WEB BREAK MDO LAMP                              F42,,175
+"OE3,2",FILM BREAK BYPASS ON                            F42,,175
+"OE3,3",CHAIN TENSION LAMP                              F50,,175
+"OE3,4",(FREE),,175
+"OE3,5",WEB BREAK TDO LAMP                              F55,,175
+"OE3,6",WEB BREAK PRS LAMP                              F55,,175
+"OE3,7",NIP ROLL FOR CORONA #1                          F55,,175
+"OE3,8",COR. ELECTRODE 1 ENGAGED - LAMP                 F55,,176
+"OE3,9",COR. ELECTRODE 2 ENGAGED - LAMP                 F55,,176
+"OE3,A",NIP ROLL FOR CORONA #3                          F55,,176
+"OE3,B",COR. ELECTRODE 3 ENGAGED - LAMP                 F55,,176
+"OE3,C",VACUUM ROLL 1 ON - LAMP                         F55,,176
+"OE3,D",VACUUM ROLL 2 ON - LAMP                         F55,,176
+"OE3,E",OZONE EXHAUST FAN 1                             F55,,176
+"OE3,F",OZONE EXHAUST FAN 2                             F55,,176
+,,,
+"OE4,0",TDO BURNER 1 INTER.                            F151,,179
+"OE4,1",TDO BURNER 1 START/STOP                        F151,,179
+"OE4,2",TDO BURNER 2 INTER.                            F152,,179
+"OE4,3",TDO BURNER 2 START/STOP                        F152,,179
+"OE4,4",TDO BURNER 3 INTER.                            F153,,179
+"OE4,5",TDO BURNER 3 START/STOP                        F153,,179
+"OE4,6",TDO BURNER 4 INTER.                            F154,,179
+"OE4,7",TDO BURNER 4 START/STOP                        F154,,179
+"OE4,8",TDO BURNER 5 INTER.                            F155,,180
+"OE4,9",TDO BURNER 5 START/STOP                        F155,,180
+"OE4,A",TDO BURNER 6 INTER.                            F156,,180
+"OE4,B",TDO BURNER 6 START/STOP                        F156,,180
+"OE4,C",TDO BURNER 7 INTER.                            F157,,180
+"OE4,D",TDO BURNER 7 START/STOP                        F157,,180
+"OE4,E",TDO BURNER 8 INTER.                            F158,,180
+"OE4,F",TDO BURNER 8 START/STOP                        F158,,180
+,,,
+"OE5,0",TDO BURNER 17 INTER.                           F167,,183
+"OE5,1",TDO BURNER 17 START/STOP                       F167,,183
+"OE5,2",TDO BURNER 18 INTER.                           F168,,183
+"OE5,3",TDO BURNER 18 START/STOP                       F168,,183
+"OE5,4",TDO BURNER 19 INTER.                           F169,,183
+"OE5,5",TDO BURNER 19 START/STOP                       F169,,183
+"OE5,6",TDO BURNER 20 INTER.                           F170,,183
+"OE5,7",TDO BURNER 20 START/STOP                       F170,,183
+"OE5,8",FREE,,184
+"OE5,9",FREE,,184
+"OE5,A",SR6 L150+1,,184
+"OE5,B",(FREE),,184
+"OE5,C",(FREE),,184
+"OE5,D",(FREE),,184
+"OE5,E",(FREE),,184
+"OE5,F",(FREE),,184
+,,,
+"OE6,0",C. R. INTERLOCK                                 F16,,187
+"OE6,1",MDO 1 INTERLOCK                                 F16,,187
+"OE6,2",MDO 2 INTERLOCK                                 F16,,187
+"OE6,3",MDO 3 INTERLOCK                                 F16,,187
+"OE6,4",TDO INTERLOCK                                   F16,,187
+"OE6,5",PRS 1 INTERLOCK                                 F16,,187
+"OE6,6",PRS 2 INTERLOCK                                 F16,,187
+"OE6,7",AUX. 1 INTERLOCK                                F16,,187
+"OE6,8",AUX. 2 INTERLOCK                                F16,,188
+"OE6,9",AUX. WINDER INTERLOCK                           F16,,188
+"OE6,A",WEB BREAK MDO                                   F16,,188
+"OE6,B",WEB BREAK TDO                                   F16,,188
+"OE6,C",WEB BREAK PRS                                   F16,,188
+"OE6,D",MDO WARM ROLLS                                  F16,,188
+"OE6,E",TDO WARM                                        F16,,188
+"OE6,F",AUX. WINDER START/STOP                          F16,,188
+,,,
+"OF0,0",FREE,,165
+"OF0,1",FREE,,165
+"OF0,2","MDO ZONE 9, HEATING                             MDO",SV1435-13,165
+"OF0,3","MDO ZONE 10, HEATING                            MDO",SV1435-14,165
+"OF0,4",MDO ZONE 1                                      MDO,SV1435-01,165
+"OF0,5",MDO ZONE 2                                      MDO,SV1435-02,165
+"OF0,6",MDO ZONE 3                                      MDO,SV1435-03,165
+"OF0,7",MDO ZONE 4                                      MDO,SV1435-04,165
+"OF0,8",MDO ZONE 5                                      MDO,SV1435-05,166
+"OF0,9",MDO ZONE 6                                      MDO,SV1435-06,166
+"OF0,A",MDO ZONE 7                                      MDO,SV1435-07,166
+"OF0,B",MDO ZONE 8                                      MDO,SV1435-08,166
+"OF0,C","MDO ZONE 9, COOLING                             MDO",SV1435-09,166
+"OF0,D","MDO ZONE 10, COOLING                            MDO",SV1435-10,166
+"OF0,E","MDO ZONE 11, COOLING                            MDO",SV1435-11,166
+"OF0,F","MDO ZONE 12, COOLING                            MDO",SV1435-12,166
+,,,
+"OF1,0",OUTPUT FOR SV1511.01,,169
+"OF1,1",TABLE RAISE CYLINDER                           F140,SV1511-02,169
+"OF1,2",CHAIN TENSION CYLINDER                          TDO,SV1515-08,169
+"OF1,3",CHAIN TRACK LUBRIF. EAST SIDE                  F143,SV1518-01,169
+"OF1,4",CLIPS LUBRIF. EAST SIDE - PUMP ENGAGE          F143,SV1518-03,169
+"OF1,5",CLIPS LUBRIF. EAST SIDE - PUMP RETRACT         F143,SV1518-04,169
+"OF1,6",CHAIN TRACK LUBRIF. WEST SIDE                  F142,SV1518-02,169
+"OF1,7",CLIPS LUBRIF. WEST SIDE - PUMP ENGAGE          F142,SV1518-05,169
+"OF1,8",CLIPS LUBRIF. WEST SIDE - PUMP RETRACT         F142,SV1518-06,170
+"OF1,9",AIR ON CLIPS VALVE                             F142,SV1511-03,170
+"OF1,A","MDO ZONE 11, HEATING                            MDO",SV1435-15,170
+"OF1,B","MDO ZONE 12, HEATING                            MDO",SV1435-16,170
+"OF1,C",COR. ELECTRODE 1 CYLINDER                       PRS,SV1820-07,170
+"OF1,D",NIP ROLL FOR CORONA #1                          PRS,SV1820-19,170
+"OF1,E",COR. ELECTRODE 2 CYLINDER                       PRS,SV1820-16,170
+"OF1,F",COR. ELECTRODE 3 CYLINDER                       PRS,SV1820-11,170
+,,,
+"OF2,0",DIE EXHAUST HOOD ON - LAMP                      F32,,173
+"OF2,1",EDGE PINNING ON - LAMP                          F32,,173
+"OF2,2",AIR KNIFE POS. - LAMP                           F32,,173
+"OF2,3",AIR KNIFE BLOWER ON - LAMP                      F32,,173
+"OF2,4",C. R. WATER REMOVAL FAN ON - LAMP               F32,,173
+"OF2,5",FILM WATER REMOVAL 1 ON - LAMP                  F32,,173
+"OF2,6",FILM WATER REMOVAL 2 ON - LAMP                  F32,,173
+"OF2,7",SOFTAL ELECTRODES ENGAGE,,173
+"OF2,8",SOFTAL ELECTRODES RETRACT,,174
+"OF2,9",KLAXON FOR F13                                  F32,174H14,174
+"OF2,A",MDO NIP ROLL 1 ON - LAMP                        F32,,174
+"OF2,B",MDO NIP ROLL 2 ON - LAMP                        F32,,174
+"OF2,C",MDO NIP ROLL 3 ON - LAMP                        F32,,174
+"OF2,D",PRESS ROLL INLET ON - LAMP                      F32,,174
+"OF2,E",PRESS ROLL OUTLET ON - LAMP                     F32,,174
+"OF2,F",> 60M MICRO m - LAMP                            F32,,174
+,,,
+"OF3,0",OZONE EXHAUST FAN 3                             F55,,177
+"OF3,1",WEB BREAKER DETECTOR TDO - LAMP                 F55,,177
+"OF3,2",WEB BREAKER DETECTOR 1 - LAMP                   F55,,177
+"OF3,3",WEB BREAKER DETECTOR 2 - LAMP                   F55,,177
+"OF3,4",OP. NIP ROLL FOR EDGE TRIM ON - LAMP            F62,,177
+"OF3,5",OP. KNIFE FOR EDGE TRIM ON - LAMP               F62,,177
+"OF3,6",DRIVE NIP ROLL FOR EDGE TRIM ON - LAMP          F62,,177
+"OF3,7",DRIVE KNIFE FOR EDGE TRIM ON - LAMP             F62,,177
+"OF3,8",DRIVE NIP ROLL FOR EDGE TRIM ON - LAMP          F63,,178
+"OF3,9",DRIVE KNIFE FOR EDGE TRIM ON - LAMP             F63,,178
+"OF3,A","NIP ROLL FOR CORONA #1, FOR EDGE TRIM ON - LAMP F56",,178
+"OF3,B","NIP ROLL FOR CORONA #3, FOR EDGE TRIM ON - LAMP F56",,178
+"OF3,C",(FREE),,178
+"OF3,D",AUX. WINDER 3 WEB BREAK BYPASS ON - LAMP        F70,,178
+"OF3,E",AUX. WINDER 1 WEB BREAK BYPASS ON - LAMP        F36,,178
+"OF3,F",AUX. WINDER 2 WEB BREAK BYPASS ON - LAMP        F46,,178
+,,,
+"OF4,0",TDO BURNER 9 INTER.                            F159,,181
+"OF4,1",TDO BURNER 9 START/STOP                        F159,,181
+"OF4,2",TDO BURNER 10 INTER.                           F160,,181
+"OF4,3",TDO BURNER 10 START/STOP                       F160,,181
+"OF4,4",TDO BURNER 11 INTER.                           F161,,181
+"OF4,5",TDO BURNER 11 START/STOP                       F161,,181
+"OF4,6",TDO BURNER 12 INTER.                           F162,,181
+"OF4,7",TDO BURNER 12 START/STOP                       F162,,181
+"OF4,8",TDO BURNER 13 INTER.                           F163,,181
+"OF4,9",TDO BURNER 13 START/STOP                       F163,,181
+"OF4,A",TDO BURNER 14 INTER.                           F164,,181
+"OF4,B",TDO BURNER 14 START/STOP                       F164,,181
+"OF4,C",TDO BURNER 15 INTER.                           F165,,181
+"OF4,D",TDO BURNER 15 START/STOP                       F165,,181
+"OF4,E",TDO BURNER 16 INTER.                           F166,,181
+"OF4,F",TDO BURNER 16 START/STOP                       F166,,181
+,,,
+"OF5,0",TDO AND PRS WEB BREAK -> WINDER SR12 L250 + 15,,185
+"OF5,1",FLAME TREATER WEB BREAK / PROCESS STOP ACTION &,,185
+,PRS VACUUM ROLL #2 ON,,
+"OF5,2",FREE,,185
+,,,
+"OF5,3",FREE,,185
+,,,
+"OF5,4",FREE,,185
+"OF5,5","KLAXON FM F12 I96,E  TO INPUT OF F12 FOR KLAXON ALARM",,185
+"OF5,6",(FREE)   ,,185
+"OF5,7",(FREE)   ,,185
+"OF5,8",UP TO SPEED FOR SOFTAL TREATER C,,186
+"OF5,9",UP TO SPEED FOR SOFTAL TREATER D,,186
+"OF5,A",(FREE)   ,,186
+"OF5,B",(FREE)   ,,186
+"OF5,C",(FREE),,186
+"OF5,D",(FREE),,186
+"OF5,E",SOFTAL TREATERS ENGAGE ELECTRODES,,186
+"OF5,F",SOFTAL TREATERS RETRACT ELECTRODES,,186
+,,,
+"OF6,0",C. R. COOLING SKID INTER.                       C.R,,189
+"OF6,1",C. R. COOLING SKID START/STOP                   C.R,,189
+"OF6,2",WATER BATH SKID INTER.                          C.R,,189
+"OF6,3",WATER BATH SKID START/STOP                      C.R,,189
+"OF6,4",MDO BOILER SKID START/STOP                      MDO,,189
+"OF6,5",UP TO SPEED SOFTAL TREATER A,,189
+"OF6,6",UP TO SPEED SOFTAL TREATER B,,189
+"OF6,7",FILM BREAK TO MEASUREX                     MEASUREX,,189
+"OF6,8",MDO BOILER SKID INTERLOCK,C1430,190
+"OF6,9",KLAXON FOR F13                                  F13,17H3,190
+"OF6,A",ROTATING LIGHT FOR F13                          F13,17H7,190
+"OF6,B",COR. 1 INTERLOCK                                F75,G1820-01,190
+"OF6,C",COR. 2 INTERLOCK                                F76,G1820-02,190
+"OF6,D",COR. 3 INTERLOCK                                F77,G1820-03,190
+"OF6,E",COR. 4 INTERLOCK                                F78,G1820-04,190
+"OF6,F",ISO DAC GAUGE CONTROL ON/OFF TO MEASUREX   MEASUREX,,190
+,,,

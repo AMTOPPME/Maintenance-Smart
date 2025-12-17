@@ -1,0 +1,255 @@
+,F12 I/O LIST,,
+,,,
+,F12\INPUTBIT.DOC,,
+I/O,DESCRIPTION,SYMBOL,PAGE #
+WORD,,,(DRAW')
+"I81,0",EXT. 1 RUNNING                                      F16,,68
+"I81,1",EXT. 2 RUNNING                                      F16,,68
+"I81,2",SAT. 1 RUNNING                                      F16,,68
+"I81,3",SAT. 2 RUNNING                                      F16,,68
+"I81,4",PRODUC. STRETCH.                                    F16,,68
+"I81,5",(FREE),,68
+"I81,6","PRIMARY EXT. ZONE 1 (XE01)    COOLING FROM F16 - 075,F",,68
+"I81,7",MELT LINE OVER TEMPERATURE                     OIL SKID,C1240,68
+"I81,8",MELT LINE HIGH LEVEL-DEFECT                    OIL SKID,C1240,69
+"I81,9",MELT LINE LOW LEVEL-DEFECT                     OIL SKID,C1240,69
+"I81,A",FREE                                                 F8,,69
+,(*ONLY LINE #1),,
+"I81,B",#1 HOPPER FULL                                   CONAIR,,69
+"I81,C",#2 HOPPER FULL                                   CONAIR,,69
+"I81,D",#3 HOPPER FULL                                   CONAIR,,69
+"I81,E",#4 HOPPER FULL                                   CONAIR,,69
+"I81,F",#5 HOPPER FULL                                   CONAIR,,69
+,,,
+"I82,0",HEATER ZONE 1 EXT. 1                                F21,H1200-01,72
+"I82,1",HEATER ZONE 2 EXT. 1                                F21,H1200-02,72
+"I82,2",HEATER ZONE 3 EXT. 1                                F21,H1200-03,72
+"I82,3",HEATER ZONE 4 EXT. 1                                F21,H1200-04,72
+"I82,4",COOLING PUMP EXT. 1                                 F21,M1200-05,72
+"I82,5",MIXING SCREEN                                       F21,M1114-01,72
+"I82,6",ROTARY ARM                                          F21,M1114-02,72
+"I82,7",HEATER ZONE 1 EXT. 2                                F21,H1200-06,72
+"I82,8",HEATER ZONE 1 EXT. 2                                F21,H1200-07,73
+"I82,9",HEATER ZONE 2 EXT. 2                                F21,H1200-08,73
+"I82,A",HEATER ZONE 3 EXT. 2                                F21,H1200-09,73
+"I82,B",COOLING PUMP EXT. 2                                 F21,H1200-11,73
+"I82,C","VACUUM PUMP,HOMO/RECLAIM GAYLORD ADDITIVE           F21",M1107-01,73
+"I82,D",MDO DANCER ROLL REACH BOTTOM,,73
+"I82,E",MELT LINE 1 ZONE 1                                  F21,H1200-12,73
+"I82,F",MELT LINE 1 ZONE 2                                  F21,H1200-13,73
+,,,
+"I83,0",SAT. EXT. 1 HEATER ZONE 1                           F22,H1210-01,76
+"I83,1",SAT. EXT. 1 HEATER ZONE 2                           F22,H1210-02,76
+"I83,2",SAT. EXT. 1 HEATER ZONE 3                           F22,H1210-03,76
+"I83,3",SAT. EXT. 1 HEATER ZONE 4                           F22,H1210-04,76
+"I83,4",SAT. EXT. 1 HEATER ZONE 5                           F22,H1210-05,76
+"I83,5",SAT. EXT. 1 HEATER ZONE 6                           F22,H1210-06,76
+"I83,6",SAT. EXT. 1 HEATER ZONE 7                           F22,H1210-07,76
+"I83,7",ADAPT. SAT. EXT. 1                                  F22,H1210-29,76
+"I83,8",COOLING FAN ZONE 1                                  F22,M1210-08,77
+"I83,9",COOLING FAN ZONE 2                                  F22,M1210-09,77
+,,,
+B80 = RELEASE DEFECT (PC1/PC2),,,
+,,,
+,,,
+"I83,A",COOLING FAN ZONE 3                                  F22,M1210-10,77
+"I83,B",COOLING FAN ZONE 4                                  F22,M1210-11,77
+"I83,C",COOLING FAN ZONE 5                                  F22,M1210-12,77
+"I83,D",COOLING FAN ZONE 6                                  F22,M1210-13,77
+"I83,E",COOLING FAN ZONE 7                                  F22,M1210-14,77
+"I83,F",(FREE),,77
+,,,
+"I84,0",HEATING OF DIVERTER                                 F23,H1250-01,80
+"I84,1",DIE HEATER ZONE 1                                   F23,H1260-01,80
+"I84,2",DIE HEATER ZONE 2                                   F23,H1260-02,80
+"I84,3",DIE HEATER ZONE 3                                   F23,H1260-03,80
+"I84,4",DIE HEATER ZONE 4                                   F23,H1260-04,80
+"I84,5",DIE HEATER ZONE 5                                   F23,H1260-05,80
+"I84,6",DIE HEATER ZONE 6                                   F23,H1260-06,80
+"I84,7",DIE HEATER ZONE 7                                   F23,H1260-07,80
+"I84,8",(FREE),,81
+"I84,9",(FREE),,81
+"I84,A",(FREE),,81
+"I84,B",(FREE),,81
+"I84,C",(FREE),,81
+"I84,D",STATIC MIXER HEATING                                F23,H1251-01,81
+"I84,E",STATIC MIXER CONNECTIONS                            F23,H1251-02,81
+"I84,F",SAT. 1 HEATING FILTER                               F23,H1232-01,81
+,,,
+"I85,0",EXT. 1 GEAR BOX FLOW – LOW                       EXT. 1,FSL1200-21,84
+"I85,1",EXT. 1 GEAR BOX PRESSURE – LOW                   EXT. 1,PSL1200-22,84
+"I85,2",GEAR BOX EXT. 1 OIL FILTER – HIGH PRESSURE       EXT. 1,DPSH1200-23,84
+"I85,3",GEAR BOX EXT. 1 OIL FILTER – HIGH PRESSURE       EXT. 1,DPSH1200-24,84
+"I85,4",COOLING CIRCUIT EXT. 1 FLOW SWITCH – LOW         EXT. 1,FSL1200-25,84
+"I85,5",GEAR BOX EXT. 2 FLOW SWITCH – LOW                EXT. 2,FSL1200-26,84
+"I85,6",GEAR BOX EXT. 2 PRESSURE SWITCH – LOW            EXT. 2,PSL1200-27,84
+"I85,7",GEAR BOX EXT. 2 OIL FILTER – HIGH PRESSURE       EXT. 2,DPSH1200-28,84
+"I85,8",GEAR BOX EXT. 2 OIL FILTER – HIGH PRESSURE       EXT. 2,DPSH1200-29,85
+"I85,9",COOLING CIRCUIT EXT. 2 FLOW SWITCH – LOW         EXT. 2,FSL1200-30,85
+"I85,A",MELT LINE AGGREGATE FLOW SWITCH – LOW          OIL SKID,FSL1240-10,85
+"I85,B",ADDITIVE DOSING HOPPER LOW LEVEL                 CONAIR,LAL1112-01,85
+"I85,C",HOMO DOSING HOPPER LOW LEVEL                     CONAIR,LAL1106-01,85
+"I85,D",RECLAIM DOSING HOPPER LOW LEVEL                  CONAIR,LAL1106-02,85
+"I85,E",GEAR BOX SAT. EXT. 1 FLOW LOW                    SAT. 1,FSL1210-35,85
+,,,
+,,,
+"I85,F",GEAR BOX SAT. EXT. 1 PRESSURE LOW                SAT. 1,PSL1210-36,85
+,,,
+"I86,0",FEEDING VALVE – OPEN                                F29,,88
+"I86,1",FEEDING VALVE – CLOSED                              F29,,88
+"I86,2",4 EXTRUDERS STOP                                    F29,,88
+"I86,3",MELT LINE OIL SKID STOP                             F35,,88
+"I86,4",MAIN EXT. AIR FLOW SWITCH,,
+"I86,5",SECONDARY EXT. AIR FLOW SWITCH,,
+"I86,6",FOREMOST BLENDER RUNNING,,
+"I86,7","FOREMOST                     KLAXON FROM F13 (OF5,5)",,
+"I86,8",EMERGENCY STOP LED LIGHT,,
+"I86,9",(FREE),,89
+"I86,A",(FREE),,89
+"I86,B",(FREE),,89
+"I86,C",(FREE),,89
+"I86,D",(FREE),,89
+"I86,E",(FREE),,89
+"I86,F",(FREE),,89
+,,,
+"I87,0",(FREE),,92
+"I87,1",(FREE),,92
+"I87,2",(FREE),,92
+"I87,3",(FREE),,92
+"I87,4",(FREE),,92
+"I87,5",(FREE),,92
+"I87,6",(FREE),,92
+"I87,7",(FREE),,92
+"I87,8",(FREE),,93
+"I87,9",(FREE),,93
+"I87,A",(FREE),,93
+"I87,B",(FREE),,93
+"I87,C",SYSTEM RUNNING                               HOMO DRYER,C1103-01,93
+"I87,D",SYSTEM DEFECT                                HOMO DRYER,C1103-01,93
+"I87,E",TEMPERATURE OK                               HOMO DRYER,C1103-01,93
+"I87,F",SYSTEM RUNNING                            RECLAIM DRYER,C1103-02,93
+,,,
+"I91,0",MIXING HOPPER EMPTY                                  F8,,70
+"I91,1",MIXING HOPPER HIGH LEVEL                             F8,,70
+"I91,2",FREE,,70
+"I91,3",HOMO AUGER MOTOR DEFECT                              F5,M1106-01,70
+"I91,4",FREE                                                 F5,M1106-02,70
+"I91,5",FREE                                                 F5,M1106-02,70
+"I91,6",FREE                                                 F5,M1112-01,70
+"I91,7",FREE                                                 F5,M1112-01,70
+"I91,8",P511 TIMER DELAY ACTION                              F8,,
+"I91,9",P512 TIMER DELAY ACTION                              F8,,
+"I91,A",P514 TIMER DELAY ACTION                              F8,,
+"I91,B",P516 TIMER DELAY ACTION                              F8,,
+"I91,C",PRESSURE TRANSDUCER P501                             F8,,
+"I91,D",PRESSURE TRANSDUCER P503                             F8,,
+"I91,E",PRESSURE TRANSDUCER P505                             F8,,
+"I91,F",PRESSURE TRANSDUCER P507,,
+,,,
+"I92,0",MELT LINE 1 ZONE 3                                  F21,H1200-14,74
+"I92,1",MELT LINE 1 ZONE 4                                  F21,H1200-15,74
+"I92,2",NORTH DRYER   LOW LEVEL,,74
+"I92,3",SOUTH DRYER   LOW LEVEL,,
+"I92,4",MOTOR CHANGE FILTER EXT. 1                          F21,M1230-01,74
+"I92,5",FILTER ZONE 1                                       F21,H1230-02,74
+"I92,6",FILTER ZONE 2                                       F21,H1230-03,74
+"I92,7",FILTER ZONE 3                                       F21,H1230-04,74
+"I92,8",ADAPTER                                             F21,H1230-05,75
+"I92,9",(FREE),,75
+"I92,A",(FREE),,
+"I92,B",MOTOR CHANGE FILTER EXT. 2                          F21,M1231-01,75
+"I92,C",FILTER ZONE 1                                       F21,H1231-02,75
+"I92,D",FILTER ZONE 2                                       F21,H1231-03,75
+"I92,E",FILTER ZONE 3                                       F21,H1231-04,75
+"I92,F",ADAPTER                                             F21,H1231-05,75
+"I93,0",(FREE),,78
+"I93,1",SAT. EXT. 2 HEATER ZONE 1                           F22,H1210-15,78
+"I93,2",SAT. EXT. 2 HEATER ZONE 2                           F22,H1210-16,78
+"I93,3",SAT. EXT. 2 HEATER ZONE 3                           F22,H1210-17,78
+"I93,4",SAT. EXT. 2 HEATER ZONE 4                           F22,H1210-18,78
+"I93,5",SAT. EXT. 2 HEATER ZONE 5                           F22,H1210-19,78
+"I93,6",SAT. EXT. 2 HEATER ZONE 6                           F22,H1210-20,78
+"I93,7",SAT. EXT. 2 HEATER ZONE 7                           F22,H1210-21,78
+"I93,8",ADAPT. SAT. EXT. 2                                  F22,H1210-30,79
+"I93,9",COOLING FAN ZONE 1                                  F22,M1210-22,79
+"I93,A",COOLING FAN ZONE 2                                  F22,M1210-23,79
+"I93,B",COOLING FAN ZONE 3                                  F22,M1210-24,79
+"I93,C",COOLING FAN ZONE 4                                  F22,M1210-25,79
+"I93,D",COOLING FAN ZONE 5                                  F22,M1210-26,79
+"I93,E",COOLING FAN ZONE 6                                  F22,M1210-27,79
+"I93,F",COOLING FAN ZONE 7                                  F22,M1210-28,79
+,,,
+"I94,0",SAT. 2 HEATING FILTER                               F23 ,H1232-02,82
+"I94,1",SAT. 1 HYDRAULIC PUMP FIR SCREEN CHANGER            F23,M1232-03,82
+"I94,2",SAT. 2 HYDRAULIC PUMP FIR SCREEN CHANGER            F23,M1232-04,82
+"I94,3",(FREE),,82
+"I94,4",HOPPER LOW LEVEL                             HOMO DRYER,LSL1104-01,82
+"I94,5",HOPPER HIGH LEVEL                            HOMO DRYER,LSH1104-02,82
+"I94,6",HOPPER LOW LEVEL                          RECLAIM DRYER,LSL1104-03,82
+"I94,7",HOPPER HIGH LEVEL                         RECLAIM DRYER,LSH1104-04,82
+"I94,8",HOPPER LOW LEVEL                           SAT. 1 DRYER,LSL1123-01,83
+"I94,9",HOPPER HIGH LEVEL                          SAT. 1 DRYER,LSH1123-02,83
+"I94,A",HOPPER LOW LEVEL                            SAT. EXT. 1,LSL1124-01,83
+"I94,B", FREE                                       SAT. EXT. 1,LSH1124-02,83
+,,,
+"I94,C",HOPPER LOW LEVEL                           SAT. 2 DRYER,LSL1123-03,83
+"I94,D",HOPPER HIGH LEVEL                          SAT. 2 DRYER,LSH1123-04,83
+"I94,E",HOPPER LOW LEVEL                            SAT. EXT. 2,LSL1124-03,83
+"I94,F",HOPPER HIGH LEVEL                           SAT. EXT. 2,LSH1124-04,83
+,(NOT USED),,
+,,,
+"I95,0",GEAR BOX SAT. EXT. 1 OIL FILTER –                SAT. 1,DPS1210-37,86
+,HIGH PRESSURE,,
+"I95,1",GEAR BOX SAT. EXT. 1 OIL FILTER -                SAT. 1,DPS1210-38,86
+,HIGH PRESSURE,,
+"I95,2",GEAR BOX SAT. EXT. 2 FLOW SWITCH – LOW           SAT. 2,FSL1210-39,86
+"I95,3",GEAR BOX SAT. EXT. 2 PRESSURE SWITCH – LOW       SAT. 2,PSL1210-40,86
+"I95,4",GEAR BOX SAT. EXT. 2 OIL FILTER –                SAT. 2,DPS1210-41,86
+,HIGH PRESSURE,,
+"I95,5",GEAR BOX SAT. EXT. 2 OIL FILTER -                SAT. 2,DPS1210-42,86
+,HIGH PRESSURE,,
+"I95,6",(FREE),,86
+"I95,7",FEEDING VALVE OPEN (UNDER MIXING HOPPER),ZSO1114-02,86
+"I95,8",HYDR. PUMP SAT. 1 – START                        SAT. 1,,87
+"I95,9",HYDR. PUMP SAT. 1 – STOP                         SAT. 1,,87
+"I95,A",HYDR. PUMP SAT. 2 – START                        SAT. 2,,87
+"I95,B",HYDR. PUMP SAT. 2 – STOP                         SAT. 2,,87
+"I95,C",HYDR. PUMP EXT. 1 – START                        EXT. 1,,87
+"I95,D",HYDR. PUMP EXT. 1 – STOP                         EXT. 1,,87
+"I95,E",HYDR. PUMP EXT. 2 – START                        EXT. 2,,87
+"I95,F",HYDR. PUMP EXT. 2 – STOP                         EXT. 2,,87
+,,,
+"I96,0",FREE,,90
+"I96,1",(FREE),,90
+"I96,2",FREE,,90
+"I96,3",FREE,,90
+"I96,4",(FREE),,90
+"I96,5",(FREE),,90
+"I96,6",(FREE),,90
+"I96,7",(FREE),,90
+"I96,8",(FREE),,91
+"I96,9",(FREE),,91
+"I96,A",(FREE),,91
+"I96,B",(FREE),,91
+"I96,C",(FREE),,91
+"I96,D",(FREE),,91
+"I96,E",FREE,,91
+"I96,F",(FREE),,91
+,,,
+"I97,0",SYSTEM DEFECT                             RECLAIM DRYER,,94
+"I97,1",TEMPERATURE OK                            RECLAIM DRYER,,94
+"I97,2",SYSTEM RUNNING                             SAT. 1 DRYER,,94
+"I97,3",SYSTEM DEFECT                              SAT. 1 DRYER,,94
+"I97,4",TEMPERATURE OK                             SAT. 1 DRYER,,94
+"I97,5",SYSTEM RUNNING                             SAT. 2 DRYER,,94
+"I97,6",SYSTEM DEFECT                              SAT. 2 DRYER,,94
+"I97,7",TEMPERATURE OK                             SAT. 2 DRYER,,94
+"I97,8",OIL PRESSURE SWITCH (EXT. 2),,95
+"I97,9",(FREE),,95
+"I97,A",(FREE),,
+"I97,B",KLAXON,,95
+"I97,C",MAIN LOADING HOMO OR RECLAIM DRYER LOW LEVEL,,95
+,OR PUMP #4 OL TRIPPED,,
+"I97,D",RELEASE KLAXON,,95
+"I97,E",RELEASE DEFECT,,95
+"I97,F",EMERGENCY STOP,,95
