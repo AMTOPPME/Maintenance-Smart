@@ -273,14 +273,14 @@
 
     th, td {
       padding: 8px 9px;
-      border-bottom: 1px solid #e5e7eb;
+      border: 1px solid #e5e7eb;   /* ✅ Excel 格線（上下左右都有） */
       text-align: left;
       white-space: nowrap;
     }
 
     html[data-theme="dark"] th,
     html[data-theme="dark"] td {
-      border-bottom-color:#1f2937;
+      border-color: #1f2937;       /* ✅ dark mode 用你原本的顏色 */
     }
 
     th {
