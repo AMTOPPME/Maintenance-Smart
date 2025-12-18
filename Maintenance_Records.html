@@ -654,9 +654,7 @@
         Click column headers to sort. Click a row or use Edit / Delete to update the local log.
       </div>
       <div class="table-wrap">
-        <div class="empty" id="emptyState">
-          <strong>Loading......</strong>
-        </div>
+        <div class="empty" id="emptyState">Loading......</div>
         <table id="recordsTable" style="display:none;">
           <thead>
             <tr>
@@ -1111,101 +1109,116 @@ const LOGS_ENDPOINT  = SHEET_API_URL;
     return `${y}-${m}-${day}`;
   }
 
-  function renderTable(){
-    const tbody = document.getElementById('recordsBody');
-    const table = document.getElementById('recordsTable');
-    const empty = document.getElementById('emptyState');
+function renderTable(){
+  const tbody = document.getElementById('recordsBody');
+  const table = document.getElementById('recordsTable');
+  const empty = document.getElementById('emptyState');
 
-    tbody.innerHTML = '';
+  // ✅ 取得 empty text 元素（如果你沒加 id="emptyText"，就用 empty 本身）
+  const emptyTextEl = document.getElementById('emptyText') || empty;
 
-    if (!filtered.length){
-      table.style.display = 'none';
-      empty.style.display = 'block';
-      return;
-    }
-    table.style.display = 'table';
-    empty.style.display = 'none';
+  tbody.innerHTML = '';
 
-    filtered.forEach(rec=>{
-      const tr = document.createElement('tr');
-      tr.dataset.id = rec.id;
-      tr.addEventListener('click', ()=> openEdit(rec.id));
-
-      const tdDate = document.createElement('td');
-      tdDate.className = 'text-small';
-      tdDate.textContent = formatDate(rec.Date);
-      tr.appendChild(tdDate);
-
-      const tdLS = document.createElement('td');
-      const divLine = document.createElement('div');
-      divLine.className = 'tag-line';
-      divLine.textContent = rec.line || '';
-      const divSec = document.createElement('div');
-      divSec.className = 'text-small';
-      divSec.textContent = rec.section || '';
-      tdLS.appendChild(divLine);
-      tdLS.appendChild(divSec);
-      tr.appendChild(tdLS);
-
-      const tdEquip = document.createElement('td');
-      tdEquip.className = 'equip';
-      tdEquip.textContent = rec.asset_id || '';
-      tr.appendChild(tdEquip);
-
-      const tdCat = document.createElement('td');
-      const spanCat = document.createElement('span');
-      spanCat.className = 'pill-cat';
-      spanCat.textContent = rec.category || '';
-      tdCat.appendChild(spanCat);
-      tr.appendChild(tdCat);
-
-      const tdDown = document.createElement('td');
-      tdDown.className = 'text-small';
-      tdDown.textContent = Number(rec.downtime_min||0);
-      tr.appendChild(tdDown);
-
-      const tdLoc = document.createElement('td');
-      tdLoc.className = 'text-small';
-      const lf = document.createElement('div');
-      lf.innerHTML = '<strong>From:</strong> ' + (rec.location_from || '');
-      const lt = document.createElement('div');
-      lt.innerHTML = '<strong>To:</strong> ' + (rec.location_to || '');
-      tdLoc.appendChild(lf);
-      tdLoc.appendChild(lt);
-      tr.appendChild(tdLoc);
-
-      const tdDesc = document.createElement('td');
-      tdDesc.className = 'text-small';
-      const d1 = document.createElement('div');
-      d1.innerHTML = '<strong>Root:</strong> ' + (rec.root_cause||'');
-      const d2 = document.createElement('div');
-      d2.innerHTML = '<strong>Action:</strong> ' + (rec.action_taken||'');
-      tdDesc.appendChild(d1);
-      tdDesc.appendChild(d2);
-      tr.appendChild(tdDesc);
-
-      const tdAct = document.createElement('td');
-      const btnE = document.createElement('button');
-      btnE.className = 'btn-ghost';
-      btnE.textContent = 'Edit';
-      btnE.addEventListener('click', (ev)=>{
-        ev.stopPropagation();
-        openEdit(rec.id);
-      });
-      const btnD = document.createElement('button');
-      btnD.className = 'btn-ghost btn-danger';
-      btnD.textContent = 'Delete';
-      btnD.addEventListener('click', (ev)=>{
-        ev.stopPropagation();
-        deleteRecord(rec.id);
-      });
-      tdAct.appendChild(btnE);
-      tdAct.appendChild(btnD);
-      tr.appendChild(tdAct);
-
-      tbody.appendChild(tr);
-    });
+  // ✅ 1) 完全沒有任何 records（歷史資料不存在）
+  if (!records || records.length === 0){
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    emptyTextEl.innerHTML = '<strong>No "filter條件" historical records exist.</strong>';
+    return;
   }
+
+  // ✅ 2) 有 records，但被 filter 掉了（查不到）
+  if (!filtered || filtered.length === 0){
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    emptyTextEl.innerHTML = '<strong>No records match your filters.</strong>';
+    return;
+  }
+
+  table.style.display = 'table';
+  empty.style.display = 'none';
+
+  filtered.forEach(rec=>{
+    const tr = document.createElement('tr');
+    tr.dataset.id = rec.id;
+    tr.addEventListener('click', ()=> openEdit(rec.id));
+
+    const tdDate = document.createElement('td');
+    tdDate.className = 'text-small';
+    tdDate.textContent = formatDate(rec.Date);
+    tr.appendChild(tdDate);
+
+    const tdLS = document.createElement('td');
+    const divLine = document.createElement('div');
+    divLine.className = 'tag-line';
+    divLine.textContent = rec.line || '';
+    const divSec = document.createElement('div');
+    divSec.className = 'text-small';
+    divSec.textContent = rec.section || '';
+    tdLS.appendChild(divLine);
+    tdLS.appendChild(divSec);
+    tr.appendChild(tdLS);
+
+    const tdEquip = document.createElement('td');
+    tdEquip.className = 'equip';
+    tdEquip.textContent = rec.asset_id || '';
+    tr.appendChild(tdEquip);
+
+    const tdCat = document.createElement('td');
+    const spanCat = document.createElement('span');
+    spanCat.className = 'pill-cat';
+    spanCat.textContent = rec.category || '';
+    tdCat.appendChild(spanCat);
+    tr.appendChild(tdCat);
+
+    const tdDown = document.createElement('td');
+    tdDown.className = 'text-small';
+    tdDown.textContent = Number(rec.downtime_min||0);
+    tr.appendChild(tdDown);
+
+    const tdLoc = document.createElement('td');
+    tdLoc.className = 'text-small';
+    const lf = document.createElement('div');
+    lf.innerHTML = '<strong>From:</strong> ' + (rec.location_from || '');
+    const lt = document.createElement('div');
+    lt.innerHTML = '<strong>To:</strong> ' + (rec.location_to || '');
+    tdLoc.appendChild(lf);
+    tdLoc.appendChild(lt);
+    tr.appendChild(tdLoc);
+
+    const tdDesc = document.createElement('td');
+    tdDesc.className = 'text-small';
+    const d1 = document.createElement('div');
+    d1.innerHTML = '<strong>Root:</strong> ' + (rec.root_cause||'');
+    const d2 = document.createElement('div');
+    d2.innerHTML = '<strong>Action:</strong> ' + (rec.action_taken||'');
+    tdDesc.appendChild(d1);
+    tdDesc.appendChild(d2);
+    tr.appendChild(tdDesc);
+
+    const tdAct = document.createElement('td');
+    const btnE = document.createElement('button');
+    btnE.className = 'btn-ghost';
+    btnE.textContent = 'Edit';
+    btnE.addEventListener('click', (ev)=>{
+      ev.stopPropagation();
+      openEdit(rec.id);
+    });
+    const btnD = document.createElement('button');
+    btnD.className = 'btn-ghost btn-danger';
+    btnD.textContent = 'Delete';
+    btnD.addEventListener('click', (ev)=>{
+      ev.stopPropagation();
+      deleteRecord(rec.id);
+    });
+    tdAct.appendChild(btnE);
+    tdAct.appendChild(btnD);
+    tr.appendChild(tdAct);
+
+    tbody.appendChild(tr);
+  });
+}
+
 
   function updateSummary(){
     const totalEl     = document.getElementById('sumTotal');
