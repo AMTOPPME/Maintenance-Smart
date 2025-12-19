@@ -273,29 +273,48 @@
 
     th, td {
       padding: 8px 9px;
-      border-bottom: 1px solid #e5e7eb;
+      border: 1px solid #e5e7eb;   /* ✅ Excel 格線（上下左右都有） */
       text-align: left;
       white-space: nowrap;
     }
 
     html[data-theme="dark"] th,
     html[data-theme="dark"] td {
-      border-bottom-color:#1f2937;
+      border-color: #1f2937;       /* ✅ dark mode 用你原本的顏色 */
     }
 
-    th {
-      font-size: var(--xsmall-font);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-soft);
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      cursor: pointer;
-      user-select: none;
-      background: #f9fafb;
-    }
+th{
+  font-size: var(--xsmall-font);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+  cursor: pointer;
+  user-select: none;
+  background: #f9fafb;
+}
+
+/* 只有 header row sticky */
+.ms-header-row th{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* title row 不要 sticky + 樣式像 Excel 標題 */
+.ms-title-row th{
+  position: static;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  background: #ffffff;
+}
+html[data-theme="dark"] .ms-title-row th{
+  background:#020617;
+}
+
 
     th[data-col]:hover {
       color: var(--accent);
@@ -427,6 +446,16 @@
         color: #000 !important;
       }
     }
+     /* === 強制表格每一列都有高度（即使是空白） === */
+tbody tr {
+  height: 44px;              /* 你想要的列高，可調 */
+}
+
+/* === 空白 cell 也撐高度，不影響內容 === */
+td:empty::before {
+  content: "\00a0";          /* 不換行空白字元 */
+}
+
   </style>
 </head>
 
@@ -439,7 +468,7 @@
   <img src="assets/hangyodon2.png" alt="Hangyodon Right" class="side-hangyodon right">
 
   <div class="page">
-
+    
     <!-- Filters (collapsible) -->
     <div class="card">
       <div class="filter-header" onclick="toggleFilters()">
@@ -451,7 +480,7 @@
       </div>
 
       <div class="filters collapsible open" id="filtersBox">
-        <span class="filters-label">Module:</span>
+        <span class="filters-label">Section:</span>
         <select id="modSel"></select>
 
         <span class="filters-label">File:</span>
@@ -513,10 +542,131 @@
   let indexData = null;
   let rowsAll = [];
   let header = [];
+  let titleText = "";      // 例如 F16\BIT.DOC
+  let bodyRows2D = [];     // 真正資料（含空白列）
   let sortKey = null;
   let sortAsc = true;
 
   const $ = (s)=>document.querySelector(s);
+
+  function isEmptyCell(v){
+  return v == null || String(v).trim() === "";
+}
+function countNonEmpty(row){
+  return row.reduce((n, c) => n + (!isEmptyCell(c) ? 1 : 0), 0);
+}
+function padRows(rows){
+  const maxCols = Math.max(...rows.map(r => r.length));
+  return rows.map(r => {
+    const rr = r.slice();
+    while (rr.length < maxCols) rr.push("");
+    return rr;
+  });
+}
+
+// ✅ 找標題列（像：F16\BIT.DOC、只有一格有內容）
+function detectTitleRowIndex(rows){
+  if (!rows.length) return -1;
+  const r0 = rows[0];
+  const nonEmpty = r0.filter(c => !isEmptyCell(c));
+  if (nonEmpty.length === 1) {
+    const t = String(nonEmpty[0]).trim();
+    // 你這種標題常見特徵：含 \ 或 .DOC/.XLS/…
+    if (/\\|\.doc|\.xls|\.csv|\.txt/i.test(t)) return 0;
+  }
+  return -1;
+}
+
+// ✅ 找表頭列（通常是 PLC ADR / COMMENT 那一列）
+function detectHeaderRowIndex(rows, startIdx){
+  for (let i = startIdx; i < rows.length; i++){
+    const row = rows[i];
+    // 至少兩個非空欄位，且不像純資料(B0,B1...)那樣
+    if (countNonEmpty(row) >= 2) return i;
+  }
+  return startIdx; // fallback
+}
+
+/**
+ * rows: 2D array (已經 parse 好 CSV 的結果)
+ * tableEl: <table> element
+ */
+function renderLikeExcel(rows, tableEl){
+  if (!rows || !rows.length || !tableEl) return;
+
+  const padded = padRows(rows);
+
+  const titleIdx = detectTitleRowIndex(padded);
+  const headerIdx = detectHeaderRowIndex(padded, titleIdx === 0 ? 1 : 0);
+
+  const maxCols = padded[0].length;
+
+  // title text（取那列唯一非空 cell）
+  let titleText = "";
+  if (titleIdx === 0){
+    titleText = padded[0].find(c => !isEmptyCell(c)) || "";
+  }
+
+  const headers = padded[headerIdx];
+  const bodyRows = padded.slice(headerIdx + 1);
+
+  // build THEAD
+  const thead = document.createElement("thead");
+
+  if (titleIdx === 0 && titleText){
+    const trTitle = document.createElement("tr");
+    trTitle.className = "ms-title-row";
+    const th = document.createElement("th");
+    th.colSpan = maxCols;
+    th.textContent = titleText;
+    trTitle.appendChild(th);
+    thead.appendChild(trTitle);
+  }
+
+  const trHead = document.createElement("tr");
+  trHead.className = "ms-header-row";
+  headers.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = String(h || "").trim();
+    trHead.appendChild(th);
+  });
+  thead.appendChild(trHead);
+
+  // build TBODY
+  const tbody = document.createElement("tbody");
+  bodyRows.forEach(r => {
+    const tr = document.createElement("tr");
+    r.forEach(c => {
+      const td = document.createElement("td");
+      const txt = String(c ?? "");
+      td.textContent = txt;
+      // ✅ 保留空白列高度（不用改 table 結構）
+      if (isEmptyCell(txt)) td.innerHTML = "&nbsp;";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  tableEl.innerHTML = "";
+  tableEl.appendChild(thead);
+  tableEl.appendChild(tbody);
+}
+
+function updateSectionUI(sec){
+  const a = document.getElementById("secTitle");
+  const b = document.getElementById("secTitle2");
+  if (a) a.textContent = sec;
+  if (b) b.textContent = sec;
+  document.title = "Maintenance Smart | IO Description List | " + sec;
+  // ✅ 同步網址，方便分享連結
+  const u = new URL(location.href);
+  u.searchParams.set("section", sec);
+  history.replaceState(null, "", u.toString());
+  
+  if (window.parent && window.parent !== window) {
+  window.parent.postMessage({ type:"ms-section-change", section: sec }, "*");
+  }
+}
 
   function showError(msg){
     const el = $("#errBox");
@@ -554,40 +704,32 @@
     else if(items.length) selectEl.value = items[0];
   }
 
-  // CSV parser (supports quotes)
-  function parseCsv(text){
-    const rows = [];
-    let row = [], cur = "", inQ = false;
+// CSV parser -> 回傳原始 2D rows（保留空白列）
+function parseCsvRows(text){
+  const rows = [];
+  let row = [], cur = "", inQ = false;
 
-    for(let i=0;i<text.length;i++){
-      const c = text[i], n = text[i+1];
+  for(let i=0;i<text.length;i++){
+    const c = text[i], n = text[i+1];
 
-      if(c === '"'){
-        if(inQ && n === '"'){ cur += '"'; i++; }
-        else inQ = !inQ;
-      } else if(!inQ && c === ','){
-        row.push(cur); cur="";
-      } else if(!inQ && (c === '\n' || c === '\r')){
-        if(c === '\r' && n === '\n') i++;
-        row.push(cur); rows.push(row);
-        row=[]; cur="";
-      } else {
-        cur += c;
-      }
+    if(c === '"'){
+      if(inQ && n === '"'){ cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if(!inQ && c === ','){
+      row.push(cur); cur="";
+    } else if(!inQ && (c === '\n' || c === '\r')){
+      if(c === '\r' && n === '\n') i++;
+      row.push(cur); rows.push(row);
+      row=[]; cur="";
+    } else {
+      cur += c;
     }
-    if(cur.length || row.length){ row.push(cur); rows.push(row); }
-
-    const header = (rows.shift() || []).map(h => String(h).trim());
-    const data = rows
-      .filter(r => r.some(x => String(x).trim() !== ""))
-      .map(r => {
-        const obj = {};
-        header.forEach((k,idx)=> obj[k] = (r[idx] ?? "").trim());
-        return obj;
-      });
-
-    return { header, data };
   }
+  if(cur.length || row.length){ row.push(cur); rows.push(row); }
+
+  // ❗不做 filter，不刪空白列
+  return rows;
+}
 
   async function fetchJson(url){
     const r = await fetch(url, {cache:"no-store"});
@@ -595,12 +737,26 @@
     return r.json();
   }
 
-  async function loadCsv(path){
-    const r = await fetch(path, {cache:"no-store"});
-    if(!r.ok) throw new Error("CSV load failed: " + r.status + " | " + path);
-    const text = await r.text();
-    return parseCsv(text);
+async function loadCsv(path){
+  const r = await fetch(path, { cache:"no-store" });
+  if(!r.ok) throw new Error("CSV load failed: " + r.status + " | " + path);
+
+  const buf = await r.arrayBuffer();
+
+  let text;
+
+  try {
+    // ✅ 優先用 ANSI / Windows-1252（最符合你現在的 CSV 來源）
+    text = new TextDecoder("windows-1252").decode(buf);
+  } catch(e){
+    // fallback（極少數瀏覽器）
+    text = new TextDecoder("utf-8").decode(buf);
   }
+
+  return parseCsvRows(text);
+}
+
+
 
   function getCsvPath(){
     const m = $("#modSel").value;
@@ -640,39 +796,41 @@
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
     }[m]));
   }
+function render(){
+  const q = ($("#searchInput").value || "").trim().toLowerCase();
 
-  function render(){
-    const q = ($("#searchInput").value || "").trim().toLowerCase();
-    let data = [...rowsAll];
+  // 建一份可排序/可搜尋的索引
+  let idxs = rowsAll.map((_, i) => i);
 
-    // search
-    if(q){
-      data = data.filter(obj=>{
-        const text = header.map(h=>obj[h] ?? "").join(" ").toLowerCase();
-        return text.includes(q);
-      });
-    }
-
-    // sort
-    if(sortKey){
-      data.sort((a,b)=>{
-        const x = (a[sortKey] ?? "").toString();
-        const y = (b[sortKey] ?? "").toString();
-        if(x === y) return 0;
-        return sortAsc ? x.localeCompare(y, "en") : y.localeCompare(x, "en");
-      });
-    }
-
-    const tbody = $("#ioTable tbody");
-    tbody.innerHTML = "";
-    data.forEach(obj=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = header.map(h => `<td title="${escapeHtml(obj[h] ?? "")}">${escapeHtml(obj[h] ?? "")}</td>`).join("");
-      tbody.appendChild(tr);
+  // search（用 object 搜尋，但顯示要回去 2D row）
+  if(q){
+    idxs = idxs.filter(i=>{
+      const obj = rowsAll[i];
+      const text = header.map(h=>obj[h] ?? "").join(" ").toLowerCase();
+      return text.includes(q);
     });
-
-    setCountInfo(data.length, rowsAll.length);
   }
+
+  // sort（排序索引）
+  if(sortKey){
+    idxs.sort((ia, ib)=>{
+      const a = (rowsAll[ia][sortKey] ?? "").toString();
+      const b = (rowsAll[ib][sortKey] ?? "").toString();
+      if(a === b) return 0;
+      return sortAsc ? a.localeCompare(b, "en") : b.localeCompare(a, "en");
+    });
+  }
+
+  // 組回 2D rows：標題列 + 表頭列 + 篩選/排序後的 body rows
+  const tableRows = [];
+  if(titleText) tableRows.push([titleText]);           // 第1列
+  tableRows.push(header);                              // 第2列
+  idxs.forEach(i => tableRows.push(bodyRows2D[i]));    // 第3列起（含空白列）
+
+  renderLikeExcel(tableRows, $("#ioTable"));
+
+  setCountInfo(idxs.length, rowsAll.length);
+}
 
   async function refresh(){
     clearError();
@@ -693,12 +851,32 @@
       return;
     }
 
-    const parsed = await loadCsv("./" + path);
-    header = parsed.header;
-    rowsAll = parsed.data;
+   const rows2d = await loadCsv("./" + path);
 
-    buildThead();
-    render();
+// 用你已經有的 helper：padRows / detectTitleRowIndex / detectHeaderRowIndex
+const padded = padRows(rows2d);
+const tIdx = detectTitleRowIndex(padded);
+const hIdx = detectHeaderRowIndex(padded, tIdx === 0 ? 1 : 0);
+
+// title
+titleText = (tIdx === 0) ? (padded[0].find(c => !isEmptyCell(c)) || "") : "";
+
+// header row（第2列）
+header = padded[hIdx].map(x => String(x ?? "").trim());
+
+// body（第3列開始）✅ 保留空白列
+bodyRows2D = padded.slice(hIdx + 1);
+
+// 同時準備給 search/sort 用的 rowsAll（object陣列）✅ 空白列也保留
+rowsAll = bodyRows2D.map(r => {
+  const obj = {};
+  header.forEach((k, idx) => obj[k] = String(r[idx] ?? "").trim());
+  return obj;
+});
+
+sortKey = null; sortAsc = true;
+render(); // 走你原本 filter/sort，再用 renderLikeExcel 畫表格
+
   }
 
   async function init(){
@@ -709,15 +887,18 @@
       const modules = wantModules.filter(m => indexData[m]);
       fillSelect($("#modSel"), modules.length ? modules : Object.keys(indexData));
 
-      // ✅ support ?module=F12
+      // ✅ support ?section=F12
       const params = new URLSearchParams(location.search);
-      const preMod = params.get("module");
-      if(preMod && (modules.length ? modules.includes(preMod) : Object.keys(indexData).includes(preMod))){
-        $("#modSel").value = preMod;
+      const preSection = params.get("section");
+      if(preSection && (modules.length ? modules.includes(preSection) : Object.keys(indexData).includes(preSection))){
+        $("#modSel").value = preSection;
+        updateSectionUI(preSection);
       }
+
 
       $("#modSel").addEventListener("change", ()=>{
         const m = $("#modSel").value;
+        updateSectionUI(m);
         const cats = Object.keys(indexData[m] || {});
         fillSelect($("#catSel"), cats);
 

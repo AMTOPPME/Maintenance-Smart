@@ -136,25 +136,39 @@
     .menu-icon{font-size:16px;}
 
     .top-meta{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      font-size:11px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .pill{
-      padding:5px 11px;
-      border-radius:999px;
-      border:1px solid #e5e7eb;
-      background:#f9fafb;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      transition:background .2s ease,border-color .2s ease,color .2s ease;
-    }
-    .pill-label{color:var(--text-soft)}
-    .pill-strong{color:var(--text);font-weight:500}
+  display:flex;
+  flex-direction:column;     /* ✅ 三排 */
+  gap:8px;
+  align-items:flex-end;      /* ✅ 向右對齊 */
+  font-size:11px;
+}
+
+.pill{
+  width:240px;               /* ✅ 三個大小一致（你可改 220/260） */
+  padding:9px 12px;
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+  background:#f9fafb;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  transition:background .2s ease,border-color .2s ease,color .2s ease;
+}
+
+.pill-label{color:var(--text-soft)}
+.pill-strong{color:var(--text);font-weight:600}
+
+/* Version 特別一點（但大小仍一致） */
+.pill.version{
+  border-color:#dbeafe;
+  background:#eff6ff;
+}
+.pill.version .pill-strong{
+  color:#1d4ed8;
+  font-weight:800;
+  letter-spacing:.02em;
+}
 
     .pill.designer{
       padding:6px 13px;
@@ -609,7 +623,6 @@
 
         <button id="menuButton" class="menu-button" type="button" aria-expanded="false" aria-controls="navPanel">
           <span class="menu-icon">☰</span>
-          <span class="menu-label">Modules</span>
         </button>
       </div>
 
@@ -619,15 +632,22 @@
       </div>
 
       <div class="top-meta">
-        <div class="pill designer">
-          <span class="pill-label">Designed by</span>
-          <span class="pill-designer-strong">Benjamin Lin</span>
-        </div>
-        <div class="pill">
-          <span class="pill-label">Modified Date</span>
-          <span class="pill-strong" id="modDate">Checking…</span>
-        </div>
-      </div>
+  <div class="pill version">
+    <span class="pill-label">Version</span>
+    <span class="pill-strong">1.0.0</span>
+  </div>
+
+  <div class="pill">
+    <span class="pill-label">Designed by</span>
+    <span class="pill-strong">Benjamin Lin</span>
+  </div>
+
+  <div class="pill">
+    <span class="pill-label">Modified on</span>
+    <span class="pill-strong" id="modDate">Checking…</span>
+  </div>
+</div>
+      
     </div>
 
     <!-- Modules -->
@@ -1139,6 +1159,22 @@
     if (subEl)   subEl.textContent   = sub   || '';
   }
 
+  // ✅ 接收 IO_Description_List.html 用 postMessage 通知的 section 變更
+  window.addEventListener("message", (e) => {
+    if (!e.data || e.data.type !== "ms-section-change") return;
+
+    const sec = e.data.section;
+
+    // 只在「目前 iframe 正在顯示 IO Description List」時才改標題，避免影響其他頁
+    const src = frame?.getAttribute("src") || "";
+    if (!/IO_Description_List\.html/i.test(src)) return;
+
+    setModule(
+      "IO Description List – " + sec,
+      "Browse I/O description CSV tables for " + sec + "."
+    );
+  });
+
   function activateNav(btn){
     buttons.forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
@@ -1397,7 +1433,7 @@
         ioDescBtn.addEventListener('click', ()=>{
           if (!currentSchematicSection) return;
 
-          const url = 'IO_Description_List.html?module=' + encodeURIComponent(currentSchematicSection);
+          const url = 'IO_Description_List.html?section=' + encodeURIComponent(currentSchematicSection);
           if (frame) frame.src = url;
 
           setModule('IO Description List – ' + currentSchematicSection,
