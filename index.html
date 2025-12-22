@@ -18,6 +18,7 @@
       --shadow-soft-sm:0 10px 26px rgba(15,23,42,.06);
       --shadow-soft-md:0 16px 40px rgba(15,23,42,.09);
       --small-font:13px; --xsmall-font:11px;
+      --menu-offset-desktop: 40px;
     }
 
     /* style 主題底色（index 用純色，不用圖） */
@@ -123,7 +124,7 @@
       align-items:center;
       justify-content:center;
       gap:8px;
-      margin-top:40px;
+      margin-top: var(--menu-offset-desktop);
       cursor:pointer;
       color:#1d4ed8;
        box-shadow: 0 3px 8px rgba(129,140,248,.25);
@@ -215,7 +216,7 @@
     .nav-panel{
       position:absolute;
       left:24px;
-      top:calc(24px + 72px);
+      top: calc(24px + 72px + var(--menu-offset-desktop));
       max-width:260px;
       background:rgba(255,255,255,0.97);
       border-radius:18px;
