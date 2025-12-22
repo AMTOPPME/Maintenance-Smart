@@ -781,7 +781,8 @@
 <script>
   const STORAGE_KEY   = 'ms-maintenance-logs';
 const DELETE_PASSWORD = '1234';
-
+const EDIT_PASSWORD   = '1234';
+  
 // ✅ 直接打 Google Sheet Web App
 const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbx7CDsQJdIOmrgRFiFAyvZVcLvJrqr2dF1RM4oqy0Aj9FPiZDmTRUP75o8ZUp3bFHXvfg/exec';
 const LOGS_ENDPOINT  = SHEET_API_URL; 
@@ -1271,22 +1272,32 @@ function renderTable(){
   }
 
   function openEdit(id){
-    const rec = records.find(r=>r.id === id);
-    if (!rec) return;
-    editingId = id;
 
-    document.getElementById('editDate').value    = rec.Date ? String(rec.Date).slice(0,10) : '';
-    document.getElementById('editLine').value    = rec.line || 'Line1';
-    document.getElementById('editSection').value = rec.section || 'F12';
-    document.getElementById('editCategory').value= rec.category || 'Other';
-    document.getElementById('editAssetId').value = rec.asset_id || '';
-    document.getElementById('editLocFrom').value = rec.location_from || '';
-    document.getElementById('editLocTo').value   = rec.location_to || '';
-    document.getElementById('editRoot').value    = rec.root_cause || '';
-    document.getElementById('editAction').value  = rec.action_taken || '';
-
-    document.getElementById('editBackdrop').classList.add('open');
+  // ✅ Edit password check (same as Delete)
+  const input = prompt('Enter password to edit this record:');
+  if (input === null) return;
+  if (input !== EDIT_PASSWORD){
+    alert('Incorrect password. Edit cancelled.');
+    return;
   }
+
+  const rec = records.find(r=>r.id === id);
+  if (!rec) return;
+  editingId = id;
+
+  document.getElementById('editDate').value    = rec.Date ? String(rec.Date).slice(0,10) : '';
+  document.getElementById('editLine').value    = rec.line || 'Line1';
+  document.getElementById('editSection').value = rec.section || 'F12';
+  document.getElementById('editCategory').value= rec.category || 'Other';
+  document.getElementById('editAssetId').value = rec.asset_id || '';
+  document.getElementById('editLocFrom').value = rec.location_from || '';
+  document.getElementById('editLocTo').value   = rec.location_to || '';
+  document.getElementById('editRoot').value    = rec.root_cause || '';
+  document.getElementById('editAction').value  = rec.action_taken || '';
+
+  document.getElementById('editBackdrop').classList.add('open');
+}
+
 
   function closeEdit(){
     editingId = null;
