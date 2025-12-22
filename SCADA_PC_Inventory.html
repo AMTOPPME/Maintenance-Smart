@@ -597,6 +597,15 @@ html[data-theme="dark"] .detail-item{
   border-color:var(--accent);
   box-shadow:0 3px 10px rgba(148,163,253,0.28);
 }
+    
+.modal-actions{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
 
   </style>
 </head>
@@ -734,7 +743,98 @@ html[data-theme="dark"] .detail-item{
   const printBtn     = document.getElementById("printBtn");
   const lastSyncEl   = document.getElementById("lastSync");
   const countInfoEl  = document.getElementById("countInfo");
+/* ===== Detail Modal Logic ===== */
+  const detailBackdrop = document.getElementById("detailBackdrop");
+  const detailModal    = document.getElementById("detailModal");
+  const detailCloseBtn = document.getElementById("detailClose");
+  const detailGrid     = document.getElementById("detailGrid");
+  const detailTitle    = document.getElementById("detailTitle");
+  const detailSub      = document.getElementById("detailSub");
+  const detailHistoryBtn = document.getElementById("detailHistoryBtn");
+  const detailCopyBtn  = document.getElementById("detailCopyBtn");
 
+  let lastFocusedEl = null;
+
+  function escapeHtml(str){
+    return String(str ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function prettyLabel(key){
+    return key.replaceAll("_"," ").trim();
+  }
+
+  function openDetail(record){
+    if (!record) return;
+
+    lastFocusedEl = document.activeElement;
+
+    const asset = record.asset_id || "";
+    detailTitle.textContent = asset ? `PC Detail • ${asset}` : "PC Detail";
+    detailSub.textContent = "Loaded from Google Sheet";
+
+    const keys = Object.keys(record);
+    detailGrid.innerHTML = keys.map(k => {
+      const v = record[k];
+      return `
+        <div class="detail-item">
+          <div class="detail-k">${escapeHtml(prettyLabel(k))}</div>
+          <div class="detail-v">${escapeHtml(v)}</div>
+        </div>
+      `;
+    }).join("");
+
+    detailHistoryBtn.href = "Maintenance_Records.html?asset=" + encodeURIComponent(asset);
+
+    detailBackdrop.classList.add("show");
+    detailModal.classList.add("show");
+    detailBackdrop.setAttribute("aria-hidden","false");
+
+    setTimeout(() => detailCloseBtn.focus(), 0);
+  }
+
+  function closeDetail(){
+    detailBackdrop.classList.remove("show");
+    detailModal.classList.remove("show");
+    detailBackdrop.setAttribute("aria-hidden","true");
+    if (lastFocusedEl && typeof lastFocusedEl.focus === "function") lastFocusedEl.focus();
+  }
+
+  detailCloseBtn.addEventListener("click", closeDetail);
+  detailBackdrop.addEventListener("click", closeDetail);
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && detailModal.classList.contains("show")) closeDetail();
+  });
+
+  detailCopyBtn.addEventListener("click", async () => {
+    if (!detailModal.classList.contains("show")) return;
+
+    const lines = [];
+    detailGrid.querySelectorAll(".detail-item").forEach(it => {
+      const k = it.querySelector(".detail-k")?.textContent?.trim() || "";
+      const v = it.querySelector(".detail-v")?.textContent?.trim() || "";
+      lines.push(`${k}: ${v}`);
+    });
+
+    const text = lines.join("\n");
+    try{
+      await navigator.clipboard.writeText(text);
+      alert("Copied detail to clipboard.");
+    }catch(err){
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      alert("Copied detail to clipboard.");
+    }
+  });
   // 🔄 從 Google Sheet 抓資料（Apps Script 回傳：{ ok: true, data: [...] }）
   async function loadFromSheet() {
     try {
@@ -867,113 +967,6 @@ tr.addEventListener("click", () => {
 
     checkInventoryLow();
   }
-
-  /* ===== Detail Modal Logic ===== */
-const detailBackdrop = document.getElementById("detailBackdrop");
-const detailModal    = document.getElementById("detailModal");
-const detailCloseBtn = document.getElementById("detailClose");
-const detailGrid     = document.getElementById("detailGrid");
-const detailTitle    = document.getElementById("detailTitle");
-const detailSub      = document.getElementById("detailSub");
-const detailHistoryBtn = document.getElementById("detailHistoryBtn");
-const detailCopyBtn  = document.getElementById("detailCopyBtn");
-
-let lastFocusedEl = null;
-
-function escapeHtml(str){
-  return String(str ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-function prettyLabel(key){
-  return key.replaceAll("_"," ").trim();
-}
-
-function openDetail(record){
-  if (!record) return;
-
-  lastFocusedEl = document.activeElement;
-
-  const asset = record.asset_id || "";
-  detailTitle.textContent = asset ? `PC Detail • ${asset}` : "PC Detail";
-  detailSub.textContent = "Loaded from Google Sheet";
-
-  // 產生所有欄位（把 record 內的 key/value 全列出）
-  const keys = Object.keys(record);
-
-  detailGrid.innerHTML = keys.map(k => {
-    const v = record[k];
-    return `
-      <div class="detail-item">
-        <div class="detail-k">${escapeHtml(prettyLabel(k))}</div>
-        <div class="detail-v">${escapeHtml(v)}</div>
-      </div>
-    `;
-  }).join("");
-
-  // Historic records button
-  const url = "Maintenance_Records.html?asset=" + encodeURIComponent(asset);
-  detailHistoryBtn.href = url;
-
-  // show
-  detailBackdrop.classList.add("show");
-  detailModal.classList.add("show");
-  detailBackdrop.setAttribute("aria-hidden","false");
-
-  // focus close
-  setTimeout(() => detailCloseBtn.focus(), 0);
-}
-
-function closeDetail(){
-  detailBackdrop.classList.remove("show");
-  detailModal.classList.remove("show");
-  detailBackdrop.setAttribute("aria-hidden","true");
-
-  if (lastFocusedEl && typeof lastFocusedEl.focus === "function"){
-    lastFocusedEl.focus();
-  }
-}
-
-detailCloseBtn.addEventListener("click", closeDetail);
-detailBackdrop.addEventListener("click", closeDetail);
-
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && detailModal.classList.contains("show")) {
-    closeDetail();
-  }
-});
-
-detailCopyBtn.addEventListener("click", async () => {
-  if (!detailModal.classList.contains("show")) return;
-
-  // 轉成可貼到 email 的文字
-  const lines = [];
-  const items = detailGrid.querySelectorAll(".detail-item");
-  items.forEach(it => {
-    const k = it.querySelector(".detail-k")?.textContent?.trim() || "";
-    const v = it.querySelector(".detail-v")?.textContent?.trim() || "";
-    lines.push(`${k}: ${v}`);
-  });
-
-  const text = lines.join("\n");
-  try{
-    await navigator.clipboard.writeText(text);
-    alert("Copied detail to clipboard.");
-  }catch(err){
-    // fallback
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    ta.remove();
-    alert("Copied detail to clipboard.");
-  }
-});
 
   function checkInventoryLow() {
     const spareCount = computers.filter(c =>
