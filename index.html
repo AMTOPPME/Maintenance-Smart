@@ -137,29 +137,27 @@
 
     .top-meta{
   display:flex;
-  flex-direction:column;     /* ✅ 三排 */
-  gap:8px;
-  align-items:flex-end;      /* ✅ 向右對齊 */
-  font-size:11px;
+  flex-direction:column;
+  gap:6px;                 /* 原本 8px → 小一點 */
+  align-items:flex-end;
+  font-size:10px;          /* 整體字再小一點 */
 }
 
 .pill{
-  width:240px;               /* ✅ 三個大小一致（你可改 220/260） */
-  padding:9px 12px;
-  border-radius:14px;
+  width:210px;             /* 原本 240 → 小一點 */
+  padding:7px 10px;        /* 原本 9 12 → 小一點 */
+  border-radius:12px;      /* 原本 14 → 小一點 */
   border:1px solid #e5e7eb;
   background:#f9fafb;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
-  transition:background .2s ease,border-color .2s ease,color .2s ease;
+  gap:8px;
 }
 
-.pill-label{color:var(--text-soft)}
-.pill-strong{color:var(--text);font-weight:600}
+.pill-label{color:var(--text-soft); font-size:10px;}
+.pill-strong{color:var(--text); font-weight:600; font-size:11px;}
 
-/* Version 特別一點（但大小仍一致） */
 .pill.version{
   border-color:#dbeafe;
   background:#eff6ff;
@@ -167,7 +165,6 @@
 .pill.version .pill-strong{
   color:#1d4ed8;
   font-weight:800;
-  letter-spacing:.02em;
 }
 
     .pill.designer{
@@ -638,6 +635,11 @@
   </div>
 
   <div class="pill">
+    <span class="pill-label">Managed by</span>
+    <span class="pill-strong">ME Team</span>
+  </div>
+
+  <div class="pill">
     <span class="pill-label">Designed by</span>
     <span class="pill-strong">Benjamin Lin</span>
   </div>
@@ -647,8 +649,6 @@
     <span class="pill-strong" id="modDate">Checking…</span>
   </div>
 </div>
-      
-    </div>
 
     <!-- Modules -->
     <nav class="nav-panel" id="navPanel" aria-label="Module navigation">
