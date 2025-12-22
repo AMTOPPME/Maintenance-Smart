@@ -555,14 +555,20 @@
         padding:4px 0 0;
         order:3;
       }
-      .top-meta{
-        width:100%;
-        justify-content:flex-start;
-        gap:6px;
-        flex-wrap:wrap;
-        order:2;
-      }
-      .top-meta .pill{ flex-shrink:0; }
+       .top-meta{
+    width:100%;
+    display:flex;
+    flex-direction:column;   /* ✅ 直向 */
+    align-items:flex-end;    /* ✅ 靠右 */
+    gap:6px;
+    flex-wrap:nowrap;        /* ✅ 不要換行 */
+    order:2;
+  }
+
+  .top-meta .pill{
+     width:min(210px, 92vw);             /* ✅ 跟桌機一致（或你想要 220/240 也行） */
+  }
+}
 
       .menu-button{
         order:4;
