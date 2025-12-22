@@ -558,15 +558,17 @@
        .top-meta{
     width:100%;
     display:flex;
-    flex-direction:column;   /* ✅ 直向 */
-    align-items:flex-end;    /* ✅ 靠右 */
-    gap:6px;
-    flex-wrap:nowrap;        /* ✅ 不要換行 */
+    flex-direction:column;
+    align-items:center;     /* ✅ 整組置中 */
+    gap:8px;
     order:2;
   }
 
+  /* 每一行 pill：幾乎滿版、但留一點邊 */
   .top-meta .pill{
-     width:min(210px, 92vw);             /* ✅ 跟桌機一致（或你想要 220/240 也行） */
+    width:95%;              /* ✅ 幾乎滿版（不是 100%） */
+    max-width:420px;        /* ✅ 防止平板太寬 */
+    justify-content:space-between;
   }
 }
 
