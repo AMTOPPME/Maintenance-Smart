@@ -1661,7 +1661,7 @@
 
     // 如果即將碰到 iframe，就停在 iframe 左上角
     if (scrollY + START_TOP >= iframeTop){
-      top = iframeTop - scrollY; // ← 精準對齊 iframe 左上角
+      top = iframeTop - scrollY + 12;
     }
 
     menuBtn.style.top = top + 'px';
