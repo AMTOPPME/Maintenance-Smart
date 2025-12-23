@@ -612,23 +612,21 @@
       }
       .maintenance-group.open .maintenance-third-panel{ display:block; }
     }
-    /* ===== Desktop only: menu button + module panel follow scroll ===== */
+    /* ===== Desktop only: menu button align with mascot ===== */
 @media (min-width:901px){
-  /* ☰ 按鈕固定在視窗左側 */
   .menu-button{
-    position:fixed;
-    left:24px;
-    top:140px;          /* 你想要的高度，可調 120~170 */
-    margin-top:0;       /* 取消原本用 margin-top 推下去 */
-    z-index:300;
+    position: fixed;
+    left: 72px;          /* ✅ 與藍色 mascot 對齊 */
+    top: 140px;
+    margin-top: 0;
+    z-index: 300;
   }
 
-  /* Modules 面板也固定，跟著按鈕 */
   .nav-panel{
-    position:fixed;
-    left:24px;
-    top:200px;          /* 大約 = menu-button top + 按鈕高度 */
-    z-index:299;
+    position: fixed;
+    left: 72px;          /* 跟 ☰ 按鈕同一直線 */
+    top: 200px;
+    z-index: 299;
   }
 }
 
