@@ -1638,5 +1638,42 @@
     }
   })();
 </script> 
+  <script>
+(function(){
+  if (window.innerWidth < 901) return;
+
+  const menuBtn = document.getElementById('menuButton');
+  const navPanel = document.getElementById('navPanel');
+  const iframeWrap = document.querySelector('.iframe-wrap');
+
+  if (!menuBtn || !iframeWrap) return;
+
+  const START_TOP = 140;   // 一開始的位置
+  const GAP = 16;          // 距離 iframe 的安全距離
+
+  function clampMenu(){
+    const iframeTop = iframeWrap.getBoundingClientRect().top + window.scrollY;
+    const maxTop = iframeTop - menuBtn.offsetHeight - GAP;
+
+    const scrollY = window.scrollY;
+    const desiredTop = START_TOP;
+
+    if (scrollY + desiredTop > maxTop){
+      // 停住
+      const finalTop = maxTop - scrollY;
+      menuBtn.style.top = finalTop + 'px';
+      if (navPanel) navPanel.style.top = (finalTop + 60) + 'px';
+    }else{
+      // 正常 fixed
+      menuBtn.style.top = START_TOP + 'px';
+      if (navPanel) navPanel.style.top = (START_TOP + 60) + 'px';
+    }
+  }
+
+  window.addEventListener('scroll', clampMenu);
+  window.addEventListener('resize', clampMenu);
+  clampMenu();
+})();
+</script>
 </body> 
 </html>
