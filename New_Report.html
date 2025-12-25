@@ -635,11 +635,17 @@ async function saveRecordToServer(payload) {
     saveRecords(logs);
 
     // 清空幾個欄位，方便連續填寫
-    document.getElementById('downInput').value = '';
-    document.getElementById('rootInput').value = '';
-    document.getElementById('actionInput').value = '';
-    document.getElementById('locFromInput').value = '';
-    document.getElementById('locToInput').value = '';
+    // 清空欄位：保留日期，其它都重設
+document.getElementById('lineInput').value = 'Line1';      // 或改成你想預設的
+document.getElementById('sectionInput').value = '';
+document.getElementById('equipInput').value = '';
+document.getElementById('catInput').value = 'Electrical';  // 或改成你想預設的
+document.getElementById('downInput').value = '';
+document.getElementById('rootInput').value = '';
+document.getElementById('actionInput').value = '';
+document.getElementById('locFromInput').value = '';
+document.getElementById('locToInput').value = '';
+
 
     if (serverOk){
       updateStatus('✅ Record saved to <strong>Google Sheet</strong> and this browser.');
