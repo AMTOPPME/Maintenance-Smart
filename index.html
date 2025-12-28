@@ -1182,29 +1182,34 @@ let front = frameA;   // 目前顯示的
 let back  = frameB;   // 用來預載的
 let navToken = 0;
 
+function syncStyleTo(frame){
+  try{
+    const style = document.documentElement.getAttribute("data-style") || "blue";
+    frame?.contentDocument?.documentElement?.setAttribute("data-style", style);
+  }catch(e){}
+}
+
 function swapTo(src){
   if (!front || !back || !src) return;
 
-  // 如果同一個 src，就不要重載（也避免閃）
   const current = front.getAttribute('src') || '';
   if (current === src) return;
 
   navToken++;
   const t = navToken;
 
-  // 先把 back 設成不可點（避免點到）
+  // back 先不可點 + 透明
   back.style.pointerEvents = 'none';
   back.style.opacity = '0';
 
-  // 預載完成後交換
+  // ✅ 如果 back 目前已經有文件（例如上一頁），先同步一次避免閃一下
+  syncStyleTo(back);
+
   back.onload = () => {
     if (t !== navToken) return;
 
-    // 同步 style 到新的 back（你原本的 window._msSyncFrameStyle 只會抓單一 mainFrame）
-    try{
-      const style = document.documentElement.getAttribute("data-style") || "blue";
-      back.contentDocument?.documentElement?.setAttribute("data-style", style);
-    }catch(e){}
+    // ✅ 載入完成後，再同步一次（最保險）
+    syncStyleTo(back);
 
     back.style.opacity = '1';
     back.style.pointerEvents = 'auto';
@@ -1222,6 +1227,7 @@ function swapTo(src){
 
   back.src = src;
 }
+
 
   const titleEl = document.getElementById('moduleTitle');
   const subEl   = document.getElementById('moduleSub');
@@ -1531,8 +1537,11 @@ function swapTo(src){
 
       schematicLineBtns.forEach(b=>b.classList.remove('active'));
       updateSchematicChildrenVisibility();
+    });
+  });
 
-      if (ioDescBtn){
+    // ✅ IO Description List：只綁一次（不要放在 section click 裡）
+if (ioDescBtn){
   ioDescBtn.addEventListener('click', ()=>{
     if (!currentSchematicSection) return;
 
@@ -1547,9 +1556,8 @@ function swapTo(src){
     closeModules();
   });
 }
-    });
-  });
 
+    
   // Schematic LINE（真正切頁才改 Title）
   schematicLineBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
