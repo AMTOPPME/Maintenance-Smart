@@ -985,11 +985,18 @@
     <div class="workspace">
       <main class="main">
         <div class="section-head">
-          <div>
-            <h2 class="section-title" id="moduleTitle">Home</h2>
-            <p class="section-sub" id="moduleSub">Welcome to Maintenance Smart.</p>
-          </div>
-        </div>
+  <div>
+    <h2 class="section-title" id="moduleTitle">Home</h2>
+    <p class="section-sub" id="moduleSub">Welcome to Maintenance Smart.</p>
+  </div>
+
+  <div class="page-jump">
+  <button class="jump-btn" id="jumpToggle" type="button" title="Go to bottom">
+    ↓ Bottom
+  </button>
+</div>
+</div>
+
 
         <div class="iframe-wrap" id="frameWrap">
           <iframe id="mainFrameA" title="Module view A" src="Home.html"></iframe>
@@ -1125,7 +1132,30 @@
   document.addEventListener('DOMContentLoaded', ()=> setTimeout(applyStyleToFront, 30));
 })();
 
+.page-jump{
+  display:flex;
+  align-items:center;
+}
 
+.jump-btn{
+  border:1px solid var(--border-subtle);
+  background:var(--card-bg);
+  color:var(--accent);
+  padding:8px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:12px;
+  box-shadow:var(--shadow-soft-sm);
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.jump-btn:hover{
+  background:var(--accent-soft);
+  transform:translateY(-1px);
+  box-shadow:var(--shadow-soft-md);
+}
+
+  
   // Modules 面板開關
   (function(){
     const menuBtn = document.getElementById('menuButton');
@@ -1792,6 +1822,57 @@ if (ioDescBtn){
   window.addEventListener('resize', updatePosition);
   updatePosition();
 })();
+
+   (function(){
+  const btn = document.getElementById('jumpToggle');
+  if (!btn) return;
+
+  function atBottom(){
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const winH = window.innerHeight;
+    const docH = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    return scrollTop + winH >= docH - 8; // 8px buffer
+  }
+
+  function scrollToTop(){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function scrollToBottom(){
+    const h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    );
+    window.scrollTo({ top: h, behavior: 'smooth' });
+  }
+
+  function updateBtn(){
+    if (atBottom()){
+      btn.textContent = '↑ Top';
+      btn.title = 'Go to top';
+    }else{
+      btn.textContent = '↓ Bottom';
+      btn.title = 'Go to bottom';
+    }
+  }
+
+  btn.addEventListener('click', ()=>{
+    if (atBottom()){
+      scrollToTop();
+    }else{
+      scrollToBottom();
+    }
+  });
+
+  window.addEventListener('scroll', updateBtn);
+  window.addEventListener('resize', updateBtn);
+
+  updateBtn(); // init
+})();
+
 </script>
 </body> 
 </html>
