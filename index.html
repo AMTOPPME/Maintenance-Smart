@@ -1246,12 +1246,19 @@ function swapTo(src){
   const scadaPanel       = document.getElementById('scadaPanel');
 
   // Schematic
-  const schematicLineBtns = document.querySelectorAll('.schematic-line-btn');
-  const schematicSecBtns  = document.querySelectorAll('.schematic-sec-btn');
-  const schematicLineRow   = document.querySelector('.schematic-line-row');
-  const schematicTagsBlock = document.querySelector('.ls-tags');
-  const schematicLineTitle = document.querySelector('.line-title');
-  const ioDescBtn          = document.getElementById('ioDescBtn');
+  // ✅ 只抓 LINE 1~4（不包含 IO List）
+const schematicLineBtns  = document.querySelectorAll('.schematic-line-row .schematic-line-btn');
+
+// ✅ SECTION
+const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
+
+const schematicLineRow   = document.querySelector('.schematic-line-row');
+const schematicTagsBlock = document.querySelector('.ls-tags');
+const schematicLineTitle = document.querySelector('.line-title');
+
+// ✅ IO List（獨立抓，不要跟 LINE 混）
+const ioDescBtn          = document.getElementById('ioDescBtn');
+
 
   let currentSchematicLine = null;
   let currentSchematicSection = null;
@@ -1520,30 +1527,43 @@ function swapTo(src){
     });
   });
 
-  // Schematic SECTION
-  schematicSecBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      resetOtherGroups('schematic');
-      activateNav(schematicParentBtn);
+schematicSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    resetOtherGroups('schematic');
+    activateNav(schematicParentBtn);
 
-      const sec = btn.getAttribute('data-section');
-      if (!sec) return;
+    const sec = btn.getAttribute('data-section');
+    if (!sec) return;
 
-      currentSchematicSection = sec;
-      currentSchematicLine = null;
+    currentSchematicSection = sec;
+    currentSchematicLine = null;
 
-      schematicSecBtns.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
+    // ✅ SECTION active
+    schematicSecBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
 
-      schematicLineBtns.forEach(b=>b.classList.remove('active'));
-      updateSchematicChildrenVisibility();
-    });
+    // ✅ 清掉 LINE + IO List
+    schematicLineBtns.forEach(b=>b.classList.remove('active'));
+    ioDescBtn?.classList.remove('active');
+
+    updateSchematicChildrenVisibility();
   });
+});
+
 
     // ✅ IO Description List：只綁一次（不要放在 section click 裡）
 if (ioDescBtn){
   ioDescBtn.addEventListener('click', ()=>{
     if (!currentSchematicSection) return;
+
+    resetOtherGroups('schematic');
+    activateNav(schematicParentBtn);
+
+    // ✅ IO active
+    ioDescBtn.classList.add('active');
+
+    // ✅ LINE 清掉
+    schematicLineBtns.forEach(b=>b.classList.remove('active'));
 
     const url = 'IO_Description_List.html?section=' + encodeURIComponent(currentSchematicSection);
     swapTo(url);
@@ -1557,30 +1577,36 @@ if (ioDescBtn){
   });
 }
 
+
     
   // Schematic LINE（真正切頁才改 Title）
   schematicLineBtns.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      resetOtherGroups('schematic');
-      activateNav(schematicParentBtn);
+  btn.addEventListener('click', ()=>{
+    if (!currentSchematicSection) return;
 
-      const lineKey = btn.getAttribute('data-line');
-      if (!lineKey || !currentSchematicSection) return;
+    resetOtherGroups('schematic');
+    activateNav(schematicParentBtn);
 
-      currentSchematicLine = lineKey;
+    currentSchematicLine = btn.getAttribute('data-line');
 
-      schematicLineBtns.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
+    // ✅ LINE active
+    schematicLineBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
 
-      const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
-      swapTo(file);
+    // ✅ IO List 清掉
+    ioDescBtn?.classList.remove('active');
 
-      const lineLabel = formatLineLabel(currentSchematicLine);
-      setModule('Updated Schematic – ' + lineLabel + ' – ' + currentSchematicSection, 'Schematic file: ' + file);
+    const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
+    swapTo(file);
 
-      closeModules();
-    });
+    setModule(
+      `Updated Schematic – ${formatLineLabel(currentSchematicLine)} – ${currentSchematicSection}`,
+      `Schematic file: ${file}`
+    );
+
+    closeModules();
   });
+});
 
   // Maintenance：2nd/3rd layer
   if (maintenancePanel){
