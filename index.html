@@ -203,14 +203,33 @@
       overflow:hidden;
       height:calc(100vh - 110px);
     }
-    .iframe-wrap iframe{
-      width:100%;
-      height:100%;
-      min-height:0;
-      border:0;
-      display:block;
-      background:#111827;
-    }
+    .iframe-wrap{
+  position: relative; /* ✅ 必須 */
+}
+
+/* 兩個 iframe 疊在一起 */
+.iframe-wrap iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+  background: transparent;         /* ✅ 避免白閃 */
+  opacity:0;
+  transition: opacity .18s ease;
+}
+
+/* 預設 A 顯示 */
+#mainFrameA{
+  opacity:1;
+  z-index:1;
+}
+#mainFrameB{
+  z-index:2;
+  pointer-events:none;
+}
+
 
     /* Modules 主面板 */
     .nav-panel{
@@ -967,8 +986,9 @@
           </div>
         </div>
 
-        <div class="iframe-wrap">
-          <iframe id="mainFrame" title="Module view" src="Home.html"></iframe>
+        <div class="iframe-wrap" id="frameWrap">
+          <iframe id="mainFrameA" title="Module view A" src="Home.html"></iframe>
+          <iframe id="mainFrameB" title="Module view B" src="about:blank" aria-hidden="true"></iframe>
         </div>
       </main>
     </div>
@@ -1077,20 +1097,29 @@
 <script>
   // ---- 子頁面同步主頁 style ----
   (function syncStyleToIframe(){
-    const frame = document.getElementById("mainFrame");
+  function getFrontFrame(){
+    // 目前顯示的是 opacity=1 的那個
+    const a = document.getElementById("mainFrameA");
+    const b = document.getElementById("mainFrameB");
+    if (!a || !b) return a || b;
+    const ao = parseFloat(getComputedStyle(a).opacity || '0');
+    return (ao >= 0.5) ? a : b;
+  }
 
-    function applyStyleToFrame(){
-      if (!frame || !frame.contentDocument) return;
-      const style = document.documentElement.getAttribute("data-style") || "blue";
-      frame.contentDocument.documentElement.setAttribute("data-style", style);
-    }
+  function applyStyleToFront(){
+    const f = getFrontFrame();
+    if (!f || !f.contentDocument) return;
+    const style = document.documentElement.getAttribute("data-style") || "blue";
+    f.contentDocument.documentElement.setAttribute("data-style", style);
+  }
 
-    if (frame){
-      frame.addEventListener("load", ()=> setTimeout(applyStyleToFrame, 30));
-    }
+  // 讓其他地方可以呼叫
+  window._msSyncFrameStyle = applyStyleToFront;
 
-    window._msSyncFrameStyle = applyStyleToFrame;
-  })();
+  // 初次也同步一次
+  document.addEventListener('DOMContentLoaded', ()=> setTimeout(applyStyleToFront, 30));
+})();
+
 
   // Modules 面板開關
   (function(){
@@ -1146,7 +1175,54 @@
 
   // ✅ 切換模組 + Line Schematic / Maintenance / SCADA（你這段完整 logic）
   (function(){
-  const frame   = document.getElementById('mainFrame');
+  const frameA = document.getElementById('mainFrameA');
+const frameB = document.getElementById('mainFrameB');
+
+let front = frameA;   // 目前顯示的
+let back  = frameB;   // 用來預載的
+let navToken = 0;
+
+function swapTo(src){
+  if (!front || !back || !src) return;
+
+  // 如果同一個 src，就不要重載（也避免閃）
+  const current = front.getAttribute('src') || '';
+  if (current === src) return;
+
+  navToken++;
+  const t = navToken;
+
+  // 先把 back 設成不可點（避免點到）
+  back.style.pointerEvents = 'none';
+  back.style.opacity = '0';
+
+  // 預載完成後交換
+  back.onload = () => {
+    if (t !== navToken) return;
+
+    // 同步 style 到新的 back（你原本的 window._msSyncFrameStyle 只會抓單一 mainFrame）
+    try{
+      const style = document.documentElement.getAttribute("data-style") || "blue";
+      back.contentDocument?.documentElement?.setAttribute("data-style", style);
+    }catch(e){}
+
+    back.style.opacity = '1';
+    back.style.pointerEvents = 'auto';
+
+    front.style.opacity = '0';
+    front.style.pointerEvents = 'none';
+
+    // 交換角色
+    const tmp = front;
+    front = back;
+    back = tmp;
+
+    back.onload = null;
+  };
+
+  back.src = src;
+}
+
   const titleEl = document.getElementById('moduleTitle');
   const subEl   = document.getElementById('moduleSub');
   const panel   = document.getElementById('navPanel');
@@ -1391,7 +1467,7 @@
       resetScadaSelection();
 
       activateNav(btn);
-      if (frame) frame.src = src;
+      swapTo(src);
       setModule(btn.dataset.title || 'Module', btn.dataset.sub || '');
 
       closeAllSubPanels();
@@ -1431,7 +1507,7 @@
           return;
       }
 
-      if (frame) frame.src = src;
+      swapTo(src);
       setModule(title, sub);
       closeModules();
     });
@@ -1457,18 +1533,19 @@
 
       // IO Description List button
       if (ioDescBtn){
-        ioDescBtn.addEventListener('click', ()=>{
-          if (!currentSchematicSection) return;
+  ioDescBtn.addEventListener('click', ()=>{
+    if (!currentSchematicSection) return;
 
-          const url = 'IO_Description_List.html?section=' + encodeURIComponent(currentSchematicSection);
-          if (frame) frame.src = url;
+    const url = 'IO_Description_List.html?section=' + encodeURIComponent(currentSchematicSection);
+    swapTo(url);
 
-          setModule('IO Description List – ' + currentSchematicSection,
-                    'Browse I/O description CSV tables for ' + currentSchematicSection + '.');
+    setModule('IO Description List – ' + currentSchematicSection,
+              'Browse I/O description CSV tables for ' + currentSchematicSection + '.');
 
-          closeModules();
-        });
-      }
+    closeModules();
+  });
+}
+
     });
   });
 
@@ -1487,7 +1564,7 @@
       btn.classList.add('active');
 
       const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
-      if (frame) frame.src = file;
+      swapTo(file);
 
       const lineLabel = formatLineLabel(currentSchematicLine);
       setModule('Updated Schematic – ' + lineLabel + ' – ' + currentSchematicSection, 'Schematic file: ' + file);
@@ -1577,7 +1654,7 @@
       if (!key) return;
 
       const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
-      if (frame) frame.src = viewerUrl;
+      swapTo(viewerUrl);
 
       setModule('Calibration Procedure – ' + label, 'PDF: ' + label);
 
