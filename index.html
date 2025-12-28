@@ -55,9 +55,8 @@
       display:flex;
       justify-content:space-between;
       gap:14px;
-      align-items:flex-start;
+      align-items:center;
       margin-bottom:18px;
-      transition:background .25s ease,box-shadow .25s ease,border-color .25s ease;
     }
 
     .top-left{
@@ -94,7 +93,16 @@
     }
     .brand-sub{font-size:13px;color:var(--text-soft)}
 
-    .top-quote{ text-align:center; justify-self:center; }
+    .top-quote{
+  flex:1;                 /* ✅ 讓它吃中間空間 */
+  text-align:center;
+  display:flex;           /* ✅ 用 flex 做垂直置中 */
+  flex-direction:column;
+  justify-content:center; /* ✅ 垂直置中 */
+  align-items:center;     /* ✅ 水平置中 */
+  min-height:72px;        /* ✅ 跟左邊 top-left 高度一致時更穩 */
+}
+    
     .quote-label{
       font-size:11px;
       text-transform:uppercase;
@@ -102,6 +110,7 @@
       color:var(--text-soft);
       margin-bottom:4px;
     }
+    
     .quote-text{
   font-size:18px;
   font-weight:500;
@@ -109,15 +118,33 @@
   font-style:italic;
   max-width:720px;
   margin:0 auto;
-  text-align:left;
+  text-align:center;      /* ✅ 改成置中 */
   white-space:normal;
   word-wrap:break-word;
-
-  /* ✅ 新增這一行 */
-  transform: translateY(6px);   /* 可微調：4px~8px */
+}
+    
+.page-jump{
+  display:flex;
+  align-items:center;
 }
 
+.jump-btn{
+  border:1px solid var(--border-subtle);
+  background:var(--card-bg);
+  color:var(--accent);
+  padding:8px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:12px;
+  box-shadow:var(--shadow-soft-sm);
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
 
+.jump-btn:hover{
+  background:var(--accent-soft);
+  transform:translateY(-1px);
+  box-shadow:var(--shadow-soft-md);
+}
 
     .menu-button{
       border-radius:999px;
@@ -1131,30 +1158,6 @@
   // 初次也同步一次
   document.addEventListener('DOMContentLoaded', ()=> setTimeout(applyStyleToFront, 30));
 })();
-
-.page-jump{
-  display:flex;
-  align-items:center;
-}
-
-.jump-btn{
-  border:1px solid var(--border-subtle);
-  background:var(--card-bg);
-  color:var(--accent);
-  padding:8px 14px;
-  border-radius:999px;
-  cursor:pointer;
-  font-size:12px;
-  box-shadow:var(--shadow-soft-sm);
-  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
-}
-
-.jump-btn:hover{
-  background:var(--accent-soft);
-  transform:translateY(-1px);
-  box-shadow:var(--shadow-soft-md);
-}
-
   
   // Modules 面板開關
   (function(){
@@ -1349,12 +1352,16 @@ const ioDescBtn          = document.getElementById('ioDescBtn');
   }
 
   function resetSchematicSelection(){
-    currentSchematicLine = null;
-    currentSchematicSection = null;
-    schematicSecBtns.forEach(b => b.classList.remove('active'));
-    schematicLineBtns.forEach(b => b.classList.remove('active'));
-    updateSchematicChildrenVisibility();
-  }
+  currentSchematicLine = null;
+  currentSchematicSection = null;
+
+  schematicSecBtns.forEach(b => b.classList.remove('active'));
+  schematicLineBtns.forEach(b => b.classList.remove('active'));
+  ioDescBtn?.classList.remove('active');   // ✅ 補這行
+
+  updateSchematicChildrenVisibility();
+}
+
 
   function resetMaintenanceSelection(){
     maintenanceSecBtns.forEach(b => b.classList.remove('active'));
