@@ -96,10 +96,12 @@
   text-align:center;
   display:flex;
   flex-direction:column;
-  justify-content:center;   /* ✅ 只置中 quote 區塊內容 */
+  justify-content:flex-start; /* ⬆️ 靠上 */
   align-items:center;
-  min-height:72px;          /* ✅ 跟左邊 top-left 高度對齊 */
+  min-height:72px;
+  padding-top:10px;           /* 自己控制高度 */
 }
+
     
     .quote-label{
       font-size:11px;
