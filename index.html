@@ -1829,9 +1829,12 @@ if (ioDescBtn){
   updatePosition();
 })();
 
-   (function(){
+(function(){
   const btn = document.getElementById('jumpToggle');
   if (!btn) return;
+
+  // ✅ 手機版直接不啟用
+  if (window.innerWidth <= 900) return;
 
   function atBottom(){
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
