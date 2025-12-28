@@ -95,7 +95,7 @@
 .top-quote{
   text-align:center;
   display:grid;
-  grid-template-rows:auto 1fr; /* label 固定，上；文字吃剩餘 */
+  grid-template-rows:auto 2px 1fr;
   align-items:center;
   min-height:72px;
 
@@ -121,7 +121,7 @@
   text-align:center;   /* 建議置中，看起來更像 topbar quote */
   white-space:normal;
   word-wrap:break-word;
-  /* ❌ transform: translateY(6px);  拿掉 */
+  line-height:1.25;
 }
     
 .page-jump{
