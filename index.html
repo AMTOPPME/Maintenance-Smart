@@ -587,7 +587,8 @@
 
     /* 手機版：子列表改成在下面展開 */
     @media (max-width:900px){
-      .page-jump{ display:none !important; }
+       .page-jump{ display:none !important; }
+       #jumpToggle{ display:none !important; }
       .page{ padding-top:16px; padding-bottom:24px; }
 
       .topbar{
@@ -1834,17 +1835,14 @@ if (ioDescBtn){
   const btn = document.getElementById('jumpToggle');
   if (!btn) return;
 
-  // ✅ 手機版直接不啟用
-  if (window.innerWidth <= 900) return;
+  const mq = window.matchMedia('(max-width: 900px)');
+  let bound = false;
 
   function atBottom(){
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const winH = window.innerHeight;
-    const docH = Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight
-    );
-    return scrollTop + winH >= docH - 8; // 8px buffer
+    const docH = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    return scrollTop + winH >= docH - 8;
   }
 
   function scrollToTop(){
@@ -1852,10 +1850,7 @@ if (ioDescBtn){
   }
 
   function scrollToBottom(){
-    const h = Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight
-    );
+    const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
     window.scrollTo({ top: h, behavior: 'smooth' });
   }
 
@@ -1869,19 +1864,44 @@ if (ioDescBtn){
     }
   }
 
-  btn.addEventListener('click', ()=>{
-    if (atBottom()){
-      scrollToTop();
-    }else{
-      scrollToBottom();
-    }
-  });
+  function onClick(){
+    if (atBottom()) scrollToTop();
+    else scrollToBottom();
+  }
 
-  window.addEventListener('scroll', updateBtn);
-  window.addEventListener('resize', updateBtn);
+  function enable(){
+    // 讓桌機版顯示/可用
+    btn.style.display = '';
+    if (bound) return;
+    btn.addEventListener('click', onClick);
+    window.addEventListener('scroll', updateBtn);
+    window.addEventListener('resize', updateBtn);
+    bound = true;
+    updateBtn();
+  }
 
-  updateBtn(); // init
+  function disable(){
+    // 手機版強制隱藏/不綁事件
+    btn.style.display = 'none';
+    if (!bound) return;
+    btn.removeEventListener('click', onClick);
+    window.removeEventListener('scroll', updateBtn);
+    window.removeEventListener('resize', updateBtn);
+    bound = false;
+  }
+
+  function apply(){
+    if (mq.matches) disable();
+    else enable();
+  }
+
+  // 初始 + 旋轉/縮放時都會重新判斷
+  if (mq.addEventListener) mq.addEventListener('change', apply);
+  else mq.addListener(apply); // 舊瀏覽器
+
+  apply();
 })();
+
 
 </script>
 </body> 
