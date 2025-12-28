@@ -95,20 +95,21 @@
 .top-quote{
   text-align:center;
   display:grid;
-  grid-template-rows: auto 1fr; /* label 高度固定，下面撐滿 */
-  align-items:center;           /* 讓 text 在 1fr 裡垂直置中 */
+  grid-template-rows:auto 1fr; /* label 固定，上；文字吃剩餘 */
+  align-items:center;
   min-height:72px;
-  padding-top:6px;
+
+  padding-top:4px;   /* ⬅ 比你現在 6px 再少一點 */
 }
 
-    
-    .quote-label{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:var(--text-soft);
-      margin-bottom:4px;
-    }
+.quote-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--text-soft);
+
+  margin-bottom:2px; /* ⬅ 原本 4px 稍微偏多 */
+}
     
     .quote-text{
   font-size:18px;
