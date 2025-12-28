@@ -92,14 +92,13 @@
     }
     .brand-sub{font-size:13px;color:var(--text-soft)}
 
-    .top-quote{
+.top-quote{
   text-align:center;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start; /* ⬆️ 靠上 */
-  align-items:center;
+  display:grid;
+  grid-template-rows: auto 1fr; /* label 高度固定，下面撐滿 */
+  align-items:center;           /* 讓 text 在 1fr 裡垂直置中 */
   min-height:72px;
-  padding-top:6px;           /* 自己控制高度 */
+  padding-top:6px;
 }
 
     
