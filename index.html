@@ -653,7 +653,12 @@
         min-width:0;
       }
 
-      .iframe-wrap{ height:calc(100vh - 220px); }
+      @media (max-width:900px){
+        .iframe-wrap{
+        height:calc(100dvh - 160px);
+        min-height:520px;
+      }
+
 
       .maintenance-third-panel{
         position:static;
