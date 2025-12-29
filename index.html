@@ -38,13 +38,13 @@
     }
 
     .page{
-  position:relative;
-  width:100%;
-  max-width:none;
-  margin:0;
-  padding:24px 16px 16px;  /* 底部少一點，避免空白 */
-  z-index:2;
-}
+      position:relative;
+      width:100%;
+      max-width:none;
+      margin:0;
+      padding:24px 16px 40px;
+      z-index:2;
+    }
 
     .topbar{
       background:var(--card-bg);
@@ -214,9 +214,8 @@
       color:var(--text);
     }
 
-    .workspace{ min-height:0; }
-.main{ min-width:0; }
-
+    .workspace{ min-height:60vh; }
+    .main{ flex:1; min-width:0; }
 
     .section-head{
       margin-bottom:10px;
@@ -230,17 +229,14 @@
     .section-sub{font-size:var(--small-font);color:var(--text-soft);margin:2px 0 0}
 
     .iframe-wrap{
-  background:var(--card-bg);
-  border-radius:var(--radius-xl);
-  border:1px solid var(--border-subtle);
-  box-shadow:var(--shadow-soft-sm);
-  overflow:hidden;
-  position: relative;
-
-  /* ✅ 用 JS 算好的高度 */
-  height: var(--frame-h, calc(100dvh - 220px));
-}
-
+      background:var(--card-bg);
+      border-radius:var(--radius-xl);
+      border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow-soft-sm);
+      overflow:hidden;
+      height:calc(100vh - 110px);
+      position: relative;
+    }
 
 
 /* 兩個 iframe 疊在一起 */
@@ -657,8 +653,7 @@
         min-width:0;
       }
 
-      .iframe-wrap{ height: var(--frame-h, calc(100dvh - 260px)); }
-
+      .iframe-wrap{ height:calc(100vh - 220px); }
 
       .maintenance-third-panel{
         position:static;
@@ -1907,40 +1902,9 @@ if (ioDescBtn){
 
   apply();
 })();
+
+
 </script>
-  <script>
-(function(){
-  const page = document.querySelector('.page');
-  const topbar = document.querySelector('.topbar');
-  const head = document.querySelector('.section-head');
-  const wrap = document.querySelector('.iframe-wrap');
-  if(!page || !topbar || !head || !wrap) return;
-
-  function setFrameHeight(){
-    // 用 innerHeight 比 100vh 更準（避免手機網址列影響）
-    const vh = window.innerHeight;
-
-    const pageStyle = getComputedStyle(page);
-    const padTop = parseFloat(pageStyle.paddingTop) || 0;
-    const padBottom = parseFloat(pageStyle.paddingBottom) || 0;
-
-    const topbarH = topbar.getBoundingClientRect().height;
-    const headH = head.getBoundingClientRect().height;
-
-    // 你 iframe-wrap 上面沒有額外內容了，所以扣這些就夠
-    let h = vh - padTop - padBottom - topbarH - headH;
-
-    // 保底，避免太小
-    h = Math.max(360, Math.floor(h));
-
-    document.documentElement.style.setProperty('--frame-h', h + 'px');
-  }
-
-  window.addEventListener('resize', setFrameHeight);
-  window.addEventListener('load', setFrameHeight);
-  setTimeout(setFrameHeight, 50);
-})();
-</script>
-
 </body> 
 </html>
+以這個改
