@@ -26,6 +26,9 @@
     html[data-style="hangyodon"]{ --bg:#dbeafe; } /* 淡藍 */
 
     *{box-sizing:border-box}
+    html, body{
+      height:100%;
+    }
     body{
       margin:0;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
@@ -35,14 +38,18 @@
       min-height:100vh;
       overflow-x:hidden;
       transition:background .25s ease,color .25s ease;
+      overflow:hidden;
     }
 
     .page{
+      height:100vh;
+      display:flex;
+      flex-direction:column;
       position:relative;
       width:100%;
       max-width:none;
       margin:0;
-      padding:24px 16px 40px;
+      padding:24px 16px 16px;
       z-index:2;
     }
 
@@ -214,8 +221,18 @@
       color:var(--text);
     }
 
-    .workspace{ min-height:60vh; }
-    .main{ flex:1; min-width:0; }
+    .workspace{ 
+      flex:1;
+      min-height:0; 
+    }
+    .main{ 
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+      flex:1;
+      min-width:0; 
+    }
 
     .section-head{
       margin-bottom:10px;
@@ -224,6 +241,7 @@
       align-items:flex-end;
       gap:10px;
       flex-wrap:wrap;
+      flex:0 0 auto;
     }
     .section-title{font-size:18px;font-weight:600;color:var(--text);margin:0}
     .section-sub{font-size:var(--small-font);color:var(--text-soft);margin:2px 0 0}
@@ -234,7 +252,9 @@
       border:1px solid var(--border-subtle);
       box-shadow:var(--shadow-soft-sm);
       overflow:hidden;
-      height:calc(100vh - 110px);
+      flex:1;
+      min-height:0;              /* ✅ 很關鍵 */
+      height:auto;               /* ✅ 拿掉 calc(100vh - 110px) */
       position: relative;
     }
 
