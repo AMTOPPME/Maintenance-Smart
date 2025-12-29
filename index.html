@@ -46,26 +46,18 @@
       z-index:2;
     }
 
-   .topbar{
-  background:var(--card-bg);
+    .topbar{
+      background:var(--card-bg);
+      padding:18px 20px;
+      border-radius:22px;
+      border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow-soft-md);
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
 
-  /* ⬇️ 變窄（高度） */
-  padding:10px 16px;          /* 原本 18px 20px */
-
-  border-radius:18px;         /* 原本 22px */
-  border:1px solid var(--border-subtle);
-  box-shadow:var(--shadow-soft-md);
-
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-
-  align-items:flex-start;
-
-  /* ⬆️ 整條往上移 */
-  margin-top:-6px;
-}
-
+      align-items:flex-start;   /* ✅ 回復原本，不要置中整條 */
+    }
     .top-left{
       display:flex;
       flex-direction:column;
