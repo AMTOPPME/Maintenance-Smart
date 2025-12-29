@@ -42,13 +42,8 @@
   width:100%;
   max-width:none;
   margin:0;
-  padding:24px 16px 16px;   /* ✅ 底部不要撐太多 */
+  padding:24px 16px 16px;  /* 底部少一點，避免空白 */
   z-index:2;
-
-  /* ✅ 讓內容用 flex 排版，iframe 可以吃剩餘高度 */
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
 }
 
     .topbar{
@@ -219,19 +214,8 @@
       color:var(--text);
     }
 
-    .workspace{
-      flex:1;                  /* ✅ 吃掉 topbar 下面的空間 */
-      min-height:0;            /* ✅ 允許內部元素縮，不要把頁面撐高 */
-      display:flex;
-    }
-
-    .main{
-      flex:1;
-      min-width:0;
-      min-height:0;            /* ✅ 很重要：避免 flex item 撐高造成多餘 scroll */
-      display:flex;
-      flex-direction:column;
-    }
+    .workspace{ min-height:0; }
+.main{ min-width:0; }
 
 
     .section-head{
@@ -246,16 +230,17 @@
     .section-sub{font-size:var(--small-font);color:var(--text-soft);margin:2px 0 0}
 
     .iframe-wrap{
-      background:var(--card-bg);
-      border-radius:var(--radius-xl);
-      border:1px solid var(--border-subtle);
-      box-shadow:var(--shadow-soft-sm);
-      overflow:hidden;
+  background:var(--card-bg);
+  border-radius:var(--radius-xl);
+  border:1px solid var(--border-subtle);
+  box-shadow:var(--shadow-soft-sm);
+  overflow:hidden;
+  position: relative;
 
-      flex:1;          /* ✅ 用 flex 撐滿剩餘高度 */
-      min-height:0;    /* ✅ 防止多出底部空白 */
-      position:relative;
-    }
+  /* ✅ 用 JS 算好的高度 */
+  height: var(--frame-h, calc(100dvh - 220px));
+}
+
 
 
 /* 兩個 iframe 疊在一起 */
@@ -672,7 +657,8 @@
         min-width:0;
       }
 
-      .iframe-wrap{ height:calc(100vh - 220px); }
+      .iframe-wrap{ height: var(--frame-h, calc(100dvh - 260px)); }
+
 
       .maintenance-third-panel{
         position:static;
@@ -1921,8 +1907,40 @@ if (ioDescBtn){
 
   apply();
 })();
-
-
 </script>
+  <script>
+(function(){
+  const page = document.querySelector('.page');
+  const topbar = document.querySelector('.topbar');
+  const head = document.querySelector('.section-head');
+  const wrap = document.querySelector('.iframe-wrap');
+  if(!page || !topbar || !head || !wrap) return;
+
+  function setFrameHeight(){
+    // 用 innerHeight 比 100vh 更準（避免手機網址列影響）
+    const vh = window.innerHeight;
+
+    const pageStyle = getComputedStyle(page);
+    const padTop = parseFloat(pageStyle.paddingTop) || 0;
+    const padBottom = parseFloat(pageStyle.paddingBottom) || 0;
+
+    const topbarH = topbar.getBoundingClientRect().height;
+    const headH = head.getBoundingClientRect().height;
+
+    // 你 iframe-wrap 上面沒有額外內容了，所以扣這些就夠
+    let h = vh - padTop - padBottom - topbarH - headH;
+
+    // 保底，避免太小
+    h = Math.max(360, Math.floor(h));
+
+    document.documentElement.style.setProperty('--frame-h', h + 'px');
+  }
+
+  window.addEventListener('resize', setFrameHeight);
+  window.addEventListener('load', setFrameHeight);
+  setTimeout(setFrameHeight, 50);
+})();
+</script>
+
 </body> 
 </html>
