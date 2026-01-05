@@ -625,79 +625,58 @@
 .menu-text{ display:none; }
 
 @media (max-width:900px){
+  .page-jump{ display:none !important; }
+  #jumpToggle{ display:none !important; }
+  .page{ padding-top:16px; padding-bottom:24px; }
 
-  /* ✅ Topbar 改直向，避免三欄擠爆 */
   .topbar{
-    flex-direction:column;
-    align-items:stretch;
-    gap:10px;
-    padding:12px 12px 14px;
-  }
-
-  /* ✅ 讓 top-left 的內容「解包」成 topbar 的 flex item，才能用 order 排順序 */
-  .top-left{ display:contents; }
-
-  /* ✅ 排序：Brand → Quote → Pills → Modules */
-  .brand-wrap{ order:1; }
-  .top-quote { order:2; }
-  .top-meta  { order:3; }
-  #moduleSlotTopbar{
-    order:4;
-    width:100%;
     display:flex;
-    justify-content:center;
-    margin-top:6px;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+    padding:14px 14px 18px;
   }
 
-  /* ✅ Brand 區微調 */
-  .brand-main{ font-size:18px; }
-  .brand-sub { font-size:12px; }
+  /* ✅ 解包：讓 brand / meta / quote / menu 都變成 topbar 的 item 才能用 order */
+  .top-left{ display:contents; min-height:0; }
 
-  /* ✅ Quote 縮小避免太高 */
+  .brand-wrap{ order:1; }
+  .top-meta{ order:2; }
+  .top-quote{ order:3; }
+  .module-dock{ order:4; width:100%; }
+
+  .brand-main{ font-size:17px; letter-spacing:.10em; }
+  .brand-sub{ font-size:12px; }
+
   .top-quote{
-    min-height:auto;
-    padding-top:0;
-    text-align:center;
-  }
-  .quote-label{
-    font-size:10px;
-    margin-bottom:2px;
-    letter-spacing:.10em;
-    opacity:.85;
-  }
-  .quote-text{
-    font-size:clamp(16px, 4.6vw, 20px);
-    line-height:1.25;
-    max-width:320px;
-    margin:0 auto;
+    width:100%;
+    text-align:left;
+    padding:4px 0 0;
   }
 
-  /* ✅ Pills 變成手機寬度，不會被切 */
   .top-meta{
     width:100%;
-    align-items:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;     /* ✅ 整組置中 */
     gap:8px;
   }
+
   .top-meta .pill{
     width:95%;
     max-width:420px;
     justify-content:space-between;
   }
 
-  /* ✅ Modules 變整條大按鈕（圖二那種） */
-  .menu-text{ display:inline; }
-
   .menu-button{
     width:95%;
     max-width:420px;
-    padding:14px 18px;
-    font-size:15px;
-    border-radius:999px;
+    align-self:center;
     justify-content:center;
-    gap:10px;
+    text-align:center;
+    margin-top:4px;
   }
 
-  /* ✅ nav-panel 手機版跟著排版走 */
   .nav-panel{
     position:relative;
     left:0;
@@ -707,14 +686,31 @@
     margin-top:8px;
   }
 
-  /* 手機不需要 iframe overlay slot */
-  .module-slot-frame{ position:static; }
+  .schematic-panel,
+  .maintenance-panel,
+  .scada-panel{
+    position:static;
+    left:auto;
+    margin-left:0;
+    width:100%;
+    min-width:0;
+  }
 
-  /* iframe 高度（可選） */
+  /* ✅ 這段原本被你寫在巢狀 @media 裡，會失效 */
   .iframe-wrap{
     height:calc(100dvh - 160px);
     min-height:520px;
   }
+
+  .maintenance-third-panel{
+    position:static;
+    left:auto;
+    margin-left:0;
+    min-width:0;
+    margin-top:8px;
+    display:none;
+  }
+  .maintenance-group.open .maintenance-third-panel{ display:block; }
 }
 
 
