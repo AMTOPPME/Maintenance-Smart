@@ -1825,12 +1825,16 @@ if (ioDescBtn){
   const SWITCH_Y = 110; // 想更早搬：調大；想更晚搬：調小
 
   function updateDockHome(){
-    // 手機不搬家，維持你原本手機排版
-    if (window.innerWidth <= 900){
-      if (!slotTop.contains(dock)) slotTop.appendChild(dock);
-      inFrame = false;
-      return;
-    }
+    // 📱 手機：強制放在 topbar 裡，而且是最後一個
+if (window.innerWidth <= 900){
+  if (!slotTop.contains(dock)) slotTop.appendChild(dock);
+  dock.style.order = '999';   // ✅ 一定在最下面
+  inFrame = false;
+  return;
+}else{
+  dock.style.order = '';      // 桌機清掉
+}
+
 
     const rect = frameWrap.getBoundingClientRect();
     const shouldGoFrame = rect.top <= SWITCH_Y;
