@@ -621,20 +621,43 @@
       overflow:visible;
       padding-right:4px;
     }
+    
+.menu-text{ display:none; } /* ✅ 桌機先隱藏文字 */
 
 @media (max-width:900px){
-  /* ✅ 在手機把 module dock 放到最後（在 pills 下面） */
+  .topbar{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+    padding:14px 14px 18px;
+  }
+
+  .top-left{ display:contents; min-height:0; }
+
+  .top-meta{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+
+  .top-meta .pill{
+    width:95%;
+    max-width:420px;
+    justify-content:space-between;
+  }
+
+  /* module slot 在 pills 下方 */
   #moduleSlotTopbar{
-    order: 99;
     width:100%;
     margin-top:10px;
     display:flex;
     justify-content:center;
   }
 
-  /* ✅ Modules 變回整條大按鈕 */
   .menu-text{ display:inline; }
-
   .menu-button{
     width:95%;
     max-width:420px;
@@ -645,19 +668,24 @@
     gap:10px;
   }
 }
+
+
 /* ✅ 桌機：讓 module slot 貼到 topbar 左下角 */
 @media (min-width:901px){
   .top-left{
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start; /* ⬅️ 不用 space-between */
-    min-height:100px;            /* ⬅️ 需要更低就加大：86~100 自己調 */
-    padding-bottom:12px;         /* ⬅️ 微調貼近 bottom（想更低就加大） */
-  }
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-start; /* ✅ 必加：讓 auto margin 推到底生效 */
+  min-height:100px;           /* ✅ 想更下面就加大 110/120 */
+}
 
-  #moduleSlotTopbar{
-    margin-top:auto;            /* ✅ 關鍵：自動往下推到底 */
-  }
+/* ✅ slot 推到底 + 再往下微調 */
+#moduleSlotTopbar{
+  margin-top:auto;            /* ✅ 真正推到底 */
+  padding-top:10px;           /* ✅ 想更下面：10→14→18 */
+}
+
 }
 
 
@@ -707,8 +735,10 @@
 </div>
     <div class="module-dock">
   <button id="menuButton" class="menu-button" type="button" aria-expanded="false" aria-controls="navPanel">
-    <span class="menu-icon">☰</span>
-  </button>
+  <span class="menu-icon">☰</span>
+  <span class="menu-text">Modules</span>
+</button>
+
     <!-- Modules -->
     <nav class="nav-panel" id="navPanel" aria-label="Module navigation">
       <ul class="nav-list">
