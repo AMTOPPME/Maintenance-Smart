@@ -56,7 +56,9 @@
       display:flex;
       justify-content:space-between;
       gap:14px;
-
+      position:relative;
+      z-index:5000;
+      overflow:visible;
       align-items:flex-start;   /* ✅ 回復原本，不要置中整條 */
     }
     .brand-wrap{display:flex;align-items:center;gap:10px}
@@ -236,8 +238,11 @@
  /* ===== Module Dock：會搬家（Topbar slot <-> Iframe slot） ===== */
 .module-dock{
   width:100%;
-    display:flex;
-    justify-content:center;
+  display:flex;
+  justify-content:center;
+  position:relative;
+  z-index:5200;
+  overflow:visible;
 }
 
 /* Iframe 裡的 slot：左上角 overlay */
@@ -283,7 +288,7 @@
   box-shadow:var(--shadow-soft-md);
   border:1px solid var(--border-subtle);
   backdrop-filter:blur(12px);
-  z-index:999;
+  z-index:9999;
   display:none;
   max-height:70vh;
   overflow:visible; /* 讓右邊 pop-out 不被裁掉 */
@@ -652,13 +657,15 @@
 
   .nav-panel{
     position:relative;
-    left:0;
-    top:0;
-    width:100%;
-    max-width:none;
-    margin-top:8px;
+    left:auto;
+    top:auto;
+    width:95%;
+    max-width:420px;      /* 同上 */
+    margin:8px auto 0;    /* ✅ 置中 + 往下 */
+    z-index:9999;
   }
 
+  /* 手機下：子面板全部改成往下疊（你原本就有） */
   .schematic-panel,
   .maintenance-panel,
   .scada-panel{
@@ -667,6 +674,7 @@
     margin-left:0;
     width:100%;
     min-width:0;
+  }
   }
 
   /* ✅ 這段原本被你寫在巢狀 @media 裡，會失效 */
@@ -702,6 +710,9 @@
 #moduleSlotTopbar{
   margin-top:auto;            /* ✅ 真正推到底 */
   padding-top:10px;           /* ✅ 想更下面：10→14→18 */
+  position:relative;
+  z-index:5100;
+  overflow:visible;
 }
 
 }
