@@ -622,55 +622,98 @@
       padding-right:4px;
     }
     
-.menu-text{ display:none; } /* ✅ 桌機先隱藏文字 */
+.menu-text{ display:none; }
 
 @media (max-width:900px){
-  /* topbar 整體變緊湊 */
+
+  /* ✅ Topbar 改直向，避免三欄擠爆 */
   .topbar{
-    padding:12px 12px 14px;
+    flex-direction:column;
+    align-items:stretch;
     gap:10px;
+    padding:12px 12px 14px;
   }
 
-  /* brand 區不要太佔高度 */
-  .brand-main{ font-size:18px; }
-  .brand-sub{ font-size:12px; }
+  /* ✅ 讓 top-left 的內容「解包」成 topbar 的 flex item，才能用 order 排順序 */
+  .top-left{ display:contents; }
 
-  /* Modules 按鈕：變小一點 + 上下距離縮短 */
+  /* ✅ 排序：Brand → Quote → Pills → Modules */
+  .brand-wrap{ order:1; }
+  .top-quote { order:2; }
+  .top-meta  { order:3; }
   #moduleSlotTopbar{
-    margin-top:8px;
-  }
-  .menu-button{
-    width:92%;
-    max-width:360px;
-    padding:12px 16px;      /* 原本 14 18 → 小一點 */
-    font-size:14px;
-    box-shadow:0 8px 18px rgba(129,140,248,.22); /* 淡一點 */
+    order:4;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin-top:6px;
   }
 
-  /* Quote 區：縮高度、縮字、讓版面不爆 */
+  /* ✅ Brand 區微調 */
+  .brand-main{ font-size:18px; }
+  .brand-sub { font-size:12px; }
+
+  /* ✅ Quote 縮小避免太高 */
   .top-quote{
-    min-height:auto;        /* 不要硬卡 72px */
-    padding-top:4px;
-    row-gap:6px;
+    min-height:auto;
+    padding-top:0;
+    text-align:center;
   }
   .quote-label{
     font-size:10px;
-    margin-bottom:0;
+    margin-bottom:2px;
     letter-spacing:.10em;
     opacity:.85;
   }
   .quote-text{
-    font-size:clamp(17px, 4.6vw, 22px); /* 手機自適應 */
+    font-size:clamp(16px, 4.6vw, 20px);
     line-height:1.25;
-    max-width:320px;        /* 避免太寬撐高 */
+    max-width:320px;
     margin:0 auto;
   }
 
-  /* pills 再薄一點（讓 header 更短） */
-  .top-meta{ gap:7px; }
+  /* ✅ Pills 變成手機寬度，不會被切 */
+  .top-meta{
+    width:100%;
+    align-items:center;
+    gap:8px;
+  }
   .top-meta .pill{
-    padding:8px 12px;
-    border-radius:14px;
+    width:95%;
+    max-width:420px;
+    justify-content:space-between;
+  }
+
+  /* ✅ Modules 變整條大按鈕（圖二那種） */
+  .menu-text{ display:inline; }
+
+  .menu-button{
+    width:95%;
+    max-width:420px;
+    padding:14px 18px;
+    font-size:15px;
+    border-radius:999px;
+    justify-content:center;
+    gap:10px;
+  }
+
+  /* ✅ nav-panel 手機版跟著排版走 */
+  .nav-panel{
+    position:relative;
+    left:0;
+    top:0;
+    width:100%;
+    max-width:none;
+    margin-top:8px;
+  }
+
+  /* 手機不需要 iframe overlay slot */
+  .module-slot-frame{ position:static; }
+
+  /* iframe 高度（可選） */
+  .iframe-wrap{
+    height:calc(100dvh - 160px);
+    min-height:520px;
   }
 }
 
