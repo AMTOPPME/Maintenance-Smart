@@ -672,22 +672,28 @@
     }
     /* ===== Desktop only: menu button align with mascot ===== */
 @media (min-width:901px){
-  .menu-button{
-    position: sticky;   /* ✅ 改 sticky */
-    top: 24px;          /* ✅ 距離視窗頂部 */
-    left: auto;
-    margin-top: 0;
+  .module-dock{
+    position: sticky;
+    top: 110px;          /* ← 這個就是你要在圖二的位置，可自行微調 */
     z-index: 300;
+    width: 260px;
+    margin-top: 12px;
   }
 
-  .nav-panel{
-    position: sticky;   /* ✅ nav 也可以 sticky */
-    top: calc(24px + 52px + 8px); /* 依 ☰ 高度微調 */
-    left: auto;
-    z-index: 299;
+  .module-dock .menu-button{
+    position: static;    /* ← 讓它回到正常流 */
+    margin-top: 0;
   }
+
+  .module-dock .nav-panel{
+    position: static;    /* ← navPanel 也回到正常流 */
+    display: none;       /* 仍用 .open 控制顯示 */
+    margin-top: 8px;
+    max-width: 260px;
+  }
+
+  .module-dock .nav-panel.open{ display:block; }
 }
-
   </style>
 </head>
 
@@ -702,10 +708,6 @@
             <div class="brand-sub">Make an easy life.</div>
           </div>
         </div>
-
-        <button id="menuButton" class="menu-button" type="button" aria-expanded="false" aria-controls="navPanel">
-          <span class="menu-icon">☰</span>
-        </button>
       </div>
 
       <div class="top-quote">
@@ -735,6 +737,10 @@
   </div>
 </div>
 </div>
+    <div class="module-dock">
+  <button id="menuButton" class="menu-button" type="button" aria-expanded="false" aria-controls="navPanel">
+    <span class="menu-icon">☰</span>
+  </button>
     <!-- Modules -->
     <nav class="nav-panel" id="navPanel" aria-label="Module navigation">
       <ul class="nav-list">
@@ -1015,7 +1021,7 @@
         </li>
       </ul>
     </nav>
-
+</div>
     <div class="workspace">
       <main class="main">
         <div class="section-head">
@@ -1800,42 +1806,7 @@ if (ioDescBtn){
   })();
 </script> 
  <script>
-(function(){
-  if (window.innerWidth < 901) return;
 
-  const menuBtn   = document.getElementById('menuButton');
-  const navPanel  = document.getElementById('navPanel');
-  const iframeWrap = document.querySelector('.iframe-wrap');
-
-  if (!menuBtn || !iframeWrap) return;
-
-  const START_TOP = 140;   // 初始浮動高度（尚未碰到 iframe）
-
-  function updatePosition(){
-    const iframeRect = iframeWrap.getBoundingClientRect();
-    const iframeTop  = iframeRect.top + window.scrollY;
-
-    const scrollY = window.scrollY;
-
-    // ☰ 想要的位置（fixed 狀態）
-    let top = START_TOP;
-
-    // 如果即將碰到 iframe，就停在 iframe 左上角
-    if (scrollY + START_TOP >= iframeTop){
-      top = iframeTop - scrollY + 12;
-    }
-
-    menuBtn.style.top = top + 'px';
-
-    if (navPanel){
-      navPanel.style.top = (top + menuBtn.offsetHeight + 8) + 'px';
-    }
-  }
-
-  window.addEventListener('scroll', updatePosition);
-  window.addEventListener('resize', updatePosition);
-  updatePosition();
-})();
 
 (function(){
   const btn = document.getElementById('jumpToggle');
