@@ -625,47 +625,52 @@
 .menu-text{ display:none; } /* ✅ 桌機先隱藏文字 */
 
 @media (max-width:900px){
+  /* topbar 整體變緊湊 */
   .topbar{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
+    padding:12px 12px 14px;
     gap:10px;
-    padding:14px 14px 18px;
   }
 
-  .top-left{ display:contents; min-height:0; }
+  /* brand 區不要太佔高度 */
+  .brand-main{ font-size:18px; }
+  .brand-sub{ font-size:12px; }
 
-  .top-meta{
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:8px;
-  }
-
-  .top-meta .pill{
-    width:95%;
-    max-width:420px;
-    justify-content:space-between;
-  }
-
-  /* module slot 在 pills 下方 */
+  /* Modules 按鈕：變小一點 + 上下距離縮短 */
   #moduleSlotTopbar{
-    width:100%;
-    margin-top:10px;
-    display:flex;
-    justify-content:center;
+    margin-top:8px;
+  }
+  .menu-button{
+    width:92%;
+    max-width:360px;
+    padding:12px 16px;      /* 原本 14 18 → 小一點 */
+    font-size:14px;
+    box-shadow:0 8px 18px rgba(129,140,248,.22); /* 淡一點 */
   }
 
-  .menu-text{ display:inline; }
-  .menu-button{
-    width:95%;
-    max-width:420px;
-    padding:14px 18px;
-    font-size:15px;
-    border-radius:999px;
-    justify-content:center;
-    gap:10px;
+  /* Quote 區：縮高度、縮字、讓版面不爆 */
+  .top-quote{
+    min-height:auto;        /* 不要硬卡 72px */
+    padding-top:4px;
+    row-gap:6px;
+  }
+  .quote-label{
+    font-size:10px;
+    margin-bottom:0;
+    letter-spacing:.10em;
+    opacity:.85;
+  }
+  .quote-text{
+    font-size:clamp(17px, 4.6vw, 22px); /* 手機自適應 */
+    line-height:1.25;
+    max-width:320px;        /* 避免太寬撐高 */
+    margin:0 auto;
+  }
+
+  /* pills 再薄一點（讓 header 更短） */
+  .top-meta{ gap:7px; }
+  .top-meta .pill{
+    padding:8px 12px;
+    border-radius:14px;
   }
 }
 
