@@ -628,7 +628,7 @@
   .page-jump{ display:none !important; }
   #jumpToggle{ display:none !important; }
   .page{ padding-top:16px; padding-bottom:24px; }
-
+  .top-left{ display:contents; }
   .topbar{
     display:flex;
     flex-direction:column;
@@ -643,7 +643,10 @@
   .brand-wrap{ order:1; }
   .top-meta{ order:2; }
   .top-quote{ order:3; }
-  .module-dock{ order:4; width:100%; }
+  .module-dock{
+    order:4;          /* ✅ 這才是真的「最下面」 */
+    width:100%;
+  }
 
   .brand-main{ font-size:17px; letter-spacing:.10em; }
   .brand-sub{ font-size:12px; }
@@ -673,7 +676,6 @@
     max-width:420px;
     align-self:center;
     justify-content:center;
-    text-align:center;
     margin-top:4px;
   }
 
