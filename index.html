@@ -264,23 +264,81 @@
 
 
     /* Modules 主面板 */
-    .nav-panel{
-      position:absolute;
-      left:24px;
-      top: calc(24px + 72px + var(--menu-offset-desktop));
-      max-width:260px;
-      background:rgba(255,255,255,0.97);
-      border-radius:18px;
-      padding:10px 6px 10px;
-      box-shadow:var(--shadow-soft-md);
-      border:1px solid var(--border-subtle);
-      backdrop-filter:blur(12px);
-      z-index:10;
-      display:none;
-      max-height:70vh;
-      overflow:visible; /* 讓右邊 pop-out 不被裁掉 */
-    }
-    .nav-panel.open{ display:block; }
+ /* ===== Module Dock：會搬家（Topbar slot <-> Iframe slot） ===== */
+.module-dock{
+  position:relative; /* 讓 nav-panel 以它為定位基準 */
+  z-index:300;
+}
+
+/* Topbar 裡的 slot：會自然在 top-left 底部（因為 top-left 用 space-between） */
+#moduleSlotTopbar{
+  margin-top:10px;
+}
+
+/* Iframe 裡的 slot：左上角 overlay */
+.module-slot-frame{
+  position:absolute;
+  top:12px;
+  left:12px;
+  z-index:600;
+}
+
+/* Menu button：不要再用 margin-top 推位置（位置交給 slot） */
+.menu-button{
+  border-radius:999px;
+  border:1px solid #e5e7eb;
+  background:#eff6ff;
+  padding: 10px 22px;
+  font-size: 14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:0;              /* ✅ 關鍵：不要再推 */
+  cursor:pointer;
+  color:#1d4ed8;
+  box-shadow: 0 3px 8px rgba(129,140,248,.25);
+  transition:all .18s ease;
+}
+.menu-button:hover{
+  background:#dbeafe;
+  transform:translateY(-1px);
+  box-shadow:0 6px 16px rgba(129,140,248,.45);
+}
+.menu-icon{font-size:16px;}
+
+/* Modules 主面板：永遠出現在按鈕下方 */
+.nav-panel{
+  position:absolute;
+  left:0;
+  top:calc(100% + 10px);
+  max-width:260px;
+  background:rgba(255,255,255,0.97);
+  border-radius:18px;
+  padding:10px 6px 10px;
+  box-shadow:var(--shadow-soft-md);
+  border:1px solid var(--border-subtle);
+  backdrop-filter:blur(12px);
+  z-index:999;
+  display:none;
+  max-height:70vh;
+  overflow:visible; /* 讓右邊 pop-out 不被裁掉 */
+}
+.nav-panel.open{ display:block; }
+
+/* 手機版：nav-panel 變成跟著排版走（你原本就這樣） */
+@media (max-width:900px){
+  .module-slot-frame{ position:static; } /* 手機不需要 iframe overlay */
+  .nav-panel{
+    position:relative;
+    left:0;
+    top:0;
+    width:100%;
+    max-width:none;
+    margin-top:8px;
+  }
+}
+
 
     .nav-list{
       list-style:none;
@@ -670,30 +728,7 @@
       }
       .maintenance-group.open .maintenance-third-panel{ display:block; }
     }
-    /* ===== Desktop only: menu button align with mascot ===== */
-@media (min-width:901px){
-  .module-dock{
-    position: sticky;
-    top: 110px;          /* ← 這個就是你要在圖二的位置，可自行微調 */
-    z-index: 300;
-    width: 260px;
-    margin-top: 12px;
-  }
 
-  .module-dock .menu-button{
-    position: static;    /* ← 讓它回到正常流 */
-    margin-top: 0;
-  }
-
-  .module-dock .nav-panel{
-    position: static;    /* ← navPanel 也回到正常流 */
-    display: none;       /* 仍用 .open 控制顯示 */
-    margin-top: 8px;
-    max-width: 260px;
-  }
-
-  .module-dock .nav-panel.open{ display:block; }
-}
   </style>
 </head>
 
@@ -708,6 +743,7 @@
             <div class="brand-sub">Make an easy life.</div>
           </div>
         </div>
+        <div id="moduleSlotTopbar"></div>
       </div>
 
       <div class="top-quote">
@@ -1039,6 +1075,8 @@
 
 
         <div class="iframe-wrap" id="frameWrap">
+          <div id="moduleSlotFrame" class="module-slot-frame"></div>
+          
           <iframe id="mainFrameA" title="Module view A" src="Home.html"></iframe>
           <iframe id="mainFrameB" title="Module view B" src="about:blank" aria-hidden="true"></iframe>
         </div>
@@ -1757,7 +1795,51 @@ if (ioDescBtn){
   }
 })();
 </script>
-  
+<script>
+/* ===== Module Dock 搬家：Topbar <-> Iframe ===== */
+(function(){
+  const dock      = document.querySelector('.module-dock');
+  const slotTop   = document.getElementById('moduleSlotTopbar');
+  const slotFrame = document.getElementById('moduleSlotFrame');
+  const frameWrap = document.getElementById('frameWrap');
+  const menuBtn   = document.getElementById('menuButton');
+
+  if(!dock || !slotTop || !slotFrame || !frameWrap || !menuBtn) return;
+
+  // 初始化：先放到 Topbar 左下角
+  if (!slotTop.contains(dock)) slotTop.appendChild(dock);
+
+  let inFrame = false;
+
+  // 你圖二那個「切換點」：iframeWrap 的 top <= 這個值，就搬到 iframe
+  const SWITCH_Y = 110; // 想更早搬：調大；想更晚搬：調小
+
+  function updateDockHome(){
+    // 手機不搬家，維持你原本手機排版
+    if (window.innerWidth <= 900){
+      if (!slotTop.contains(dock)) slotTop.appendChild(dock);
+      inFrame = false;
+      return;
+    }
+
+    const rect = frameWrap.getBoundingClientRect();
+    const shouldGoFrame = rect.top <= SWITCH_Y;
+
+    if (shouldGoFrame && !inFrame){
+      slotFrame.appendChild(dock);
+      inFrame = true;
+    } else if (!shouldGoFrame && inFrame){
+      slotTop.appendChild(dock);
+      inFrame = false;
+    }
+  }
+
+  window.addEventListener('scroll', updateDockHome, { passive:true });
+  window.addEventListener('resize', updateDockHome);
+  updateDockHome();
+})();
+</script>
+
 <script>
   /* =========================
      Style Theme (blue / panther / hangyodon)
