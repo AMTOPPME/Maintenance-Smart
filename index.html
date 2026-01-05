@@ -242,7 +242,11 @@
   justify-content:center;
   z-index:5200;
   overflow:visible;
+
+  position:relative;   /* ✅ 必加：給 nav-panel 的 absolute 當基準 */
+  align-items:flex-start;
 }
+
 
 /* Iframe 裡的 slot：左上角 overlay */
 .module-slot-frame{
@@ -618,8 +622,12 @@
   .brand-wrap{ order:1; }
   .top-meta{ order:2; }
   .top-quote{ order:3; }
-  .module-dock{
-    order:4;          /* ✅ 這才是真的「最下面」 */
+   .module-dock{
+    order:4; 
+    flex-direction:column;     /* ✅ 直排：按鈕在上、面板在下 */
+    align-items:center;
+    justify-content:flex-start;
+    position:relative;         /* ✅ 保險（桌機也會用到） */
     width:100%;
   }
 
@@ -646,7 +654,7 @@
     justify-content:space-between;
   }
 
-  .menu-button{
+.menu-button{
     width:95%;
     max-width:none;
     align-self:center;
@@ -655,14 +663,11 @@
   }
 
   .nav-panel{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:50%;
-    transform:translateX(-50%);
+    position:static;           /* ✅ 關鍵：不要 absolute */
+    transform:none;
     width:95%;
     max-width:420px;
-    margin:0;              /* ✅ 重要：不要再用 margin:auto 推 */
-    z-index:9999;
+    margin:8px auto 0;         /* ✅ 就在按鈕正下方 */
   }
 
   /* 手機下：子面板全部改成往下疊（你原本就有） */
@@ -675,9 +680,7 @@
     width:100%;
     min-width:0;
   }
-  }
-
-  /* ✅ 這段原本被你寫在巢狀 @media 裡，會失效 */
+   /* ✅ 這段原本被你寫在巢狀 @media 裡，會失效 */
   .iframe-wrap{
     height:calc(100dvh - 160px);
     min-height:520px;
@@ -693,7 +696,6 @@
   }
   .maintenance-group.open .maintenance-third-panel{ display:block; }
 }
-
 
 /* ✅ 桌機：讓 module slot 貼到 topbar 左下角 */
 @media (min-width:901px){
