@@ -673,17 +673,17 @@
     /* ===== Desktop only: menu button align with mascot ===== */
 @media (min-width:901px){
   .menu-button{
-    position: fixed;
-    left: 32px;          /* ✅ 與藍色 mascot 對齊 */
-    top: 140px;
+    position: sticky;   /* ✅ 改 sticky */
+    top: 24px;          /* ✅ 距離視窗頂部 */
+    left: auto;
     margin-top: 0;
     z-index: 300;
   }
 
   .nav-panel{
-    position: fixed;
-    left: 32px;          /* 跟 ☰ 按鈕同一直線 */
-    top: 200px;
+    position: sticky;   /* ✅ nav 也可以 sticky */
+    top: calc(24px + 52px + 8px); /* 依 ☰ 高度微調 */
+    left: auto;
     z-index: 299;
   }
 }
