@@ -60,13 +60,16 @@
       align-items:flex-start;   /* ✅ 回復原本，不要置中整條 */
     }
     .top-left{
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
-      min-height:72px;
-    }
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+
+  /* ✅ 讓整塊稍微更高，按鈕才有機會更靠下 */
+  min-height:92px;        /* 想更下面就再加：100 / 110 */
+
+  /* ✅ 底部留空間，讓按鈕再往下 */
+  padding-bottom:10px;    /* 想更下面就再加：12 / 16 */
+}
     .brand-wrap{display:flex;align-items:center;gap:10px}
 
     .mascot{
@@ -261,7 +264,7 @@
 
 /* Topbar 裡的 slot：會自然在 top-left 底部（因為 top-left 用 space-between） */
 #moduleSlotTopbar{
-  margin-top:10px;
+    margin-top:auto; 
 }
 
 /* Iframe 裡的 slot：左上角 overlay */
