@@ -623,73 +623,28 @@
     }
 
 @media (max-width:900px){
-  .page-jump{ display:none !important; }
-  #jumpToggle{ display:none !important; }
-
-  .page{ padding-top:16px; padding-bottom:24px; }
-
-  .topbar{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-    padding:14px 14px 18px;
-  }
-
-  .top-left{ display:contents; min-height:0; }
-
-  .top-meta{
+  /* ✅ 在手機把 module dock 放到最後（在 pills 下面） */
+  #moduleSlotTopbar{
+    order: 99;
     width:100%;
+    margin-top:10px;
     display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:8px;
+    justify-content:center;
   }
 
-  .top-meta .pill{
+  /* ✅ Modules 變回整條大按鈕 */
+  .menu-text{ display:inline; }
+
+  .menu-button{
     width:95%;
     max-width:420px;
-    justify-content:space-between;
+    padding:14px 18px;
+    font-size:15px;
+    border-radius:999px;
+    justify-content:center;
+    gap:10px;
   }
-
-  /* dock 不搬家 */
-  .module-slot-frame{ position:static; }
-
-  .nav-panel{
-    position:relative;
-    left:0;
-    top:0;
-    width:100%;
-    max-width:none;
-    margin-top:8px;
-  }
-
-  .schematic-panel,
-  .maintenance-panel,
-  .scada-panel{
-    position:static;
-    left:auto;
-    margin-left:0;
-    width:100%;
-    min-width:0;
-  }
-
-  .iframe-wrap{
-    height:calc(100dvh - 160px);
-    min-height:520px;
-  }
-
-  .maintenance-third-panel{
-    position:static;
-    left:auto;
-    margin-left:0;
-    min-width:0;
-    margin-top:8px;
-    display:none;
-  }
-  .maintenance-group.open .maintenance-third-panel{ display:block; }
 }
-
 /* ✅ 桌機：讓 module slot 貼到 topbar 左下角 */
 @media (min-width:901px){
   .top-left{
