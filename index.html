@@ -656,12 +656,13 @@
   }
 
   .nav-panel{
-    position:relative;
-    left:auto;
-    top:auto;
+    position:absolute;
+    top:calc(100% + 8px);
+    left:50%;
+    transform:translateX(-50%);
     width:95%;
-    max-width:420px;      /* 同上 */
-    margin:8px auto 0;    /* ✅ 置中 + 往下 */
+    max-width:420px;
+    margin:0;              /* ✅ 重要：不要再用 margin:auto 推 */
     z-index:9999;
   }
 
