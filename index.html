@@ -235,8 +235,9 @@
     /* Modules 主面板 */
  /* ===== Module Dock：會搬家（Topbar slot <-> Iframe slot） ===== */
 .module-dock{
-  position:relative; /* 讓 nav-panel 以它為定位基準 */
-  z-index:300;
+  width:100%;
+    display:flex;
+    justify-content:center;
 }
 
 /* Iframe 裡的 slot：左上角 overlay */
@@ -255,7 +256,6 @@
   padding: 10px 22px;
   font-size: 14px;
   display:inline-flex;
-  align-items:center;
   justify-content:center;
   gap:8px;
   margin-top:0;              /* ✅ 關鍵：不要再推 */
