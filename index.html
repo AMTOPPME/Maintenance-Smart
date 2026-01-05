@@ -687,6 +687,21 @@
   .maintenance-group.open .maintenance-third-panel{ display:block; }
 }
 
+/* ✅ 桌機：讓 module slot 貼到 topbar 左下角 */
+@media (min-width:901px){
+  .top-left{
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start; /* ⬅️ 不用 space-between */
+    min-height:86px;            /* ⬅️ 需要更低就加大：86~100 自己調 */
+    padding-bottom:6px;         /* ⬅️ 微調貼近 bottom（想更低就加大） */
+  }
+
+  #moduleSlotTopbar{
+    margin-top:auto;            /* ✅ 關鍵：自動往下推到底 */
+  }
+}
+
 
   </style>
 </head>
