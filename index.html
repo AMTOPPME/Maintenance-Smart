@@ -1284,27 +1284,26 @@ function swapTo(src){
   navToken++;
   const t = navToken;
 
-  // reset handlers
-  back.onload = null;
-
+  // back 先不可點 + 透明
   back.style.pointerEvents = 'none';
   back.style.opacity = '0';
 
+  // ✅ 如果 back 目前已經有文件（例如上一頁），先同步一次避免閃一下
   syncStyleTo(back);
 
-  let done = false;
-  const finish = () => {
-    if (done) return;
-    done = true;
+  back.onload = () => {
     if (t !== navToken) return;
 
+    // ✅ 載入完成後，再同步一次（最保險）
     syncStyleTo(back);
+
     back.style.opacity = '1';
     back.style.pointerEvents = 'auto';
 
     front.style.opacity = '0';
     front.style.pointerEvents = 'none';
 
+    // 交換角色
     const tmp = front;
     front = back;
     back = tmp;
@@ -1312,16 +1311,8 @@ function swapTo(src){
     back.onload = null;
   };
 
-  back.onload = finish;
-
-  // ✅ 保險：load 沒來也會換（例如某些快取/同頁情況）
-  const fallback = setTimeout(finish, 1800);
-
-  back.addEventListener('load', () => clearTimeout(fallback), { once: true });
-
   back.src = src;
 }
-
 
 
   const titleEl = document.getElementById('moduleTitle');
@@ -1838,17 +1829,7 @@ if (window.innerWidth <= 900){
     }
   }
 
-let rafPending = false;
-function onScroll(){
-  if (rafPending) return;
-  rafPending = true;
-  requestAnimationFrame(() => {
-    rafPending = false;
-    updateDockHome();
-  });
-}
-window.addEventListener('scroll', onScroll, { passive:true });
-
+  window.addEventListener('scroll', updateDockHome, { passive:true });
   window.addEventListener('resize', updateDockHome);
   updateDockHome();
 })();
