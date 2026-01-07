@@ -69,9 +69,10 @@
 
     /* ===== 翻轉圖片 ===== */
     .flip-wrap{
-      width:min(92vw, 900px);
-      aspect-ratio: 16 / 9;
-      max-height:80vh;
+     width: min(96vw, 1100px);   /* 桌機更大 */
+    aspect-ratio: 3 / 4;       /* 接近直式文件比例 */
+    max-height: 88vh;
+
 
       position:relative;
       cursor:pointer;
@@ -110,6 +111,14 @@
         aspect-ratio:4 / 5;
       }
     }
+    /* Home 專用：移除卡片外觀 */
+.card-home{
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
   </style>
 </head>
 
