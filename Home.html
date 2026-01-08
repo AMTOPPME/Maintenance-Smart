@@ -22,13 +22,16 @@
       --muted:#6b7280;
       --shadow: 0 12px 36px rgba(0,0,0,.12);
       --radius: 18px;
+      --hint: #6b7280;
     }
 
     html[data-style="panther"]{
       --bg:#ffe4ec;
+      --hint:#7c2d12;
     }
     html[data-style="hangyodon"]{
       --bg:#dbeafe;
+      --hint:#1e3a8a;
     }
 
     body{
@@ -112,36 +115,19 @@
       z-index:2;
       cursor:pointer;
       -webkit-tap-highlight-color: transparent;
-      transition: transform .18s ease, filter .18s ease;
+      transition: transform .18s ease, filter .18s ease, box-shadow .25s ease; /* ✅ A */
     }
     .home-image:active{
       transform: scale(.992);
     }
 
-    /* Spotlight 模式（雙擊） */
-    .spotlight{
-      position:fixed;
-      inset:0;
-      background: rgba(15,23,42,.62);
-      z-index:9;
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .22s ease;
-      backdrop-filter: blur(2px);
-    }
-    body[data-spotlight="1"] .spotlight{
-      opacity:1;
-      pointer-events:auto;
-    }
-    body[data-spotlight="1"] .home-image{
-      z-index:10;
-      transform: scale(1.02);
-      filter: brightness(1.02) saturate(1.05);
-    }
-    body[data-spotlight="1"] .side-panther,
-    body[data-spotlight="1"] .side-hangyodon{
-      opacity:.25;
-      filter: blur(1px) saturate(.9);
+    /* ✅ A：桌機 hover 微浮起（手機不觸發 hover） */
+    @media (hover:hover){
+      .home-image:hover{
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 18px 40px rgba(0,0,0,.18);
+        filter: saturate(1.03);
+      }
     }
 
     /* 小提示 Toast */
@@ -270,6 +256,20 @@
       border-radius: 8px;
     }
 
+    /* ✅ C：左下角時間提示 */
+    .time-hint{
+      position:fixed;
+      left:16px;
+      bottom:16px;
+      z-index:24; /* 在 confetti 之下/之上都可，這裡放在控制器之下 */
+      font-size:12px;
+      color:var(--hint);
+      opacity:.75;
+      pointer-events:none;
+      user-select:none;
+      text-shadow: 0 1px 0 rgba(255,255,255,.45);
+    }
+
     @media (max-width: 520px){
       .help{ max-width: 86vw; }
       .fab button{ padding: 10px 11px; }
@@ -278,9 +278,6 @@
 </head>
 
 <body>
-  <!-- Spotlight 背景 -->
-  <div class="spotlight" id="spotlight"></div>
-
   <!-- Confetti 容器 -->
   <div class="confetti-wrap" id="confettiWrap"></div>
 
@@ -288,9 +285,9 @@
   <div class="help" id="helpBox">
     <div style="font-weight:600; color:var(--text); margin-bottom:6px;">Shortcuts</div>
     <div><span class="kbd">Click</span> Home image = confetti</div>
-    <div><span class="kbd">Double-click</span> = Spotlight</div>
     <div><span class="kbd">H</span> = Toggle this help</div>
     <div><span class="kbd">Type</span> <span class="kbd">m</span><span class="kbd">s</span> = Easter egg</div>
+    <div><span class="kbd">Esc</span> = Close help</div>
   </div>
 
   <!-- 🌟 角色背景 -->
@@ -307,6 +304,9 @@
     <span class="pill" id="toastPill">MS</span>
     <span id="toastText">Ready</span>
   </div>
+
+  <!-- ✅ C：時間提示 -->
+  <div class="time-hint" id="timeHint"></div>
 
   <!-- 右下角控制器 -->
   <div class="fab">
@@ -335,6 +335,7 @@
       localStorage.setItem("ms-style", t);
       toast("Theme", `Switched to ${t}`);
       updateThemeLabel();
+      updateTimeHint(); // 主題換了順便刷新一下字色感覺
     }
     function cycleTheme(){
       const cur = getTheme();
@@ -384,8 +385,7 @@
       if (!fxOn) return;
 
       const now = Date.now();
-      // 節流：避免狂點爆炸
-      if (now - lastBurst < 220) return;
+      if (now - lastBurst < 220) return; // 節流
       lastBurst = now;
 
       const colors = themeColors();
@@ -394,42 +394,24 @@
       for (let i = 0; i < count; i++){
         const c = document.createElement("div");
         c.className = "confetti";
-        const col = colors[Math.floor(Math.random() * colors.length)];
-        c.style.background = col;
-
-        const x0 = `${x}px`;
-        const y0 = `${y}px`;
+        c.style.background = colors[(Math.random() * colors.length) | 0];
 
         const drift = (Math.random() * 240 - 120);
-        const x1 = `${x + drift}px`;
-
         const dur = (Math.random() * 900 + 900) | 0;
-        c.style.setProperty("--x0", x0);
-        c.style.setProperty("--y0", y0);
-        c.style.setProperty("--x1", x1);
+
+        c.style.setProperty("--x0", `${x}px`);
+        c.style.setProperty("--y0", `${y}px`);
+        c.style.setProperty("--x1", `${x + drift}px`);
         c.style.setProperty("--dur", `${dur}ms`);
 
-        c.style.left = "0px";
-        c.style.top = "0px";
-
-        // 隨機尺寸
         const w = (Math.random() * 6 + 7);
         const h = (Math.random() * 10 + 10);
         c.style.width = `${w}px`;
         c.style.height = `${h}px`;
 
         wrap.appendChild(c);
-
         setTimeout(() => c.remove(), dur + 100);
       }
-    }
-
-    // ---------- spotlight (double click) ----------
-    function toggleSpotlight(force){
-      const cur = document.body.getAttribute("data-spotlight") === "1";
-      const next = typeof force === "boolean" ? force : !cur;
-      document.body.setAttribute("data-spotlight", next ? "1" : "0");
-      toast("View", next ? "Spotlight ON" : "Spotlight OFF");
     }
 
     // ---------- help ----------
@@ -440,28 +422,29 @@
       if (next) toast("Help", "Shortcuts shown");
     }
 
+    // ---------- ✅ C: time hint ----------
+    function updateTimeHint(){
+      const h = new Date().getHours();
+      let msg = "Maintenance Smart";
+      if (h < 12) msg = "Good Morning — Maintenance Smart";
+      else if (h < 18) msg = "Good Afternoon — Maintenance Smart";
+      else msg = "Good Evening — Maintenance Smart";
+      $("timeHint").textContent = msg;
+    }
+
     // ---------- events ----------
     const img = $("homeImage");
 
-    // click => confetti
-    img.addEventListener("click", (e) => {
+    // click => confetti (中心點)
+    img.addEventListener("click", () => {
       const rect = img.getBoundingClientRect();
-      const x = rect.left + rect.width * 0.5;
-      const y = rect.top + rect.height * 0.45;
-      burstConfetti(x, y);
+      burstConfetti(rect.left + rect.width * 0.5, rect.top + rect.height * 0.45);
     });
 
-    // pointerdown => confetti from pointer position (更爽)
+    // pointerdown => confetti from pointer position
     img.addEventListener("pointerdown", (e) => {
-      // 避免雙擊時連續噴太多：交給節流
       burstConfetti(e.clientX, e.clientY);
     });
-
-    // dblclick => spotlight
-    img.addEventListener("dblclick", () => toggleSpotlight());
-
-    // spotlight background click => exit
-    $("spotlight").addEventListener("click", () => toggleSpotlight(false));
 
     $("themeBtn").addEventListener("click", cycleTheme);
     $("toggleFxBtn").addEventListener("click", () => setFx(!fxOn));
@@ -476,7 +459,6 @@
         return;
       }
       if (k === "escape"){
-        toggleSpotlight(false);
         toggleHelp(false);
         return;
       }
@@ -485,11 +467,11 @@
         buffer = (buffer + k).slice(-2);
         if (buffer === "ms"){
           toast("Easter", "Maintenance Smart ✨");
-          // 小小抖一下角色（不改布局）
           if (fxOn){
             document.querySelectorAll(".side-panther,.side-hangyodon").forEach(el=>{
-              el.style.transform = el.style.transform + " translateY(-6px)";
-              setTimeout(()=>{ el.style.transform = ""; }, 180);
+              const prev = el.style.transform;
+              el.style.transform = (prev ? prev + " " : "") + "translateY(-6px)";
+              setTimeout(()=>{ el.style.transform = prev; }, 180);
             });
           }
         }
@@ -499,6 +481,7 @@
     // init
     setFx(fxOn);
     updateThemeLabel();
+    updateTimeHint();
     toast("MS", "Home loaded");
   </script>
 </body>
