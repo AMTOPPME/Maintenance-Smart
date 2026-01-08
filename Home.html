@@ -16,9 +16,14 @@
   <style>
     :root{
       --bg:#f3f4f6;
+      --glass: rgba(255,255,255,.72);
+      --glass2: rgba(255,255,255,.52);
+      --text: #111827;
+      --muted:#6b7280;
+      --shadow: 0 12px 36px rgba(0,0,0,.12);
+      --radius: 18px;
     }
 
-    /* 背景底色 */
     html[data-style="panther"]{
       --bg:#ffe4ec;
     }
@@ -26,7 +31,6 @@
       --bg:#dbeafe;
     }
 
-    /* ✨ 背景與 Line Schematic 一致：漸層 + 純色 */
     body{
       margin:0;
       background:
@@ -39,6 +43,8 @@
       padding:0;
       overflow:hidden;
       position:relative;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
     }
 
     html[data-style="panther"] body{
@@ -52,7 +58,7 @@
         var(--bg);
     }
 
-    /* ✨ 左右角色（與 Line Schematic 相同） */
+    /* ✨ 左右角色 */
     .side-panther,
     .side-hangyodon{
       position:fixed;
@@ -64,28 +70,24 @@
       pointer-events:none;
       user-select:none;
       display:none;
-      transition:opacity .25s ease, transform .25s ease;
+      transition:opacity .25s ease, transform .25s ease, filter .25s ease;
+      filter: drop-shadow(0 18px 30px rgba(0,0,0,.10));
     }
 
-    /* Panther 左右 */
     .side-panther.left{ left:1.5%; transform:translateY(-50%) scaleX(1); }
     .side-panther.right{ right:1.5%; transform:translateY(-50%) scaleX(1); }
 
-    /* Hangyodon 左右 */
     .side-hangyodon.left{ left:1.5%; transform:translateY(-50%) scaleX(-1); }
     .side-hangyodon.right{ right:1.5%; transform:translateY(-50%) scaleX(-1); }
 
-    /* 啟動 style 對應角色 */
     html[data-style="panther"] .side-panther{ display:block; }
     html[data-style="hangyodon"] .side-hangyodon{ display:block; }
 
-    /* 手機版只留右邊，並置中放大 */
     @media (max-width: 900px){
       html[data-style="panther"] .side-panther.left,
       html[data-style="hangyodon"] .side-hangyodon.left{
         display:none !important;
       }
-
       html[data-style="panther"] .side-panther.right,
       html[data-style="hangyodon"] .side-hangyodon.right{
         display:block !important;
@@ -95,33 +97,409 @@
         top:50% !important;
         transform:translate(-50%,-50%) !important;
         width:260px;
-        opacity:.7;
+        opacity:.65;
       }
     }
 
     /* Home 圖片 */
     .home-image{
-      max-width:90%;
-      max-height:90%;
-      border-radius:18px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.15);
+      max-width:min(980px, 92vw);
+      max-height:86vh;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
       object-fit:contain;
       position:relative;
-      z-index:2; /* 壓在角色上面 */
+      z-index:2;
+      cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .18s ease, filter .18s ease;
+    }
+    .home-image:active{
+      transform: scale(.992);
     }
 
+    /* Spotlight 模式（雙擊） */
+    .spotlight{
+      position:fixed;
+      inset:0;
+      background: rgba(15,23,42,.62);
+      z-index:9;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .22s ease;
+      backdrop-filter: blur(2px);
+    }
+    body[data-spotlight="1"] .spotlight{
+      opacity:1;
+      pointer-events:auto;
+    }
+    body[data-spotlight="1"] .home-image{
+      z-index:10;
+      transform: scale(1.02);
+      filter: brightness(1.02) saturate(1.05);
+    }
+    body[data-spotlight="1"] .side-panther,
+    body[data-spotlight="1"] .side-hangyodon{
+      opacity:.25;
+      filter: blur(1px) saturate(.9);
+    }
+
+    /* 小提示 Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:22px;
+      transform: translateX(-50%) translateY(12px);
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,.65);
+      box-shadow: 0 12px 30px rgba(15,23,42,.14);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      z-index: 30;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      backdrop-filter: blur(10px);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      max-width: 92vw;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .pill{
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--glass2);
+      border: 1px solid rgba(255,255,255,.6);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    /* 右下角控制器 */
+    .fab{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      z-index:25;
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+    }
+    .fab button{
+      border:none;
+      cursor:pointer;
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,.65);
+      box-shadow: 0 10px 24px rgba(15,23,42,.12);
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      color: var(--text);
+      display:flex;
+      gap:8px;
+      align-items:center;
+      transition: transform .15s ease;
+    }
+    .fab button:active{ transform: scale(.98); }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: rgba(37,99,235,.9);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.16);
+    }
+    html[data-style="panther"] .dot{ background: rgba(244,114,182,.92); box-shadow: 0 0 0 3px rgba(244,114,182,.18); }
+    html[data-style="hangyodon"] .dot{ background: rgba(56,189,248,.95); box-shadow: 0 0 0 3px rgba(56,189,248,.18); }
+
+    /* Confetti（輕量 DOM 粒子） */
+    .confetti-wrap{
+      position:fixed;
+      inset:0;
+      z-index:20;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .confetti{
+      position:absolute;
+      width:10px; height:14px;
+      border-radius: 3px;
+      opacity:.95;
+      transform: translate(-50%,-50%) rotate(0deg);
+      animation: fall var(--dur) linear forwards;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.12));
+    }
+    @keyframes fall{
+      0%{ transform: translate(var(--x0), var(--y0)) rotate(0deg); }
+      100%{ transform: translate(var(--x1), 110vh) rotate(540deg); }
+    }
+
+    /* Help overlay */
+    .help{
+      position:fixed;
+      top:14px;
+      left:14px;
+      z-index:25;
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,.65);
+      box-shadow: 0 10px 24px rgba(15,23,42,.12);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 320px;
+      line-height: 1.45;
+      display:none;
+    }
+    body[data-help="1"] .help{ display:block; }
+
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size: 11px;
+      color: var(--text);
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(255,255,255,.7);
+      padding: 1px 6px;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 520px){
+      .help{ max-width: 86vw; }
+      .fab button{ padding: 10px 11px; }
+    }
   </style>
 </head>
-<body>
 
-  <!-- 🌟 角色背景（與 Schematic 同素材） -->
+<body>
+  <!-- Spotlight 背景 -->
+  <div class="spotlight" id="spotlight"></div>
+
+  <!-- Confetti 容器 -->
+  <div class="confetti-wrap" id="confettiWrap"></div>
+
+  <!-- Help -->
+  <div class="help" id="helpBox">
+    <div style="font-weight:600; color:var(--text); margin-bottom:6px;">Shortcuts</div>
+    <div><span class="kbd">Click</span> Home image = confetti</div>
+    <div><span class="kbd">Double-click</span> = Spotlight</div>
+    <div><span class="kbd">H</span> = Toggle this help</div>
+    <div><span class="kbd">Type</span> <span class="kbd">m</span><span class="kbd">s</span> = Easter egg</div>
+  </div>
+
+  <!-- 🌟 角色背景 -->
   <img src="assets/pinkpanther1.png" class="side-panther left" alt="">
   <img src="assets/pinkpanther2.png" class="side-panther right" alt="">
   <img src="assets/hangyodon1.png" class="side-hangyodon left" alt="">
   <img src="assets/hangyodon2.png" class="side-hangyodon right" alt="">
 
-  <!-- 🌟 你的 Home 首頁圖片 -->
-  <img src="assets/home.png" alt="Home" class="home-image">
+  <!-- 🌟 Home 圖片 -->
+  <img src="assets/home.png" alt="Home" class="home-image" id="homeImage">
 
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="pill" id="toastPill">MS</span>
+    <span id="toastText">Ready</span>
+  </div>
+
+  <!-- 右下角控制器 -->
+  <div class="fab">
+    <button id="toggleFxBtn" type="button" title="Toggle effects">
+      <span class="dot"></span>
+      <span id="fxLabel">FX: ON</span>
+    </button>
+    <button id="themeBtn" type="button" title="Switch theme">
+      <span class="dot"></span>
+      <span id="themeLabel">Theme</span>
+    </button>
+  </div>
+
+  <script>
+    // ---------- helpers ----------
+    const $ = (id) => document.getElementById(id);
+
+    const themes = ["blue", "panther", "hangyodon"];
+    const root = document.documentElement;
+
+    function getTheme(){
+      return root.getAttribute("data-style") || "blue";
+    }
+    function setTheme(t){
+      root.setAttribute("data-style", t);
+      localStorage.setItem("ms-style", t);
+      toast("Theme", `Switched to ${t}`);
+      updateThemeLabel();
+    }
+    function cycleTheme(){
+      const cur = getTheme();
+      const idx = themes.indexOf(cur);
+      const next = themes[(idx + 1 + themes.length) % themes.length];
+      setTheme(next);
+    }
+
+    function updateThemeLabel(){
+      const t = getTheme();
+      $("themeLabel").textContent = `Theme: ${t}`;
+    }
+
+    // ---------- toast ----------
+    let toastTimer = null;
+    function toast(pill, msg){
+      const el = $("toast");
+      $("toastPill").textContent = pill;
+      $("toastText").textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    // ---------- FX toggle ----------
+    const FX_KEY = "ms-home-fx";
+    let fxOn = (localStorage.getItem(FX_KEY) ?? "1") === "1";
+    function setFx(on){
+      fxOn = !!on;
+      localStorage.setItem(FX_KEY, fxOn ? "1" : "0");
+      $("fxLabel").textContent = fxOn ? "FX: ON" : "FX: OFF";
+      toast("FX", fxOn ? "Effects enabled" : "Effects disabled");
+    }
+
+    // ---------- confetti ----------
+    const wrap = $("confettiWrap");
+    let lastBurst = 0;
+
+    function themeColors(){
+      const t = getTheme();
+      if (t === "panther") return ["#fb7185","#f472b6","#fda4af","#fecdd3","#a855f7"];
+      if (t === "hangyodon") return ["#38bdf8","#22c55e","#60a5fa","#93c5fd","#a7f3d0"];
+      return ["#2563eb","#6366f1","#60a5fa","#a78bfa","#22c55e"];
+    }
+
+    function burstConfetti(x, y){
+      if (!fxOn) return;
+
+      const now = Date.now();
+      // 節流：避免狂點爆炸
+      if (now - lastBurst < 220) return;
+      lastBurst = now;
+
+      const colors = themeColors();
+      const count = window.matchMedia("(max-width: 520px)").matches ? 18 : 28;
+
+      for (let i = 0; i < count; i++){
+        const c = document.createElement("div");
+        c.className = "confetti";
+        const col = colors[Math.floor(Math.random() * colors.length)];
+        c.style.background = col;
+
+        const x0 = `${x}px`;
+        const y0 = `${y}px`;
+
+        const drift = (Math.random() * 240 - 120);
+        const x1 = `${x + drift}px`;
+
+        const dur = (Math.random() * 900 + 900) | 0;
+        c.style.setProperty("--x0", x0);
+        c.style.setProperty("--y0", y0);
+        c.style.setProperty("--x1", x1);
+        c.style.setProperty("--dur", `${dur}ms`);
+
+        c.style.left = "0px";
+        c.style.top = "0px";
+
+        // 隨機尺寸
+        const w = (Math.random() * 6 + 7);
+        const h = (Math.random() * 10 + 10);
+        c.style.width = `${w}px`;
+        c.style.height = `${h}px`;
+
+        wrap.appendChild(c);
+
+        setTimeout(() => c.remove(), dur + 100);
+      }
+    }
+
+    // ---------- spotlight (double click) ----------
+    function toggleSpotlight(force){
+      const cur = document.body.getAttribute("data-spotlight") === "1";
+      const next = typeof force === "boolean" ? force : !cur;
+      document.body.setAttribute("data-spotlight", next ? "1" : "0");
+      toast("View", next ? "Spotlight ON" : "Spotlight OFF");
+    }
+
+    // ---------- help ----------
+    function toggleHelp(force){
+      const cur = document.body.getAttribute("data-help") === "1";
+      const next = typeof force === "boolean" ? force : !cur;
+      document.body.setAttribute("data-help", next ? "1" : "0");
+      if (next) toast("Help", "Shortcuts shown");
+    }
+
+    // ---------- events ----------
+    const img = $("homeImage");
+
+    // click => confetti
+    img.addEventListener("click", (e) => {
+      const rect = img.getBoundingClientRect();
+      const x = rect.left + rect.width * 0.5;
+      const y = rect.top + rect.height * 0.45;
+      burstConfetti(x, y);
+    });
+
+    // pointerdown => confetti from pointer position (更爽)
+    img.addEventListener("pointerdown", (e) => {
+      // 避免雙擊時連續噴太多：交給節流
+      burstConfetti(e.clientX, e.clientY);
+    });
+
+    // dblclick => spotlight
+    img.addEventListener("dblclick", () => toggleSpotlight());
+
+    // spotlight background click => exit
+    $("spotlight").addEventListener("click", () => toggleSpotlight(false));
+
+    $("themeBtn").addEventListener("click", cycleTheme);
+    $("toggleFxBtn").addEventListener("click", () => setFx(!fxOn));
+
+    // keyboard easter egg: "ms"
+    let buffer = "";
+    window.addEventListener("keydown", (e) => {
+      const k = e.key.toLowerCase();
+
+      if (k === "h"){
+        toggleHelp();
+        return;
+      }
+      if (k === "escape"){
+        toggleSpotlight(false);
+        toggleHelp(false);
+        return;
+      }
+
+      if (k.length === 1 && /[a-z0-9]/.test(k)){
+        buffer = (buffer + k).slice(-2);
+        if (buffer === "ms"){
+          toast("Easter", "Maintenance Smart ✨");
+          // 小小抖一下角色（不改布局）
+          if (fxOn){
+            document.querySelectorAll(".side-panther,.side-hangyodon").forEach(el=>{
+              el.style.transform = el.style.transform + " translateY(-6px)";
+              setTimeout(()=>{ el.style.transform = ""; }, 180);
+            });
+          }
+        }
+      }
+    });
+
+    // init
+    setFx(fxOn);
+    updateThemeLabel();
+    toast("MS", "Home loaded");
+  </script>
 </body>
 </html>
