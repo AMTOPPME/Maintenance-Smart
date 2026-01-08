@@ -5,7 +5,7 @@
   <title>Home | Maintenance Smart</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- 套用主題 -->
+  <!-- 套用主頁 style（blue / panther / hangyodon） -->
   <script>
     (function () {
       const style = localStorage.getItem('ms-style') || 'blue';
@@ -16,146 +16,112 @@
   <style>
     :root{
       --bg:#f3f4f6;
-      --card-bg:#ffffffcc;
-      --radius:22px;
     }
 
-    html[data-style="panther"]{ --bg:#ffe4ec; }
-    html[data-style="hangyodon"]{ --bg:#dbeafe; }
+    /* 背景底色 */
+    html[data-style="panther"]{
+      --bg:#ffe4ec;
+    }
+    html[data-style="hangyodon"]{
+      --bg:#dbeafe;
+    }
 
+    /* ✨ 背景與 Line Schematic 一致：漸層 + 純色 */
     body{
       margin:0;
       background:
-        radial-gradient(circle at top, rgba(129,140,248,.12), transparent),
+        radial-gradient(circle at top, rgba(129,140,248,0.12), transparent),
         var(--bg);
-      min-height:100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
-    }
-
-    /* ===== Page Layout ===== */
-    .page{
-      padding:24px 18px 40px;
-      max-width:1100px;
-      margin:auto;
-    }
-
-    .page h1{
-      margin:6px 0 2px;
-      font-size:26px;
-    }
-
-    .page p{
-      margin:0 0 18px;
-      color:#6b7280;
-    }
-
-    /* ===== Card ===== */
-    .card{
-      background:var(--card-bg);
-      border-radius:28px;
-      padding:22px;
-      box-shadow:none;
-    }
-
-    /* ⭐⭐⭐ 關鍵：Home 內容置中容器 ⭐⭐⭐ */
-    .home-center{
-  width: 100%;
-
-  /* ✅ 關鍵：扣掉上方 Header 高度 */
-  min-height: calc(100vh - 88px);
-
-  display: flex;
-  align-items: center;        /* 垂直置中 */
-  justify-content: center;    /* 水平置中 */
-
-  padding: 2vh 2vw;
-  box-sizing: border-box;
-}
-
-    /* ===== 翻轉圖片 ===== */
-    .flip-wrap{
-     width: min(96vw, 1100px);   /* 桌機更大 */
-    aspect-ratio: 3 / 4;       /* 接近直式文件比例 */
-    max-height: 88vh;
-
-
-      position:relative;
-      cursor:pointer;
-      perspective:1200px;
-
-      border-radius:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      padding:0;
       overflow:hidden;
-      box-shadow:none;
+      position:relative;
     }
 
-    .flip-wrap img{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:contain;
+    html[data-style="panther"] body{
+      background:
+        radial-gradient(circle at top,rgba(244,114,182,0.28),transparent),
+        var(--bg);
+    }
+    html[data-style="hangyodon"] body{
+      background:
+        radial-gradient(circle at top,rgba(56,189,248,0.35),transparent),
+        var(--bg);
+    }
 
-      backface-visibility:hidden;
-      transform-style:preserve-3d;
-      transition:transform .8s cubic-bezier(.4,.2,.2,1);
-
+    /* ✨ 左右角色（與 Line Schematic 相同） */
+    .side-panther,
+    .side-hangyodon{
+      position:fixed;
+      top:50%;
+      transform:translateY(-50%);
+      width:320px;
+      opacity:.9;
+      z-index:1;
       pointer-events:none;
       user-select:none;
-      -webkit-user-drag:none;
+      display:none;
+      transition:opacity .25s ease, transform .25s ease;
     }
 
-    .flip-wrap .front{ transform:rotateY(0deg); }
-    .flip-wrap .back{ transform:rotateY(180deg); }
+    /* Panther 左右 */
+    .side-panther.left{ left:1.5%; transform:translateY(-50%) scaleX(1); }
+    .side-panther.right{ right:1.5%; transform:translateY(-50%) scaleX(1); }
 
-    .flip-wrap.flipped .front{ transform:rotateY(-180deg); }
-    .flip-wrap.flipped .back{ transform:rotateY(0deg); }
+    /* Hangyodon 左右 */
+    .side-hangyodon.left{ left:1.5%; transform:translateY(-50%) scaleX(-1); }
+    .side-hangyodon.right{ right:1.5%; transform:translateY(-50%) scaleX(-1); }
 
-    /* 手機比例 */
-    @media (max-width:900px){
-      .flip-wrap{
-        aspect-ratio:4 / 5;
+    /* 啟動 style 對應角色 */
+    html[data-style="panther"] .side-panther{ display:block; }
+    html[data-style="hangyodon"] .side-hangyodon{ display:block; }
+
+    /* 手機版只留右邊，並置中放大 */
+    @media (max-width: 900px){
+      html[data-style="panther"] .side-panther.left,
+      html[data-style="hangyodon"] .side-hangyodon.left{
+        display:none !important;
+      }
+
+      html[data-style="panther"] .side-panther.right,
+      html[data-style="hangyodon"] .side-hangyodon.right{
+        display:block !important;
+        position:fixed !important;
+        left:50% !important;
+        right:auto !important;
+        top:50% !important;
+        transform:translate(-50%,-50%) !important;
+        width:260px;
+        opacity:.7;
       }
     }
-    /* Home 專用：移除卡片外觀 */
-.card-home{
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;
-}
+
+    /* Home 圖片 */
+    .home-image{
+      max-width:90%;
+      max-height:90%;
+      border-radius:18px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.15);
+      object-fit:contain;
+      position:relative;
+      z-index:2; /* 壓在角色上面 */
+    }
 
   </style>
 </head>
-
 <body>
 
-  <div class="page">
-<div class="card card-home">
-  <div class="home-center">
-    <div class="flip-wrap" id="homeFlip">
-      <img src="assets/home.png" class="front" alt="Home">
-      <img src="assets/home-2.png" class="back" alt="Home second">
-    </div>
-  </div>
-</div>
-  </div>
+  <!-- 🌟 角色背景（與 Schematic 同素材） -->
+  <img src="assets/pinkpanther1.png" class="side-panther left" alt="">
+  <img src="assets/pinkpanther2.png" class="side-panther right" alt="">
+  <img src="assets/hangyodon1.png" class="side-hangyodon left" alt="">
+  <img src="assets/hangyodon2.png" class="side-hangyodon right" alt="">
 
-  <script>
-    const flip = document.getElementById('homeFlip');
-
-    function toggleFlip(){
-      flip.classList.toggle('flipped');
-    }
-
-    flip.addEventListener('click', toggleFlip);
-
-    flip.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' '){
-        e.preventDefault();
-        toggleFlip();
-      }
-    });
-  </script>
+  <!-- 🌟 你的 Home 首頁圖片 -->
+  <img src="assets/home.png" alt="Home" class="home-image">
 
 </body>
 </html>
