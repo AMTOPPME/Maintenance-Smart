@@ -458,6 +458,15 @@
     setFx(fxOn);
     updateTimeHint();
     toast("MS", "Home loaded");
+    // 點 help 卡片外面就關閉
+    document.addEventListener("pointerdown", (e) => {
+      const helpOn = document.body.getAttribute("data-help") === "1";
+      if (!helpOn) return;
+
+      const box = $("helpBox");
+      if (!box.contains(e.target)) toggleHelp(false);
+    }, { capture: true });
+
   </script>
 </body>
 </html>
