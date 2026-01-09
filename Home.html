@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Home | Maintenance Smart</title>
+  <title>Home | Maintenance ONE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- 套用主頁 style（blue / panther / hangyodon） -->
@@ -402,10 +402,10 @@
     // ---------- ✅ C: time hint ----------
     function updateTimeHint(){
       const h = new Date().getHours();
-      let msg = "Maintenance Smart";
-      if (h < 12) msg = "Good Morning — Maintenance Smart";
-      else if (h < 18) msg = "Good Afternoon — Maintenance Smart";
-      else msg = "Good Evening — Maintenance Smart";
+      let msg = "Maintenance ONE";
+      if (h < 12) msg = "Good Morning — Maintenance ONE";
+      else if (h < 18) msg = "Good Afternoon — Maintenance ONE";
+      else msg = "Good Evening — Maintenance ONE";
       $("timeHint").textContent = msg;
     }
 
@@ -442,7 +442,7 @@
       if (k.length === 1 && /[a-z0-9]/.test(k)){
         buffer = (buffer + k).slice(-2);
         if (buffer === "ms"){
-          toast("Easter", "Maintenance Smart ✨");
+          toast("Easter", "Maintenance ONE ✨");
           if (fxOn){
             document.querySelectorAll(".side-panther,.side-hangyodon").forEach(el=>{
               const prev = el.style.transform;
