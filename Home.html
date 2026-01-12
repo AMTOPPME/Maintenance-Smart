@@ -425,7 +425,7 @@
 
     $("toggleFxBtn").addEventListener("click", () => setFx(!fxOn));
 
-    // keyboard easter egg: "ms"
+    // keyboard easter egg: "mo"
     let buffer = "";
     window.addEventListener("keydown", (e) => {
       const k = e.key.toLowerCase();
@@ -441,7 +441,7 @@
 
       if (k.length === 1 && /[a-z0-9]/.test(k)){
         buffer = (buffer + k).slice(-2);
-        if (buffer === "ms"){
+        if (buffer === "mo"){
           toast("Easter", "Maintenance ONE ✨");
           if (fxOn){
             document.querySelectorAll(".side-panther,.side-hangyodon").forEach(el=>{
@@ -457,7 +457,7 @@
     // init
     setFx(fxOn);
     updateTimeHint();
-    toast("MS", "Home loaded");
+    toast("MO", "Home loaded");
     // 點 help 卡片外面就關閉
     document.addEventListener("pointerdown", (e) => {
       const helpOn = document.body.getAttribute("data-help") === "1";
