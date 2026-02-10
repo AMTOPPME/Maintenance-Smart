@@ -239,12 +239,7 @@
       align-items:flex-start;
     }
 
-    .module-slot-frame{
-      position:absolute;
-      top:12px;
-      left:12px;
-      z-index:10;
-    }
+    
 
     /* Menu button：不要再用 margin-top 推位置（位置交給 slot） */
     .menu-button{
@@ -768,28 +763,28 @@
       .maintenance-group.open .maintenance-third-panel{ display:block; }
     }
 
-    /* ✅ 桌機：讓 module slot 貼到 topbar 左下角 */
-    @media (min-width:901px){
-      .module-dock{ justify-content:flex-start; }
-      .nav-panel{ left:0; transform:none; }
-      .top-left{
-        display:flex;
-        flex-direction:column;
-        align-items:flex-start;
-        min-height: 140px;
-        justify-content: space-between;
-        padding-bottom: 10px;
-      }
+/* ✅ Desktop：module dock 跟 viewport 走（上：topbar 左下；下：iframe 左上） */
+@media (min-width:901px){
+  .nav-panel{ left:0; transform:none; }
 
-      /* ✅ slot 推到底 + 再往下微調 */
-      #moduleSlotTopbar{
-        margin-top:auto;
-        padding-top:10px;
-        position:relative;
-        z-index:5100;
-        overflow:visible;
-      }
-    }
+  .module-dock{
+    position:fixed;
+    width:auto;
+    justify-content:flex-start;
+    z-index:9999;
+    overflow:visible;   /* 讓右側 pop-out 不裁切 */
+  }
+
+  .module-dock.at-topbar{
+    left: 28px;     /* 你可微調 */
+    top: 92px;      /* 你可微調：topbar 左下角 */
+  }
+
+  .module-dock.at-iframe{
+    left: 28px;     /* 建議跟上面一致 */
+    top: 16px;      /* iframe 左上角 */
+  }
+}
   </style>
 </head>
 
