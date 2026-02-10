@@ -1422,6 +1422,44 @@
     });
   });
 
+  /* ---------- Desktop hover open (keep mobile click) ---------- */
+  (function(){
+    const isMobile = () => window.matchMedia('(max-width:900px)').matches;
+
+    const groupPairs = [
+      ['[data-role="schematic-parent"]', 'schematicPanel'],
+      ['[data-role="io-parent"]',        'ioPanel'],
+      ['[data-role="maintenance-parent"]','maintenancePanel'],
+      ['[data-role="scada-parent"]',     'scadaPanel'],
+    ];
+
+    groupPairs.forEach(([btnSel, panelId]) => {
+      const btn = document.querySelector(btnSel);
+      const panel = document.getElementById(panelId);
+      if (!btn || !panel) return;
+
+      const li = btn.closest('li');
+      if (!li) return;
+
+      li.addEventListener('mouseenter', () => {
+        if (isMobile()) return;
+        closeAllSubPanels();
+        panel.classList.add('open');
+      });
+
+      li.addEventListener('mouseleave', () => {
+        if (isMobile()) return;
+        panel.classList.remove('open');
+
+        // 同時關掉 maintenance 第三層
+        if (panelId === 'maintenancePanel') {
+          document.querySelectorAll('.maintenance-group.open').forEach(g => g.classList.remove('open'));
+          document.querySelectorAll('.maintenance-group-btn.active').forEach(b => b.classList.remove('active'));
+        }
+      });
+    });
+  })();
+  
   /* ---------- Updated Schematic: Section then Line ---------- */
   (function(){
     const secBtns  = schematicPanel?.querySelectorAll('.schematic-sec-btn') || [];
