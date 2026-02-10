@@ -1155,10 +1155,8 @@
   </div>
 
 <script>
-  /* ---------- helpers ---------- */
-  const isTouchDevice =
-    ('ontouchstart' in window) ||
-    (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+const isTouchDevice = window.matchMedia('(max-width:900px)').matches;
 
   /* ---------- Modified Date ---------- */
   (function () {
@@ -1319,32 +1317,74 @@
     next.addEventListener('load', onLoad, { once:true });
   }
 
-  /* ---------- Menu open/close ---------- */
-  (function(){
-    const menuBtn = document.getElementById('menuButton');
-    const panel   = document.getElementById('navPanel');
+  // Modules 面板開關
+(function(){
+  const menuBtn = document.getElementById('menuButton');
+  const panel   = document.getElementById('navPanel');
+  if (!menuBtn || !panel) return;
 
-    function setOpen(open){
-      panel.classList.toggle('open', open);
-      menuBtn.setAttribute('aria-expanded', open ? 'true':'false');
+  let mainHideTimer = null;
+
+  function openPanel(){
+    panel.classList.add('open');
+    menuBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closePanel(){
+    panel.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    // ✅ 關主面板時順便把子面板都關掉（避免殘留）
+    closeAllSubPanels?.();
+  }
+  function clearMainHideTimer(){
+    if (mainHideTimer){
+      clearTimeout(mainHideTimer);
+      mainHideTimer = null;
     }
+  }
+  function scheduleMainHide(){
+    clearMainHideTimer();
+    mainHideTimer = setTimeout(closePanel, 2000);
+  }
+  function togglePanel(){
+    panel.classList.contains('open') ? closePanel() : openPanel();
+  }
 
-    menuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      setOpen(!panel.classList.contains('open'));
-    });
+  // click 開關
+  menuBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    togglePanel();
+  });
 
-    document.addEventListener('click', (e) => {
-      // click outside closes
-      if (!panel.contains(e.target) && e.target !== menuBtn) setOpen(false);
-    });
+  // 點外面關閉
+  document.addEventListener('click', (e)=>{
+    if (!panel.classList.contains('open')) return;
+    if (!panel.contains(e.target) && !menuBtn.contains(e.target)) closePanel();
+  });
 
-    // Escape closes
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') setOpen(false);
-    });
-  })();
+  // ✅ 桌機：hover module-dock 就開主面板；離開 2 秒後關
+  if (!isTouchDevice){
+    const dock = document.querySelector('.module-dock');
+    if (dock){
+      dock.addEventListener('mouseenter', ()=>{
+        clearMainHideTimer();
+        openPanel();
+      });
 
+      dock.addEventListener('mouseleave', (e)=>{
+        // 如果滑到 navPanel 內，不要算離開
+        if (e.relatedTarget && panel.contains(e.relatedTarget)) return;
+        scheduleMainHide();
+      });
+
+      panel.addEventListener('mouseenter', clearMainHideTimer);
+      panel.addEventListener('mouseleave', (e)=>{
+        // 如果滑回 menuBtn/dock 不要關
+        if (e.relatedTarget && dock.contains(e.relatedTarget)) return;
+        scheduleMainHide();
+      });
+    }
+  }
+})();
   /* ---------- Panels open logic (Schematic / IO / Maintenance / SCADA) ---------- */
   const navPanel = document.getElementById('navPanel');
   const schematicPanel = document.getElementById('schematicPanel');
@@ -1421,72 +1461,6 @@
     });
   });
 
-/* ---------- Desktop hover open (gap-safe) ---------- */
-(function(){
-  const isMobile = () => window.matchMedia('(max-width:900px)').matches;
-
-  const groupPairs = [
-    ['[data-role="schematic-parent"]',  'schematicPanel'],
-    ['[data-role="io-parent"]',         'ioPanel'],
-    ['[data-role="maintenance-parent"]','maintenancePanel'],
-    ['[data-role="scada-parent"]',      'scadaPanel'],
-  ];
-
-  const closeTimers = new Map(); // panelId -> timer
-
-  function clearTimer(panelId){
-    const t = closeTimers.get(panelId);
-    if (t) clearTimeout(t);
-    closeTimers.delete(panelId);
-  }
-
-  function scheduleClose(panelId, panel){
-    clearTimer(panelId);
-    closeTimers.set(panelId, setTimeout(()=>{
-      panel.classList.remove('open');
-
-      // maintenance 第三層一起關
-      if (panelId === 'maintenancePanel') {
-        document.querySelectorAll('.maintenance-group.open').forEach(g => g.classList.remove('open'));
-        document.querySelectorAll('.maintenance-group-btn.active').forEach(b => b.classList.remove('active'));
-      }
-    }, 180)); // ✅ 這個 180ms 就是跨過 8px gap 的緩衝
-  }
-
-  groupPairs.forEach(([btnSel, panelId]) => {
-    const btn = document.querySelector(btnSel);
-    const panel = document.getElementById(panelId);
-    if (!btn || !panel) return;
-
-    const li = btn.closest('li');
-    if (!li) return;
-
-    // 進入主項目或子面板，都視為「保持開啟」
-    const keepOpen = () => {
-      if (isMobile()) return;
-      clearTimer(panelId);
-
-      // 確保主選單開著
-      document.getElementById('navPanel')?.classList.add('open');
-      document.getElementById('menuButton')?.setAttribute('aria-expanded','true');
-
-      closeAllSubPanels();
-      panel.classList.add('open');
-    };
-
-    const maybeClose = () => {
-      if (isMobile()) return;
-      scheduleClose(panelId, panel);
-    };
-
-    li.addEventListener('mouseenter', keepOpen);
-    li.addEventListener('mouseleave', maybeClose);
-
-    // ✅ 這兩個讓你滑到子面板/第三層時不會被 li 的 mouseleave 關掉
-    panel.addEventListener('mouseenter', () => { if (!isMobile()) clearTimer(panelId); });
-    panel.addEventListener('mouseleave', maybeClose);
-  });
-})();
   
   /* ---------- Updated Schematic: Section then Line ---------- */
   (function(){
@@ -1692,23 +1666,6 @@
 
   /* ---------- Click inside navPanel shouldn't close ---------- */
   navPanel?.addEventListener('click', (e)=> e.stopPropagation());
-
-  // ✅ Desktop：滑出整個 menu 區域才關子面板（避免一移到右側 pop-out 就被關）
-(function(){
-  const menuBtn = document.getElementById('menuButton');
-  const nav = document.getElementById('navPanel');
-  const dock = document.querySelector('.module-dock');
-  if (!nav || !dock) return;
-
-  const isMobile = () => window.matchMedia('(max-width:900px)').matches;
-
-  dock.addEventListener('mouseleave', ()=>{
-    if (isMobile()) return;
-    // 只有 menu 是開的才關
-    if (nav.classList.contains('open')) closeAllSubPanels();
-  });
-})();
-
   
 
 </script>
