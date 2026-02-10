@@ -337,11 +337,14 @@
       box-shadow:0 4px 10px rgba(37,99,235,.35);
     }
 
-    .nav-group-schematic .nav-item-btn,
-    .nav-group-maintenance .nav-item-btn,
-    .nav-group-scada .nav-item-btn{
-      justify-content:space-between;
-    }
+   .nav-group-schematic .nav-item-btn,
+   .nav-group-io .nav-item-btn,
+  .nav-group-maintenance .nav-item-btn,
+  .nav-group-scada .nav-item-btn{
+    justify-content:space-between;
+  }
+
+.nav-group-io{ position:relative; }
     .nav-chevron{font-size:14px;opacity:.7;}
 
     .nav-group-schematic,
@@ -815,15 +818,39 @@
               <button class="schematic-line-btn" type="button" data-line="Line4">Line 4</button>
             </div>
 
-            <div class="ls-tags" style="display:none;">
-              <div class="ls-label">I/O LIST</div>
-
-              <button class="schematic-line-btn" type="button" id="ioDescBtn" style="grid-column:1 / -1;">
-                IO Description List
-              </button>
-            </div>
           </div>
         </li>
+
+        <!-- IO Description List (same selector as Updated Schematic) -->
+<li class="nav-group-io">
+  <button class="nav-item-btn" type="button"
+    data-role="io-parent"
+    data-title="IO Description List"
+    data-sub="Select section (F12/F13/F16/F201) then line (1~4).">
+    <span class="nav-icon">📑</span>
+    <span class="nav-label">IO Description List</span>
+    <span class="nav-chevron" aria-hidden="true">▾</span>
+  </button>
+
+  <div class="schematic-panel" id="ioPanel" aria-label="IO description selector">
+    <div class="schematic-title">SECTION</div>
+
+    <div class="schematic-sec-row">
+      <button class="schematic-sec-btn io-sec-btn" type="button" data-io-section="F12"><span class="code">F12</span></button>
+      <button class="schematic-sec-btn io-sec-btn" type="button" data-io-section="F13"><span class="code">F13</span></button>
+      <button class="schematic-sec-btn io-sec-btn" type="button" data-io-section="F16"><span class="code">F16</span></button>
+      <button class="schematic-sec-btn io-sec-btn" type="button" data-io-section="F201"><span class="code">F201</span></button>
+    </div>
+
+    <div class="schematic-title io-line-title" style="margin-top:8px; display:none;">LINE</div>
+    <div class="schematic-line-row io-line-row" style="display:none;">
+      <button class="schematic-line-btn io-line-btn" type="button" data-io-line="Line1">Line 1</button>
+      <button class="schematic-line-btn io-line-btn" type="button" data-io-line="Line2">Line 2</button>
+      <button class="schematic-line-btn io-line-btn" type="button" data-io-line="Line3">Line 3</button>
+      <button class="schematic-line-btn io-line-btn" type="button" data-io-line="Line4">Line 4</button>
+    </div>
+  </div>
+</li>
 
         <!-- Calibration Procedure -->
         <li class="nav-group-maintenance">
@@ -1325,7 +1352,24 @@ function swapTo(src){
   const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
   const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
   const scadaParentBtn       = document.querySelector('[data-role="scada-parent"]');
+  const ioParentBtn = document.querySelector('[data-role="io-parent"]');
+  const ioPanel     = document.getElementById('ioPanel');
 
+  const ioSecBtns   = document.querySelectorAll('.io-sec-btn');
+  const ioLineBtns  = document.querySelectorAll('.io-line-btn');
+  const ioLineRow   = document.querySelector('.io-line-row');
+  const ioLineTitle = document.querySelector('.io-line-title');
+
+  let currentIoSection = null;
+  let currentIoLine    = null;
+
+  function updateIoChildrenVisibility(){
+    const hasSection = !!currentIoSection;
+    if (ioLineTitle) ioLineTitle.style.display = hasSection ? '' : 'none';
+    if (ioLineRow)   ioLineRow.style.display   = hasSection ? '' : 'none';
+  }
+
+  updateIoChildrenVisibility();
   // Panels
   const schematicPanel   = document.getElementById('schematicPanel');
   const maintenancePanel = document.getElementById('maintenancePanel');
@@ -1339,11 +1383,9 @@ const schematicLineBtns  = document.querySelectorAll('.schematic-line-row .schem
 const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
 
 const schematicLineRow   = document.querySelector('.schematic-line-row');
-const schematicTagsBlock = document.querySelector('.ls-tags');
 const schematicLineTitle = document.querySelector('.line-title');
 
-// ✅ IO List（獨立抓，不要跟 LINE 混）
-const ioDescBtn          = document.getElementById('ioDescBtn');
+
 
 
   let currentSchematicLine = null;
@@ -1405,7 +1447,7 @@ const ioDescBtn          = document.getElementById('ioDescBtn');
 
   schematicSecBtns.forEach(b => b.classList.remove('active'));
   schematicLineBtns.forEach(b => b.classList.remove('active'));
-  ioDescBtn?.classList.remove('active');   // ✅ 補這行
+     // ✅ 補這行
 
   updateSchematicChildrenVisibility();
 }
@@ -1422,13 +1464,22 @@ const ioDescBtn          = document.getElementById('ioDescBtn');
   function resetScadaSelection(){
     scadaSecBtns.forEach(b => b.classList.remove('active'));
   }
+  function resetIoSelection(){
+  currentIoSection = null;
+  currentIoLine = null;
+  ioSecBtns.forEach(b => b.classList.remove('active'));
+  ioLineBtns.forEach(b => b.classList.remove('active'));
+  updateIoChildrenVisibility();
+}
 
   function resetOtherGroups(activeGroup){
     if (activeGroup !== 'schematic')   resetSchematicSelection();
     if (activeGroup !== 'maintenance') resetMaintenanceSelection();
     if (activeGroup !== 'scada')       resetScadaSelection();
+    if (activeGroup !== 'io')          resetIoSelection(); // ← 只加這行
     currentParent = activeGroup;
   }
+  
 
   function collapseParent(which){
     if (which === 'schematic'){
@@ -1451,12 +1502,18 @@ const ioDescBtn          = document.getElementById('ioDescBtn');
     const hasSection = !!currentSchematicSection;
     if (schematicLineTitle) schematicLineTitle.style.display = hasSection ? '' : 'none';
     if (schematicLineRow)   schematicLineRow.style.display   = hasSection ? '' : 'none';
-    if (schematicTagsBlock) schematicTagsBlock.style.display = hasSection ? '' : 'none';
+    
   }
 
   function formatLineLabel(lineKey){
     if (!lineKey) return '';
     return lineKey.startsWith('Line') ? lineKey.replace('Line','Line ') : lineKey;
+  }
+    
+  function buildIoFileName(lineKey, sectionKey){
+    const n = (lineKey || '').replace('Line',''); // Line1 -> 1
+    return 'IO_List.html?line=' + encodeURIComponent(n) +
+           '&sec=' + encodeURIComponent(sectionKey || '');
   }
 
   function buildSchematicFileName(lineKey, sectionKey){
@@ -1512,6 +1569,7 @@ const ioDescBtn          = document.getElementById('ioDescBtn');
     setupHover(schematicParentBtn, schematicPanel, 'schematic');
     setupHover(maintenanceParentBtn, maintenancePanel, 'maintenance');
     setupHover(scadaParentBtn, scadaPanel, 'scada');
+    setupHover(ioParentBtn, ioPanel, 'io');
   }
 
   // 點 nav item（Home/父群組）
@@ -1555,6 +1613,25 @@ const ioDescBtn          = document.getElementById('ioDescBtn');
         return;
       }
 
+      if (role === 'io-parent'){
+      if (isTouchDevice && currentParent==='io' && ioPanel?.classList.contains('open')){
+        ioPanel.classList.remove('open');
+        resetIoSelection();
+        deactivateNav(ioParentBtn);
+        currentParent = null;
+        return;
+      }
+
+        resetOtherGroups('io');
+        activateNav(ioParentBtn);
+
+        ioPanel && ioPanel.classList.add('open');
+        schematicPanel && schematicPanel.classList.remove('open');
+        maintenancePanel && maintenancePanel.classList.remove('open');
+        scadaPanel && scadaPanel.classList.remove('open');
+        return;
+      }
+
       // 一般 module
       const src = btn.dataset.src;
       if (!src) return;
@@ -1573,6 +1650,7 @@ const ioDescBtn          = document.getElementById('ioDescBtn');
       if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
     });
   });
+
 
   // SCADA 3 buttons
   scadaSecBtns.forEach(btn=>{
@@ -1628,40 +1706,11 @@ schematicSecBtns.forEach(btn=>{
 
     // ✅ 清掉 LINE + IO List
     schematicLineBtns.forEach(b=>b.classList.remove('active'));
-    ioDescBtn?.classList.remove('active');
+    
 
     updateSchematicChildrenVisibility();
   });
 });
-
-
-    // ✅ IO Description List：只綁一次（不要放在 section click 裡）
-if (ioDescBtn){
-  ioDescBtn.addEventListener('click', ()=>{
-    if (!currentSchematicSection) return;
-
-    resetOtherGroups('schematic');
-    activateNav(schematicParentBtn);
-
-    // ✅ IO active
-    ioDescBtn.classList.add('active');
-
-    // ✅ LINE 清掉
-    schematicLineBtns.forEach(b=>b.classList.remove('active'));
-
-    const url = 'IO_Description_List.html?section=' + encodeURIComponent(currentSchematicSection);
-    swapTo(url);
-
-    setModule(
-      'IO Description List – ' + currentSchematicSection,
-      'Browse I/O description CSV tables for ' + currentSchematicSection + '.'
-    );
-
-    closeModules();
-  });
-}
-
-
     
   // Schematic LINE（真正切頁才改 Title）
   schematicLineBtns.forEach(btn=>{
@@ -1678,7 +1727,7 @@ if (ioDescBtn){
     btn.classList.add('active');
 
     // ✅ IO List 清掉
-    ioDescBtn?.classList.remove('active');
+    
 
     const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
     swapTo(file);
@@ -1686,6 +1735,50 @@ if (ioDescBtn){
     setModule(
       `Updated Schematic – ${formatLineLabel(currentSchematicLine)} – ${currentSchematicSection}`,
       `Schematic file: ${file}`
+    );
+
+    closeModules();
+  });
+});
+
+  // ===== IO Description List（貼在這裡）=====
+ioSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    resetOtherGroups('io');
+    activateNav(ioParentBtn);
+
+    const sec = btn.getAttribute('data-io-section');
+    if (!sec) return;
+
+    currentIoSection = sec;
+    currentIoLine = null;
+
+    ioSecBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    ioLineBtns.forEach(b=>b.classList.remove('active'));
+    updateIoChildrenVisibility();
+  });
+});
+
+ioLineBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if (!currentIoSection) return;
+
+    resetOtherGroups('io');
+    activateNav(ioParentBtn);
+
+    currentIoLine = btn.getAttribute('data-io-line');
+
+    ioLineBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const file = buildIoFileName(currentIoLine, currentIoSection);
+    swapTo(file);
+
+    setModule(
+      `IO Description List – ${formatLineLabel(currentIoLine)} – ${currentIoSection}`,
+      `IO viewer: ${file}`
     );
 
     closeModules();
