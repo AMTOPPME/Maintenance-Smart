@@ -768,6 +768,7 @@
   .nav-panel{ left:0; transform:none; }
 
   .module-dock{
+    display:inline-flex
     position:fixed;
     width:auto;
     justify-content:flex-start;
@@ -1265,7 +1266,7 @@ const isTouchDevice = window.matchMedia('(max-width:900px)').matches;
     }
 
     const r = topbar.getBoundingClientRect();
-    const topbarVisible = r.bottom > 0; // topbar 還沒完全捲出視窗
+    const topbarVisible = r.bottom > 40; // topbar 還沒完全捲出視窗
 
     dock.classList.toggle('at-topbar', topbarVisible);
     dock.classList.toggle('at-iframe', !topbarVisible);
