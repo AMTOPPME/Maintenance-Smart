@@ -814,17 +814,19 @@
               <button class="schematic-line-btn" type="button" data-line="Line3">Line 3</button>
               <button class="schematic-line-btn" type="button" data-line="Line4">Line 4</button>
             </div>
-
-            <div class="ls-tags" style="display:none;">
-              <div class="ls-label">I/O LIST</div>
-
-              <button class="schematic-line-btn" type="button" id="ioDescBtn" style="grid-column:1 / -1;">
-                IO Description List
-              </button>
-            </div>
           </div>
         </li>
-
+        
+        <li>
+          <button class="nav-item-btn"
+            data-src="IO_Description_List.html"
+            data-title="IO Description List"
+            data-sub="Browse I/O description CSV tables (F12/F13/F16/F201).">
+            <span class="nav-icon">🧾</span>
+            <span class="nav-label">IO Description List</span>
+          </button>
+        </li>
+        
         <!-- Calibration Procedure -->
         <li class="nav-group-maintenance">
           <button class="nav-item-btn" type="button"
@@ -1339,11 +1341,8 @@ const schematicLineBtns  = document.querySelectorAll('.schematic-line-row .schem
 const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
 
 const schematicLineRow   = document.querySelector('.schematic-line-row');
-const schematicTagsBlock = document.querySelector('.ls-tags');
 const schematicLineTitle = document.querySelector('.line-title');
 
-// ✅ IO List（獨立抓，不要跟 LINE 混）
-const ioDescBtn          = document.getElementById('ioDescBtn');
 
 
   let currentSchematicLine = null;
@@ -1451,7 +1450,6 @@ const ioDescBtn          = document.getElementById('ioDescBtn');
     const hasSection = !!currentSchematicSection;
     if (schematicLineTitle) schematicLineTitle.style.display = hasSection ? '' : 'none';
     if (schematicLineRow)   schematicLineRow.style.display   = hasSection ? '' : 'none';
-    if (schematicTagsBlock) schematicTagsBlock.style.display = hasSection ? '' : 'none';
   }
 
   function formatLineLabel(lineKey){
@@ -1628,38 +1626,12 @@ schematicSecBtns.forEach(btn=>{
 
     // ✅ 清掉 LINE + IO List
     schematicLineBtns.forEach(b=>b.classList.remove('active'));
-    ioDescBtn?.classList.remove('active');
 
     updateSchematicChildrenVisibility();
   });
 });
 
 
-    // ✅ IO Description List：只綁一次（不要放在 section click 裡）
-if (ioDescBtn){
-  ioDescBtn.addEventListener('click', ()=>{
-    if (!currentSchematicSection) return;
-
-    resetOtherGroups('schematic');
-    activateNav(schematicParentBtn);
-
-    // ✅ IO active
-    ioDescBtn.classList.add('active');
-
-    // ✅ LINE 清掉
-    schematicLineBtns.forEach(b=>b.classList.remove('active'));
-
-    const url = 'IO_Description_List.html?section=' + encodeURIComponent(currentSchematicSection);
-    swapTo(url);
-
-    setModule(
-      'IO Description List – ' + currentSchematicSection,
-      'Browse I/O description CSV tables for ' + currentSchematicSection + '.'
-    );
-
-    closeModules();
-  });
-}
 
 
     
@@ -1677,8 +1649,7 @@ if (ioDescBtn){
     schematicLineBtns.forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
 
-    // ✅ IO List 清掉
-    ioDescBtn?.classList.remove('active');
+
 
     const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
     swapTo(file);
