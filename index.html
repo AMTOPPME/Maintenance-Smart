@@ -241,10 +241,10 @@
 
     /* Iframe 裡的 slot：左上角 overlay */
     .module-slot-frame{
-      position:absolute;
-      top:12px;
-      left:12px;
-      z-index:10;
+      position:fixed;   /* 原本 absolute */
+      top:110px;        /* 你可以微調 */
+      left:28px;
+      z-index:9999;
     }
 
     /* Menu button：不要再用 margin-top 推位置（位置交給 slot） */
@@ -1259,26 +1259,29 @@
     document.documentElement.setAttribute('data-style', saved);
   })();
 
-  /* ---------- Module Dock move (desktop: topbar, mobile: topbar; frame slot for special use if you want) ---------- */
-  (function(){
-    const dock = document.querySelector('.module-dock');
-    const slotTopbar = document.getElementById('moduleSlotTopbar');
-    const slotFrame  = document.getElementById('moduleSlotFrame');
+  /* ---------- Module Dock move (desktop: float on iframe, mobile: in topbar) ---------- */
+(function(){
+  const dock = document.querySelector('.module-dock');
+  const slotTopbar = document.getElementById('moduleSlotTopbar');
+  const slotFrame  = document.getElementById('moduleSlotFrame');
 
-    function mountDock(){
-      // you can choose rules; right now: always put in topbar slot
-      if (slotTopbar && dock && !slotTopbar.contains(dock)) {
-        slotTopbar.appendChild(dock);
-      }
-      // If you want on small screens to stay topbar, this is enough.
-      // If you want on very large screens to go into iframe, you can change logic here.
-      if (slotFrame && slotFrame.contains(dock)) {
-        slotFrame.innerHTML = '';
-      }
+  function mountDock(){
+    if (!dock) return;
+
+    const isMobile = window.matchMedia('(max-width:900px)').matches;
+
+    if (isMobile){
+      // mobile：放 topbar
+      if (slotTopbar && !slotTopbar.contains(dock)) slotTopbar.appendChild(dock);
+    }else{
+      // desktop：放 iframe 左上角 overlay（懸浮）
+      if (slotFrame && !slotFrame.contains(dock)) slotFrame.appendChild(dock);
     }
-    window.addEventListener('resize', mountDock);
-    mountDock();
-  })();
+  }
+
+  window.addEventListener('resize', mountDock);
+  mountDock();
+})();
 
   /* ---------- Iframe smooth swap (A/B) ---------- */
   const frameA = document.getElementById('mainFrameA');
