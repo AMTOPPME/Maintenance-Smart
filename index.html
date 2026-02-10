@@ -1251,28 +1251,29 @@ const isTouchDevice = window.matchMedia('(max-width:900px)').matches;
     document.documentElement.setAttribute('data-style', saved);
   })();
 
-  /* ---------- Module Dock move (desktop: float on iframe, mobile: in topbar) ---------- */
 (function(){
   const dock = document.querySelector('.module-dock');
-  const slotTopbar = document.getElementById('moduleSlotTopbar');
-  const slotFrame  = document.getElementById('moduleSlotFrame');
+  const topbar = document.querySelector('.topbar');
+  if(!dock || !topbar) return;
 
-  function mountDock(){
-    if (!dock) return;
-
+  // 只看「topbar 還在不在視窗內」
+  function update(){
     const isMobile = window.matchMedia('(max-width:900px)').matches;
-
     if (isMobile){
-      // mobile：放 topbar
-      if (slotTopbar && !slotTopbar.contains(dock)) slotTopbar.appendChild(dock);
-    }else{
-      // desktop：放 iframe 左上角 overlay（懸浮）
-      if (slotFrame && !slotFrame.contains(dock)) slotFrame.appendChild(dock);
+      dock.classList.remove('at-topbar','at-iframe');
+      return;
     }
+
+    const r = topbar.getBoundingClientRect();
+    const topbarVisible = r.bottom > 0; // topbar 還沒完全捲出視窗
+
+    dock.classList.toggle('at-topbar', topbarVisible);
+    dock.classList.toggle('at-iframe', !topbarVisible);
   }
 
-  window.addEventListener('resize', mountDock);
-  mountDock();
+  window.addEventListener('scroll', update, { passive:true });
+  window.addEventListener('resize', update);
+  update();
 })();
 
   /* ---------- Iframe smooth swap (A/B) ---------- */
