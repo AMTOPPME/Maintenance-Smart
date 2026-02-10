@@ -239,12 +239,11 @@
       align-items:flex-start;
     }
 
-    /* Iframe 裡的 slot：左上角 overlay */
     .module-slot-frame{
-      position:fixed;   /* 原本 absolute */
-      top:110px;        /* 你可以微調 */
-      left:28px;
-      z-index:9999;
+      position:absolute;   /* ✅ 回到 absolute，跟著 iframe-wrap */
+      top:12px;
+      left:12px;
+      z-index:10;
     }
 
     /* Menu button：不要再用 margin-top 推位置（位置交給 slot） */
@@ -1443,6 +1442,11 @@
 
       li.addEventListener('mouseenter', () => {
         if (isMobile()) return;
+
+        // ✅ 確保主選單是開的（hover 才看得到）
+        document.getElementById('navPanel')?.classList.add('open');
+        document.getElementById('menuButton')?.setAttribute('aria-expanded','true');
+
         closeAllSubPanels();
         panel.classList.add('open');
       });
@@ -1665,10 +1669,21 @@
   /* ---------- Click inside navPanel shouldn't close ---------- */
   navPanel?.addEventListener('click', (e)=> e.stopPropagation());
 
-  /* ---------- Close subpanels when clicking blank area inside menu ---------- */
-  document.getElementById('navPanel')?.addEventListener('mouseleave', ()=>{
-    if (!isTouchDevice) closeAllSubPanels();
+  // ✅ Desktop：滑出整個 menu 區域才關子面板（避免一移到右側 pop-out 就被關）
+(function(){
+  const menuBtn = document.getElementById('menuButton');
+  const nav = document.getElementById('navPanel');
+  const dock = document.querySelector('.module-dock');
+  if (!nav || !dock) return;
+
+  const isMobile = () => window.matchMedia('(max-width:900px)').matches;
+
+  dock.addEventListener('mouseleave', ()=>{
+    if (isMobile()) return;
+    // 只有 menu 是開的才關
+    if (nav.classList.contains('open')) closeAllSubPanels();
   });
+})();
 
   
 
