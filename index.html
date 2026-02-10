@@ -1481,9 +1481,7 @@
         b.classList.add('active');
 
         const sec = b.getAttribute('data-io-section');
-        // ✅ 這裡改成你 IO list 的檔名規則
-        // e.g. IO/F13.html 或 IO/F13/index.html
-        const src = `IO/${sec}.html`;
+        const src = `IO_Description_List.html`;
 
         document.getElementById('moduleTitle').textContent = `IO Description List • ${sec}`;
         document.getElementById('moduleSub').textContent   = `IO list for section ${sec}.`;
