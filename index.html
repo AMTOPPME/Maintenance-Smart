@@ -1421,48 +1421,72 @@
     });
   });
 
-  /* ---------- Desktop hover open (keep mobile click) ---------- */
-  (function(){
-    const isMobile = () => window.matchMedia('(max-width:900px)').matches;
+/* ---------- Desktop hover open (gap-safe) ---------- */
+(function(){
+  const isMobile = () => window.matchMedia('(max-width:900px)').matches;
 
-    const groupPairs = [
-      ['[data-role="schematic-parent"]', 'schematicPanel'],
-      ['[data-role="io-parent"]',        'ioPanel'],
-      ['[data-role="maintenance-parent"]','maintenancePanel'],
-      ['[data-role="scada-parent"]',     'scadaPanel'],
-    ];
+  const groupPairs = [
+    ['[data-role="schematic-parent"]',  'schematicPanel'],
+    ['[data-role="io-parent"]',         'ioPanel'],
+    ['[data-role="maintenance-parent"]','maintenancePanel'],
+    ['[data-role="scada-parent"]',      'scadaPanel'],
+  ];
 
-    groupPairs.forEach(([btnSel, panelId]) => {
-      const btn = document.querySelector(btnSel);
-      const panel = document.getElementById(panelId);
-      if (!btn || !panel) return;
+  const closeTimers = new Map(); // panelId -> timer
 
-      const li = btn.closest('li');
-      if (!li) return;
+  function clearTimer(panelId){
+    const t = closeTimers.get(panelId);
+    if (t) clearTimeout(t);
+    closeTimers.delete(panelId);
+  }
 
-      li.addEventListener('mouseenter', () => {
-        if (isMobile()) return;
+  function scheduleClose(panelId, panel){
+    clearTimer(panelId);
+    closeTimers.set(panelId, setTimeout(()=>{
+      panel.classList.remove('open');
 
-        // ✅ 確保主選單是開的（hover 才看得到）
-        document.getElementById('navPanel')?.classList.add('open');
-        document.getElementById('menuButton')?.setAttribute('aria-expanded','true');
+      // maintenance 第三層一起關
+      if (panelId === 'maintenancePanel') {
+        document.querySelectorAll('.maintenance-group.open').forEach(g => g.classList.remove('open'));
+        document.querySelectorAll('.maintenance-group-btn.active').forEach(b => b.classList.remove('active'));
+      }
+    }, 180)); // ✅ 這個 180ms 就是跨過 8px gap 的緩衝
+  }
 
-        closeAllSubPanels();
-        panel.classList.add('open');
-      });
+  groupPairs.forEach(([btnSel, panelId]) => {
+    const btn = document.querySelector(btnSel);
+    const panel = document.getElementById(panelId);
+    if (!btn || !panel) return;
 
-      li.addEventListener('mouseleave', () => {
-        if (isMobile()) return;
-        panel.classList.remove('open');
+    const li = btn.closest('li');
+    if (!li) return;
 
-        // 同時關掉 maintenance 第三層
-        if (panelId === 'maintenancePanel') {
-          document.querySelectorAll('.maintenance-group.open').forEach(g => g.classList.remove('open'));
-          document.querySelectorAll('.maintenance-group-btn.active').forEach(b => b.classList.remove('active'));
-        }
-      });
-    });
-  })();
+    // 進入主項目或子面板，都視為「保持開啟」
+    const keepOpen = () => {
+      if (isMobile()) return;
+      clearTimer(panelId);
+
+      // 確保主選單開著
+      document.getElementById('navPanel')?.classList.add('open');
+      document.getElementById('menuButton')?.setAttribute('aria-expanded','true');
+
+      closeAllSubPanels();
+      panel.classList.add('open');
+    };
+
+    const maybeClose = () => {
+      if (isMobile()) return;
+      scheduleClose(panelId, panel);
+    };
+
+    li.addEventListener('mouseenter', keepOpen);
+    li.addEventListener('mouseleave', maybeClose);
+
+    // ✅ 這兩個讓你滑到子面板/第三層時不會被 li 的 mouseleave 關掉
+    panel.addEventListener('mouseenter', () => { if (!isMobile()) clearTimer(panelId); });
+    panel.addEventListener('mouseleave', maybeClose);
+  });
+})();
   
   /* ---------- Updated Schematic: Section then Line ---------- */
   (function(){
