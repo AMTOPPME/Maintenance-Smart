@@ -1362,7 +1362,23 @@ function swapTo(src){
 
   let currentIoSection = null;
   let currentIoLine    = null;
+  function applyIoActiveUI(){
 
+  // SECTION active
+  ioSecBtns.forEach(b=>{
+    const sec = b.getAttribute('data-io-section');
+    b.classList.toggle('active', !!currentIoSection && sec === currentIoSection);
+  });
+
+  // 顯示 / 隱藏 LINE
+  updateIoChildrenVisibility();
+
+  // LINE active
+  ioLineBtns.forEach(b=>{
+    const lk = b.getAttribute('data-io-line'); // "Line1"
+    b.classList.toggle('active', !!currentIoLine && lk === currentIoLine);
+  });
+}
   function updateIoChildrenVisibility(){
     const hasSection = !!currentIoSection;
     if (ioLineTitle) ioLineTitle.style.display = hasSection ? '' : 'none';
@@ -1769,7 +1785,7 @@ ioLineBtns.forEach(btn=>{
     activateNav(ioParentBtn);
 
     currentIoLine = btn.getAttribute('data-io-line');
-
+    applyIoActiveUI();
     ioLineBtns.forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
 
@@ -1876,6 +1892,24 @@ ioLineBtns.forEach(btn=>{
 
       closeModules();
     });
+    function syncIoFromCurrentIframeUrl(){
+  const src = front?.getAttribute('src') || '';
+  if (!/IO_List\.html/i.test(src)) return;
+
+  try{
+    const u = new URL(src, location.href);
+    const sec  = (u.searchParams.get('sec') || '').toUpperCase();
+    const line = u.searchParams.get('line') || '';
+
+    if (sec)  currentIoSection = sec;
+    if (line) currentIoLine = 'Line' + String(parseInt(line,10) || '');
+
+    applyIoActiveUI();
+  }catch(e){}
+}
+
+// ✅ 初次載入 / 重新整理時同步 active
+syncIoFromCurrentIframeUrl();
   }
 })();
 </script>
