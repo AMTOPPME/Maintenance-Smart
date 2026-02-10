@@ -1629,6 +1629,70 @@
     if (!isTouchDevice) closeAllSubPanels();
   });
 
+  /* =========================
+   IO Description List - open by section
+   ========================= */
+
+function setHeader(title, sub) {
+  const t = document.getElementById('moduleTitle');
+  const s = document.getElementById('moduleSub');
+  if (t) t.textContent = title || '';
+  if (s) s.textContent = sub || '';
+}
+
+const frameA = document.getElementById('mainFrameA');
+const frameB = document.getElementById('mainFrameB');
+let activeFrame = 'A';
+
+function swapTo(src) {
+  // 使用 B 作為 next
+  const current = activeFrame === 'A' ? frameA : frameB;
+  const next = activeFrame === 'A' ? frameB : frameA;
+
+  // 先把 next 準備好
+  next.style.transition = 'opacity .18s ease';
+  current.style.transition = 'opacity .18s ease';
+
+  next.style.pointerEvents = 'auto';
+  current.style.pointerEvents = 'none';
+
+  next.onload = () => {
+    // 淡入 next、淡出 current
+    next.style.opacity = '1';
+    current.style.opacity = '0';
+
+    // 切換 active
+    activeFrame = (activeFrame === 'A') ? 'B' : 'A';
+    next.onload = null;
+  };
+
+  next.src = src;
+}
+
+/* IO Section buttons */
+document.querySelectorAll('.io-sec-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sec = btn.getAttribute('data-io-section'); // F12 / F13 / F16 / F201
+    if (!sec) return;
+
+    // active 樣式
+    document.querySelectorAll('.io-sec-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // 導向 IO_Description_List.html 並帶 section
+    const target = `IO_Description_List.html?section=${encodeURIComponent(sec)}`;
+
+    setHeader('IO Description List', `Section: ${sec}`);
+    swapTo(target);
+
+    // 關閉 nav（如果你有 open class）
+    const nav = document.getElementById('navPanel');
+    const menuBtn = document.getElementById('menuButton');
+    if (nav) nav.classList.remove('open');
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+  });
+});
+
 </script>
 </body>
 </html>
