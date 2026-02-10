@@ -1585,7 +1585,33 @@ const schematicLineTitle = document.querySelector('.line-title');
     setupHover(schematicParentBtn, schematicPanel, 'schematic');
     setupHover(maintenanceParentBtn, maintenancePanel, 'maintenance');
     setupHover(scadaParentBtn, scadaPanel, 'scada');
-    setupHover(ioParentBtn, ioPanel, 'io');
+    // ✅ IO：用整個 li 當 hover 區域，避免移動到右邊面板時中斷
+if (!isTouchDevice){
+  const ioGroup = ioParentBtn?.closest('.nav-group-io');
+  let ioTimer = null;
+
+  function ioOpen(){
+    clearTimeout(ioTimer);
+    currentParent = 'io';
+    ioPanel && ioPanel.classList.add('open');
+  }
+
+  function ioClose(){
+    clearTimeout(ioTimer);
+    ioTimer = setTimeout(()=>{
+      ioPanel && ioPanel.classList.remove('open');
+    }, 220); // ✅ 給滑鼠跨越空隙的時間（可調 180~300）
+  }
+
+  if (ioGroup && ioPanel){
+    ioGroup.addEventListener('mouseenter', ioOpen);
+    ioGroup.addEventListener('mouseleave', ioClose);
+
+    // 進入 panel 不關；離開才開始倒數
+    ioPanel.addEventListener('mouseenter', ioOpen);
+    ioPanel.addEventListener('mouseleave', ioClose);
+  }
+}
   }
 
   // 點 nav item（Home/父群組）
