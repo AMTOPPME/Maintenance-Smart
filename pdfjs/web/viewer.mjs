@@ -110,7 +110,7 @@ const {
 
 ;// ./web/ui_utils.js
 
-const DEFAULT_SCALE_VALUE = "auto";
+const DEFAULT_SCALE_VALUE = "1.25";
 const DEFAULT_SCALE = 1.0;
 const DEFAULT_SCALE_DELTA = 1.1;
 const MIN_SCALE = 0.1;
@@ -725,7 +725,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   defaultZoomValue: {
-    value: "auto",
+    value: "1.25",
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE,
   },
   disableHistory: {
