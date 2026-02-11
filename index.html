@@ -667,27 +667,6 @@
     
 .menu-text{ display:none; }
 
-/* =========================
-   Mobile Drawer Overlay
-   ========================= */
-#drawerOverlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.35);
-  backdrop-filter: blur(2px);
-  z-index: 9000;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .18s ease;
-}
-#drawerOverlay.open{
-  opacity:1;
-  pointer-events:auto;
-}
-
-/* =========================
-   Mobile (<=900px)
-   ========================= */
 @media (max-width:900px){
 
   .page-jump{ display:none !important; }
