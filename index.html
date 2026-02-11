@@ -338,11 +338,12 @@
     }
 
    .nav-group-schematic .nav-item-btn,
-   .nav-group-io .nav-item-btn,
-  .nav-group-maintenance .nav-item-btn,
-  .nav-group-scada .nav-item-btn{
-    justify-content:space-between;
-  }
+.nav-group-io .nav-item-btn,
+.nav-group-maintenance .nav-item-btn,
+.nav-group-training .nav-item-btn,
+.nav-group-scada .nav-item-btn{
+  justify-content:space-between;
+}
 
 .nav-group-io{ position:relative; }
     .nav-chevron{font-size:14px;opacity:.7;}
@@ -1051,6 +1052,65 @@
           </div>
         </li>
 
+        <!-- TRAINING -->
+<li class="nav-group-training">
+  <button class="nav-item-btn" type="button"
+    data-role="training-parent"
+    data-title="Training"
+    data-sub="Open training materials.">
+    <span class="nav-icon">🎓</span>
+    <span class="nav-label">Training</span>
+    <span class="nav-chevron" aria-hidden="true">▾</span>
+  </button>
+
+  <!-- 用 maintenance-panel 直接復用樣式（不另外加 CSS） -->
+  <div class="maintenance-panel" id="trainingPanel" aria-label="Training selector">
+    <div class="maintenance-title">Training</div>
+
+    <div class="maintenance-sec-row">
+      <button class="maintenance-sec-btn training-sec-btn" type="button"
+        data-train-key="MICROSOFT_OFFICE_WORD" data-label="MICROSOFT OFFICE - WORD">
+        <span class="code">MICROSOFT OFFICE - WORD</span>
+      </button>
+
+      <button class="maintenance-sec-btn training-sec-btn" type="button"
+        data-train-key="MICROSOFT_OFFICE_EXCEL" data-label="EXCEL">
+        <span class="code">EXCEL</span>
+      </button>
+
+      <button class="maintenance-sec-btn training-sec-btn" type="button"
+        data-train-key="MICROSOFT_OFFICE_POWERPOINT" data-label="POWERPOINT">
+        <span class="code">POWERPOINT</span>
+      </button>
+
+      <button class="maintenance-sec-btn training-sec-btn" type="button"
+        data-train-key="PLC_MITSUBISHI" data-label="PLC - MITSUBISHI">
+        <span class="code">PLC - MITSUBISHI</span>
+      </button>
+
+      <button class="maintenance-sec-btn training-sec-btn" type="button"
+        data-train-key="ALLEN_BRADLEY" data-label="ALEN-BRADIEY">
+        <span class="code">ALEN-BRADIEY</span>
+      </button>
+
+      <button class="maintenance-sec-btn training-sec-btn" type="button"
+        data-train-key="SIEMENS" data-label="SIEMENS">
+        <span class="code">SIEMENS</span>
+      </button>
+
+      <button class="maintenance-sec-btn training-sec-btn" type="button"
+        data-train-key="DC_DRIVE_BARDAC_DRIVE" data-label="DC Drive - Bardac Drive">
+        <span class="code">DC Drive - Bardac Drive</span>
+      </button>
+
+      <button class="maintenance-sec-btn training-sec-btn" type="button"
+        data-train-key="TROUBLESHOOTING_COMPUTER" data-label="Troubleshooting computer">
+        <span class="code">Troubleshooting computer</span>
+      </button>
+    </div>
+  </div>
+</li>
+        
         <!-- SCADA PC -->
         <li class="nav-group-scada">
           <button class="nav-item-btn" type="button"
@@ -1390,7 +1450,9 @@ function swapTo(src){
   const schematicPanel   = document.getElementById('schematicPanel');
   const maintenancePanel = document.getElementById('maintenancePanel');
   const scadaPanel       = document.getElementById('scadaPanel');
-
+  const trainingParentBtn = document.querySelector('[data-role="training-parent"]');
+  const trainingPanel     = document.getElementById('trainingPanel');
+  const trainingSecBtns   = document.querySelectorAll('.training-sec-btn');
   // Schematic
   // ✅ 只抓 LINE 1~4（不包含 IO List）
 const schematicLineBtns  = document.querySelectorAll('.schematic-line-row .schematic-line-btn');
@@ -1446,10 +1508,12 @@ const schematicLineTitle = document.querySelector('.line-title');
   }
 
   function closeAllSubPanels(){
-    schematicPanel   && schematicPanel.classList.remove('open');
-    maintenancePanel && maintenancePanel.classList.remove('open');
-    scadaPanel       && scadaPanel.classList.remove('open');
-  }
+  schematicPanel   && schematicPanel.classList.remove('open');
+  ioPanel          && ioPanel.classList.remove('open');
+  maintenancePanel && maintenancePanel.classList.remove('open');
+  trainingPanel    && trainingPanel.classList.remove('open');
+  scadaPanel       && scadaPanel.classList.remove('open');
+}
 
   function closeModules(){
     if (panel) panel.classList.remove('open');
@@ -1487,12 +1551,16 @@ const schematicLineTitle = document.querySelector('.line-title');
   ioLineBtns.forEach(b => b.classList.remove('active'));
   updateIoChildrenVisibility();
 }
+  function resetTrainingSelection(){
+  trainingSecBtns.forEach(b => b.classList.remove('active'));
+}
 
   function resetOtherGroups(activeGroup){
     if (activeGroup !== 'schematic')   resetSchematicSelection();
     if (activeGroup !== 'maintenance') resetMaintenanceSelection();
     if (activeGroup !== 'scada')       resetScadaSelection();
     if (activeGroup !== 'io')          resetIoSelection(); // ← 只加這行
+    if (activeGroup !== 'training')    resetTrainingSelection();
     currentParent = activeGroup;
   }
   
@@ -1585,7 +1653,8 @@ const schematicLineTitle = document.querySelector('.line-title');
     setupHover(schematicParentBtn, schematicPanel, 'schematic');
     setupHover(maintenanceParentBtn, maintenancePanel, 'maintenance');
     setupHover(scadaParentBtn, scadaPanel, 'scada');
-    // ✅ IO：用整個 li 當 hover 區域，避免移動到右邊面板時中斷
+    setupHover(trainingParentBtn, trainingPanel, 'training');
+    
 if (!isTouchDevice){
   const ioGroup = ioParentBtn?.closest('.nav-group-io');
   let ioTimer = null;
@@ -1652,6 +1721,26 @@ if (!isTouchDevice){
         scadaPanel && scadaPanel.classList.add('open');
         schematicPanel && schematicPanel.classList.remove('open');
         maintenancePanel && maintenancePanel.classList.remove('open');
+        return;
+      }
+
+       if (role === 'training-parent'){
+        if (isTouchDevice && currentParent==='training' && trainingPanel?.classList.contains('open')){
+          trainingPanel.classList.remove('open');
+          resetTrainingSelection();
+          deactivateNav(trainingParentBtn);
+          currentParent = null;
+          return;
+        }
+
+        resetOtherGroups('training');
+        activateNav(trainingParentBtn);
+
+        trainingPanel && trainingPanel.classList.add('open');
+        schematicPanel && schematicPanel.classList.remove('open');
+        ioPanel && ioPanel.classList.remove('open');
+        maintenancePanel && maintenancePanel.classList.remove('open');
+        scadaPanel && scadaPanel.classList.remove('open');
         return;
       }
 
@@ -1822,6 +1911,27 @@ ioLineBtns.forEach(btn=>{
       `IO Description List – ${formatLineLabel(currentIoLine)} – ${currentIoSection}`,
       `IO viewer: ${file}`
     );
+
+    closeModules();
+  });
+});
+
+    trainingSecBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    resetOtherGroups('training');
+    activateNav(trainingParentBtn);
+
+    const key   = btn.getAttribute('data-train-key');
+    const label = btn.getAttribute('data-label') || btn.textContent.trim() || key || '';
+    if (!key) return;
+
+    const viewerUrl = 'TRANING.html?key=' + encodeURIComponent(key);
+    swapTo(viewerUrl);
+
+    setModule('Training – ' + label, 'Training: ' + label);
+
+    trainingSecBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
 
     closeModules();
   });
