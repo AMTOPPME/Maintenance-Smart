@@ -1681,6 +1681,35 @@ if (!isTouchDevice){
     ioPanel.addEventListener('mouseleave', ioClose);
   }
 }
+    // ✅ Training：用整個 li 當 hover 區域（跟 IO 同招）
+if (!isTouchDevice){
+  const trainingParentBtn = document.querySelector('[data-role="training-parent"]');
+  const trainingPanel     = document.getElementById('trainingPanel'); // ← 你的 Training panel id
+  const trainingGroup     = trainingParentBtn?.closest('.nav-group-training');
+
+  let trainingTimer = null;
+
+  function trainingOpen(){
+    clearTimeout(trainingTimer);
+    currentParent = 'training';
+    trainingPanel && trainingPanel.classList.add('open');
+  }
+
+  function trainingClose(){
+    clearTimeout(trainingTimer);
+    trainingTimer = setTimeout(()=>{
+      trainingPanel && trainingPanel.classList.remove('open');
+    }, 220); // ✅ 給滑鼠跨越空隙的時間（180~300 都可）
+  }
+
+  if (trainingGroup && trainingPanel){
+    trainingGroup.addEventListener('mouseenter', trainingOpen);
+    trainingGroup.addEventListener('mouseleave', trainingClose);
+
+    trainingPanel.addEventListener('mouseenter', trainingOpen);
+    trainingPanel.addEventListener('mouseleave', trainingClose);
+  }
+}
   }
 
   // 點 nav item（Home/父群組）
