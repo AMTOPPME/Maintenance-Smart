@@ -594,17 +594,18 @@
 .training-group-btn{
   width:100%;
   border:1px solid rgba(229,231,235,1);
-  background:linear-gradient(to right, rgba(37,99,235,.08), transparent);
+  background:linear-gradient(to right, rgba(37,99,235,.06), transparent);
   border-left:3px solid rgba(37,99,235,.85);
-  border-radius:12px;
-  padding:10px 12px;
+  border-radius:10px;           /* 原本 12px → 小一點 */
+  padding:7px 10px;             /* 原本 10px 12px → 縮小 */
   display:flex;
   align-items:center;
   justify-content:space-between;
   cursor:pointer;
   color:#1e40af;
-  font-weight:650;
-  letter-spacing:.12em;
+  font-weight:600;              /* 原本 650 → 600 */
+  font-size:12px;               /* 新增：縮小字 */
+  letter-spacing:.08em;         /* 原本 .12 → 縮小 */
   text-transform:uppercase;
   transition:transform .12s ease, box-shadow .15s ease, background .15s ease;
 }
