@@ -719,18 +719,59 @@
   }
 
   /* ✅ 手機：Menu 變成 icon launcher（44x44） */
-  .menu-button{
-    width:44px !important;
-    height:44px !important;
-    padding:0 !important;
-    border-radius:12px !important;
-    justify-content:center !important;
-    align-self:flex-start !important;
-    margin-top:4px;
-  }
-  /* 可選：手機只顯示 icon */
-  .menu-text{ display:none !important; }
+  @media (max-width:900px){
 
+  .menu-button{
+    width:auto !important;
+    height:42px !important;
+    padding:0 18px !important;
+
+    border-radius:999px !important;
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:.02em;
+
+    background:#2563eb;
+    color:#fff;
+    border:none;
+
+    box-shadow:
+      0 8px 20px rgba(37,99,235,.25),
+      inset 0 1px 0 rgba(255,255,255,.4);
+
+    justify-content:center;
+
+    transition:all .18s ease;
+  }
+
+  /* Hover（手機其實少用，但平板有幫助） */
+  .menu-button:hover{
+    background:#1d4ed8;
+  }
+
+  /* 點擊按壓效果 */
+  .menu-button:active{
+    transform:translateY(1px) scale(.98);
+    box-shadow:
+      0 4px 12px rgba(37,99,235,.25),
+      inset 0 1px 0 rgba(255,255,255,.4);
+  }
+
+  /* Drawer 開啟時（JS 會加 aria-expanded="true"） */
+  .menu-button[aria-expanded="true"]{
+    background:#1e40af;
+  }
+
+  /* 文字一定顯示 */
+  .menu-text{
+    display:inline !important;
+  }
+
+}
   /* ✅ Drawer：貼到底 + 更寬 */
   .nav-panel{
     position:fixed !important;
