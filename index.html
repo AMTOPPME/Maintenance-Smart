@@ -571,6 +571,21 @@
       transform:translateY(-1px);
     }
 
+    /* Training group header */
+.training-group-title{
+  margin:10px 6px 6px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  border-top:1px dashed rgba(148,163,184,.7);
+}
+.training-group-title:first-child{
+  border-top:none;
+  margin-top:4px;
+}
     /* ===== Maintenance: 2nd level pill + 3rd level pop-out ===== */
     .nav-group-maintenance{ position:relative; }
     .maintenance-group{ position:relative; }
@@ -1068,46 +1083,58 @@
     <div class="maintenance-title">Training</div>
 
     <div class="maintenance-sec-row">
-      <button class="maintenance-sec-btn training-sec-btn" type="button"
-        data-train-key="MICROSOFT_OFFICE_WORD" data-label="MICROSOFT OFFICE - WORD">
-        <span class="code">MICROSOFT OFFICE - WORD</span>
-      </button>
 
-      <button class="maintenance-sec-btn training-sec-btn" type="button"
-        data-train-key="MICROSOFT_OFFICE_EXCEL" data-label="EXCEL">
-        <span class="code">EXCEL</span>
-      </button>
+  <div class="training-group-title">MICROSOFT OFFICE</div>
 
-      <button class="maintenance-sec-btn training-sec-btn" type="button"
-        data-train-key="MICROSOFT_OFFICE_POWERPOINT" data-label="POWERPOINT">
-        <span class="code">POWERPOINT</span>
-      </button>
+  <button class="maintenance-sec-btn training-sec-btn" type="button"
+    data-train-key="MICROSOFT_OFFICE_WORD" data-label="MICROSOFT OFFICE - WORD">
+    <span class="code">MICROSOFT OFFICE - WORD</span>
+  </button>
 
-      <button class="maintenance-sec-btn training-sec-btn" type="button"
-        data-train-key="PLC_MITSUBISHI" data-label="PLC - MITSUBISHI">
-        <span class="code">PLC - MITSUBISHI</span>
-      </button>
+  <button class="maintenance-sec-btn training-sec-btn" type="button"
+    data-train-key="MICROSOFT_OFFICE_EXCEL" data-label="EXCEL">
+    <span class="code">EXCEL</span>
+  </button>
 
-      <button class="maintenance-sec-btn training-sec-btn" type="button"
-        data-train-key="ALLEN_BRADLEY" data-label="ALEN-BRADIEY">
-        <span class="code">ALEN-BRADIEY</span>
-      </button>
+  <button class="maintenance-sec-btn training-sec-btn" type="button"
+    data-train-key="MICROSOFT_OFFICE_POWERPOINT" data-label="POWERPOINT">
+    <span class="code">POWERPOINT</span>
+  </button>
 
-      <button class="maintenance-sec-btn training-sec-btn" type="button"
-        data-train-key="SIEMENS" data-label="SIEMENS">
-        <span class="code">SIEMENS</span>
-      </button>
 
-      <button class="maintenance-sec-btn training-sec-btn" type="button"
-        data-train-key="DC_DRIVE_BARDAC_DRIVE" data-label="DC Drive - Bardac Drive">
-        <span class="code">DC Drive - Bardac Drive</span>
-      </button>
+  <div class="training-group-title">PLC</div>
 
-      <button class="maintenance-sec-btn training-sec-btn" type="button"
-        data-train-key="TROUBLESHOOTING_COMPUTER" data-label="Troubleshooting computer">
-        <span class="code">Troubleshooting computer</span>
-      </button>
-    </div>
+  <button class="maintenance-sec-btn training-sec-btn" type="button"
+    data-train-key="PLC_MITSUBISHI" data-label="PLC - MITSUBISHI">
+    <span class="code">PLC - MITSUBISHI</span>
+  </button>
+
+  <button class="maintenance-sec-btn training-sec-btn" type="button"
+    data-train-key="ALLEN_BRADLEY" data-label="ALEN-BRADIEY">
+    <span class="code">ALEN-BRADIEY</span>
+  </button>
+
+  <button class="maintenance-sec-btn training-sec-btn" type="button"
+    data-train-key="SIEMENS" data-label="SIEMENS">
+    <span class="code">SIEMENS</span>
+  </button>
+
+
+  <div class="training-group-title">DC DRIVE</div>
+
+  <button class="maintenance-sec-btn training-sec-btn" type="button"
+    data-train-key="DC_DRIVE_BARDAC_DRIVE" data-label="DC Drive - Bardac Drive">
+    <span class="code">DC Drive - Bardac Drive</span>
+  </button>
+
+
+  <div class="training-group-title">COMPUTER</div>
+
+  <button class="maintenance-sec-btn training-sec-btn" type="button"
+    data-train-key="TROUBLESHOOTING_COMPUTER" data-label="Troubleshooting computer">
+    <span class="code">Troubleshooting computer</span>
+  </button>
+</div>
   </div>
 </li>
         
