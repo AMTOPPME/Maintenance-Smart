@@ -668,10 +668,9 @@
 .menu-text{ display:none; }
 
 
+
 /* =========================
-   Mobile (<=900px)
-   Modules button = pill
-   Nav panel = left drawer
+   MOBILE (<=900px)
    ========================= */
 @media (max-width:900px){
 
@@ -691,15 +690,14 @@
   /* ✅ 解包：讓 brand / meta / quote / menu 都能用 order 排序 */
   .top-left{ display:contents; min-height:0; }
 
-  /* ===== Modules 按鈕位置：放最上面（App 感） ===== */
+  /* ===== Modules 按鈕區塊：放最上面（App 感） ===== */
   .module-dock{
     order:0;
     width:auto;
     align-self:flex-start;
     margin-bottom:8px;
-
     position:relative;
-    z-index:9200; /* ✅ 比 overlay(9000) 高，避免按鈕被蓋住 */
+    z-index:9200; /* ✅ 保證在 overlay 之上可按 */
   }
 
   .brand-wrap{ order:1; }
@@ -735,7 +733,7 @@
     height:42px !important;
     padding:0 18px !important;
 
-    border-radius:999px !important; /* ✅ pill */
+    border-radius:999px !important;
     display:flex;
     align-items:center;
     gap:8px;
@@ -756,27 +754,22 @@
     transition:all .18s ease;
 
     position:relative;
-    z-index:9200; /* ✅ 再保險一次 */
+    z-index:9200; /* ✅ 避免被 overlay 蓋住 */
   }
 
-  /* Hover（平板/桌機模式有用） */
   .menu-button:hover{ background:#1d4ed8; }
-
-  /* 按壓 */
   .menu-button:active{
     transform:translateY(1px) scale(.98);
     box-shadow:
       0 4px 12px rgba(37,99,235,.25),
       inset 0 1px 0 rgba(255,255,255,.4);
   }
-
-  /* Drawer 開啟狀態：JS 會改 aria-expanded="true" */
   .menu-button[aria-expanded="true"]{ background:#1e40af; }
 
   /* 文字一定顯示 */
   .menu-text{ display:inline !important; }
 
-  /* ===== Drawer：左側抽屜 ===== */
+  /* ===== Drawer：左側抽屜（清楚，不要霧化自己） ===== */
   .nav-panel{
     position:fixed !important;
     top:0 !important;
@@ -792,17 +785,61 @@
     transition:transform .22s ease;
 
     border-radius:0 22px 22px 0;
-    padding:16px 12px 22px;
+    padding:12px 12px 22px; /* ✅ 上方留給 header */
+
+    background:#ffffff !important;
+    backdrop-filter:none !important;
 
     overflow:auto;
     -webkit-overflow-scrolling:touch;
 
-    z-index:9100;  /* ✅ 在 overlay 上 */
+    z-index:9100;  /* ✅ 一定要 > overlay */
     display:block; /* 用 transform 控制開關 */
   }
   .nav-panel.open{ transform:translateX(0); }
 
-  /* ===== 子面板：手機改往下疊（抽屜內很順） ===== */
+  /* ===== Drawer Header（放 Modules + X） ===== */
+  .drawer-head{
+    position:sticky;
+    top:0;
+    background:#fff;
+    padding:10px 6px 12px;
+    z-index:2;
+    border-bottom:1px solid rgba(229,231,235,.9);
+    margin-bottom:8px;
+  }
+  .drawer-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .drawer-title .t{
+    font-weight:800;
+    letter-spacing:.08em;
+    color:#111827;
+  }
+  .drawer-close{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    border:1px solid rgba(229,231,235,1);
+    background:#f9fafb;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+  }
+  .drawer-close:active{ transform:scale(.98); }
+
+  /* ✅ Drawer 打開時：把外面的 Modules pill 隱藏（避免抽屜底下還有一顆） */
+  body.drawer-open #menuButton{
+    opacity:0;
+    pointer-events:none;
+  }
+
+  /* ===== 子面板：手機改往下疊（抽屜內好用） ===== */
   .schematic-panel,
   .maintenance-panel,
   .scada-panel{
@@ -829,11 +866,6 @@
     min-height:520px;
   }
 }
-
-/* =========================
-   Desktop (>=901px)
-   module slot stays in topbar
-   ========================= */
 @media (min-width:901px){
   .module-dock{ justify-content:flex-start; }
   .nav-panel{ left:0; transform:none; }
@@ -910,6 +942,12 @@
 
     <!-- Modules -->
     <nav class="nav-panel" id="navPanel" aria-label="Module navigation">
+      <div class="drawer-head">
+  <div class="drawer-title">
+    <div class="t">MODULES</div>
+    <button class="drawer-close" type="button" id="drawerCloseBtn" aria-label="Close">✕</button>
+  </div>
+</div>
       <ul class="nav-list">
 
         <li>
@@ -1485,27 +1523,30 @@
   }
 
   function openPanel(){
-    panel.classList.add('open');
-    menuBtn.setAttribute('aria-expanded','true');
+  panel.classList.add('open');
+  menuBtn.setAttribute('aria-expanded','true');
 
-    // ✅ mobile drawer overlay
-    if (isMobile() && overlay){
-      overlay.classList.add('open');
-      overlay.setAttribute('aria-hidden','false');
-      document.body.style.overflow = 'hidden'; // 鎖背景捲動
-    }
+  document.body.classList.add('drawer-open'); // ✅ 加這行
+
+  if (isMobile() && overlay){
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
   }
+}
 
-  function closePanel(){
-    panel.classList.remove('open');
-    menuBtn.setAttribute('aria-expanded','false');
+function closePanel(){
+  panel.classList.remove('open');
+  menuBtn.setAttribute('aria-expanded','false');
 
-    if (overlay){
-      overlay.classList.remove('open');
-      overlay.setAttribute('aria-hidden','true');
-    }
-    document.body.style.overflow = ''; // 解鎖
+  document.body.classList.remove('drawer-open'); // ✅ 加這行
+
+  if (overlay){
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden','true');
   }
+  document.body.style.overflow = '';
+}
 
   function clearMainHideTimer(){
     if (mainHideTimer){
