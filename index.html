@@ -668,96 +668,33 @@
 .menu-text{ display:none; }
 
 @media (max-width:900px){
-  .page-jump{ display:none !important; }
-  #jumpToggle{ display:none !important; }
-  #moduleSlotTopbar{ display:contents; }
-  .topbar{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:10px;
-    padding:14px 14px 18px;
-  }
-
-  /* ✅ 解包：讓 brand / meta / quote / menu 都變成 topbar 的 item 才能用 order */
-  .top-left{ display:contents; min-height:0; }
-
-  .brand-wrap{ order:1; }
-  .top-meta{ order:2; }
-  .top-quote{ order:3; }
-   .module-dock{
-    order:4; 
-    flex-direction:column;     /* ✅ 直排：按鈕在上、面板在下 */
-    align-items:center;
-    justify-content:flex-start;
-    position:relative;         /* ✅ 保險（桌機也會用到） */
-    width:100%;
-  }
-
-  .brand-main{ font-size:17px; letter-spacing:.10em; }
-  .brand-sub{ font-size:12px; }
-
-  .top-quote{
-    width:100%;
-    text-align:left;
-    padding:4px 0 0;
-  }
-
-  .top-meta{
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    align-items:center;     /* ✅ 整組置中 */
-    gap:8px;
-  }
-
-  .top-meta .pill{
-    width:95%;
-    max-width:none;
-    justify-content:space-between;
-  }
-
-.menu-button{
-    width:95%;
-    max-width:none;
-    align-self:center;
-    justify-content:center;
-    margin-top:4px;
-  }
-
   .nav-panel{
-    position:static;           /* ✅ 關鍵：不要 absolute */
-    transform:none;
-    width:95%;
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    bottom:0 !important;            /* ✅ 直接貼到底 */
+    height:auto !important;         /* ✅ 交給 top+bottom 決定高度 */
+
+    width:min(92vw, 420px);         /* ✅ 抽屜更「長」(視覺上更大) */
     max-width:420px;
-    margin:8px auto 0;         /* ✅ 就在按鈕正下方 */
+
+    margin:0 !important;
+    transform:translateX(-110%);
+    transition:transform .22s ease;
+
+    border-radius:0 22px 22px 0;    /* ✅ 圓角大一點更像抽屜 */
+    padding:16px 12px 22px;         /* ✅ 底部 padding 加大 */
+
+    overflow:auto;                  /* ✅ 內容超出可捲 */
+    -webkit-overflow-scrolling:touch;
+
+    z-index:9100;
+    display:block;
   }
 
-  /* 手機下：子面板全部改成往下疊（你原本就有） */
-  .schematic-panel,
-  .maintenance-panel,
-  .scada-panel{
-    position:static;
-    left:auto;
-    margin-left:0;
-    width:100%;
-    min-width:0;
+  .nav-panel.open{
+    transform:translateX(0);
   }
-   /* ✅ 這段原本被你寫在巢狀 @media 裡，會失效 */
-  .iframe-wrap{
-    height:calc(100dvh - 160px);
-    min-height:520px;
-  }
-
-  .maintenance-third-panel{
-    position:static;
-    left:auto;
-    margin-left:0;
-    min-width:0;
-    margin-top:8px;
-    display:none;
-  }
-  .maintenance-group.open .maintenance-third-panel{ display:block; }
 }
 
 /* ✅ 桌機：讓 module slot 貼到 topbar 左下角 */
