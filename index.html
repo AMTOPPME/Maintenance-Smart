@@ -668,96 +668,96 @@
 .menu-text{ display:none; }
 
 @media (max-width:900px){
-
-  /* Modules 按鈕維持你原本設定即可 */
-  .menu-button{
-    width:92%;
-    max-width:520px;
-    margin:10px auto 0;
-    justify-content:center;
-  }
-
-  /* 右邊保留原畫面 + 半透明遮罩 */
-  .sheet-backdrop{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,.30);
-    backdrop-filter: blur(3px);
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .18s ease;
-    z-index:9000;
-  }
-  .sheet-backdrop.open{
-    opacity:1;
-    pointer-events:auto;
-  }
-
-  /* ✅ 左側 Slide-in Drawer */
-  .nav-panel{
-    position:fixed !important;
-    top:12px;
-    bottom:12px;
-    left:12px;
-    right:auto;
-
-    width:min(420px, 86vw);  /* 左側抽屜寬度 */
-    max-width:420px;
-
-    border-radius:18px;
-    padding:10px;
-    box-shadow:0 18px 55px rgba(15,23,42,.28);
-    overflow:auto;
-
-    transform:translateX(-110%);   /* 從左藏起來 */
-    opacity:1;                     /* drawer 以位移呈現，不用 opacity */
-    pointer-events:none;
-    transition:transform .18s ease;
-    z-index:9100;
-  }
-
-  .nav-panel.open{
-    transform:translateX(0);
-    pointer-events:auto;
-  }
-
-  /* Drawer header */
-  .nav-mobile-head{
+  .page-jump{ display:none !important; }
+  #jumpToggle{ display:none !important; }
+  #moduleSlotTopbar{ display:contents; }
+  .topbar{
     display:flex;
-    align-items:center;
-    justify-content:space-between;
+    flex-direction:column;
+    align-items:flex-start;
     gap:10px;
-    padding:6px 6px 10px;
-    border-bottom:1px solid rgba(229,231,235,1);
-    margin-bottom:10px;
-    position:sticky;
-    top:0;
-    background:rgba(255,255,255,.97);
-    backdrop-filter: blur(10px);
-    z-index:2;
-  }
-  .nav-mobile-title{
-    font-size:13px;
-    font-weight:700;
-    letter-spacing:.10em;
-    text-transform:uppercase;
-    color:#111827;
-  }
-  .nav-close{
-    border:1px solid rgba(229,231,235,1);
-    background:#fff;
-    border-radius:999px;
-    width:34px;
-    height:34px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    color:#334155;
+    padding:14px 14px 18px;
   }
 
-  /* ✅ 取消你原本 bottom sheet 的小把手 */
-  .nav-panel::before{ content:none !important; }
+  /* ✅ 解包：讓 brand / meta / quote / menu 都變成 topbar 的 item 才能用 order */
+  .top-left{ display:contents; min-height:0; }
+
+  .brand-wrap{ order:1; }
+  .top-meta{ order:2; }
+  .top-quote{ order:3; }
+   .module-dock{
+    order:4; 
+    flex-direction:column;     /* ✅ 直排：按鈕在上、面板在下 */
+    align-items:center;
+    justify-content:flex-start;
+    position:relative;         /* ✅ 保險（桌機也會用到） */
+    width:100%;
+  }
+
+  .brand-main{ font-size:17px; letter-spacing:.10em; }
+  .brand-sub{ font-size:12px; }
+
+  .top-quote{
+    width:100%;
+    text-align:left;
+    padding:4px 0 0;
+  }
+
+  .top-meta{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;     /* ✅ 整組置中 */
+    gap:8px;
+  }
+
+  .top-meta .pill{
+    width:95%;
+    max-width:none;
+    justify-content:space-between;
+  }
+
+.menu-button{
+    width:95%;
+    max-width:none;
+    align-self:center;
+    justify-content:center;
+    margin-top:4px;
+  }
+
+  .nav-panel{
+    position:static;           /* ✅ 關鍵：不要 absolute */
+    transform:none;
+    width:95%;
+    max-width:420px;
+    margin:8px auto 0;         /* ✅ 就在按鈕正下方 */
+  }
+
+  /* 手機下：子面板全部改成往下疊（你原本就有） */
+  .schematic-panel,
+  .maintenance-panel,
+  .scada-panel{
+    position:static;
+    left:auto;
+    margin-left:0;
+    width:100%;
+    min-width:0;
+  }
+   /* ✅ 這段原本被你寫在巢狀 @media 裡，會失效 */
+  .iframe-wrap{
+    height:calc(100dvh - 160px);
+    min-height:520px;
+  }
+
+  .maintenance-third-panel{
+    position:static;
+    left:auto;
+    margin-left:0;
+    min-width:0;
+    margin-top:8px;
+    display:none;
+  }
+  .maintenance-group.open .maintenance-third-panel{ display:block; }
 }
 
 /* ✅ 桌機：讓 module slot 貼到 topbar 左下角 */
@@ -837,10 +837,6 @@
 
     <!-- Modules -->
     <nav class="nav-panel" id="navPanel" aria-label="Module navigation">
-    <div class="nav-mobile-head" aria-hidden="true">
-      <div class="nav-mobile-title">Modules</div>
-      <button class="nav-close" type="button" aria-label="Close">✕</button>
-    </div>
       <ul class="nav-list">
 
         <li>
@@ -1247,7 +1243,6 @@
         </li>
       </ul>
     </nav>
-    <div class="sheet-backdrop" id="sheetBackdrop" aria-hidden="true"></div>
 </div>
     <div class="workspace">
       <main class="main">
@@ -1403,42 +1398,57 @@
   document.addEventListener('DOMContentLoaded', ()=> setTimeout(applyStyleToFront, 30));
 })();
   
-(function(){
-  const menuBtn  = document.getElementById('menuButton');
-  const panel    = document.getElementById('navPanel');
-  const backdrop = document.getElementById('sheetBackdrop');
-  const closeBtn = panel ? panel.querySelector('.nav-close') : null;
-  if (!menuBtn || !panel) return;
+  // Modules 面板開關
+  (function(){
+    const menuBtn = document.getElementById('menuButton');
+    const panel   = document.getElementById('navPanel');
+    if (!menuBtn || !panel) return;
 
-  function openPanel(){
-    panel.classList.add('open');
-    menuBtn.setAttribute('aria-expanded', 'true');
-    backdrop && backdrop.classList.add('open');
-  }
-  function closePanel(){
-    panel.classList.remove('open');
-    menuBtn.setAttribute('aria-expanded', 'false');
-    backdrop && backdrop.classList.remove('open');
-  }
-  function togglePanel(){
-    panel.classList.contains('open') ? closePanel() : openPanel();
-  }
+    let mainHideTimer = null;
 
-  menuBtn.addEventListener('click', togglePanel);
+    function openPanel(){
+      panel.classList.add('open');
+      menuBtn.setAttribute('aria-expanded', 'true');
+    }
+    function closePanel(){
+      panel.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+    function clearMainHideTimer(){
+      if (mainHideTimer){
+        clearTimeout(mainHideTimer);
+        mainHideTimer = null;
+      }
+    }
+    function scheduleMainHide(){
+      clearMainHideTimer();
+      mainHideTimer = setTimeout(closePanel, 2000);
+    }
+    function togglePanel(){
+      panel.classList.contains('open') ? closePanel() : openPanel();
+    }
 
-  // ✅ 點遮罩關掉
-  backdrop && backdrop.addEventListener('click', closePanel);
+    menuBtn.addEventListener('click', togglePanel);
 
-  // ✅ 點 X 關掉
-  closeBtn && closeBtn.addEventListener('click', closePanel);
+    document.addEventListener('click', (e)=>{
+      if (!panel.classList.contains('open')) return;
+      if (!panel.contains(e.target) && !menuBtn.contains(e.target)) closePanel();
+    });
 
-  // ✅ ESC 關掉（手機可有可無）
-  document.addEventListener('keydown', (e)=>{
-    if (e.key === 'Escape') closePanel();
-  });
+    if (!isTouchDevice){
+      menuBtn.addEventListener('mouseenter', ()=>{ clearMainHideTimer(); openPanel(); });
+      menuBtn.addEventListener('mouseleave', (e)=>{
+        if (e.relatedTarget && panel.contains(e.relatedTarget)) return;
+        scheduleMainHide();
+      });
 
-  // 原本你桌機 hover 的邏輯可以保留（手機不會跑）
-})();
+      panel.addEventListener('mouseenter', clearMainHideTimer);
+      panel.addEventListener('mouseleave', (e)=>{
+        if (e.relatedTarget && menuBtn.contains(e.relatedTarget)) return;
+        scheduleMainHide();
+      });
+    }
+  })();
 
   // ✅ 切換模組 + Line Schematic / Maintenance / SCADA（你這段完整 logic）
   (function(){
