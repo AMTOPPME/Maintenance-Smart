@@ -783,7 +783,74 @@
 }
 
 }
+/* =========================
+   Mobile Drawer (Modules)
+   ========================= */
+#drawerOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  backdrop-filter: blur(2px);
+  z-index: 9000;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
 
+#drawerOverlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* ✅ 手機：navPanel 變抽屜 */
+@media (max-width:900px){
+  .nav-panel{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    height:100dvh;
+    width:min(86vw, 360px);
+    max-width:360px;
+
+    margin:0 !important;
+    transform:translateX(-110%);
+    transition:transform .22s ease;
+
+    border-radius:0 18px 18px 0;
+    padding:14px 10px 16px;
+    overflow:auto;               /* 內容可滾 */
+    z-index: 9100;               /* 要在 overlay 上面 */
+    display:block;               /* 讓它常駐，靠 transform 控制開關 */
+  }
+
+  .nav-panel.open{
+    transform:translateX(0);
+  }
+
+  /* 手機：menu 按鈕不要 95% 寬（改成像 drawer launcher） */
+  .menu-button{
+    width:auto !important;
+    max-width:none !important;
+    align-self:flex-start;
+    padding:10px 14px;
+  }
+
+  /* 手機：子面板仍維持你原本「往下疊」的設計（不用改） */
+  .schematic-panel,
+  .maintenance-panel,
+  .scada-panel{
+    position:static !important;
+    width:100% !important;
+    margin:8px 0 0 !important;
+    border-radius:14px;
+  }
+
+  .maintenance-third-panel{
+    position:static !important;
+    width:100% !important;
+    margin:8px 0 0 !important;
+  }
+}
 
   </style>
 </head>
@@ -1398,57 +1465,119 @@
   document.addEventListener('DOMContentLoaded', ()=> setTimeout(applyStyleToFront, 30));
 })();
   
-  // Modules 面板開關
-  (function(){
-    const menuBtn = document.getElementById('menuButton');
-    const panel   = document.getElementById('navPanel');
-    if (!menuBtn || !panel) return;
+// Modules 面板開關（Desktop: hover/dropdown, Mobile: left drawer）
+(function(){
+  const menuBtn = document.getElementById('menuButton');
+  const panel   = document.getElementById('navPanel');
+  const overlay = document.getElementById('drawerOverlay');
+  if (!menuBtn || !panel) return;
 
-    let mainHideTimer = null;
+  let mainHideTimer = null;
 
-    function openPanel(){
-      panel.classList.add('open');
-      menuBtn.setAttribute('aria-expanded', 'true');
+  function isMobile(){
+    return window.matchMedia('(max-width: 900px)').matches;
+  }
+
+  function openPanel(){
+    panel.classList.add('open');
+    menuBtn.setAttribute('aria-expanded','true');
+
+    // ✅ mobile drawer overlay
+    if (isMobile() && overlay){
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden'; // 鎖背景捲動
     }
-    function closePanel(){
-      panel.classList.remove('open');
-      menuBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  function closePanel(){
+    panel.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded','false');
+
+    if (overlay){
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden','true');
     }
-    function clearMainHideTimer(){
-      if (mainHideTimer){
-        clearTimeout(mainHideTimer);
-        mainHideTimer = null;
-      }
+    document.body.style.overflow = ''; // 解鎖
+  }
+
+  function clearMainHideTimer(){
+    if (mainHideTimer){
+      clearTimeout(mainHideTimer);
+      mainHideTimer = null;
     }
-    function scheduleMainHide(){
+  }
+
+  function scheduleMainHide(){
+    clearMainHideTimer();
+    mainHideTimer = setTimeout(closePanel, 2000);
+  }
+
+  function togglePanel(){
+    panel.classList.contains('open') ? closePanel() : openPanel();
+  }
+
+  menuBtn.addEventListener('click', (e)=>{
+    // ✅ mobile drawer：純 toggle
+    if (isMobile()){
+      e.preventDefault();
+      togglePanel();
+      return;
+    }
+    // 桌機：維持原本 click toggle（你原本就有）
+    togglePanel();
+  });
+
+  // 點 overlay 關閉（mobile）
+  if (overlay){
+    overlay.addEventListener('click', closePanel);
+  }
+
+  // 點外面關閉（桌機 dropdown 用）
+  document.addEventListener('click', (e)=>{
+    if (!panel.classList.contains('open')) return;
+    if (isMobile()){
+      // mobile 由 overlay 管
+      return;
+    }
+    if (!panel.contains(e.target) && !menuBtn.contains(e.target)) closePanel();
+  });
+
+  // Desktop hover 行為維持（mobile 不啟用）
+  if (!isTouchDevice){
+    menuBtn.addEventListener('mouseenter', ()=>{
+      if (isMobile()) return;
       clearMainHideTimer();
-      mainHideTimer = setTimeout(closePanel, 2000);
-    }
-    function togglePanel(){
-      panel.classList.contains('open') ? closePanel() : openPanel();
-    }
-
-    menuBtn.addEventListener('click', togglePanel);
-
-    document.addEventListener('click', (e)=>{
-      if (!panel.classList.contains('open')) return;
-      if (!panel.contains(e.target) && !menuBtn.contains(e.target)) closePanel();
+      openPanel();
+    });
+    menuBtn.addEventListener('mouseleave', (e)=>{
+      if (isMobile()) return;
+      if (e.relatedTarget && panel.contains(e.relatedTarget)) return;
+      scheduleMainHide();
     });
 
-    if (!isTouchDevice){
-      menuBtn.addEventListener('mouseenter', ()=>{ clearMainHideTimer(); openPanel(); });
-      menuBtn.addEventListener('mouseleave', (e)=>{
-        if (e.relatedTarget && panel.contains(e.relatedTarget)) return;
-        scheduleMainHide();
-      });
+    panel.addEventListener('mouseenter', ()=>{
+      if (isMobile()) return;
+      clearMainHideTimer();
+    });
+    panel.addEventListener('mouseleave', (e)=>{
+      if (isMobile()) return;
+      if (e.relatedTarget && menuBtn.contains(e.relatedTarget)) return;
+      scheduleMainHide();
+    });
+  }
 
-      panel.addEventListener('mouseenter', clearMainHideTimer);
-      panel.addEventListener('mouseleave', (e)=>{
-        if (e.relatedTarget && menuBtn.contains(e.relatedTarget)) return;
-        scheduleMainHide();
-      });
+  // ✅ resize：從 mobile 切回桌機時，確保狀態乾淨
+  window.addEventListener('resize', ()=>{
+    if (!isMobile()){
+      if (overlay){
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden','true');
+      }
+      document.body.style.overflow = '';
     }
-  })();
+  });
+})();
 
   // ✅ 切換模組 + Line Schematic / Maintenance / SCADA（你這段完整 logic）
   (function(){
@@ -1619,11 +1748,17 @@ const schematicLineTitle = document.querySelector('.line-title');
   scadaPanel       && scadaPanel.classList.remove('open');
 }
 
-  function closeModules(){
-    if (panel) panel.classList.remove('open');
-    if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-    closeAllSubPanels();
+ function closeModules(){
+  if (panel) panel.classList.remove('open');
+  if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+  const overlay = document.getElementById('drawerOverlay');
+  if (overlay){
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden','true');
   }
+  document.body.style.overflow = '';
+  closeAllSubPanels();
+}
 
   function resetSchematicSelection(){
   currentSchematicLine = null;
@@ -2383,5 +2518,6 @@ if (window.innerWidth <= 900){
 
 
 </script>
+<div id="drawerOverlay" aria-hidden="true"></div>
 </body> 
 </html>
