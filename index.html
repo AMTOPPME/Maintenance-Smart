@@ -718,15 +718,93 @@
     justify-content:space-between;
   }
 
-  /* ✅ 手機：Menu 變成 icon launcher（44x44） */
-  @media (max-width:900px){
+/* =========================
+   Drawer Overlay (Modules)
+   ========================= */
+#drawerOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  backdrop-filter: blur(2px);
+  z-index:9000;
 
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+#drawerOverlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* =========================
+   Mobile (<=900px)
+   Modules button = pill
+   Nav panel = left drawer
+   ========================= */
+@media (max-width:900px){
+
+  /* ===== 基本隱藏/版面 ===== */
+  .page-jump{ display:none !important; }
+  #jumpToggle{ display:none !important; }
+  #moduleSlotTopbar{ display:contents; }
+
+  .topbar{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+    padding:14px 14px 18px;
+  }
+
+  /* ✅ 解包：讓 brand / meta / quote / menu 都能用 order 排序 */
+  .top-left{ display:contents; min-height:0; }
+
+  /* ===== Modules 按鈕位置：放最上面（App 感） ===== */
+  .module-dock{
+    order:0;
+    width:auto;
+    align-self:flex-start;
+    margin-bottom:8px;
+
+    position:relative;
+    z-index:9200; /* ✅ 比 overlay(9000) 高，避免按鈕被蓋住 */
+  }
+
+  .brand-wrap{ order:1; }
+  .top-meta{ order:2; }
+  .top-quote{ order:3; }
+
+  .brand-main{ font-size:17px; letter-spacing:.10em; }
+  .brand-sub{ font-size:12px; }
+
+  .top-quote{
+    width:100%;
+    text-align:left;
+    padding:4px 0 0;
+  }
+
+  .top-meta{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+
+  .top-meta .pill{
+    width:95%;
+    max-width:none;
+    justify-content:space-between;
+  }
+
+  /* ===== Menu button：手機改 pill ===== */
   .menu-button{
     width:auto !important;
     height:42px !important;
     padding:0 18px !important;
 
-    border-radius:999px !important;
+    border-radius:999px !important; /* ✅ pill */
     display:flex;
     align-items:center;
     gap:8px;
@@ -744,16 +822,16 @@
       inset 0 1px 0 rgba(255,255,255,.4);
 
     justify-content:center;
-
     transition:all .18s ease;
+
+    position:relative;
+    z-index:9200; /* ✅ 再保險一次 */
   }
 
-  /* Hover（手機其實少用，但平板有幫助） */
-  .menu-button:hover{
-    background:#1d4ed8;
-  }
+  /* Hover（平板/桌機模式有用） */
+  .menu-button:hover{ background:#1d4ed8; }
 
-  /* 點擊按壓效果 */
+  /* 按壓 */
   .menu-button:active{
     transform:translateY(1px) scale(.98);
     box-shadow:
@@ -761,18 +839,13 @@
       inset 0 1px 0 rgba(255,255,255,.4);
   }
 
-  /* Drawer 開啟時（JS 會加 aria-expanded="true"） */
-  .menu-button[aria-expanded="true"]{
-    background:#1e40af;
-  }
+  /* Drawer 開啟狀態：JS 會改 aria-expanded="true" */
+  .menu-button[aria-expanded="true"]{ background:#1e40af; }
 
   /* 文字一定顯示 */
-  .menu-text{
-    display:inline !important;
-  }
+  .menu-text{ display:inline !important; }
 
-}
-  /* ✅ Drawer：貼到底 + 更寬 */
+  /* ===== Drawer：左側抽屜 ===== */
   .nav-panel{
     position:fixed !important;
     top:0 !important;
@@ -793,12 +866,12 @@
     overflow:auto;
     -webkit-overflow-scrolling:touch;
 
-    z-index:9100;
-    display:block;
+    z-index:9100;  /* ✅ 在 overlay 上 */
+    display:block; /* 用 transform 控制開關 */
   }
   .nav-panel.open{ transform:translateX(0); }
 
-  /* 子面板：手機往下疊 */
+  /* ===== 子面板：手機改往下疊（抽屜內很順） ===== */
   .schematic-panel,
   .maintenance-panel,
   .scada-panel{
@@ -819,32 +892,37 @@
   }
   .maintenance-group.open .maintenance-third-panel{ display:block; }
 
+  /* ===== iframe 高度 ===== */
   .iframe-wrap{
     height:calc(100dvh - 160px);
     min-height:520px;
   }
 }
 
-/* ✅ 桌機：讓 module slot 貼到 topbar 左下角 */
+/* =========================
+   Desktop (>=901px)
+   module slot stays in topbar
+   ========================= */
 @media (min-width:901px){
   .module-dock{ justify-content:flex-start; }
   .nav-panel{ left:0; transform:none; }
-  .top-left{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  min-height: 140px;            /* 高度決定它能多往下 */
-  justify-content: space-between;
-  padding-bottom: 10px;         /* 底部留一點呼吸 */
-}
 
-/* ✅ slot 推到底 + 再往下微調 */
-#moduleSlotTopbar{
-  margin-top:auto;            /* ✅ 真正推到底 */
-  padding-top:10px;           /* ✅ 想更下面：10→14→18 */
-  position:relative;
-  z-index:5100;
-  overflow:visible;
+  .top-left{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    min-height:140px;
+    justify-content:space-between;
+    padding-bottom:10px;
+  }
+
+  #moduleSlotTopbar{
+    margin-top:auto;
+    padding-top:10px;
+    position:relative;
+    z-index:5100;
+    overflow:visible;
+  }
 }
 
 }
