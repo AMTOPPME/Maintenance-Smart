@@ -375,8 +375,6 @@
     const frame      = document.getElementById('pdfFrame');
     const openNewTab = document.getElementById('openNewTab');
 
-    if (titleEl) titleEl.textContent = `Training – ${docInfo.title}`;
-    if (subEl)   subEl.textContent   = docInfo.desc;
 
     // ✅ iPad / iPadOS 偵測（含 iPad 開桌面版：MacIntel + touch）
     function isIPadOS(){
