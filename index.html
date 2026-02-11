@@ -588,6 +588,44 @@
   border-top:none;
   margin-top:4px;
 }
+    /* ===== Training accordion groups ===== */
+.training-group{ margin-top:10px; }
+
+.training-group-btn{
+  width:100%;
+  border:1px solid rgba(229,231,235,1);
+  background:linear-gradient(to right, rgba(37,99,235,.08), transparent);
+  border-left:3px solid rgba(37,99,235,.85);
+  border-radius:12px;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  color:#1e40af;
+  font-weight:650;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  transition:transform .12s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.training-group-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(15,23,42,.08);
+}
+
+.tg-chevron{
+  opacity:.7;
+  transition:transform .18s ease;
+}
+
+.training-group-body{
+  display:none;
+  padding-top:10px;
+}
+
+.training-group.open .training-group-body{ display:block; }
+.training-group.open .tg-chevron{ transform:rotate(180deg); }
     /* ===== Maintenance: 2nd level pill + 3rd level pop-out ===== */
     .nav-group-maintenance{ position:relative; }
     .maintenance-group{ position:relative; }
@@ -1080,64 +1118,97 @@
     <span class="nav-chevron" aria-hidden="true">▾</span>
   </button>
 
-  <!-- 用 maintenance-panel 直接復用樣式（不另外加 CSS） -->
-  <div class="maintenance-panel" id="trainingPanel" aria-label="Training selector">
-    <div class="maintenance-title">Training</div>
+<div class="maintenance-panel" id="trainingPanel" aria-label="Training selector">
+  <div class="maintenance-title">Training</div>
 
-    <div class="maintenance-sec-row">
+  <!-- MICROSOFT OFFICE -->
+  <div class="training-group open">
+    <button class="training-group-btn" type="button" aria-expanded="true">
+      <span class="tg-label">MICROSOFT OFFICE</span>
+      <span class="tg-chevron" aria-hidden="true">▾</span>
+    </button>
 
-  <div class="training-group-title">MICROSOFT OFFICE</div>
+    <div class="training-group-body">
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn training-sec-btn" type="button"
+          data-train-key="WORD" data-label="MICROSOFT OFFICE - WORD">
+          <span class="code">WORD</span>
+        </button>
 
-  <button class="maintenance-sec-btn training-sec-btn" type="button"
-    data-train-key="MICROSOFT_OFFICE_WORD" data-label="MICROSOFT OFFICE - WORD">
-    <span class="code">WORD</span>
-  </button>
+        <button class="maintenance-sec-btn training-sec-btn" type="button"
+          data-train-key="EXCEL" data-label="EXCEL">
+          <span class="code">EXCEL</span>
+        </button>
 
-  <button class="maintenance-sec-btn training-sec-btn" type="button"
-    data-train-key="MICROSOFT_OFFICE_EXCEL" data-label="EXCEL">
-    <span class="code">EXCEL</span>
-  </button>
-
-  <button class="maintenance-sec-btn training-sec-btn" type="button"
-    data-train-key="MICROSOFT_OFFICE_POWERPOINT" data-label="POWERPOINT">
-    <span class="code">POWERPOINT</span>
-  </button>
-
-
-  <div class="training-group-title">PLC</div>
-
-  <button class="maintenance-sec-btn training-sec-btn" type="button"
-    data-train-key="PLC_MITSUBISHI" data-label="PLC - MITSUBISHI">
-    <span class="code">MITSUBISHI</span>
-  </button>
-
-  <button class="maintenance-sec-btn training-sec-btn" type="button"
-    data-train-key="ALLEN_BRADLEY" data-label="ALEN-BRADIEY">
-    <span class="code">ALLEN-BRADIEY</span>
-  </button>
-
-  <button class="maintenance-sec-btn training-sec-btn" type="button"
-    data-train-key="SIEMENS" data-label="SIEMENS">
-    <span class="code">SIEMENS</span>
-  </button>
-
-
-  <div class="training-group-title">DC DRIVE</div>
-
-  <button class="maintenance-sec-btn training-sec-btn" type="button"
-    data-train-key="DC_DRIVE_BARDAC_DRIVE" data-label="DC Drive - Bardac Drive">
-    <span class="code">Bardac Drive</span>
-  </button>
-
-
-  <div class="training-group-title">COMPUTER</div>
-
-  <button class="maintenance-sec-btn training-sec-btn" type="button"
-    data-train-key="TROUBLESHOOTING_COMPUTER" data-label="Troubleshooting computer">
-    <span class="code">Troubleshooting computer</span>
-  </button>
-</div>
+        <button class="maintenance-sec-btn training-sec-btn" type="button"
+          data-train-key="POWERPOINT" data-label="POWERPOINT">
+          <span class="code">POWERPOINT</span>
+        </button>
+      </div>
+    </div>
   </div>
+
+  <!-- PLC -->
+  <div class="training-group">
+    <button class="training-group-btn" type="button" aria-expanded="false">
+      <span class="tg-label">PLC</span>
+      <span class="tg-chevron" aria-hidden="true">▾</span>
+    </button>
+
+    <div class="training-group-body">
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn training-sec-btn" type="button"
+          data-train-key="PLC_MITSUBISHI" data-label="PLC - MITSUBISHI">
+          <span class="code">MITSUBISHI</span>
+        </button>
+
+        <button class="maintenance-sec-btn training-sec-btn" type="button"
+          data-train-key="ALLEN_BRADLEY" data-label="ALLEN-BRADLEY">
+          <span class="code">ALLEN-BRADLEY</span>
+        </button>
+
+        <button class="maintenance-sec-btn training-sec-btn" type="button"
+          data-train-key="SIEMENS" data-label="SIEMENS">
+          <span class="code">SIEMENS</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DC DRIVE -->
+  <div class="training-group">
+    <button class="training-group-btn" type="button" aria-expanded="false">
+      <span class="tg-label">DC DRIVE</span>
+      <span class="tg-chevron" aria-hidden="true">▾</span>
+    </button>
+
+    <div class="training-group-body">
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn training-sec-btn" type="button"
+          data-train-key="DC_DRIVE_BARDAC" data-label="DC Drive - Bardac Drive">
+          <span class="code">Bardac Drive</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPUTER -->
+  <div class="training-group">
+    <button class="training-group-btn" type="button" aria-expanded="false">
+      <span class="tg-label">COMPUTER</span>
+      <span class="tg-chevron" aria-hidden="true">▾</span>
+    </button>
+
+    <div class="training-group-body">
+      <div class="maintenance-sec-row">
+        <button class="maintenance-sec-btn training-sec-btn" type="button"
+          data-train-key="TROUBLESHOOTING_COMPUTER" data-label="Troubleshooting computer">
+          <span class="code">Troubleshooting computer</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 </li>
         
         <!-- SCADA PC -->
@@ -1592,7 +1663,37 @@ const schematicLineTitle = document.querySelector('.line-title');
     if (activeGroup !== 'training')    resetTrainingSelection();
     currentParent = activeGroup;
   }
-  
+
+    // ===== Training accordion toggle =====
+(function(){
+  const trainingPanel = document.getElementById('trainingPanel');
+  if (!trainingPanel) return;
+
+  trainingPanel.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.training-group-btn');
+    if (!btn) return;
+
+    const group = btn.closest('.training-group');
+    if (!group) return;
+
+    const isOpen = group.classList.contains('open');
+
+    // 想要一次只開一個：先關其他（像 accordion）
+    trainingPanel.querySelectorAll('.training-group').forEach(g=>{
+      g.classList.remove('open');
+      const b = g.querySelector('.training-group-btn');
+      if (b) b.setAttribute('aria-expanded','false');
+    });
+
+    // 再決定要不要開回來
+    if (!isOpen){
+      group.classList.add('open');
+      btn.setAttribute('aria-expanded','true');
+    }else{
+      btn.setAttribute('aria-expanded','false');
+    }
+  });
+})();
 
   function collapseParent(which){
     if (which === 'schematic'){
