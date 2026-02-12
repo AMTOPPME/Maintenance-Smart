@@ -1801,14 +1801,14 @@ function closeModules(){
   if (panel) panel.classList.remove('open');
   if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
 
-  // ✅ 這行一定要有，不然按鈕會永久被你那段 CSS 藏起來
-  document.body.classList.remove('drawer-open');
+  document.body.classList.remove('drawer-open'); // ✅ 关键：讓 menuButton 回來
 
   const overlay = document.getElementById('drawerOverlay');
   if (overlay){
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden','true');
   }
+
   document.body.style.overflow = '';
   closeAllSubPanels();
 }
@@ -2126,9 +2126,7 @@ if (!isTouchDevice){
       swapTo(src);
       setModule(btn.dataset.title || 'Module', btn.dataset.sub || '');
 
-      closeAllSubPanels();
-      if (panel) panel.classList.remove('open');
-      if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+      closeModules();  // ✅ 一次把 overlay + drawer-open 一起收乾淨
     });
   });
 
