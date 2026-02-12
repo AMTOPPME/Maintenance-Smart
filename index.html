@@ -769,27 +769,27 @@
   /* 文字一定顯示 */
   .menu-text{ display:inline !important; }
 
-  /* ===== Drawer：左側抽屜（清楚，不要霧化自己） ===== */
   .nav-panel{
   position:fixed !important;
   top:0 !important;
   left:0 !important;
   bottom:0 !important;
 
-  height:100dvh !important;
+  /* ❌ 刪掉這行：height:100dvh !important; */
 
-  width:calc(100vw - 48px);  /* ⭐ 右邊留空 */
-  max-width:420px;           /* ⭐ 桌機限制 */
+  width:calc(100vw - 48px);
+  max-width:420px;
 
   margin:0 !important;
 
   transform:translateX(-100%);
   transition:transform .25s cubic-bezier(.4,0,.2,1);
 
-  border-top-right-radius:18px;   /* ⭐ 抽屜感 */
+  border-top-right-radius:18px;
   border-bottom-right-radius:18px;
 
-  padding:16px 18px 28px;
+  /* ✅ 這行是關鍵：底部自動吃安全區，不會「空一大塊」 */
+  padding:16px 18px calc(14px + env(safe-area-inset-bottom));
 
   background:#fff !important;
 
@@ -799,7 +799,6 @@
   z-index:9100;
   display:block;
 }
-
 .nav-panel.open{
   transform:translateX(0);
 }
@@ -881,7 +880,6 @@
   }
 }
 
-}
   </style>
 </head>
 
