@@ -774,7 +774,10 @@
   top:0 !important;
   left:0 !important;
   bottom:0 !important;
-
+  max-height: none !important;
+    height: 100dvh !important;     /* ✅ 你之前拿掉也行，但這個最保險 */
+    top: 0 !important;
+    bottom: auto !important;       /* 用 height 控制就不要 bottom */
   /* ❌ 刪掉這行：height:100dvh !important; */
 
   width:calc(100vw - 48px);
