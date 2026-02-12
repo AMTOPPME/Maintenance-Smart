@@ -1795,9 +1795,13 @@ const schematicLineTitle = document.querySelector('.line-title');
   scadaPanel       && scadaPanel.classList.remove('open');
 }
 
- function closeModules(){
+function closeModules(){
   if (panel) panel.classList.remove('open');
   if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
+
+  // ✅ 這行一定要有，不然按鈕會永久被你那段 CSS 藏起來
+  document.body.classList.remove('drawer-open');
+
   const overlay = document.getElementById('drawerOverlay');
   if (overlay){
     overlay.classList.remove('open');
