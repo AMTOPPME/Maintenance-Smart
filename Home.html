@@ -50,7 +50,7 @@ body::before{
   content:"";
   position:fixed;
   inset:0;
-  z-index:0;
+  z-index:-1;                 /* ✅ 最穩：永遠在最底 */
   background-image: var(--bgimg);
   background-size: cover;
   background-position: center;
@@ -311,13 +311,12 @@ body::before{
       $("fxLabel").textContent = fxOn ? "FX: ON" : "FX: OFF";
       toast("FX", fxOn ? "Effects enabled" : "Effects disabled");
     }
-
+    function themeColors(){
+      return ["#2563eb","#6366f1","#60a5fa","#a78bfa","#22c55e"];
+    }
     // ---------- confetti ----------
     const wrap = $("confettiWrap");
     let lastBurst = 0;
-
-
-
     function burstConfetti(x, y){
       if (!fxOn) return;
 
@@ -359,20 +358,24 @@ body::before{
       if (next) toast("Help", "Shortcuts shown");
     }
     // ✅ Time-based background (morning/noon/night) for ALL styles
-function applyTimeBackground(){
-  const h = new Date().getHours();
+(function(){
+  function applyTimeBackground(){
+    const h = new Date().getHours();
 
-  // 你放在 assets/ 的三張圖（檔名可自行改）
-  const morning = "assets/bg_morning.png";
-  const noon    = "assets/bg_noon.png";
-  const night   = "assets/bg_night.png";
+    const morning = new URL('assets/bg_morning.png', location.href).href;
+    const noon    = new URL('assets/bg_noon.png', location.href).href;
+    const night   = new URL('assets/bg_night.png', location.href).href;
+    
+    let src = morning;                    // 05:00–11:59
+    if (h >= 12 && h < 18) src = noon;    // 12:00–17:59
+    else if (h >= 18 || h < 5) src = night; // 18:00–04:59
+    console.log("bg:", src);
+    document.documentElement.style.setProperty('--bgimg', `url("${src}")`);
+  }
 
-  let src = morning;                 // 05:00–11:59
-  if (h >= 12 && h < 18) src = noon; // 12:00–17:59
-  else if (h >= 18 || h < 5) src = night; // 18:00–04:59
-
-  document.documentElement.style.setProperty("--bgimg", `url("${src}")`);
-}
+  applyTimeBackground();
+  setInterval(applyTimeBackground, 60 * 1000);
+})();
     // ---------- ✅ C: time hint ----------
     function updateTimeHint(){
       const h = new Date().getHours();
@@ -437,7 +440,6 @@ function applyTimeBackground(){
     // init
     setFx(fxOn);
     updateTimeHint();
-    applyTimeBackground();   // ✅ 新增這行
     toast("MO", "Inteplast Quality Policy loaded");
     // 點 help 卡片外面就關閉
     document.addEventListener("pointerdown", (e) => {
@@ -448,21 +450,6 @@ function applyTimeBackground(){
       if (!box.contains(e.target)) toggleHelp(false);
     }, { capture: true });
     (function(){
-  function applyTimeBackground(){
-    const h = new Date().getHours();
-
-    // ✅ 你 repo 實際檔名是 bg_morning.png / bg_noon.png / bg_night.png
-    // 用 new URL 讓 GitHub Pages / 子資料夾路徑也不會翻車
-    const morning = new URL('assets/bg_morning.png', location.href).href;
-    const noon    = new URL('assets/bg_noon.png', location.href).href;
-    const night   = new URL('assets/bg_night.png', location.href).href;
-
-    let src = morning;                  // 05:00–11:59
-    if (h >= 12 && h < 18) src = noon;  // 12:00–17:59
-    else if (h >= 18 || h < 5) src = night; // 18:00–04:59
-
-    document.documentElement.style.setProperty('--bgimg', `url("${src}")`);
-  }
 
   // 初次套用 + 每分鐘刷新（跨時段自動換）
   applyTimeBackground();
