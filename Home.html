@@ -23,8 +23,8 @@
       --shadow: 0 12px 36px rgba(0,0,0,.12);
       --radius: 18px;
       --hint: #6b7280;
-      --bgimg: none;           /* ✅ 由 JS 依時間注入 */
-      --bgimg-opacity: .55;    /* ✅ 背景圖透明度可調 */
+      --bgimg: none;           /* JS 注入 */
+      --bgimg-opacity: .55;    /* 可調：0.35~0.75 */
     }
 
     html[data-style="panther"]{
@@ -66,9 +66,12 @@ body::before{
   background-repeat: no-repeat;
   opacity: var(--bgimg-opacity);
   filter: saturate(1.05) contrast(1.02);
-  transform: scale(1.03); /* 防止邊緣露白 */
+  transform: scale(1.03);
   pointer-events:none;
 }
+
+/* 你原本 page/topbar 需要在背景之上 */
+.page{ position:relative; z-index:2; }
 
 /* ✅ 確保你的內容在背景圖上面 */
 .confetti-wrap{ z-index:20; }
@@ -510,7 +513,27 @@ function applyTimeBackground(){
       const box = $("helpBox");
       if (!box.contains(e.target)) toggleHelp(false);
     }, { capture: true });
+    (function(){
+  function applyTimeBackground(){
+    const h = new Date().getHours();
 
+    // ✅ 你 repo 實際檔名是 bg_morning.png / bg_noon.png / bg_night.png
+    // 用 new URL 讓 GitHub Pages / 子資料夾路徑也不會翻車
+    const morning = new URL('assets/bg_morning.png', location.href).href;
+    const noon    = new URL('assets/bg_noon.png', location.href).href;
+    const night   = new URL('assets/bg_night.png', location.href).href;
+
+    let src = morning;                  // 05:00–11:59
+    if (h >= 12 && h < 18) src = noon;  // 12:00–17:59
+    else if (h >= 18 || h < 5) src = night; // 18:00–04:59
+
+    document.documentElement.style.setProperty('--bgimg', `url("${src}")`);
+  }
+
+  // 初次套用 + 每分鐘刷新（跨時段自動換）
+  applyTimeBackground();
+  setInterval(applyTimeBackground, 60 * 1000);
+})();
   </script>
 </body>
 </html>
