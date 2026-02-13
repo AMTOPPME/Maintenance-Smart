@@ -23,6 +23,8 @@
       --shadow: 0 12px 36px rgba(0,0,0,.12);
       --radius: 18px;
       --hint: #6b7280;
+      --bgimg: none;           /* ✅ 由 JS 依時間注入 */
+      --bgimg-opacity: .55;    /* ✅ 背景圖透明度可調 */
     }
 
     html[data-style="panther"]{
@@ -34,21 +36,48 @@
       --hint:#1e3a8a;
     }
 
-    body{
-      margin:0;
-      background:
-        radial-gradient(circle at top, rgba(129,140,248,0.12), transparent),
-        var(--bg);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      height:100vh;
-      padding:0;
-      overflow:hidden;
-      position:relative;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-      color:var(--text);
-    }
+
+/* body 保留素色與 radial，另外用 ::before 疊時間背景圖 */
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at top, rgba(129,140,248,0.12), transparent),
+    var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+  padding:0;
+  overflow:hidden;
+  position:relative;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  color:var(--text);
+}
+
+/* ✅ 疊早/中/晚背景圖（所有風格都會用） */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background-image: var(--bgimg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: var(--bgimg-opacity);
+  filter: saturate(1.05) contrast(1.02);
+  transform: scale(1.03); /* 防止邊緣露白 */
+  pointer-events:none;
+}
+
+/* ✅ 確保你的內容在背景圖上面 */
+.confetti-wrap{ z-index:20; }
+.side-panther, .side-hangyodon{ z-index:1; }
+.home-image{ z-index:2; }
+.toast{ z-index:30; }
+.fab{ z-index:25; }
+.time-hint{ z-index:24; }
+.help{ z-index:9999; }
 
     html[data-style="panther"] body{
       background:
@@ -398,7 +427,21 @@
       document.body.setAttribute("data-help", next ? "1" : "0");
       if (next) toast("Help", "Shortcuts shown");
     }
+    // ✅ Time-based background (morning/noon/night) for ALL styles
+function applyTimeBackground(){
+  const h = new Date().getHours();
 
+  // 你放在 assets/ 的三張圖（檔名可自行改）
+  const morning = "assets/bg_morning.png";
+  const noon    = "assets/bg_noon.png";
+  const night   = "assets/bg_night.png";
+
+  let src = morning;                 // 05:00–11:59
+  if (h >= 12 && h < 18) src = noon; // 12:00–17:59
+  else if (h >= 18 || h < 5) src = night; // 18:00–04:59
+
+  document.documentElement.style.setProperty("--bgimg", `url("${src}")`);
+}
     // ---------- ✅ C: time hint ----------
     function updateTimeHint(){
       const h = new Date().getHours();
@@ -457,6 +500,7 @@
     // init
     setFx(fxOn);
     updateTimeHint();
+    applyTimeBackground();   // ✅ 新增這行
     toast("MO", "Home loaded");
     // 點 help 卡片外面就關閉
     document.addEventListener("pointerdown", (e) => {
