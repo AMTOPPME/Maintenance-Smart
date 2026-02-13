@@ -27,15 +27,6 @@
       --bgimg-opacity: .55;    /* 可調：0.35~0.75 */
     }
 
-    html[data-style="panther"]{
-      --bg:#ffe4ec;
-      --hint:#7c2d12;
-    }
-    html[data-style="hangyodon"]{
-      --bg:#dbeafe;
-      --hint:#1e3a8a;
-    }
-
 
 /* body 保留素色與 radial，另外用 ::before 疊時間背景圖 */
 body{
@@ -75,66 +66,13 @@ body::before{
 
 /* ✅ 確保你的內容在背景圖上面 */
 .confetti-wrap{ z-index:20; }
-.side-panther, .side-hangyodon{ z-index:1; }
 .home-image{ z-index:2; }
 .toast{ z-index:30; }
 .fab{ z-index:25; }
 .time-hint{ z-index:24; }
 .help{ z-index:9999; }
 
-    html[data-style="panther"] body{
-      background:
-        radial-gradient(circle at top,rgba(244,114,182,0.28),transparent),
-        var(--bg);
-    }
-    html[data-style="hangyodon"] body{
-      background:
-        radial-gradient(circle at top,rgba(56,189,248,0.35),transparent),
-        var(--bg);
-    }
 
-    /* ✨ 左右角色 */
-    .side-panther,
-    .side-hangyodon{
-      position:fixed;
-      top:50%;
-      transform:translateY(-50%);
-      width:320px;
-      opacity:.9;
-      z-index:1;
-      pointer-events:none;
-      user-select:none;
-      display:none;
-      transition:opacity .25s ease, transform .25s ease, filter .25s ease;
-      filter: drop-shadow(0 18px 30px rgba(0,0,0,.10));
-    }
-
-    .side-panther.left{ left:1.5%; transform:translateY(-50%) scaleX(1); }
-    .side-panther.right{ right:1.5%; transform:translateY(-50%) scaleX(1); }
-
-    .side-hangyodon.left{ left:1.5%; transform:translateY(-50%) scaleX(-1); }
-    .side-hangyodon.right{ right:1.5%; transform:translateY(-50%) scaleX(-1); }
-
-    html[data-style="panther"] .side-panther{ display:block; }
-    html[data-style="hangyodon"] .side-hangyodon{ display:block; }
-
-    @media (max-width: 900px){
-      html[data-style="panther"] .side-panther.left,
-      html[data-style="hangyodon"] .side-hangyodon.left{
-        display:none !important;
-      }
-      html[data-style="panther"] .side-panther.right,
-      html[data-style="hangyodon"] .side-hangyodon.right{
-        display:block !important;
-        position:fixed !important;
-        left:50% !important;
-        right:auto !important;
-        top:50% !important;
-        transform:translate(-50%,-50%) !important;
-        width:260px;
-        opacity:.65;
-      }
-    }
 
     /* Home 圖片 */
     .home-image{
@@ -233,8 +171,7 @@ body::before{
       background: rgba(37,99,235,.9);
       box-shadow: 0 0 0 3px rgba(37,99,235,.16);
     }
-    html[data-style="panther"] .dot{ background: rgba(244,114,182,.92); box-shadow: 0 0 0 3px rgba(244,114,182,.18); }
-    html[data-style="hangyodon"] .dot{ background: rgba(56,189,248,.95); box-shadow: 0 0 0 3px rgba(56,189,248,.18); }
+
 
     /* Confetti（輕量 DOM 粒子） */
     .confetti-wrap{
@@ -323,11 +260,7 @@ body::before{
     <div><span class="kbd">Esc</span> = Close help</div>
   </div>
 
-  <!-- 🌟 角色背景 -->
-  <img src="assets/pinkpanther1.png" class="side-panther left" alt="">
-  <img src="assets/pinkpanther2.png" class="side-panther right" alt="">
-  <img src="assets/hangyodon1.png" class="side-hangyodon left" alt="">
-  <img src="assets/hangyodon2.png" class="side-hangyodon right" alt="">
+
 
   <!-- 🌟 Home 圖片 -->
   <img src="assets/home.png" alt="Home" class="home-image" id="homeImage">
@@ -383,12 +316,7 @@ body::before{
     const wrap = $("confettiWrap");
     let lastBurst = 0;
 
-    function themeColors(){
-      const t = getTheme();
-      if (t === "panther") return ["#fb7185","#f472b6","#fda4af","#fecdd3","#a855f7"];
-      if (t === "hangyodon") return ["#38bdf8","#22c55e","#60a5fa","#93c5fd","#a7f3d0"];
-      return ["#2563eb","#6366f1","#60a5fa","#a78bfa","#22c55e"];
-    }
+
 
     function burstConfetti(x, y){
       if (!fxOn) return;
