@@ -2048,25 +2048,35 @@ if (!isTouchDevice){
         return;
       }
 
-       if (role === 'training-parent'){
-        if (isTouchDevice && currentParent==='training' && trainingPanel?.classList.contains('open')){
-          trainingPanel.classList.remove('open');
-          resetTrainingSelection();
-          deactivateNav(trainingParentBtn);
-          currentParent = null;
-          return;
-        }
+if (role === 'training-parent'){
 
-        resetOtherGroups('training');
-        activateNav(trainingParentBtn);
+  if (isTouchDevice && currentParent==='training' && trainingPanel?.classList.contains('open')){
+    trainingPanel.classList.remove('open');
+    resetTrainingSelection();
+    deactivateNav(trainingParentBtn);
+    currentParent = null;
+    return;
+  }
 
-        trainingPanel && trainingPanel.classList.add('open');
-        schematicPanel && schematicPanel.classList.remove('open');
-        ioPanel && ioPanel.classList.remove('open');
-        maintenancePanel && maintenancePanel.classList.remove('open');
-        scadaPanel && scadaPanel.classList.remove('open');
-        return;
-      }
+  // ✅ 關掉所有其他主 panel（包含狀態）
+  resetSchematicSelection();
+  resetIoSelection();
+  resetMaintenanceSelection();   // ⭐ 關鍵
+  resetScadaSelection();
+
+  schematicPanel && schematicPanel.classList.remove('open');
+  ioPanel && ioPanel.classList.remove('open');
+  maintenancePanel && maintenancePanel.classList.remove('open');
+  scadaPanel && scadaPanel.classList.remove('open');
+
+  // ✅ 只開 Training
+  resetOtherGroups('training');
+  activateNav(trainingParentBtn);
+  trainingPanel && trainingPanel.classList.add('open');
+
+  currentParent = 'training';
+  return;
+}
 
       if (role === 'io-parent'){
       if (isTouchDevice && currentParent==='io' && ioPanel?.classList.contains('open')){
