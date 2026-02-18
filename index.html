@@ -769,42 +769,31 @@
   /* 文字一定顯示 */
   .menu-text{ display:inline !important; }
 
-  .nav-panel{
-  position:fixed !important;
-  top:0 !important;
-  left:0 !important;
-  bottom:0 !important;
-  max-height: none !important;
-    height: 100dvh !important;     /* ✅ 你之前拿掉也行，但這個最保險 */
-    top: 0 !important;
-    bottom: auto !important;       /* 用 height 控制就不要 bottom */
-  /* ❌ 刪掉這行：height:100dvh !important; */
+   .nav-panel{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    height:100dvh !important;
+    width:calc(100vw - 48px);
+    max-width:420px;
 
-  width:calc(100vw - 48px);
-  max-width:420px;
+    margin:0 !important;
+    transform:translateX(-100%);
+    transition:transform .25s cubic-bezier(.4,0,.2,1);
 
-  margin:0 !important;
+    border-top-right-radius:18px;
+    border-bottom-right-radius:18px;
 
-  transform:translateX(-100%);
-  transition:transform .25s cubic-bezier(.4,0,.2,1);
+    padding:16px 18px calc(14px + env(safe-area-inset-bottom));
+    background:#fff !important;
 
-  border-top-right-radius:18px;
-  border-bottom-right-radius:18px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
 
-  /* ✅ 這行是關鍵：底部自動吃安全區，不會「空一大塊」 */
-  padding:16px 18px calc(14px + env(safe-area-inset-bottom));
-
-  background:#fff !important;
-
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-
-  z-index:9100;
-  display:block;
-}
-.nav-panel.open{
-  transform:translateX(0);
-}
+    z-index:9100;
+    display:block;
+  }
+  .nav-panel.open{ transform:translateX(0); }
 
   /* ===== Drawer Header（放 Modules + X） ===== */
   .drawer-head{
