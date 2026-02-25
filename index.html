@@ -2403,19 +2403,17 @@ ioLineBtns.forEach(btn=>{
   });
 });
 
-
-
+/* ===== 左邊 COURSE → 開新分頁 (YouTube 等外部連結) ===== */
 trainingSecBtns.forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    const key    = btn.getAttribute('data-train-key');
     const rawUrl = btn.getAttribute('data-train-url');
-    if (!key) return;
-
-    const viewerUrl = (rawUrl && rawUrl.trim())
-      ? rawUrl.trim()
-      : 'Training.html?key=' + encodeURIComponent(key);
-
-    window.open(viewerUrl, '_blank');   // ✅ 開新分頁
+    if (!rawUrl || !rawUrl.trim()){
+      // URL 還沒填：短暫提示
+      btn.style.outline = '2px dashed #f59e0b';
+      setTimeout(()=>{ btn.style.outline = ''; }, 800);
+      return;
+    }
+    window.open(rawUrl.trim(), '_blank');
 
     // 短暫 active 視覺回饋
     trainingSecBtns.forEach(b=>b.classList.remove('active'));
@@ -2427,7 +2425,7 @@ trainingSecBtns.forEach(btn=>{
   });
 });
 
-/* ===== Training MATERIAL buttons → 開 PDF (iframe) ===== */
+/* ===== 右邊 MATERIAL → 開 Training.html (iframe) ===== */
 trainingMaterialBtns.forEach(btn=>{
   btn.addEventListener('click', ()=>{
     if (btn.getAttribute('data-placeholder') === 'true'){
@@ -2443,9 +2441,9 @@ trainingMaterialBtns.forEach(btn=>{
     const label = btn.getAttribute('data-material-label') || key || '';
     if (!key) return;
 
-    const viewerUrl = 'CalibrationProcedure.html?key=' + encodeURIComponent(key);
+    const viewerUrl = 'Training.html?key=' + encodeURIComponent(key);
     swapTo(viewerUrl);
-    setModule('Training Material – ' + label, 'PDF Material: ' + label);
+    setModule('Training Material – ' + label, 'Training PDF: ' + label);
 
     trainingSecBtns.forEach(b=>b.classList.remove('active'));
     trainingMaterialBtns.forEach(b=>b.classList.remove('active'));
