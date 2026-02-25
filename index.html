@@ -160,23 +160,6 @@
       word-wrap:break-word;
       line-height:1.25;
     }
-    .page-jump{display:flex;align-items:center;}
-    .jump-btn{
-      border:1px solid var(--border-subtle);
-      background:var(--card-bg);
-      color:var(--accent);
-      padding:8px 14px;
-      border-radius:999px;
-      cursor:pointer;
-      font-size:12px;
-      box-shadow:var(--shadow-soft-sm);
-      transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
-    }
-    .jump-btn:hover{
-      background:var(--accent-soft);
-      transform:translateY(-1px);
-      box-shadow:var(--shadow-soft-md);
-    }
 
     .top-meta{
       display:flex;
@@ -521,9 +504,7 @@
     .menu-text{ display:none; }
 
     @media (max-width:900px){
-      .page-jump{ display:none !important; }
-      #jumpToggle{ display:none !important; }
-      #moduleSlotTopbar{ display:contents; }
+    #moduleSlotTopbar{ display:contents; }
       .topbar{ display:flex; flex-direction:column; align-items:flex-start; gap:10px; padding:14px 14px 18px; }
       .top-left{ display:contents; min-height:0; }
       .module-dock{ order:0; width:auto; align-self:flex-start; margin-bottom:8px; position:relative; z-index:9200; }
@@ -763,49 +744,7 @@
       #chatToggleBtn  { right: 16px; bottom: 16px; }
     }
 
-    /* ── Back to Top Button ── */
-    #mainBackToTop {
-      position: fixed;
-      right: 28px;
-      bottom: 28px;                          /* 預設：與聊天按鈕同高 */
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(37,99,235,0.3);
-      background: rgba(255,255,255,0.92);
-      color: var(--accent);
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      display: none;                         /* JS 控制顯示 */
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(37,99,235,0.18);
-      z-index: 88500;                        /* 在聊天按鈕 89000 之下，聊天面板 88000 之上 */
-      transition: bottom 0.3s cubic-bezier(0.34,1.56,0.64,1),
-                  opacity 0.2s ease,
-                  transform 0.2s ease,
-                  box-shadow 0.2s ease;
-      opacity: 0;
-      backdrop-filter: blur(6px);
-    }
-    #mainBackToTop.btt-visible {
-      opacity: 1;
-    }
-    #mainBackToTop:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(37,99,235,0.28);
-      background: var(--accent);
-      color: #fff;
-    }
-    /* 聊天開著時，Back to Top 自動往上移到聊天按鈕上面 */
-    body.cf-panel-open #mainBackToTop {
-      bottom: 96px;   /* 28px 聊天按鈕底部 + 56px 按鈕高 + 12px 間距 */
-    }
-    @media (max-width: 600px) {
-      #mainBackToTop { right: 16px; bottom: 16px; width: 36px; height: 36px; font-size: 16px; }
-      body.cf-panel-open #mainBackToTop { bottom: 82px; }
-    }
+    
   </style>
 </head>
 
@@ -949,9 +888,6 @@
             <h2 class="section-title" id="moduleTitle">Inteplast Quality Policy</h2>
             <p class="section-sub" id="moduleSub">Welcome to Maintenance ONE.</p>
           </div>
-          <div class="page-jump">
-            <button class="jump-btn" id="jumpToggle" type="button" title="Go to bottom">↓ Bottom</button>
-          </div>
         </div>
         <div class="iframe-wrap" id="frameWrap">
           <div id="moduleSlotFrame" class="module-slot-frame"></div>
@@ -972,9 +908,6 @@
   <!-- ═══════════════════════════════════════════════
        FLOATING CHATBOT WIDGET HTML
   ═══════════════════════════════════════════════ -->
-
-  <!-- Back to Top Button -->
-  <button id="mainBackToTop" title="Back to top" aria-label="Back to top">↑</button>
 
   <!-- Toggle Button -->
   <button id="chatToggleBtn" title="Troubleshooting Assistant" aria-label="Open troubleshooting assistant">
@@ -1128,7 +1061,6 @@
     (function(){ const STYLE_KEY='ms-style',root=document.documentElement,mascot=document.querySelector('.mascot'),styles=['blue','panther','hangyodon'],themeConfig={ blue:{bgImage:''}, panther:{bgImage:'url("assets/pinkpanther.png")'}, hangyodon:{bgImage:'url("assets/hangyodon.png")'} }; function applyStyle(style){ const s=themeConfig[style]?style:'blue',cfg=themeConfig[s]; root.setAttribute('data-style',s); if(mascot) mascot.style.backgroundImage=cfg.bgImage||''; localStorage.setItem(STYLE_KEY,s); if(window._msSyncFrameStyle) setTimeout(window._msSyncFrameStyle,30); } function cycleStyle(){ const current=root.getAttribute('data-style')||'blue',idx=styles.indexOf(current),next=styles[(idx+1)%styles.length]; applyStyle(next); } const saved=localStorage.getItem(STYLE_KEY)||'blue'; applyStyle(saved); if(mascot){ mascot.style.cursor='pointer'; mascot.title='Click to change style'; mascot.addEventListener('click',cycleStyle); } })();
   </script>
   <script>
-    (function(){ const btn=document.getElementById('jumpToggle'); if(!btn) return; const mq=window.matchMedia('(max-width: 900px)'); let bound=false; function atBottom(){ const scrollTop=window.scrollY||document.documentElement.scrollTop,winH=window.innerHeight,docH=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight); return scrollTop+winH>=docH-8; } function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); } function scrollToBottom(){ const h=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight); window.scrollTo({top:h,behavior:'smooth'}); } function updateBtn(){ if(atBottom()){ btn.textContent='↑ Top'; btn.title='Go to top'; }else{ btn.textContent='↓ Bottom'; btn.title='Go to bottom'; } } function onClick(){ if(atBottom()) scrollToTop(); else scrollToBottom(); } function enable(){ btn.style.display=''; if(bound) return; btn.addEventListener('click',onClick); window.addEventListener('scroll',updateBtn); window.addEventListener('resize',updateBtn); bound=true; updateBtn(); } function disable(){ btn.style.display='none'; if(!bound) return; btn.removeEventListener('click',onClick); window.removeEventListener('scroll',updateBtn); window.removeEventListener('resize',updateBtn); bound=false; } function apply(){ if(mq.matches) disable(); else enable(); } if(mq.addEventListener) mq.addEventListener('change',apply); else mq.addListener(apply); apply(); })();
   </script>
   <script>
     (function(){ var btn=document.getElementById('aboutBtn'),overlay=document.getElementById('aboutOverlay'),frame=document.getElementById('aboutFrame'); if(!btn||!overlay||!frame) return; var loaded=false; function openAbout(){ if(!loaded){ frame.src='about.html'; loaded=true; } overlay.classList.add('open'); document.body.style.overflow='hidden'; } function closeAbout(){ overlay.classList.remove('open'); document.body.style.overflow=''; } btn.addEventListener('click',function(e){ e.stopPropagation(); openAbout(); }); overlay.addEventListener('click',function(e){ if(e.target===overlay) closeAbout(); }); window.addEventListener('message',function(e){ if(e.data&&e.data.type==='ms-about-close') closeAbout(); }); document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&overlay.classList.contains('open')) closeAbout(); }); })();
@@ -1248,28 +1180,6 @@
     };
 
     document.getElementById('chatToggleBtn').addEventListener('click', window.cfToggle);
-
-    // ── Back to Top logic ──────────────────────────
-    (function(){
-      const btt = document.getElementById('mainBackToTop');
-      if (!btt) return;
-      const THRESHOLD = 200;
-
-      function updateBtt(){
-        if (window.scrollY > THRESHOLD){
-          btt.style.display = 'flex';
-          requestAnimationFrame(()=> btt.classList.add('btt-visible'));
-        } else {
-          btt.classList.remove('btt-visible');
-          setTimeout(()=>{
-            if (!btt.classList.contains('btt-visible')) btt.style.display = 'none';
-          }, 200);
-        }
-      }
-
-      window.addEventListener('scroll', updateBtt, { passive: true });
-      btt.addEventListener('click', ()=> window.scrollTo({ top: 0, behavior: 'smooth' }));
-    })();
 
     window.cfSetCat=function(cat,btn){
       cfCategory=cat;
