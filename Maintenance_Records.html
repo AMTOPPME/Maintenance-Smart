@@ -335,15 +335,6 @@
           <label for="editDowntime">Downtime (min)</label>
           <input id="editDowntime" type="number" min="0" placeholder="0">
         </div>
-        <div>
-          <!-- ★ Updated Status options: Using / Spare / Broken -->
-          <label for="editStatus">Status</label>
-          <select id="editStatus">
-            <option value="Using">Using</option>
-            <option value="Spare">Spare</option>
-            <option value="Broken">Broken</option>
-          </select>
-        </div>
       </div>
 
       <div style="margin-top:8px;">
@@ -403,7 +394,7 @@
   function statusBadge(s){
     const v=(s||'').toLowerCase();
     const cls = v==='using'?'pill-using': v==='spare'?'pill-spare': v==='broken'?'pill-broken':'';
-    return `<span class="pill-status ${cls}">${s||''}</span>`;
+    return `<span class="pill-status ${cls}">${s||'—'}</span>`;
   }
 
   let records=[], filtered=[], sortKey='Date', sortDir='desc', editingId=null, searchTimer=null;
@@ -587,7 +578,7 @@
       const tdDown=document.createElement('td');
       tdDown.className='text-small';tdDown.textContent=Number(rec.downtime_min||0);tr.appendChild(tdDown);
 
-      /* ★ Status column */
+      /* Status column — shows the status recorded at the time */
       const tdStatus=document.createElement('td');
       tdStatus.innerHTML=statusBadge(rec.status);tr.appendChild(tdStatus);
 
@@ -662,7 +653,6 @@
     document.getElementById('editLocFrom').value =rec.location_from||'';
     document.getElementById('editLocTo').value   =rec.location_to||'';
     document.getElementById('editDowntime').value=rec.downtime_min||0;
-    document.getElementById('editStatus').value  =rec.status||'Using';
     document.getElementById('editRoot').value    =rec.root_cause||'';
     document.getElementById('editAction').value  =rec.action_taken||'';
     document.getElementById('editBackdrop').classList.add('open');
@@ -688,7 +678,6 @@
     rec.location_from=document.getElementById('editLocFrom').value.trim();
     rec.location_to  =document.getElementById('editLocTo').value.trim();
     rec.downtime_min =Number(document.getElementById('editDowntime').value)||0;
-    rec.status       =document.getElementById('editStatus').value;
     rec.root_cause   =document.getElementById('editRoot').value.trim();
     rec.action_taken =document.getElementById('editAction').value.trim();
     records[idx]=rec;
