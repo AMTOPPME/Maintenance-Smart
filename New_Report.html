@@ -5,16 +5,12 @@
   <title>Maintenance Smart | Maintenance Report</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Apply theme & style from portal -->
   <script>
     (function () {
-      // light / dark
       const storedTheme = localStorage.getItem('ms-theme');
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       const theme = storedTheme || (prefersDark ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
-
-      // style: blue / panther / hangyodon
       const style = localStorage.getItem('ms-style') || 'blue';
       document.documentElement.setAttribute('data-style', style);
     })();
@@ -34,7 +30,6 @@
       --small-font: 13px;
       --xsmall-font: 11px;
     }
-
     html[data-theme="dark"] {
       --bg: #020617;
       --card-bg: #020617;
@@ -45,322 +40,176 @@
       --text-soft: #9ca3af;
       --shadow-soft-sm: 0 8px 20px rgba(0,0,0,0.75);
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 15px;
-      background:
-        radial-gradient(circle at top, rgba(129,140,248,0.14), transparent),
-        var(--bg);
+      background: radial-gradient(circle at top, rgba(129,140,248,0.14), transparent), var(--bg);
       color: var(--text);
       min-height: 100vh;
       -webkit-text-size-adjust: 100%;
       transition: background .25s ease, color .25s ease;
     }
-
     html[data-style="panther"] body {
-      background:
-        radial-gradient(circle at top, rgba(244,114,182,.28), transparent),
-        var(--bg);
+      background: radial-gradient(circle at top, rgba(244,114,182,.28), transparent), var(--bg);
     }
     html[data-style="hangyodon"] body {
-      background:
-        radial-gradient(circle at top, rgba(56,189,248,.35), transparent),
-        var(--bg);
+      background: radial-gradient(circle at top, rgba(56,189,248,.35), transparent), var(--bg);
     }
-
-    .side-panther,
-    .side-hangyodon{
-      position:fixed;
-      top:50%;
-      transform:translateY(-50%);
-      width:360px;
-      opacity:.9;
-      z-index:1;
-      pointer-events:none;
-      user-select:none;
-      display:none;
-      transition:transform .25s ease, opacity .25s ease;
+    .side-panther,.side-hangyodon{
+      position:fixed;top:50%;transform:translateY(-50%);
+      width:360px;opacity:.9;z-index:1;pointer-events:none;user-select:none;display:none;
     }
-    .side-panther.left{left:1.5%;transform:translateY(-50%) scaleX(1)}
-    .side-panther.right{right:1.5%;transform:translateY(-50%) scaleX(1)}
-    .side-hangyodon.left{left:1.5%;transform:translateY(-50%) scaleX(-1)}
-    .side-hangyodon.right{right:1.5%;transform:translateY(-50%) scaleX(-1)}
-
+    .side-panther.left{left:1.5%;}
+    .side-panther.right{right:1.5%;}
+    .side-hangyodon.left{left:1.5%;transform:translateY(-50%) scaleX(-1);}
+    .side-hangyodon.right{right:1.5%;transform:translateY(-50%) scaleX(-1);}
     html[data-style="panther"] .side-panther{display:block;}
     html[data-style="hangyodon"] .side-hangyodon{display:block;}
-
-    @media (max-width: 900px){
+    @media(max-width:900px){
       html[data-style="panther"] .side-panther.left,
-      html[data-style="hangyodon"] .side-hangyodon.left{
-        display:none !important;
-      }
-
+      html[data-style="hangyodon"] .side-hangyodon.left{display:none !important;}
       html[data-style="panther"] .side-panther.right,
       html[data-style="hangyodon"] .side-hangyodon.right{
-        display:block !important;
-        position:fixed !important;
-        left:50% !important;
-        right:auto !important;
-        top:50% !important;
-        transform:translate(-50%, -50%) !important;
-        width:260px;
-        opacity:0.9;
-        pointer-events:none;
-        z-index:1;
+        display:block !important;position:fixed !important;
+        left:50% !important;right:auto !important;top:50% !important;
+        transform:translate(-50%,-50%) !important;width:260px;opacity:0.9;
       }
     }
-
-    .page {
-      position:relative;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px 16px 32px;
-      z-index:2;
+    .page{position:relative;max-width:900px;margin:0 auto;padding:20px 16px 32px;z-index:2;}
+    .card{
+      background:var(--card-bg);border-radius:var(--radius-xl);
+      border:1px solid var(--border-subtle);padding:16px 14px 14px;
+      box-shadow:var(--shadow-soft-sm);margin-bottom:14px;
+      transition:background .25s ease,border-color .25s ease,box-shadow .25s ease;
     }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--border-subtle);
-      padding: 16px 14px 14px;
-      box-shadow: var(--shadow-soft-sm);
-      margin-bottom: 14px;
-      transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
-    }
-
-    .card h2 {
-      margin: 0 0 4px;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .card-subtitle {
-      font-size: var(--small-font);
-      color: var(--text-soft);
-      margin-bottom: 10px;
-    }
-
-    .form-row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom:10px;
-    }
-    .form-row > div{
-      flex:1;
-      min-width:140px;
-    }
-
+    .card h2{margin:0 0 4px;font-size:18px;font-weight:600;color:var(--text);}
+    .card-subtitle{font-size:var(--small-font);color:var(--text-soft);margin-bottom:10px;}
+    .form-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+    .form-row>div{flex:1;min-width:140px;}
     label{
-      display:block;
-      font-size:var(--xsmall-font);
-      font-weight:600;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      color:var(--text-soft);
-      margin-bottom:3px;
+      display:block;font-size:var(--xsmall-font);font-weight:600;
+      text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft);margin-bottom:3px;
     }
-
-    input, select, textarea{
-      width:100%;
-      font-size:var(--small-font);
-      padding:7px 9px;
-      border-radius:10px;
-      border:1px solid #d1d5db;
-      background:#ffffff;
-      color:var(--text);
-      transition:border-color .15s ease, box-shadow .15s ease, background .15s ease, transform .05s ease;
+    input,select,textarea{
+      width:100%;font-size:var(--small-font);padding:7px 9px;
+      border-radius:10px;border:1px solid #d1d5db;background:#ffffff;color:var(--text);
+      transition:border-color .15s ease,box-shadow .15s ease,background .15s ease,transform .05s ease;
       font-family:inherit;
     }
     html[data-theme="dark"] input,
     html[data-theme="dark"] select,
-    html[data-theme="dark"] textarea{
-      background:#020617;
-      border-color:#1f2937;
-      color:var(--text);
-    }
-
-    input::placeholder,
-    textarea::placeholder{
-      color:#9ca3af;
-    }
-
-    input:focus, select:focus, textarea:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 2px rgba(37,99,235,.14);
-      outline:none;
-      transform:translateY(-1px);
-      background:#ffffff;
+    html[data-theme="dark"] textarea{background:#020617;border-color:#1f2937;color:var(--text);}
+    input::placeholder,textarea::placeholder{color:#9ca3af;}
+    input:focus,select:focus,textarea:focus{
+      border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,.14);
+      outline:none;transform:translateY(-1px);background:#ffffff;
     }
     html[data-theme="dark"] input:focus,
     html[data-theme="dark"] select:focus,
-    html[data-theme="dark"] textarea:focus{
-      background:#020617;
+    html[data-theme="dark"] textarea:focus{background:#020617;}
+    textarea{min-height:90px;resize:vertical;}
+    .btn{
+      cursor:pointer;border-radius:999px;padding:8px 14px;font-size:var(--xsmall-font);
+      border:none;display:inline-flex;align-items:center;gap:6px;
+      transition:all 0.15s ease;background:#e5e7eb;color:#111827;font-weight:600;
+    }
+    .btn:hover{background:#d1d5db;transform:translateY(-1px);box-shadow:0 3px 8px rgba(148,163,253,0.35);}
+    .btn-primary{background:var(--accent);color:#ffffff;box-shadow:0 4px 12px rgba(37,99,235,0.35);}
+    .btn-primary:hover{background:var(--accent-hover);}
+    .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+    .status-text{margin-top:8px;font-size:var(--xsmall-font);color:var(--text-soft);line-height:1.4;}
+    .status-text strong{color:var(--accent);}
+
+    /* ── Status badges ── */
+    .badge{
+      display:inline-flex;align-items:center;gap:4px;
+      padding:3px 10px;border-radius:999px;
+      font-size:var(--xsmall-font);font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    }
+    .badge-open      {background:#fef3c7;color:#92400e;}
+    .badge-inprogress{background:#dbeafe;color:#1e40af;}
+    .badge-resolved  {background:#d1fae5;color:#065f46;}
+    .badge-closed    {background:#f3f4f6;color:#374151;border:1px solid #d1d5db;}
+    html[data-theme="dark"] .badge-open      {background:#451a03;color:#fcd34d;}
+    html[data-theme="dark"] .badge-inprogress{background:#1e3a5f;color:#93c5fd;}
+    html[data-theme="dark"] .badge-resolved  {background:#064e3b;color:#6ee7b7;}
+    html[data-theme="dark"] .badge-closed    {background:#1f2937;color:#9ca3af;border-color:#374151;}
+
+    /* ── Update Status card ── */
+    .search-results{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+    .result-item{
+      background:var(--bg);border:1px solid var(--border-subtle);
+      border-radius:12px;padding:10px 12px;font-size:var(--small-font);
+      display:flex;flex-direction:column;gap:5px;
+    }
+    .result-header{
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;
+    }
+    .result-meta{font-size:var(--xsmall-font);color:var(--text-soft);}
+    .result-desc{color:var(--text);line-height:1.4;}
+    .result-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;align-items:center;}
+    .empty-hint{
+      text-align:center;padding:18px;font-size:var(--small-font);
+      color:var(--text-soft);background:var(--bg);border-radius:12px;
     }
 
-    textarea{
-      min-height:90px;
-      resize:vertical;
+    /* form-row-half */
+    .form-row.form-row-half>div{min-width:0;}
+    @media(max-width:900px){
+      .form-row.form-row-half{justify-content:space-between;}
+      .form-row.form-row-half>div{flex:0 0 calc(50% - 5px);max-width:calc(50% - 5px);}
     }
 
-    .btn {
-      cursor: pointer;
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: var(--xsmall-font);
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.15s ease;
-      background: #e5e7eb;
-      color: #111827;
-      font-weight:600;
+    /* Back to Top */
+    #backToTop{
+      position:fixed;bottom:22px;right:22px;width:58px;height:58px;
+      border-radius:50%;border:none;background:var(--accent);color:#fff;
+      font-size:22px;font-weight:bold;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 8px 20px rgba(0,0,0,0.25);z-index:9999;
+      opacity:0;pointer-events:none;
+      transition:opacity .2s ease,transform .25s ease,box-shadow .25s ease;
     }
-
-    .btn:hover {
-      background: #d1d5db;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(148,163,253,0.35);
+    #backToTop.visible{opacity:1;pointer-events:auto;}
+    #backToTop:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,0.30);}
+    html[data-style="panther"] #backToTop{
+      background:transparent;background-image:url("assets/pinkpanther2.png");
+      background-size:100% 100%;background-position:center;color:transparent;border:none;
     }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+    html[data-style="hangyodon"] #backToTop{
+      background:transparent;background-image:url("assets/hangyodon2.png");
+      background-size:100% 100%;background-position:center;color:transparent;border:none;
     }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-    }
-
-    .btn-row{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:6px;
-    }
-
-    .status-text{
-      margin-top:8px;
-      font-size:var(--xsmall-font);
-      color:var(--text-soft);
-      line-height:1.4;
-    }
-    .status-text strong{
-      color:var(--accent);
-    }
-
-    #backToTop {
-      position: fixed;
-      bottom: 22px;
-      right: 22px;
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent);
-      color: #fff;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      z-index: 9999;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .2s ease, transform .25s ease, box-shadow .25s ease;
-    }
-
-    #backToTop.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    #backToTop:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.30);
-    }
-
-    html[data-style="panther"] #backToTop {
-      background: transparent;
-      background-image: url("assets/pinkpanther2.png");
-      background-size: 100% 100%;
-      background-position: center;
-      color: transparent;
-      border: none;
-    }
-
-    html[data-style="hangyodon"] #backToTop {
-      background: transparent;
-      background-image: url("assets/hangyodon2.png");
-      background-size: 100% 100%;
-      background-position: center;
-      color: transparent;
-      border: none;
-    }
-
-    .form-row.form-row-half > div {
-      min-width: 0;
-    }
-    @media (max-width: 900px) {
-      .form-row.form-row-half {
-        justify-content: space-between;
-      }
-      .form-row.form-row-half > div {
-        flex: 0 0 calc(50% - 5px);
-        max-width: calc(50% - 5px);
-      }
-    }
-
     @media print{
-      body{
-        background:#ffffff !important;
-        -webkit-print-color-adjust:exact;
-        print-color-adjust:exact;
-      }
-      .side-panther,
-      .side-hangyodon,
-      #backToTop{
-        display:none !important;
-      }
-      .page{
-        max-width:100%;
-        padding:0;
-      }
-      .card{
-        box-shadow:none;
-        border-radius:0;
-        margin:0 0 8px;
-      }
+      body{background:#ffffff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .side-panther,.side-hangyodon,#backToTop{display:none !important;}
+      .page{max-width:100%;padding:0;}
+      .card{box-shadow:none;border-radius:0;margin:0 0 8px;}
     }
   </style>
 </head>
 <body>
 
-  <!-- side characters -->
-  <img src="assets/pinkpanther1.png" alt="Pink Panther Left" class="side-panther left">
-  <img src="assets/pinkpanther2.png" alt="Pink Panther Right" class="side-panther right">
-  <img src="assets/hangyodon1.png" alt="Hangyodon Left" class="side-hangyodon left">
-  <img src="assets/hangyodon2.png" alt="Hangyodon Right" class="side-hangyodon right">
+  <img src="assets/pinkpanther1.png" alt="" class="side-panther left">
+  <img src="assets/pinkpanther2.png" alt="" class="side-panther right">
+  <img src="assets/hangyodon1.png"   alt="" class="side-hangyodon left">
+  <img src="assets/hangyodon2.png"   alt="" class="side-hangyodon right">
 
   <div class="page">
+
+    <!-- ══════════════════════════════════════
+         CARD 1 · New Maintenance Report
+    ══════════════════════════════════════ -->
     <div class="card">
       <h2>Maintenance report</h2>
       <div class="card-subtitle">
-        Fill this form after each maintenance task. Data is sent to the <strong>Google Sheets backend (Apps Script)</strong>
-        and also stored in this browser as <strong>ms-maintenance-logs</strong>.
-        Use the JSON download button for backup / reporting.
+        Fill this form after each maintenance task. Data is sent to the
+        <strong>Google Sheets backend (Apps Script)</strong> and also stored in this browser as
+        <strong>ms-maintenance-logs</strong>. Use the JSON download button for backup / reporting.
       </div>
 
-      <!-- DATE -->
       <div class="form-row">
         <div>
           <label for="dateInput">Date</label>
@@ -368,7 +217,6 @@
         </div>
       </div>
 
-      <!-- LINE -->
       <div class="form-row">
         <div>
           <label for="lineInput">Line</label>
@@ -389,7 +237,7 @@
             <option value="">Select…</option>
             <option value="MCC">MCC</option>
             <option value="Control Room">Control Room</option>
-             <option value="Lab">Lab</option>
+            <option value="Lab">Lab</option>
             <option value="Field">Field</option>
             <option value="Server Room">Server Room</option>
             <option value="Other">Other</option>
@@ -397,10 +245,7 @@
         </div>
         <div>
           <label for="equipInput">Asset ID (PC-xxx)</label>
-          <input
-            type="text"
-            id="equipInput"
-            placeholder="e.g. PC-001, PC-023, PC-120">
+          <input type="text" id="equipInput" placeholder="e.g. PC-001, PC-023, PC-120">
         </div>
       </div>
 
@@ -433,6 +278,18 @@
         </div>
       </div>
 
+      <!-- ★ Status field in the new-report form -->
+      <div class="form-row">
+        <div>
+          <label for="statusInput">Status</label>
+          <select id="statusInput">
+            <option value="Using">Using</option>
+            <option value="Spare">Spare</option>
+            <option value="Broken">Broken</option>
+          </select>
+        </div>
+      </div>
+
       <div class="form-row">
         <div>
           <label for="rootInput">Root cause</label>
@@ -453,246 +310,162 @@
       </div>
 
       <div class="status-text" id="status"></div>
-    </div>
-  </div>
+    </div><!-- /card 1 -->
 
-  <!-- Back to Top button -->
+
+
+
+  </div><!-- /page -->
+
   <button id="backToTop" title="Back to Top">↑</button>
 
+  <!-- ════════════════ SCRIPTS ════════════════ -->
   <script>
-    // Back to top
     (function(){
-      const btn = document.getElementById('backToTop');
-      if (!btn) return;
-      const THRESHOLD = 250;
-      function updateVisibility(){
-        if (window.scrollY > THRESHOLD) btn.classList.add('visible');
-        else btn.classList.remove('visible');
-      }
-      function scrollToTop(){
-        window.scrollTo({top:0, behavior:'smooth'});
-      }
-      window.addEventListener('scroll', updateVisibility);
-      btn.addEventListener('click', scrollToTop);
-      updateVisibility();
+      const btn=document.getElementById('backToTop');
+      if(!btn)return;
+      function upd(){btn.classList.toggle('visible',window.scrollY>250);}
+      window.addEventListener('scroll',upd);
+      btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+      upd();
     })();
   </script>
 
   <script>
-  const STORAGE_KEY = 'ms-maintenance-logs';
+  const STORAGE_KEY='ms-maintenance-logs';
+  const API_BASE_URL='https://script.google.com/macros/s/AKfycbx7CDsQJdIOmrgRFiFAyvZVcLvJrqr2dF1RM4oqy0Aj9FPiZDmTRUP75o8ZUp3bFHXvfg/exec';
+  const LOGS_ENDPOINT=API_BASE_URL;
 
-  // ✅ 改成你的 Apps Script Web App URL
-  const API_BASE_URL =
-    'https://script.google.com/macros/s/AKfycbx7CDsQJdIOmrgRFiFAyvZVcLvJrqr2dF1RM4oqy0Aj9FPiZDmTRUP75o8ZUp3bFHXvfg/exec';
-  const LOGS_ENDPOINT = API_BASE_URL; // GET = 讀, POST = 新增
+  const STATUS_OPTIONS=['Using','Spare','Broken'];
 
   function loadRecords(){
-    try{
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    }catch(e){
-      console.error(e);
-      return [];
-    }
+    try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}
+    catch(e){return[];}
   }
-
-  function saveRecords(arr){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-  }
+  function saveRecords(arr){localStorage.setItem(STORAGE_KEY,JSON.stringify(arr));}
 
   function updateStatus(msg){
-    const el = document.getElementById('status');
-    if (!el) return;
-    const logs = loadRecords();
-    el.innerHTML = msg + '<br><strong>Total records: ' + logs.length + '</strong>';
+    const el=document.getElementById('status');
+    if(!el)return;
+    el.innerHTML=msg+'<br><strong>Total records: '+loadRecords().length+'</strong>';
+  }
+  function setToday(){
+    const inp=document.getElementById('dateInput');
+    if(inp&&!inp.value)inp.value=new Date().toISOString().slice(0,10);
   }
 
-  function setToday(){
-    const input = document.getElementById('dateInput');
-    if (!input) return;
-    if (!input.value){
-      const today = new Date().toISOString().slice(0,10);
-      input.value = today;
-    }
+  function normalizeAssetId(input){
+    if(!input)return'';
+    let v=String(input).trim().toUpperCase();
+    if(/^PC-\d{3}$/.test(v))return v;
+    v=v.replace(/^PC/i,'').replace(/[^0-9]/g,'');
+    if(!v)return'';
+    const num=parseInt(v,10);
+    if(!Number.isFinite(num)||num<1||num>999)return'';
+    return'PC-'+String(num).padStart(3,'0');
   }
 
   function getAssetIdFromQuery(){
-    const params = new URLSearchParams(window.location.search);
-    const asset = params.get('asset');
-    if (!asset) return '';
-    return normalizeAssetId(asset);
+    return normalizeAssetId(new URLSearchParams(window.location.search).get('asset')||'');
   }
 
-  function normalizeAssetId(input) {
-    if (!input) return "";
-    let v = String(input).trim().toUpperCase();
-
-    if (/^PC-\d{3}$/.test(v)) return v;
-
-    v = v.replace(/^PC/i, "").replace(/[^0-9]/g, "");
-    if (!v) return "";
-
-    const num = parseInt(v, 10);
-    if (!Number.isFinite(num) || num < 1 || num > 999) {
-      return "";
-    }
-    return "PC-" + String(num).padStart(3, "0");
-  }
-
-  // 🔐 寫入 Google Sheet（Apps Script 要有 op="add" 的 doPost）
- // 🔐 寫入 Google Sheet（Apps Script 要有 op="add" 的 doPost）
-async function saveRecordToServer(payload) {
-  let res;
-  try {
-    res = await fetch(LOGS_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
+  /* ── Server helpers ── */
+  async function saveRecordToServer(payload){
+    const res=await fetch(LOGS_ENDPOINT,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify(payload)
     });
-  } catch (err) {
-    console.error('Fetch failed:', err);
-    throw new Error('Network error: ' + err);
+    const text=await res.text().catch(()=>'');
+    if(!res.ok)throw new Error('Server error: '+res.status+' '+text);
+    try{return JSON.parse(text);}catch{return{};}
   }
 
-  const text = await res.text().catch(() => '');
-  console.log('Server raw response:', res.status, text);
-
-  if (!res.ok) {
-    throw new Error('Server error: ' + res.status + ' ' + text);
-  }
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    return {};
-  }
-}
-
+  /* ── Card 1: Save record ── */
   async function saveRecord(){
-    const date      = document.getElementById('dateInput').value;
-    const line      = document.getElementById('lineInput').value;
-    const section   = document.getElementById('sectionInput').value;
+    const date    =document.getElementById('dateInput').value;
+    const line    =document.getElementById('lineInput').value;
+    const section =document.getElementById('sectionInput').value;
+    const equipEl =document.getElementById('equipInput');
+    const assetId =normalizeAssetId(equipEl.value);
+    const category=document.getElementById('catInput').value;
+    const downtime=Number(document.getElementById('downInput').value||0);
+    const rootcause=document.getElementById('rootInput').value.trim();
+    const action  =document.getElementById('actionInput').value.trim();
+    const loc_from=document.getElementById('locFromInput').value.trim();
+    const loc_to  =document.getElementById('locToInput').value.trim();
+    const status  =document.getElementById('statusInput').value;
 
-    const equipInputEl = document.getElementById('equipInput');
-    const rawEquip     = equipInputEl.value;
-    const assetId      = normalizeAssetId(rawEquip);
-
-    const category  = document.getElementById('catInput').value;
-    const downtime  = Number(document.getElementById('downInput').value || 0);
-    const rootcause = document.getElementById('rootInput').value.trim();
-    const action    = document.getElementById('actionInput').value.trim();
-    const loc_from  = document.getElementById('locFromInput').value.trim();
-    const loc_to    = document.getElementById('locToInput').value.trim();
-
-    if (!date || !assetId){
-      updateStatus(
-        'Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).'
-      );
+    if(!date||!assetId){
+      updateStatus('Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).');
       return;
     }
+    equipEl.value=assetId;
 
-    // 把輸入框修正成標準格式
-    equipInputEl.value = assetId;
+    const serverPayload={date,line,section,asset_id:assetId,category,
+      downtime_min:downtime,root_cause:rootcause,action_taken:action,
+      location_from:loc_from,location_to:loc_to,status};
 
-    // 傳給 Google Sheets 的欄位（要跟 Apps Script / Sheet 的欄位對應）
-    const payloadForServer = {
-      date,
-      line,
-      section,
-      asset_id: assetId,
-      category,
-      downtime_min: downtime,
-      root_cause:    rootcause,
-      action_taken:  action,
-      location_from: loc_from,
-      location_to:   loc_to
-    };
+    const localRecord={Date:date,line,section,asset_id:assetId,category,
+      downtime_min:downtime,root_cause:rootcause,action_taken:action,
+      location_from:loc_from,location_to:loc_to,status,
+      timestamp:new Date().toISOString(),
+      id:(crypto&&crypto.randomUUID)?crypto.randomUUID():('rec_'+Date.now())};
 
-    // 存在 localStorage 的格式（給 Report / Records 用）
-    const recordForLocal = {
-      Date: date,
-      line,
-      section,
-      asset_id: assetId,
-      category,
-      downtime_min: downtime,
-      root_cause:    rootcause,
-      action_taken:  action,
-      location_from: loc_from,
-      location_to:   loc_to,
-      timestamp: new Date().toISOString(),
-      id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : ('rec_' + Date.now())
-    };
+    let serverOk=false;
+    try{await saveRecordToServer(serverPayload);serverOk=true;}
+    catch(e){console.error(e);}
 
-    let serverOk = false;
-    try{
-      await saveRecordToServer(payloadForServer);
-      serverOk = true;
-    }catch(e){
-      console.error('Save to server failed:', e);
-    }
-
-    const logs = loadRecords();
-    logs.push(recordForLocal);
+    const logs=loadRecords();
+    logs.push(localRecord);
     saveRecords(logs);
 
-    // 清空幾個欄位，方便連續填寫
-    // 清空欄位：保留日期，其它都重設
-document.getElementById('lineInput').value = 'Line1';      // 或改成你想預設的
-document.getElementById('sectionInput').value = '';
-document.getElementById('equipInput').value = '';
-document.getElementById('catInput').value = 'Electrical';  // 或改成你想預設的
-document.getElementById('downInput').value = '';
-document.getElementById('rootInput').value = '';
-document.getElementById('actionInput').value = '';
-document.getElementById('locFromInput').value = '';
-document.getElementById('locToInput').value = '';
+    /* reset */
+    document.getElementById('lineInput').value='Line1';
+    document.getElementById('sectionInput').value='';
+    document.getElementById('equipInput').value='';
+    document.getElementById('catInput').value='Electrical';
+    document.getElementById('downInput').value='';
+    document.getElementById('rootInput').value='';
+    document.getElementById('actionInput').value='';
+    document.getElementById('locFromInput').value='';
+    document.getElementById('locToInput').value='';
+    document.getElementById('statusInput').value='Using';
 
-
-    if (serverOk){
-      updateStatus('✅ Record saved to <strong>Google Sheet</strong> and this browser.');
-    }else{
-      updateStatus('⚠ Google Sheets backend unavailable – record saved in <strong>this browser only</strong>.');
-    }
+    updateStatus(serverOk
+      ?'✅ Record saved to <strong>Google Sheet</strong> and this browser.'
+      :'⚠ Google Sheets backend unavailable – record saved in <strong>this browser only</strong>.');
   }
 
   function downloadJson(){
-    const logs = loadRecords();
-    const blob = new Blob([JSON.stringify(logs, null, 2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'maintenance_logs.json';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    const logs=loadRecords();
+    const blob=new Blob([JSON.stringify(logs,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='maintenance_logs.json';
+    document.body.appendChild(a);a.click();a.remove();
     URL.revokeObjectURL(url);
     updateStatus('JSON file downloaded. You can use it in Python / Excel.');
   }
 
+  /* ── Init ── */
   (function init(){
     setToday();
-
-    const fromUrl = getAssetIdFromQuery();
-    if (fromUrl) {
-      const equipInputEl = document.getElementById('equipInput');
-      if (equipInputEl) equipInputEl.value = fromUrl;
+    const fromUrl=getAssetIdFromQuery();
+    if(fromUrl){
+      const el=document.getElementById('equipInput');
+      if(el)el.value=fromUrl;
     }
-
-    const equipInputEl = document.getElementById('equipInput');
-    if (equipInputEl) {
-      equipInputEl.addEventListener('blur', ()=>{
-        const formatted = normalizeAssetId(equipInputEl.value);
-        if (formatted) {
-          equipInputEl.value = formatted;
-        } else {
-          equipInputEl.value = equipInputEl.value.trim().toUpperCase();
-        }
+    const equipEl=document.getElementById('equipInput');
+    if(equipEl){
+      equipEl.addEventListener('blur',()=>{
+        const f=normalizeAssetId(equipEl.value);
+        equipEl.value=f||equipEl.value.trim().toUpperCase();
       });
     }
-
     updateStatus('Ready to record maintenance tasks.');
   })();
-</script>
+  </script>
 
 </body>
 </html>
