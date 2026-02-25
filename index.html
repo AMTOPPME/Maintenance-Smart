@@ -1986,11 +1986,15 @@ function closeModules(){
   }
 
     // ===== Training accordion toggle =====
+// ===== Training accordion toggle =====
 (function(){
   const trainingPanel = document.getElementById('trainingPanel');
   if (!trainingPanel) return;
 
   trainingPanel.addEventListener('click', (e)=>{
+    // ✅ 如果點的是 course 或 material 按鈕，直接跳過，不處理 accordion
+    if (e.target.closest('.training-sec-btn') || e.target.closest('.training-material-btn')) return;
+
     const btn = e.target.closest('.training-group-btn');
     if (!btn) return;
 
@@ -1999,14 +2003,12 @@ function closeModules(){
 
     const isOpen = group.classList.contains('open');
 
-    // 想要一次只開一個：先關其他（像 accordion）
     trainingPanel.querySelectorAll('.training-group').forEach(g=>{
       g.classList.remove('open');
       const b = g.querySelector('.training-group-btn');
       if (b) b.setAttribute('aria-expanded','false');
     });
 
-    // 再決定要不要開回來
     if (!isOpen){
       group.classList.add('open');
       btn.setAttribute('aria-expanded','true');
