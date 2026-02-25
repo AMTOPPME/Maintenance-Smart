@@ -22,7 +22,7 @@
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
+      background: transparent;
       color: var(--text);
       min-height: 100vh;
       padding: 0;
@@ -32,14 +32,12 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.45);
-      backdrop-filter: blur(4px);
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 9999;
       padding: 16px;
-      animation: fadeIn .18s ease;
     }
 
     @keyframes fadeIn {
