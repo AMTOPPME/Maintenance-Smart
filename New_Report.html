@@ -418,8 +418,8 @@
     try{await saveRecordToServer(serverPayload);serverOk=true;}
     catch(e){console.error(e);}
 
-    /* ★ Also update the Asset's current status in the Inventory sheet */
-    if(serverOk) updateInventoryStatus(assetId, status);
+    /* ★ Also update status + location in the SCADA PC Inventory sheet */
+    if(serverOk) updateInventoryStatus(assetId, status, loc_to);
 
     const logs=loadRecords();
     logs.push(localRecord);
@@ -442,19 +442,21 @@
       :'⚠ Google Sheets backend unavailable – record saved in <strong>this browser only</strong>.');
   }
 
-  /* ★ Update the current status of an Asset in the Inventory (PC sheet) */
-  function updateInventoryStatus(assetId, newStatus){
-    // Fire-and-forget — sends op=update_status to Apps Script
-    // Apps Script should handle this by finding the row in the Inventory sheet
-    // matching asset_id and updating its status column.
+  /* ★ Update status + location in the SCADA PC Inventory sheet */
+  function updateInventoryStatus(assetId, newStatus, locationTo){
     fetch(API_BASE_URL, {
       method: 'POST',
       headers: {'Content-Type': 'text/plain;charset=utf-8'},
-      body: JSON.stringify({op: 'update_inventory_status', asset_id: assetId, status: newStatus})
+      body: JSON.stringify({
+        op: 'update_inventory_status',
+        asset_id: assetId,
+        status: newStatus,
+        location_to: locationTo
+      })
     }).then(r => {
-      if(!r.ok) console.warn('Inventory status update failed:', r.status);
-      else console.log('Inventory status updated:', assetId, '->', newStatus);
-    }).catch(e => console.warn('Inventory status update error:', e));
+      if(!r.ok) console.warn('Inventory update failed:', r.status);
+      else console.log('Inventory updated:', assetId, '| status:', newStatus, '| location:', locationTo);
+    }).catch(e => console.warn('Inventory update error:', e));
   }
 
   function downloadJson(){
