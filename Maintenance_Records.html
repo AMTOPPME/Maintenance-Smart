@@ -722,7 +722,20 @@
           </select>
         </div>
       </div>
-
+<div class="modal-row" style="margin-top:8px;">
+        <div>
+          <label for="editDowntime">Downtime (min)</label>
+          <input id="editDowntime" type="number" min="0" placeholder="0">
+        </div>
+        <div>
+          <label for="editStatus">Status</label>
+          <select id="editStatus">
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+      </div>
       <div style="margin-top:8px;">
         <label for="editAssetId">Asset ID</label>
         <input id="editAssetId" type="text" placeholder="PC-001 ~ PC-999">
@@ -843,6 +856,7 @@ const LOGS_ENDPOINT  = SHEET_API_URL;
     const cat     = rec.category || '';
     const locFrom = rec.location_from || '';
     const locTo   = rec.location_to   || '';
+    const status  = rec.status || 'Open';
     const ts      = rec.timestamp || rec.created_at || '';
 
     let id = rec.id;
@@ -865,6 +879,7 @@ const LOGS_ENDPOINT  = SHEET_API_URL;
       action_taken: act,
       location_from: locFrom,
       location_to:   locTo,
+      status,
       timestamp: ts,
       id
     };
@@ -1292,6 +1307,8 @@ function renderTable(){
   document.getElementById('editAssetId').value = rec.asset_id || '';
   document.getElementById('editLocFrom').value = rec.location_from || '';
   document.getElementById('editLocTo').value   = rec.location_to || '';
+    document.getElementById('editDowntime').value = rec.downtime_min || 0;
+  document.getElementById('editStatus').value   = rec.status || 'Open';
   document.getElementById('editRoot').value    = rec.root_cause || '';
   document.getElementById('editAction').value  = rec.action_taken || '';
 
@@ -1323,6 +1340,8 @@ function renderTable(){
     rec.asset_id      = formattedAssetId;
     rec.location_from = document.getElementById('editLocFrom').value.trim();
     rec.location_to   = document.getElementById('editLocTo').value.trim();
+    rec.downtime_min  = Number(document.getElementById('editDowntime').value) || 0;
+    rec.status        = document.getElementById('editStatus').value;
     rec.root_cause    = document.getElementById('editRoot').value.trim();
     rec.action_taken  = document.getElementById('editAction').value.trim();
 
