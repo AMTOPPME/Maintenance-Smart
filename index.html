@@ -2427,19 +2427,20 @@ trainingSecBtns.forEach(btn=>{
   });
 });
 
-/* ===== 右邊 MATERIAL → 開 Training.html (iframe) ===== */
-trainingMaterialBtns.forEach(btn=>{
-  btn.addEventListener('click', (e)=>{
-    e.stopPropagation();   // ✅ 防止 accordion click 攔截
+/* ===== 右邊 MATERIAL → 直接逐個綁定（不走 panel 委派）===== */
+document.querySelectorAll('.training-material-btn').forEach(btn=>{
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();  // ✅ 比 stopPropagation 更強，攔截所有同層 listener
 
-    if (btn.getAttribute('data-placeholder') === 'true'){
-      btn.style.outline = '2px dashed #f59e0b';
-      setTimeout(()=>{ btn.style.outline = ''; }, 800);
+    if (this.getAttribute('data-placeholder') === 'true'){
+      this.style.outline = '2px dashed #f59e0b';
+      setTimeout(()=>{ this.style.outline = ''; }, 800);
       return;
     }
 
-    const key   = btn.getAttribute('data-train-material-key');
-    const label = btn.getAttribute('data-material-label') || key || '';
+    const key   = this.getAttribute('data-train-material-key');
+    const label = this.getAttribute('data-material-label') || key || '';
     if (!key) return;
 
     resetOtherGroups('training');
@@ -2449,13 +2450,13 @@ trainingMaterialBtns.forEach(btn=>{
     swapTo(viewerUrl);
     setModule('Training – ' + label, 'Training PDF: ' + label);
 
-    trainingSecBtns.forEach(b=>b.classList.remove('active'));
-    trainingMaterialBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
+    document.querySelectorAll('.training-sec-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.training-material-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
 
-    closeModules();  // ✅ 關閉 menu + panel
-  });
-});
+    closeModules();
+  }, true);  // ✅ useCapture: true — 在捕獲階段就攔截，比任何冒泡 listener 都先執行
+});;
 
   // Maintenance：2nd/3rd layer
   if (maintenancePanel){
