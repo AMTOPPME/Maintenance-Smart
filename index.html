@@ -2405,51 +2405,53 @@ ioLineBtns.forEach(btn=>{
 
 /* ===== 左邊 COURSE → 開新分頁 (YouTube 等外部連結) ===== */
 trainingSecBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
+  btn.addEventListener('click', (e)=>{
+    e.stopPropagation();   // ✅ 防止 accordion click 攔截
+
     const rawUrl = btn.getAttribute('data-train-url');
     if (!rawUrl || !rawUrl.trim()){
-      // URL 還沒填：短暫提示
       btn.style.outline = '2px dashed #f59e0b';
       setTimeout(()=>{ btn.style.outline = ''; }, 800);
       return;
     }
     window.open(rawUrl.trim(), '_blank');
 
-    // 短暫 active 視覺回饋
     trainingSecBtns.forEach(b=>b.classList.remove('active'));
     trainingMaterialBtns.forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     setTimeout(()=> btn.classList.remove('active'), 600);
 
-    closeModules();
+    closeModules();  // ✅ 關閉 menu + panel
   });
 });
 
 /* ===== 右邊 MATERIAL → 開 Training.html (iframe) ===== */
 trainingMaterialBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
+  btn.addEventListener('click', (e)=>{
+    e.stopPropagation();   // ✅ 防止 accordion click 攔截
+
     if (btn.getAttribute('data-placeholder') === 'true'){
       btn.style.outline = '2px dashed #f59e0b';
       setTimeout(()=>{ btn.style.outline = ''; }, 800);
       return;
     }
 
-    resetOtherGroups('training');
-    activateNav(trainingParentBtn);
-
     const key   = btn.getAttribute('data-train-material-key');
     const label = btn.getAttribute('data-material-label') || key || '';
     if (!key) return;
 
+    resetOtherGroups('training');
+    activateNav(trainingParentBtn);
+
     const viewerUrl = 'Training.html?key=' + encodeURIComponent(key);
     swapTo(viewerUrl);
-    setModule('Training Material – ' + label, 'Training PDF: ' + label);
+    setModule('Training – ' + label, 'Training PDF: ' + label);
 
     trainingSecBtns.forEach(b=>b.classList.remove('active'));
     trainingMaterialBtns.forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
 
-    closeModules();
+    closeModules();  // ✅ 關閉 menu + panel
   });
 });
 
