@@ -5,14 +5,12 @@
   <title>Maintenance Smart | Maintenance Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Apply theme & style from portal -->
   <script>
     (function () {
       const storedTheme = localStorage.getItem('ms-theme');
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       const theme = storedTheme || (prefersDark ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', theme);
-
       const style = localStorage.getItem('ms-style') || 'blue';
       document.documentElement.setAttribute('data-style', style);
     })();
@@ -20,600 +18,217 @@
 
   <style>
     :root {
-      --bg: #f3f4f6;
-      --card-bg: #ffffff;
-      --border-subtle: #e5e7eb;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --text: #111827;
-      --text-soft: #6b7280;
-      --radius-xl: 16px;
+      --bg: #f3f4f6; --card-bg: #ffffff; --border-subtle: #e5e7eb;
+      --accent: #2563eb; --accent-hover: #1d4ed8; --text: #111827;
+      --text-soft: #6b7280; --radius-xl: 16px;
       --shadow-soft-sm: 0 8px 20px rgba(15,23,42,0.06);
-      --small-font: 13px;
-      --xsmall-font: 11px;
+      --small-font: 13px; --xsmall-font: 11px;
     }
-
     html[data-theme="dark"] {
-      --bg: #020617;
-      --card-bg: #020617;
-      --border-subtle: #1f2937;
-      --accent: #60a5fa;
-      --accent-hover: #3b82f6;
-      --text: #e5e7eb;
-      --text-soft: #9ca3af;
-      --shadow-soft-sm: 0 8px 20px rgba(0,0,0,0.75);
+      --bg: #020617; --card-bg: #020617; --border-subtle: #1f2937;
+      --accent: #60a5fa; --accent-hover: #3b82f6; --text: #e5e7eb;
+      --text-soft: #9ca3af; --shadow-soft-sm: 0 8px 20px rgba(0,0,0,0.75);
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 15px;
-      background:
-        radial-gradient(circle at top, rgba(129,140,248,0.14), transparent),
-        var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      -webkit-text-size-adjust: 100%;
+      background: radial-gradient(circle at top, rgba(129,140,248,0.14), transparent), var(--bg);
+      color: var(--text); min-height: 100vh; -webkit-text-size-adjust: 100%;
       transition: background .25s ease, color .25s ease;
     }
-
     html[data-style="panther"] body {
-      background:
-        radial-gradient(circle at top, rgba(244,114,182,.28), transparent),
-        var(--bg);
+      background: radial-gradient(circle at top, rgba(244,114,182,.28), transparent), var(--bg);
     }
     html[data-style="hangyodon"] body {
-      background:
-        radial-gradient(circle at top, rgba(56,189,248,.35), transparent),
-        var(--bg);
+      background: radial-gradient(circle at top, rgba(56,189,248,.35), transparent), var(--bg);
     }
-
-    .side-panther,
-    .side-hangyodon{
-      position:fixed;
-      top:50%;
-      transform:translateY(-50%);
-      width:360px;
-      opacity:.9;
-      z-index:1;
-      pointer-events:none;
-      user-select:none;
-      display:none;
-      transition:transform .25s ease, opacity .25s ease;
+    .side-panther,.side-hangyodon{
+      position:fixed;top:50%;transform:translateY(-50%);width:360px;opacity:.9;
+      z-index:1;pointer-events:none;user-select:none;display:none;
     }
-    .side-panther.left{left:1.5%;transform:translateY(-50%) scaleX(1)}
-    .side-panther.right{right:1.5%;transform:translateY(-50%) scaleX(1)}
-    .side-hangyodon.left{left:1.5%;transform:translateY(-50%) scaleX(-1)}
-    .side-hangyodon.right{right:1.5%;transform:translateY(-50%) scaleX(-1)}
-
+    .side-panther.left{left:1.5%;}
+    .side-panther.right{right:1.5%;}
+    .side-hangyodon.left{left:1.5%;transform:translateY(-50%) scaleX(-1);}
+    .side-hangyodon.right{right:1.5%;transform:translateY(-50%) scaleX(-1);}
     html[data-style="panther"] .side-panther{display:block;}
     html[data-style="hangyodon"] .side-hangyodon{display:block;}
-
-    @media (max-width: 900px){
+    @media(max-width:900px){
       html[data-style="panther"] .side-panther.left,
-      html[data-style="hangyodon"] .side-hangyodon.left{
-        display:none !important;
-      }
-
+      html[data-style="hangyodon"] .side-hangyodon.left{display:none !important;}
       html[data-style="panther"] .side-panther.right,
       html[data-style="hangyodon"] .side-hangyodon.right{
-        display:block !important;
-        position:fixed !important;
-        left:50% !important;
-        right:auto !important;
-        top:50% !important;
-        transform:translate(-50%, -50%) !important;
-        width:260px;
-        opacity:0.9;
-        pointer-events:none;
-        z-index:1;
+        display:block !important;position:fixed !important;
+        left:50% !important;right:auto !important;top:50% !important;
+        transform:translate(-50%,-50%) !important;width:260px;opacity:0.9;
       }
     }
-
-    .page {
-      position:relative;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px 16px 32px;
-      z-index:2;
+    .page{position:relative;max-width:1200px;margin:0 auto;padding:20px 16px 32px;z-index:2;}
+    .card{
+      background:var(--card-bg);border-radius:var(--radius-xl);
+      border:1px solid var(--border-subtle);padding:14px;
+      box-shadow:var(--shadow-soft-sm);margin-bottom:14px;
+      transition:background .25s ease,border-color .25s ease,box-shadow .25s ease;
     }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--border-subtle);
-      padding: 14px;
-      box-shadow: var(--shadow-soft-sm);
-      margin-bottom: 14px;
-      transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
-    }
-
-    .card h2 {
-      margin: 0 0 4px;
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .card-subtitle {
-      font-size: var(--small-font);
-      color: var(--text-soft);
-      margin-bottom: 8px;
-    }
-
+    .card h2{margin:0 0 4px;font-size:17px;font-weight:600;color:var(--text);}
+    .card-subtitle{font-size:var(--small-font);color:var(--text-soft);margin-bottom:8px;}
     .summary-chip{
-      display:inline-flex;
-      flex-wrap:wrap;
-      align-items:center;
-      gap:6px;
-      padding:5px 10px;
-      border-radius:999px;
-      border:1px solid var(--border-subtle);
-      background:#f9fafb;
-      font-size:var(--xsmall-font);
-      color:var(--text-soft);
+      display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;
+      padding:5px 10px;border-radius:999px;border:1px solid var(--border-subtle);
+      background:#f9fafb;font-size:var(--xsmall-font);color:var(--text-soft);
     }
-    .summary-chip strong{
-      color:var(--text);
-      font-weight:600;
+    .summary-chip strong{color:var(--text);font-weight:600;}
+    .header-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+    .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px;}
+    .filters-label{font-size:var(--xsmall-font);color:var(--text-soft);margin-right:2px;}
+    .filters input,.filters select{
+      font-size:var(--small-font);padding:7px 9px;border-radius:8px;
+      border:1px solid #d1d5db;background:#ffffff;color:var(--text);
+      min-width:150px;transition:all 0.15s ease;
     }
-
-    .header-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-
-    /* Filters */
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      margin-top: 6px;
-    }
-
-    .filters-label {
-      font-size: var(--xsmall-font);
-      color: var(--text-soft);
-      margin-right: 2px;
-    }
-
-    .filters input,
-    .filters select {
-      font-size: var(--small-font);
-      padding: 7px 9px;
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-      background: #ffffff;
-      color: var(--text);
-      min-width: 150px;
-      transition: all 0.15s ease;
-    }
-
     html[data-theme="dark"] .filters input,
-    html[data-theme="dark"] .filters select {
-      background:#020617;
-      border-color:#1f2937;
-      color:var(--text);
+    html[data-theme="dark"] .filters select{background:#020617;border-color:#1f2937;color:var(--text);}
+    .filters input::placeholder{color:#9ca3af;}
+    .filters input:focus,.filters select:focus{
+      border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,0.14);
+      outline:none;transform:translateY(-1px);
     }
-
-    .filters input::placeholder { color: #9ca3af; }
-
-    .filters input:focus,
-    .filters select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(37,99,235,0.14);
-      outline: none;
-      transform: translateY(-1px);
+    .btn{
+      cursor:pointer;border-radius:999px;padding:7px 13px;font-size:var(--xsmall-font);
+      border:none;display:inline-flex;align-items:center;gap:6px;
+      transition:all 0.15s ease;background:#e5e7eb;color:#111827;font-weight:600;
     }
-
-    .btn {
-      cursor: pointer;
-      border-radius: 999px;
-      padding: 7px 13px;
-      font-size: var(--xsmall-font);
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.15s ease;
-      background: #e5e7eb;
-      color: #111827;
-      font-weight:600;
+    .btn:hover{background:#d1d5db;transform:translateY(-1px);box-shadow:0 3px 8px rgba(148,163,253,0.35);}
+    .btn-primary{background:var(--accent);color:#ffffff;box-shadow:0 4px 12px rgba(37,99,235,0.35);}
+    .btn-primary:hover{background:var(--accent-hover);}
+    .table-wrap{
+      margin-top:4px;border-radius:14px;border:1px solid #e5e7eb;
+      overflow-x:auto;background:#ffffff;box-shadow:var(--shadow-soft-sm);
     }
-
-    .btn:hover {
-      background: #d1d5db;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(148,163,253,0.35);
+    html[data-theme="dark"] .table-wrap{background:#020617;border-color:#1f2937;}
+    table{width:100%;border-collapse:collapse;font-size:var(--small-font);}
+    thead{background:#f9fafb;}
+    html[data-theme="dark"] thead{background:#020617;}
+    th,td{padding:8px 9px;border-bottom:1px solid #e5e7eb;text-align:left;}
+    html[data-theme="dark"] th,html[data-theme="dark"] td{border-bottom-color:#1f2937;}
+    th{
+      font-size:var(--xsmall-font);font-weight:600;text-transform:uppercase;
+      letter-spacing:0.06em;color:var(--text-soft);position:sticky;top:0;
+      z-index:5;cursor:pointer;user-select:none;background:#f9fafb;
     }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(37,99,235,0.35);
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-    }
-
-    .table-wrap {
-      margin-top: 4px;
-      border-radius: 14px;
-      border: 1px solid #e5e7eb;
-      overflow-x: auto;
-      background: #ffffff;
-      box-shadow: var(--shadow-soft-sm);
-    }
-    html[data-theme="dark"] .table-wrap {
-      background:#020617;
-      border-color:#1f2937;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: var(--small-font);
-    }
-
-    thead { background: #f9fafb; }
-    html[data-theme="dark"] thead { background:#020617; }
-
-    th, td {
-      padding: 8px 9px;
-      border-bottom: 1px solid #e5e7eb;
-      text-align: left;
-    }
-    html[data-theme="dark"] th,
-    html[data-theme="dark"] td{
-      border-bottom-color:#1f2937;
-    }
-
-    th {
-      font-size: var(--xsmall-font);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-soft);
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    th.sortable:hover {
-      color: var(--accent);
-      background: #eef2ff;
-    }
-
-    th .sort-indicator{
-      font-size:10px;
-      margin-left:4px;
-      opacity:.6;
-    }
-
-    tbody tr{
-      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
-    }
-
-    /* Light mode：一排白、一排淺灰，對照比較清楚 */
-    tbody tr:nth-child(even){
-      background:#ffffff;
-    }
-    tbody tr:nth-child(odd){
-      background:#f3f4f6;   /* 比 #fdfdfd 再深一點 */
-    }
-
-    /* Dark mode：維持透明，由 hover 顏色做對比 */
+    html[data-theme="dark"] th{background:#020617;}
+    th.sortable:hover{color:var(--accent);background:#eef2ff;}
+    th .sort-indicator{font-size:10px;margin-left:4px;opacity:.6;}
+    tbody tr{transition:background .15s ease,transform .15s ease,box-shadow .15s ease;}
+    tbody tr:nth-child(even){background:#ffffff;}
+    tbody tr:nth-child(odd){background:#f3f4f6;}
     html[data-theme="dark"] tbody tr:nth-child(even),
-    html[data-theme="dark"] tbody tr:nth-child(odd){
-      background:transparent;
-    }
+    html[data-theme="dark"] tbody tr:nth-child(odd){background:transparent;}
+    tbody tr:hover{background:#eff6ff;transform:translateY(-1px);box-shadow:0 4px 10px rgba(148,163,253,0.25);}
+    html[data-theme="dark"] tbody tr:hover{background:rgba(37,99,235,.25);}
+    td{max-width:260px;overflow:hidden;text-overflow:ellipsis;color:var(--text);vertical-align:top;}
+    .tag-line{font-size:var(--xsmall-font);color:#2563eb;font-weight:600;margin-bottom:2px;}
+    .text-small{font-size:var(--xsmall-font);color:var(--text-soft);}
+    .equip{font-weight:600;}
+    .pill-cat{display:inline-flex;padding:3px 8px;border-radius:999px;font-size:var(--xsmall-font);background:#eef2ff;color:#3730a3;}
 
-    tbody tr:hover{
-      background:#eff6ff;
-      transform:translateY(-1px);
-      box-shadow:0 4px 10px rgba(148,163,253,0.25);
-    }
-    html[data-theme="dark"] tbody tr:hover{
-      background:rgba(37,99,235,.25);
-    }
-
-    td{
-      max-width:260px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      color:var(--text);
-      vertical-align:top;
-    }
-
-    .tag-line{
-      font-size:var(--xsmall-font);
-      color:#2563eb;
-      font-weight:600;
-      margin-bottom:2px;
-    }
-    .text-small{
-      font-size:var(--xsmall-font);
-      color:var(--text-soft);
-    }
-    .equip{
-      font-weight:600;
-    }
-
-    .pill-cat{
-      display:inline-flex;
-      padding:3px 8px;
-      border-radius:999px;
-      font-size:var(--xsmall-font);
-      background:#eef2ff;
-      color:#3730a3;
-    }
+    /* ── Status badges ── */
+    .pill-status{display:inline-flex;padding:3px 8px;border-radius:999px;font-size:var(--xsmall-font);font-weight:700;}
+    .pill-using  {background:#d1fae5;color:#065f46;}
+    .pill-spare  {background:#dbeafe;color:#1e40af;}
+    .pill-broken {background:#fee2e2;color:#b91c1c;}
+    html[data-theme="dark"] .pill-using  {background:#064e3b;color:#6ee7b7;}
+    html[data-theme="dark"] .pill-spare  {background:#1e3a5f;color:#93c5fd;}
+    html[data-theme="dark"] .pill-broken {background:#450a0a;color:#fca5a5;}
 
     .btn-ghost{
-      border:none;
-      border-radius:999px;
-      padding:4px 8px;
-      font-size:10px;
-      cursor:pointer;
-      background:#e5e7eb;
-      color:#374151;
-      margin-right:4px;
-      transition:background .15s, transform .05s;
+      border:none;border-radius:999px;padding:4px 8px;font-size:10px;cursor:pointer;
+      background:#e5e7eb;color:#374151;margin-right:4px;transition:background .15s,transform .05s;
     }
-    .btn-ghost:hover{
-      background:#d1d5db;
-      transform:translateY(-1px);
-    }
-    .btn-danger{
-      background:#fee2e2;
-      color:#b91c1c;
-    }
-    .btn-danger:hover{
-      background:#fecaca;
-    }
+    .btn-ghost:hover{background:#d1d5db;transform:translateY(-1px);}
+    .btn-danger{background:#fee2e2;color:#b91c1c;}
+    .btn-danger:hover{background:#fecaca;}
+    .empty{padding:30px 16px;text-align:center;font-size:var(--small-font);color:var(--text-soft);}
 
-    .empty{
-      padding:30px 16px;
-      text-align:center;
-      font-size:var(--small-font);
-      color:var(--text-soft);
-    }
-
-       /* ===== Modal：美化版 ===== */
+    /* Modal */
     .modal-backdrop{
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:50;
-      background:rgba(15,23,42,.40);
-      backdrop-filter:blur(6px);
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+      z-index:50;background:rgba(15,23,42,.40);backdrop-filter:blur(6px);
     }
-    .modal-backdrop.open{
-      display:flex;
-      animation:fadeIn .18s ease-out;
-    }
-
+    .modal-backdrop.open{display:flex;animation:fadeIn .18s ease-out;}
     .modal{
-      position:relative;
-      width:100%;
-      max-width:520px;
-      padding:18px 20px 16px;
-      border-radius:22px;
-      border:1px solid rgba(148,163,184,0.6);
-      background:
-        radial-gradient(circle at top left, rgba(129,140,248,.16), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(56,189,248,.16), transparent 55%),
-        var(--card-bg);
+      position:relative;width:100%;max-width:520px;padding:18px 20px 16px;
+      border-radius:22px;border:1px solid rgba(148,163,184,0.6);
+      background:radial-gradient(circle at top left,rgba(129,140,248,.16),transparent 55%),
+                 radial-gradient(circle at bottom right,rgba(56,189,248,.16),transparent 55%),
+                 var(--card-bg);
       box-shadow:0 22px 55px rgba(15,23,42,0.40);
     }
-
-    .modal:before{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:inherit;
-      border:1px solid rgba(255,255,255,0.2);
-      pointer-events:none;
-      mix-blend-mode:overlay;
-    }
-
-    .modal-title{
-      margin:0 0 2px;
-      font-size:18px;
-      font-weight:650;
-      letter-spacing:.02em;
-    }
-
-    .modal-sub{
-      margin:0 0 12px;
-      font-size:var(--xsmall-font);
-      color:var(--text-soft);
-      line-height:1.5;
-    }
-
-    .modal-row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom:8px;
-    }
-    .modal-row > div{
-      flex:1;
-      min-width:140px;
-    }
-
+    .modal-title{margin:0 0 2px;font-size:18px;font-weight:650;letter-spacing:.02em;}
+    .modal-sub{margin:0 0 12px;font-size:var(--xsmall-font);color:var(--text-soft);line-height:1.5;}
+    .modal-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+    .modal-row>div{flex:1;min-width:140px;}
     .modal label{
-      display:block;
-      font-size:10px;
-      font-weight:600;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      color:var(--text-soft);
-      margin-bottom:3px;
+      display:block;font-size:10px;font-weight:600;text-transform:uppercase;
+      letter-spacing:.08em;color:var(--text-soft);margin-bottom:3px;
     }
-
-    .modal input,
-    .modal select,
-    .modal textarea{
-      width:100%;
-      font-size:var(--small-font);
-      padding:7px 9px;
-      border-radius:11px;
-      border:1px solid #d1d5db;
-      background:#ffffff;
-      color:var(--text);
-      transition:border-color .15s ease, box-shadow .15s ease, background .15s ease, transform .05s ease;
+    .modal input,.modal select,.modal textarea{
+      width:100%;font-size:var(--small-font);padding:7px 9px;border-radius:11px;
+      border:1px solid #d1d5db;background:#ffffff;color:var(--text);
+      transition:border-color .15s ease,box-shadow .15s ease,background .15s ease,transform .05s ease;
       font-family:inherit;
     }
     html[data-theme="dark"] .modal input,
     html[data-theme="dark"] .modal select,
-    html[data-theme="dark"] .modal textarea{
-      background:#020617;
-      border-color:#1f2937;
-      color:var(--text);
+    html[data-theme="dark"] .modal textarea{background:#020617;border-color:#1f2937;color:var(--text);}
+    .modal input:focus,.modal select:focus,.modal textarea:focus{
+      border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,.18);
+      outline:none;transform:translateY(-1px);
     }
+    .modal textarea{resize:vertical;min-height:70px;}
+    .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px;}
+    .modal-actions .btn{padding:7px 14px;border-radius:999px;font-size:var(--xsmall-font);}
+    .modal-actions .btn-primary{min-width:86px;justify-content:center;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+    @media(max-width:900px){.table-wrap{border-radius:14px;overflow-x:auto;}table{min-width:1000px;}}
 
-    .modal input:focus,
-    .modal select:focus,
-    .modal textarea:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 2px rgba(37,99,235,.18);
-      outline:none;
-      transform:translateY(-1px);
-    }
-
-    .modal textarea{
-      resize:vertical;
-      min-height:70px;
-    }
-
-    .modal-actions{
-      display:flex;
-      justify-content:flex-end;
-      gap:8px;
-      margin-top:10px;
-    }
-
-    .modal-actions .btn{
-      padding:7px 14px;
-      border-radius:999px;
-      font-size:var(--xsmall-font);
-    }
-
-    .modal-actions .btn-primary{
-      min-width:86px;
-      justify-content:center;
-    }
-
-    @keyframes fadeIn{
-      from{opacity:0; transform:translateY(6px);}
-      to{opacity:1; transform:translateY(0);}
-    }
-
-    @media (max-width: 900px){
-      .table-wrap{border-radius:14px;overflow-x:auto;}
-      table{min-width:1000px;}
-    }
-
-    /* Back to top */
-    #backToTop {
-      position: fixed;
-      bottom: 22px;
-      right: 22px;
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent);
-      color: #fff;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      z-index: 9999;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .2s ease, transform .25s ease, box-shadow .25s ease;
+    #backToTop{
+      position:fixed;bottom:22px;right:22px;width:58px;height:58px;
+      border-radius:50%;border:none;background:var(--accent);color:#fff;
+      font-size:22px;font-weight:bold;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 8px 20px rgba(0,0,0,0.25);z-index:9999;
+      opacity:0;pointer-events:none;
+      transition:opacity .2s ease,transform .25s ease,box-shadow .25s ease;
     }
     #backToTop.visible{opacity:1;pointer-events:auto;}
-    #backToTop:hover{
-      transform:translateY(-4px);
-      box-shadow:0 10px 28px rgba(0,0,0,0.30);
-    }
+    #backToTop:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,0.30);}
     html[data-style="panther"] #backToTop{
-      background:transparent;
-      background-image:url("assets/pinkpanther2.png");
-      background-size:100% 100%;
-      background-position:center;
-      color:transparent;
-      border:none;
+      background:transparent;background-image:url("assets/pinkpanther2.png");
+      background-size:100% 100%;background-position:center;color:transparent;border:none;
     }
     html[data-style="hangyodon"] #backToTop{
-      background:transparent;
-      background-image:url("assets/hangyodon2.png");
-      background-size:100% 100%;
-      background-position:center;
-      color:transparent;
-      border:none;
+      background:transparent;background-image:url("assets/hangyodon2.png");
+      background-size:100% 100%;background-position:center;color:transparent;border:none;
     }
-
     @media print{
-      body{
-        background:#ffffff !important;
-        -webkit-print-color-adjust:exact;
-        print-color-adjust:exact;
-      }
-      .side-panther,
-      .side-hangyodon,
-      #backToTop{
-        display:none !important;
-      }
-      .page{
-        max-width:100%;
-        padding:0;
-      }
-      .card{
-        box-shadow:none;
-        border-radius:0;
-        margin:0 0 8px;
-      }
-      .table-wrap{
-        box-shadow:none;
-        border-radius:0;
-        border:1px solid #000;
-      }
-      th,td{
-        border-color:#000 !important;
-        color:#000 !important;
-      }
-      .pill-cat{
-        border:1px solid #000 !important;
-        background:#fff !important;
-        color:#000 !important;
-      }
+      body{background:#ffffff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .side-panther,.side-hangyodon,#backToTop{display:none !important;}
+      .page{max-width:100%;padding:0;}
+      .card{box-shadow:none;border-radius:0;margin:0 0 8px;}
+      .table-wrap{box-shadow:none;border-radius:0;border:1px solid #000;}
+      th,td{border-color:#000 !important;color:#000 !important;}
+      .pill-cat,.pill-status{border:1px solid #000 !important;background:#fff !important;color:#000 !important;}
     }
   </style>
 </head>
 <body>
 
-  <!-- side characters -->
-  <img src="assets/pinkpanther1.png" alt="Pink Panther Left" class="side-panther left">
-  <img src="assets/pinkpanther2.png" alt="Pink Panther Right" class="side-panther right">
-  <img src="assets/hangyodon1.png" alt="Hangyodon Left" class="side-hangyodon left">
-  <img src="assets/hangyodon2.png" alt="Hangyodon Right" class="side-hangyodon right">
+  <img src="assets/pinkpanther1.png" alt="" class="side-panther left">
+  <img src="assets/pinkpanther2.png" alt="" class="side-panther right">
+  <img src="assets/hangyodon1.png"   alt="" class="side-hangyodon left">
+  <img src="assets/hangyodon2.png"   alt="" class="side-hangyodon right">
 
   <div class="page">
     <div class="card">
@@ -635,24 +250,16 @@
       <div class="filters">
         <span class="filters-label">Filter:</span>
         <input id="searchInput" type="search" placeholder="Search asset ID / root cause / action / location">
-        <select id="lineFilter">
-          <option value="">All lines</option>
-        </select>
-        <select id="sectionFilter">
-          <option value="">All sections</option>
-        </select>
-        <select id="categoryFilter">
-          <option value="">All categories</option>
-        </select>
+        <select id="lineFilter"><option value="">All lines</option></select>
+        <select id="sectionFilter"><option value="">All sections</option></select>
+        <select id="categoryFilter"><option value="">All categories</option></select>
         <button class="btn" id="btnClearFilters">Clear filters</button>
       </div>
     </div>
 
     <div class="card">
       <h2>Record list</h2>
-      <div class="card-subtitle">
-        Click column headers to sort. Click a row or use Edit / Delete to update the local log.
-      </div>
+      <div class="card-subtitle">Click column headers to sort. Click a row or use Edit / Delete to update the local log.</div>
       <div class="table-wrap">
         <div class="empty" id="emptyState">Loading......</div>
         <table id="recordsTable" style="display:none;">
@@ -663,6 +270,7 @@
               <th class="sortable" data-sort="asset_id">Asset ID<span class="sort-indicator"></span></th>
               <th class="sortable" data-sort="category">Category<span class="sort-indicator"></span></th>
               <th class="sortable" data-sort="downtime_min">Downtime (min)<span class="sort-indicator"></span></th>
+              <th class="sortable" data-sort="status">Status<span class="sort-indicator"></span></th>
               <th>Location</th>
               <th>Root cause / Action</th>
               <th>Actions</th>
@@ -674,13 +282,12 @@
     </div>
   </div>
 
-  <!-- Edit modal -->
+  <!-- Edit Modal -->
   <div class="modal-backdrop" id="editBackdrop">
     <div class="modal">
       <h2 class="modal-title">Edit record</h2>
-      <p class="modal-sub">
-        Update the selected maintenance record. Changes will be saved to Google Sheet and this browser.
-      </p>
+      <p class="modal-sub">Update the selected maintenance record. Changes will be saved to Google Sheet and this browser.</p>
+
       <div class="modal-row">
         <div>
           <label for="editDate">Date</label>
@@ -702,12 +309,12 @@
         <div>
           <label for="editSection">Section</label>
           <select id="editSection">
-            <option value="F12">F12</option>
-            <option value="F13">F13</option>
-            <option value="F16">F16</option>
-            <option value="F201">F201</option>
-            <option value="F42">F42</option>
-            <option value="F55">F55</option>
+            <option value="MCC">MCC</option>
+            <option value="Control Room">Control Room</option>
+            <option value="Lab">Lab</option>
+            <option value="Field">Field</option>
+            <option value="Server Room">Server Room</option>
+            <option value="Other">Other</option>
           </select>
         </div>
         <div>
@@ -722,20 +329,23 @@
           </select>
         </div>
       </div>
-<div class="modal-row" style="margin-top:8px;">
+
+      <div class="modal-row" style="margin-top:8px;">
         <div>
           <label for="editDowntime">Downtime (min)</label>
           <input id="editDowntime" type="number" min="0" placeholder="0">
         </div>
         <div>
+          <!-- ★ Updated Status options: Using / Spare / Broken -->
           <label for="editStatus">Status</label>
           <select id="editStatus">
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Closed">Closed</option>
+            <option value="Using">Using</option>
+            <option value="Spare">Spare</option>
+            <option value="Broken">Broken</option>
           </select>
         </div>
       </div>
+
       <div style="margin-top:8px;">
         <label for="editAssetId">Asset ID</label>
         <input id="editAssetId" type="text" placeholder="PC-001 ~ PC-999">
@@ -769,640 +379,356 @@
     </div>
   </div>
 
-  <!-- Back to Top -->
   <button id="backToTop" title="Back to Top">↑</button>
 
   <script>
-    // Back to top
     (function(){
-      const btn = document.getElementById('backToTop');
-      if (!btn) return;
-      const THRESHOLD = 250;
-      function updateVisibility(){
-        if (window.scrollY > THRESHOLD) btn.classList.add('visible');
-        else btn.classList.remove('visible');
-      }
-      function scrollToTop(){
-        window.scrollTo({top:0, behavior:'smooth'});
-      }
-      window.addEventListener('scroll', updateVisibility);
-      btn.addEventListener('click', scrollToTop);
-      updateVisibility();
+      const btn=document.getElementById('backToTop');
+      if(!btn)return;
+      function upd(){btn.classList.toggle('visible',window.scrollY>250);}
+      window.addEventListener('scroll',upd);
+      btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+      upd();
     })();
   </script>
 
-<script>
-  const STORAGE_KEY   = 'ms-maintenance-logs';
-const DELETE_PASSWORD = '1234';
-const EDIT_PASSWORD   = '1234';
-  
-// ✅ 直接打 Google Sheet Web App
-const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbx7CDsQJdIOmrgRFiFAyvZVcLvJrqr2dF1RM4oqy0Aj9FPiZDmTRUP75o8ZUp3bFHXvfg/exec';
-const LOGS_ENDPOINT  = SHEET_API_URL; 
-  let records   = [];
-  let filtered  = [];
-  let sortKey   = 'Date';
-  let sortDir   = 'desc';
-  let editingId = null;
-  let searchTimer = null;
+  <script>
+  const STORAGE_KEY     = 'ms-maintenance-logs';
+  const DELETE_PASSWORD = '1234';
+  const EDIT_PASSWORD   = '1234';
+  const SHEET_API_URL   = 'https://script.google.com/macros/s/AKfycbx7CDsQJdIOmrgRFiFAyvZVcLvJrqr2dF1RM4oqy0Aj9FPiZDmTRUP75o8ZUp3bFHXvfg/exec';
+  const LOGS_ENDPOINT   = SHEET_API_URL;
 
-  // ===== URL ?asset=PC-xxx =====
-  function getAssetIdFromQuery(){
-    const params = new URLSearchParams(window.location.search);
-    return params.get('asset') || '';
+  /* Status badge helper */
+  function statusBadge(s){
+    const v=(s||'').toLowerCase();
+    const cls = v==='using'?'pill-using': v==='spare'?'pill-spare': v==='broken'?'pill-broken':'';
+    return `<span class="pill-status ${cls}">${s||''}</span>`;
   }
 
-  // ===== Asset ID 正規化 PC-001 ~ PC-999 =====
+  let records=[], filtered=[], sortKey='Date', sortDir='desc', editingId=null, searchTimer=null;
+
+  function getAssetIdFromQuery(){
+    return new URLSearchParams(window.location.search).get('asset')||'';
+  }
+
   function normalizeAssetId(raw){
-    if (!raw) return '';
-    let s = String(raw).trim().toUpperCase();
-
-    if (/^\d{1,3}$/.test(s)) {
-      s = 'PC-' + s.padStart(3, '0');
-    }
-
-    const m = s.match(/^PC[-\s]?(\d{1,3})$/i);
-    if (m) {
-      s = 'PC-' + m[1].padStart(3, '0');
-    }
+    if(!raw)return'';
+    let s=String(raw).trim().toUpperCase();
+    if(/^\d{1,3}$/.test(s)) s='PC-'+s.padStart(3,'0');
+    const m=s.match(/^PC[-\s]?(\d{1,3})$/i);
+    if(m) s='PC-'+m[1].padStart(3,'0');
     return s;
   }
 
   function validateAndFormatAssetId(input){
-    const formatted = normalizeAssetId(input);
-    if (!formatted || !/^PC-\d{3}$/.test(formatted)) {
-      alert('Asset ID must be in format: PC-001 ~ PC-999');
-      return null;
-    }
-    return formatted;
+    const f=normalizeAssetId(input);
+    if(!f||!/^PC-\d{3}$/.test(f)){alert('Asset ID must be in format: PC-001 ~ PC-999');return null;}
+    return f;
   }
 
-  // ===== 統一舊/新欄位格式 =====
-  function normalizeRecord(rec, idx){
-    const dateVal = rec.Date || rec.date || '';
-
-    const assetRaw = rec.asset_id || rec.equipment || '';
-    const assetId  = normalizeAssetId(assetRaw);
-
-    let dt = 0;
-    if (rec.downtime_min != null) dt = rec.downtime_min;
-    else if (rec.downtime != null) dt = rec.downtime;
-
-    const root = rec.root_cause   || rec.rootcause   || '';
-    const act  = rec.action_taken || rec.action      || '';
-
-    const line    = rec.line    || '';
-    const section = rec.section || '';
-    const cat     = rec.category || '';
-    const locFrom = rec.location_from || '';
-    const locTo   = rec.location_to   || '';
-    const status  = rec.status || 'Open';
-    const ts      = rec.timestamp || rec.created_at || '';
-
-    let id = rec.id;
-    if (!id){
-      if (window.crypto && crypto.randomUUID){
-        id = crypto.randomUUID();
-      }else{
-        id = 'rec_' + Date.now() + '_' + idx;
-      }
-    }
-
-    return {
-      Date: dateVal,
-      line,
-      section,
-      asset_id: assetId,
-      category: cat,
-      downtime_min: Number(dt) || 0,
-      root_cause:   root,
-      action_taken: act,
-      location_from: locFrom,
-      location_to:   locTo,
-      status,
-      timestamp: ts,
-      id
+  function normalizeRecord(rec,idx){
+    const dateVal=rec.Date||rec.date||'';
+    const assetId=normalizeAssetId(rec.asset_id||rec.equipment||'');
+    let dt=0;
+    if(rec.downtime_min!=null)dt=rec.downtime_min;
+    else if(rec.downtime!=null)dt=rec.downtime;
+    let id=rec.id;
+    if(!id) id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():('rec_'+Date.now()+'_'+idx);
+    return{
+      Date:dateVal, line:rec.line||'', section:rec.section||'',
+      asset_id:assetId, category:rec.category||'',
+      downtime_min:Number(dt)||0,
+      root_cause:rec.root_cause||rec.rootcause||'',
+      action_taken:rec.action_taken||rec.action||'',
+      location_from:rec.location_from||'', location_to:rec.location_to||'',
+      status:rec.status||'Using',
+      timestamp:rec.timestamp||rec.created_at||'', id
     };
   }
 
-  // ===== localStorage 版：只負責本機快取 =====
   function loadRecordsFromLocal(){
     try{
-      const raw = localStorage.getItem(STORAGE_KEY) || '[]';
-      const arr = JSON.parse(raw);
-      if (!Array.isArray(arr)) return [];
-
-      const normalized = arr.map((rec, idx)=> normalizeRecord(rec, idx));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-      return normalized;
-    }catch(e){
-      console.error(e);
-      return [];
-    }
+      const arr=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+      if(!Array.isArray(arr))return[];
+      const n=arr.map((r,i)=>normalizeRecord(r,i));
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(n));
+      return n;
+    }catch(e){return[];}
   }
 
-  function saveRecordsToLocal(){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-  }
+  function saveRecordsToLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify(records));}
 
-  // ===== Server API 呼叫：Google Apps Script /exec =====
- // ===== Server API 呼叫（從 Google Sheet 讀）=====
   async function fetchServerLogs(){
-  const res = await fetch(SHEET_API_URL, {
-    method: 'GET',
-    headers: { 'Accept': 'application/json' }
-  });
-  if (!res.ok){
-    throw new Error('Server error: ' + res.status);
+    const res=await fetch(SHEET_API_URL,{method:'GET',headers:{'Accept':'application/json'}});
+    if(!res.ok)throw new Error('Server error: '+res.status);
+    const data=await res.json();
+    if(data&&data.ok&&Array.isArray(data.data)) return data.data.map((r,i)=>normalizeRecord(r,i));
+    return[];
   }
-  const data = await res.json();
-  if (data && data.ok && Array.isArray(data.data)) {
-    return data.data.map((rec, idx)=> normalizeRecord(rec, idx));
-  }
-  console.warn('Unexpected Sheet response:', data);
-  return [];
-}
 
-
-  // 🔄 更新到 Google Sheets（Apps Script 要有 op=update）
   async function updateOnServer(rec){
-    try {
-      const payload = {
-        id:            rec.id,
-        date:          rec.Date || null,
-        line:          rec.line || null,
-        section:       rec.section || null,
-        asset_id:      rec.asset_id || null,
-        category:      rec.category || null,
-        downtime_min:  Number(rec.downtime_min || 0),
-        root_cause:    rec.root_cause || null,
-        action_taken:  rec.action_taken || null,
-        location_from: rec.location_from || null,
-        location_to:   rec.location_to || null
-      };
-
-      const body = new URLSearchParams();
-      body.append('op', 'update');
-      body.append('payload', JSON.stringify(payload));
-
-      const res = await fetch(LOGS_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-          'Accept': 'application/json'
-        },
-        body
-      });
-
-      if (!res.ok) {
-        console.error('Update on server failed, status =', res.status);
-        return;
-      }
-
-      const data = await res.json();
-      console.log('Update on server ok:', data);
-    } catch (err) {
-      console.error('Update on server error:', err);
-    }
+    try{
+      const body=new URLSearchParams();
+      body.append('op','update');
+      body.append('payload',JSON.stringify({
+        id:rec.id, date:rec.Date||null, line:rec.line||null, section:rec.section||null,
+        asset_id:rec.asset_id||null, category:rec.category||null,
+        downtime_min:Number(rec.downtime_min||0), status:rec.status||'Using',
+        root_cause:rec.root_cause||null, action_taken:rec.action_taken||null,
+        location_from:rec.location_from||null, location_to:rec.location_to||null
+      }));
+      await fetch(LOGS_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body});
+    }catch(err){console.error('Update on server error:',err);}
   }
 
-  // ❌ 從 Google Sheets 刪除（Apps Script 要有 op=delete）
   async function deleteOnServer(id){
-    try {
-      const body = new URLSearchParams();
-      body.append('op', 'delete');
-      body.append('id', String(id));
-
-      const res = await fetch(LOGS_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-          'Accept': 'application/json'
-        },
-        body
-      });
-
-      if (!res.ok) {
-        console.error('Delete on server failed, status =', res.status);
-        return;
-      }
-
-      const data = await res.json();
-      console.log('Delete on server ok:', data);
-    } catch (err) {
-      console.error('Delete on server error:', err);
-    }
+    try{
+      const body=new URLSearchParams();
+      body.append('op','delete'); body.append('id',String(id));
+      await fetch(LOGS_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body});
+    }catch(err){console.error('Delete on server error:',err);}
   }
 
-  // ===== 自動產生 filter 選項 =====
   function populateFilterOptions(){
-    const lineSel = document.getElementById('lineFilter');
-    const secSel  = document.getElementById('sectionFilter');
-    const catSel  = document.getElementById('categoryFilter');
-
-    if (!lineSel || !secSel || !catSel) return;
-
-    const currentLine = lineSel.value;
-    const currentSec  = secSel.value;
-    const currentCat  = catSel.value;
-
-    const lines = new Set();
-    const secs  = new Set();
-    const cats  = new Set();
-
-    records.forEach(r=>{
-      if (r.line)    lines.add(r.line);
-      if (r.section) secs.add(r.section);
-      if (r.category)cats.add(r.category);
-    });
-
-    function resetSelect(sel){
-      while (sel.options.length > 1) sel.remove(1);
-    }
-    resetSelect(lineSel);
-    resetSelect(secSel);
-    resetSelect(catSel);
-
-    [...lines].sort().forEach(v=>{
-      const opt = document.createElement('option');
-      opt.value = v;
-      opt.textContent = v;
-      lineSel.appendChild(opt);
-    });
-    [...secs].sort().forEach(v=>{
-      const opt = document.createElement('option');
-      opt.value = v;
-      secSel.appendChild(opt);
-    });
-    [...cats].sort().forEach(v=>{
-      const opt = document.createElement('option');
-      opt.value = v;
-      catSel.appendChild(opt);
-    });
-
-    if ([...lineSel.options].some(o=>o.value === currentLine)) lineSel.value = currentLine;
-    else lineSel.value = '';
-    if ([...secSel.options].some(o=>o.value === currentSec))   secSel.value = currentSec;
-    else secSel.value = '';
-    if ([...catSel.options].some(o=>o.value === currentCat))   catSel.value = currentCat;
-    else catSel.value = '';
+    const lineSel=document.getElementById('lineFilter');
+    const secSel=document.getElementById('sectionFilter');
+    const catSel=document.getElementById('categoryFilter');
+    const cL=lineSel.value, cS=secSel.value, cC=catSel.value;
+    const lines=new Set(), secs=new Set(), cats=new Set();
+    records.forEach(r=>{if(r.line)lines.add(r.line);if(r.section)secs.add(r.section);if(r.category)cats.add(r.category);});
+    function reset(sel){while(sel.options.length>1)sel.remove(1);}
+    reset(lineSel);reset(secSel);reset(catSel);
+    [...lines].sort().forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;lineSel.appendChild(o);});
+    [...secs].sort().forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;secSel.appendChild(o);});
+    [...cats].sort().forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;catSel.appendChild(o);});
+    if([...lineSel.options].some(o=>o.value===cL))lineSel.value=cL; else lineSel.value='';
+    if([...secSel.options].some(o=>o.value===cS))secSel.value=cS; else secSel.value='';
+    if([...catSel.options].some(o=>o.value===cC))catSel.value=cC; else catSel.value='';
   }
 
   function applyFilters(){
-    const q  = document.getElementById('searchInput').value.trim().toLowerCase();
-    const lf = document.getElementById('lineFilter').value;
-    const sf = document.getElementById('sectionFilter').value;
-    const cf = document.getElementById('categoryFilter').value;
-
-    filtered = records.filter(r=>{
-      if (lf && r.line !== lf) return false;
-      if (sf && r.section !== sf) return false;
-      if (cf && r.category !== cf) return false;
-
-      if (q){
-        const hay = (
-          (r.asset_id||'')+' '+
-          (r.root_cause||'')+' '+
-          (r.action_taken||'')+' '+
-          (r.location_from||'')+' '+
-          (r.location_to||'')
-        ).toLowerCase();
-        if (!hay.includes(q)) return false;
+    const q=document.getElementById('searchInput').value.trim().toLowerCase();
+    const lf=document.getElementById('lineFilter').value;
+    const sf=document.getElementById('sectionFilter').value;
+    const cf=document.getElementById('categoryFilter').value;
+    filtered=records.filter(r=>{
+      if(lf&&r.line!==lf)return false;
+      if(sf&&r.section!==sf)return false;
+      if(cf&&r.category!==cf)return false;
+      if(q){
+        const hay=((r.asset_id||'')+' '+(r.root_cause||'')+' '+(r.action_taken||'')+' '+(r.location_from||'')+' '+(r.location_to||'')).toLowerCase();
+        if(!hay.includes(q))return false;
       }
       return true;
     });
-
-    sortFiltered();
-    renderTable();
-    updateSummary();
+    sortFiltered(); renderTable(); updateSummary();
   }
 
-  function onSearchInput(){
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(applyFilters, 200);
-  }
+  function onSearchInput(){clearTimeout(searchTimer);searchTimer=setTimeout(applyFilters,200);}
 
   function sortFiltered(){
     filtered.sort((a,b)=>{
-      let va = a[sortKey];
-      let vb = b[sortKey];
-
-      if (sortKey === 'Date'){
-        va = new Date(a.Date || a.date || 0).getTime();
-        vb = new Date(b.Date || b.date || 0).getTime();
-      } else if (sortKey === 'downtime_min'){
-        va = Number(a.downtime_min || a.downtime || 0);
-        vb = Number(b.downtime_min || b.downtime || 0);
-      } else {
-        if (typeof va === 'string') va = va.toLowerCase();
-        if (typeof vb === 'string') vb = vb.toLowerCase();
-      }
-
-      if (va < vb) return sortDir === 'asc' ? -1 : 1;
-      if (va > vb) return sortDir === 'asc' ? 1 : -1;
+      let va=a[sortKey], vb=b[sortKey];
+      if(sortKey==='Date'){va=new Date(a.Date||0).getTime();vb=new Date(b.Date||0).getTime();}
+      else if(sortKey==='downtime_min'){va=Number(a.downtime_min||0);vb=Number(b.downtime_min||0);}
+      else{if(typeof va==='string')va=va.toLowerCase();if(typeof vb==='string')vb=vb.toLowerCase();}
+      if(va<vb)return sortDir==='asc'?-1:1;
+      if(va>vb)return sortDir==='asc'?1:-1;
       return 0;
     });
-
     document.querySelectorAll('th.sortable').forEach(th=>{
-      const key = th.dataset.sort;
-      const span = th.querySelector('.sort-indicator');
-      if (!span) return;
-      if (key === sortKey){
-        span.textContent = sortDir === 'asc' ? '▲' : '▼';
-      }else{
-        span.textContent = '';
-      }
+      const span=th.querySelector('.sort-indicator');
+      if(!span)return;
+      span.textContent=th.dataset.sort===sortKey?(sortDir==='asc'?'▲':'▼'):'';
     });
   }
 
   function formatDate(s){
-    if (!s) return '';
-    const d = new Date(s);
-    if (isNaN(d.getTime())) return s;
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const day = String(d.getDate()).padStart(2,'0');
-    return `${y}-${m}-${day}`;
+    if(!s)return'';
+    const d=new Date(s);
+    if(isNaN(d.getTime()))return s;
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   }
 
-function renderTable(){
-  const tbody = document.getElementById('recordsBody');
-  const table = document.getElementById('recordsTable');
-  const empty = document.getElementById('emptyState');
+  function renderTable(){
+    const tbody=document.getElementById('recordsBody');
+    const table=document.getElementById('recordsTable');
+    const empty=document.getElementById('emptyState');
+    tbody.innerHTML='';
+    if(!records||records.length===0){
+      table.style.display='none';empty.style.display='block';
+      empty.innerHTML='<strong>No historical records exist.</strong>';return;
+    }
+    if(!filtered||filtered.length===0){
+      table.style.display='none';empty.style.display='block';
+      empty.innerHTML='<strong>No records match your filters.</strong>';return;
+    }
+    table.style.display='table';empty.style.display='none';
 
-  // ✅ 取得 empty text 元素（如果你沒加 id="emptyText"，就用 empty 本身）
-  const emptyTextEl = document.getElementById('emptyText') || empty;
+    filtered.forEach(rec=>{
+      const tr=document.createElement('tr');
+      tr.dataset.id=rec.id;
+      tr.addEventListener('click',()=>openEdit(rec.id));
 
-  tbody.innerHTML = '';
+      const tdDate=document.createElement('td');
+      tdDate.className='text-small';tdDate.textContent=formatDate(rec.Date);tr.appendChild(tdDate);
 
-  // ✅ 1) 完全沒有任何 records（歷史資料不存在）
-  if (!records || records.length === 0){
-    table.style.display = 'none';
-    empty.style.display = 'block';
-    emptyTextEl.innerHTML = '<strong>No "filter條件" historical records exist.</strong>';
-    return;
-  }
+      const tdLS=document.createElement('td');
+      tdLS.innerHTML=`<div class="tag-line">${rec.line||''}</div><div class="text-small">${rec.section||''}</div>`;
+      tr.appendChild(tdLS);
 
-  // ✅ 2) 有 records，但被 filter 掉了（查不到）
-  if (!filtered || filtered.length === 0){
-    table.style.display = 'none';
-    empty.style.display = 'block';
-    emptyTextEl.innerHTML = '<strong>No records match your filters.</strong>';
-    return;
-  }
+      const tdEquip=document.createElement('td');
+      tdEquip.className='equip';tdEquip.textContent=rec.asset_id||'';tr.appendChild(tdEquip);
 
-  table.style.display = 'table';
-  empty.style.display = 'none';
+      const tdCat=document.createElement('td');
+      tdCat.innerHTML=`<span class="pill-cat">${rec.category||''}</span>`;tr.appendChild(tdCat);
 
-  filtered.forEach(rec=>{
-    const tr = document.createElement('tr');
-    tr.dataset.id = rec.id;
-    tr.addEventListener('click', ()=> openEdit(rec.id));
+      const tdDown=document.createElement('td');
+      tdDown.className='text-small';tdDown.textContent=Number(rec.downtime_min||0);tr.appendChild(tdDown);
 
-    const tdDate = document.createElement('td');
-    tdDate.className = 'text-small';
-    tdDate.textContent = formatDate(rec.Date);
-    tr.appendChild(tdDate);
+      /* ★ Status column */
+      const tdStatus=document.createElement('td');
+      tdStatus.innerHTML=statusBadge(rec.status);tr.appendChild(tdStatus);
 
-    const tdLS = document.createElement('td');
-    const divLine = document.createElement('div');
-    divLine.className = 'tag-line';
-    divLine.textContent = rec.line || '';
-    const divSec = document.createElement('div');
-    divSec.className = 'text-small';
-    divSec.textContent = rec.section || '';
-    tdLS.appendChild(divLine);
-    tdLS.appendChild(divSec);
-    tr.appendChild(tdLS);
+      const tdLoc=document.createElement('td');
+      tdLoc.className='text-small';
+      tdLoc.innerHTML=`<div><strong>From:</strong> ${rec.location_from||''}</div><div><strong>To:</strong> ${rec.location_to||''}</div>`;
+      tr.appendChild(tdLoc);
 
-    const tdEquip = document.createElement('td');
-    tdEquip.className = 'equip';
-    tdEquip.textContent = rec.asset_id || '';
-    tr.appendChild(tdEquip);
+      const tdDesc=document.createElement('td');
+      tdDesc.className='text-small';
+      tdDesc.innerHTML=`<div><strong>Root:</strong> ${rec.root_cause||''}</div><div><strong>Action:</strong> ${rec.action_taken||''}</div>`;
+      tr.appendChild(tdDesc);
 
-    const tdCat = document.createElement('td');
-    const spanCat = document.createElement('span');
-    spanCat.className = 'pill-cat';
-    spanCat.textContent = rec.category || '';
-    tdCat.appendChild(spanCat);
-    tr.appendChild(tdCat);
+      const tdAct=document.createElement('td');
+      const btnE=document.createElement('button');
+      btnE.className='btn-ghost';btnE.textContent='Edit';
+      btnE.addEventListener('click',ev=>{ev.stopPropagation();openEdit(rec.id);});
+      const btnD=document.createElement('button');
+      btnD.className='btn-ghost btn-danger';btnD.textContent='Delete';
+      btnD.addEventListener('click',ev=>{ev.stopPropagation();deleteRecord(rec.id);});
+      tdAct.appendChild(btnE);tdAct.appendChild(btnD);tr.appendChild(tdAct);
 
-    const tdDown = document.createElement('td');
-    tdDown.className = 'text-small';
-    tdDown.textContent = Number(rec.downtime_min||0);
-    tr.appendChild(tdDown);
-
-    const tdLoc = document.createElement('td');
-    tdLoc.className = 'text-small';
-    const lf = document.createElement('div');
-    lf.innerHTML = '<strong>From:</strong> ' + (rec.location_from || '');
-    const lt = document.createElement('div');
-    lt.innerHTML = '<strong>To:</strong> ' + (rec.location_to || '');
-    tdLoc.appendChild(lf);
-    tdLoc.appendChild(lt);
-    tr.appendChild(tdLoc);
-
-    const tdDesc = document.createElement('td');
-    tdDesc.className = 'text-small';
-    const d1 = document.createElement('div');
-    d1.innerHTML = '<strong>Root:</strong> ' + (rec.root_cause||'');
-    const d2 = document.createElement('div');
-    d2.innerHTML = '<strong>Action:</strong> ' + (rec.action_taken||'');
-    tdDesc.appendChild(d1);
-    tdDesc.appendChild(d2);
-    tr.appendChild(tdDesc);
-
-    const tdAct = document.createElement('td');
-    const btnE = document.createElement('button');
-    btnE.className = 'btn-ghost';
-    btnE.textContent = 'Edit';
-    btnE.addEventListener('click', (ev)=>{
-      ev.stopPropagation();
-      openEdit(rec.id);
+      tbody.appendChild(tr);
     });
-    const btnD = document.createElement('button');
-    btnD.className = 'btn-ghost btn-danger';
-    btnD.textContent = 'Delete';
-    btnD.addEventListener('click', (ev)=>{
-      ev.stopPropagation();
-      deleteRecord(rec.id);
-    });
-    tdAct.appendChild(btnE);
-    tdAct.appendChild(btnD);
-    tr.appendChild(tdAct);
-
-    tbody.appendChild(tr);
-  });
-}
-
+  }
 
   function updateSummary(){
-    const totalEl     = document.getElementById('sumTotal');
-    const monthEl     = document.getElementById('sumMonth');
-    const monthDownEl = document.getElementById('sumMonthDown');
-    totalEl.textContent = records.length;
-
-    const now = new Date();
-    const ym  = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-    let cnt = 0;
-    let down = 0;
+    document.getElementById('sumTotal').textContent=records.length;
+    const now=new Date();
+    const ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+    let cnt=0,down=0;
     records.forEach(r=>{
-      if (!r.Date) return;
-      const d = new Date(r.Date);
-      if (isNaN(d.getTime())) return;
-      const m = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-      if (m === ym) {
-        cnt++;
-        down += Number(r.downtime_min || 0) || 0;
-      }
+      if(!r.Date)return;
+      const d=new Date(r.Date);if(isNaN(d.getTime()))return;
+      const m=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+      if(m===ym){cnt++;down+=Number(r.downtime_min||0)||0;}
     });
-    monthEl.textContent = cnt;
-    monthDownEl.textContent = down;
+    document.getElementById('sumMonth').textContent=cnt;
+    document.getElementById('sumMonthDown').textContent=down;
   }
 
   function clearFilters(){
-    document.getElementById('searchInput').value = '';
-    document.getElementById('lineFilter').value = '';
-    document.getElementById('sectionFilter').value = '';
-    document.getElementById('categoryFilter').value = '';
+    document.getElementById('searchInput').value='';
+    document.getElementById('lineFilter').value='';
+    document.getElementById('sectionFilter').value='';
+    document.getElementById('categoryFilter').value='';
     applyFilters();
   }
 
   async function deleteRecord(id){
-    const input = prompt('Enter password to delete this record:');
-    if (input === null) return;
-    if (input !== DELETE_PASSWORD){
-      alert('Incorrect password. Delete cancelled.');
-      return;
-    }
-    if (!confirm('Delete this record?')) return;
-
-    records = records.filter(r=>r.id !== id);
-    saveRecordsToLocal();
-    populateFilterOptions();
-    applyFilters();
-
-    // 同步刪除到 Google Sheets（如果 Apps Script 已實作 op=delete）
+    const input=prompt('Enter password to delete this record:');
+    if(input===null)return;
+    if(input!==DELETE_PASSWORD){alert('Incorrect password. Delete cancelled.');return;}
+    if(!confirm('Delete this record?'))return;
+    records=records.filter(r=>r.id!==id);
+    saveRecordsToLocal();populateFilterOptions();applyFilters();
     deleteOnServer(id);
   }
 
   function openEdit(id){
-
-  // ✅ Edit password check (same as Delete)
-  const input = prompt('Enter password to edit this record:');
-  if (input === null) return;
-  if (input !== EDIT_PASSWORD){
-    alert('Incorrect password. Edit cancelled.');
-    return;
+    const input=prompt('Enter password to edit this record:');
+    if(input===null)return;
+    if(input!==EDIT_PASSWORD){alert('Incorrect password. Edit cancelled.');return;}
+    const rec=records.find(r=>r.id===id);
+    if(!rec)return;
+    editingId=id;
+    document.getElementById('editDate').value    =rec.Date?String(rec.Date).slice(0,10):'';
+    document.getElementById('editLine').value    =rec.line||'Line1';
+    document.getElementById('editSection').value =rec.section||'MCC';
+    document.getElementById('editCategory').value=rec.category||'Other';
+    document.getElementById('editAssetId').value =rec.asset_id||'';
+    document.getElementById('editLocFrom').value =rec.location_from||'';
+    document.getElementById('editLocTo').value   =rec.location_to||'';
+    document.getElementById('editDowntime').value=rec.downtime_min||0;
+    document.getElementById('editStatus').value  =rec.status||'Using';
+    document.getElementById('editRoot').value    =rec.root_cause||'';
+    document.getElementById('editAction').value  =rec.action_taken||'';
+    document.getElementById('editBackdrop').classList.add('open');
   }
 
-  const rec = records.find(r=>r.id === id);
-  if (!rec) return;
-  editingId = id;
-
-  document.getElementById('editDate').value    = rec.Date ? String(rec.Date).slice(0,10) : '';
-  document.getElementById('editLine').value    = rec.line || 'Line1';
-  document.getElementById('editSection').value = rec.section || 'F12';
-  document.getElementById('editCategory').value= rec.category || 'Other';
-  document.getElementById('editAssetId').value = rec.asset_id || '';
-  document.getElementById('editLocFrom').value = rec.location_from || '';
-  document.getElementById('editLocTo').value   = rec.location_to || '';
-    document.getElementById('editDowntime').value = rec.downtime_min || 0;
-  document.getElementById('editStatus').value   = rec.status || 'Open';
-  document.getElementById('editRoot').value    = rec.root_cause || '';
-  document.getElementById('editAction').value  = rec.action_taken || '';
-
-  document.getElementById('editBackdrop').classList.add('open');
-}
-
-
   function closeEdit(){
-    editingId = null;
+    editingId=null;
     document.getElementById('editBackdrop').classList.remove('open');
   }
 
   async function saveEdit(){
-    if (!editingId) return;
-    const idx = records.findIndex(r=>r.id === editingId);
-    if (idx === -1) return;
-
-    const rec = records[idx];
-
-    const formattedAssetId = validateAndFormatAssetId(
-      document.getElementById('editAssetId').value
-    );
-    if (formattedAssetId === null) return;
-
-    rec.Date          = document.getElementById('editDate').value || rec.Date;
-    rec.line          = document.getElementById('editLine').value;
-    rec.section       = document.getElementById('editSection').value;
-    rec.category      = document.getElementById('editCategory').value;
-    rec.asset_id      = formattedAssetId;
-    rec.location_from = document.getElementById('editLocFrom').value.trim();
-    rec.location_to   = document.getElementById('editLocTo').value.trim();
-    rec.downtime_min  = Number(document.getElementById('editDowntime').value) || 0;
-    rec.status        = document.getElementById('editStatus').value;
-    rec.root_cause    = document.getElementById('editRoot').value.trim();
-    rec.action_taken  = document.getElementById('editAction').value.trim();
-
-    records[idx] = rec;
-    saveRecordsToLocal();
-    populateFilterOptions();
-    applyFilters();
-    closeEdit();
-
-    // 同步更新到 Google Sheets（如果 Apps Script 已實作 op=update）
+    if(!editingId)return;
+    const idx=records.findIndex(r=>r.id===editingId);
+    if(idx===-1)return;
+    const formattedAssetId=validateAndFormatAssetId(document.getElementById('editAssetId').value);
+    if(formattedAssetId===null)return;
+    const rec=records[idx];
+    rec.Date         =document.getElementById('editDate').value||rec.Date;
+    rec.line         =document.getElementById('editLine').value;
+    rec.section      =document.getElementById('editSection').value;
+    rec.category     =document.getElementById('editCategory').value;
+    rec.asset_id     =formattedAssetId;
+    rec.location_from=document.getElementById('editLocFrom').value.trim();
+    rec.location_to  =document.getElementById('editLocTo').value.trim();
+    rec.downtime_min =Number(document.getElementById('editDowntime').value)||0;
+    rec.status       =document.getElementById('editStatus').value;
+    rec.root_cause   =document.getElementById('editRoot').value.trim();
+    rec.action_taken =document.getElementById('editAction').value.trim();
+    records[idx]=rec;
+    saveRecordsToLocal();populateFilterOptions();applyFilters();closeEdit();
     updateOnServer(rec);
   }
 
-  // ===== init：優先讀伺服器，失敗再用 localStorage =====
   (async function init(){
     try{
-      const serverLogs = await fetchServerLogs();
-      records = serverLogs;
-      saveRecordsToLocal();
+      const serverLogs=await fetchServerLogs();
+      records=serverLogs;saveRecordsToLocal();
     }catch(e){
-      console.warn('Load from server failed, fallback to localStorage.', e);
-      records = loadRecordsFromLocal();
+      console.warn('Load from server failed, fallback to localStorage.',e);
+      records=loadRecordsFromLocal();
     }
-
-    filtered = [...records];
+    filtered=[...records];
     populateFilterOptions();
-
-    const assetFromUrl = getAssetIdFromQuery();
-    if (assetFromUrl){
-      const searchEl = document.getElementById('searchInput');
-      if (searchEl) searchEl.value = assetFromUrl;
+    const assetFromUrl=getAssetIdFromQuery();
+    if(assetFromUrl){
+      const el=document.getElementById('searchInput');
+      if(el)el.value=assetFromUrl;
     }
-
-    document.getElementById('searchInput').addEventListener('input', onSearchInput);
-    document.getElementById('lineFilter').addEventListener('change', applyFilters);
-    document.getElementById('sectionFilter').addEventListener('change', applyFilters);
-    document.getElementById('categoryFilter').addEventListener('change', applyFilters);
-    document.getElementById('btnClearFilters').addEventListener('click', clearFilters);
-
+    document.getElementById('searchInput').addEventListener('input',onSearchInput);
+    document.getElementById('lineFilter').addEventListener('change',applyFilters);
+    document.getElementById('sectionFilter').addEventListener('change',applyFilters);
+    document.getElementById('categoryFilter').addEventListener('change',applyFilters);
+    document.getElementById('btnClearFilters').addEventListener('click',clearFilters);
     document.querySelectorAll('th.sortable').forEach(th=>{
-      th.addEventListener('click', ()=>{
-        const key = th.dataset.sort;
-        if (sortKey === key){
-          sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-        }else{
-          sortKey = key;
-          sortDir = key === 'Date' ? 'desc' : 'asc';
-        }
-        sortFiltered();
-        renderTable();
+      th.addEventListener('click',()=>{
+        const key=th.dataset.sort;
+        if(sortKey===key)sortDir=sortDir==='asc'?'desc':'asc';
+        else{sortKey=key;sortDir=key==='Date'?'desc':'asc';}
+        sortFiltered();renderTable();
       });
     });
-
-    document.getElementById('btnCancelEdit').addEventListener('click', closeEdit);
-    document.getElementById('btnSaveEdit').addEventListener('click', saveEdit);
-    document.getElementById('editBackdrop').addEventListener('click',(e)=>{
-      if (e.target.id === 'editBackdrop') closeEdit();
-    });
-
+    document.getElementById('btnCancelEdit').addEventListener('click',closeEdit);
+    document.getElementById('btnSaveEdit').addEventListener('click',saveEdit);
+    document.getElementById('editBackdrop').addEventListener('click',e=>{if(e.target.id==='editBackdrop')closeEdit();});
     applyFilters();
   })();
-</script>
+  </script>
 </body>
 </html>
