@@ -21,10 +21,9 @@
       --menu-offset-desktop: 40px;
     }
 
-    /* style 主題底色（index 用純色，不用圖） */
     html[data-style="blue"]{ --bg:#f3f4f6; }
-    html[data-style="panther"]{ --bg:#ffe4ec; }   /* 淡粉 */
-    html[data-style="hangyodon"]{ --bg:#dbeafe; } /* 淡藍 */
+    html[data-style="panther"]{ --bg:#ffe4ec; }
+    html[data-style="hangyodon"]{ --bg:#dbeafe; }
 
     *{box-sizing:border-box}
     body{
@@ -59,7 +58,7 @@
       position:relative;
       z-index:5000;
       overflow:visible;
-      align-items:flex-start;   /* ✅ 回復原本，不要置中整條 */
+      align-items:flex-start;
     }
     .brand-wrap{display:flex;align-items:center;gap:10px}
 
@@ -87,14 +86,62 @@
     }
     .brand-sub{font-size:13px;color:var(--text-soft)}
 
+    /* ── About ? button ── */
+    .about-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1.5px solid #bfdbfe;
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background .15s, border-color .15s, transform .12s, box-shadow .15s;
+      line-height: 1;
+    }
+    .about-btn:hover {
+      background: #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(37,99,235,.3);
+    }
+
+    /* ── About modal overlay ── */
+    #aboutOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.45);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #aboutOverlay.open { display: flex; }
+    #aboutOverlay iframe {
+      width: 100%;
+      max-width: 560px;
+      height: min(90dvh, 640px);
+      border: none;
+      border-radius: 22px;
+      box-shadow: 0 24px 60px rgba(15,23,42,.22);
+      background: #fff;
+    }
+
 .top-quote{
   text-align:center;
   display:grid;
   grid-template-rows:auto 1fr;
   align-items:center;
   min-height:72px;
-
-  padding-top:4px;   /* ⬅ 比你現在 6px 再少一點 */
+  padding-top:4px;
 }
 
 .quote-label{
@@ -102,8 +149,7 @@
   text-transform:uppercase;
   letter-spacing:.12em;
   color:var(--text-soft);
-
-  margin-bottom:2px; /* ⬅ 原本 4px 稍微偏多 */
+  margin-bottom:2px;
 }
     
     .quote-text{
@@ -113,7 +159,7 @@
   font-style:italic;
   max-width:720px;
   margin:0 auto;
-  text-align:center;   /* 建議置中，看起來更像 topbar quote */
+  text-align:center;
   white-space:normal;
   word-wrap:break-word;
   line-height:1.25;
@@ -146,15 +192,15 @@
     .top-meta{
   display:flex;
   flex-direction:column;
-  gap:6px;                 /* 原本 8px → 小一點 */
+  gap:6px;
   align-items:flex-end;
-  font-size:10px;          /* 整體字再小一點 */
+  font-size:10px;
 }
 
 .pill{
-  width:210px;             /* 原本 240 → 小一點 */
-  padding:7px 10px;        /* 原本 9 12 → 小一點 */
-  border-radius:12px;      /* 原本 14 → 小一點 */
+  width:210px;
+  padding:7px 10px;
+  border-radius:12px;
   border:1px solid #e5e7eb;
   background:#f9fafb;
   display:flex;
@@ -195,21 +241,18 @@
   border:1px solid var(--border-subtle);
   box-shadow:var(--shadow-soft-sm);
   position: relative;
-
-  overflow: visible;   /* ✅ 讓 module/nav 可以往外長出來 */
+  overflow: visible;
   height:calc(100vh - 110px);
 }
 
-/* ✅ 真正負責裁切圓角的內層 */
 .iframe-clip{
   position:absolute;
   inset:0;
   border-radius:var(--radius-xl);
-  overflow:hidden;     /* ✅ 只裁切 iframe 本體 */
+  overflow:hidden;
   z-index:1;
 }
 
-/* 兩個 iframe 疊在一起 */
 .iframe-clip iframe{
   position:absolute;
   inset:0;
@@ -222,8 +265,6 @@
   transition:opacity .18s ease;
 }
 
-
-/* 預設 A 顯示 */
 #mainFrameA{
   opacity:1;
   z-index:1;
@@ -234,21 +275,16 @@
 }
 
 
-    /* Modules 主面板 */
- /* ===== Module Dock：會搬家（Topbar slot <-> Iframe slot） ===== */
-.module-dock{
+ .module-dock{
   width:100%;
   display:flex;
   justify-content:center;
   z-index:5200;
   overflow:visible;
-
-  position:relative;   /* ✅ 必加：給 nav-panel 的 absolute 當基準 */
+  position:relative;
   align-items:flex-start;
 }
 
-
-/* Iframe 裡的 slot：左上角 overlay */
 .module-slot-frame{
   position:absolute;
   top:12px;
@@ -256,7 +292,6 @@
   z-index:10;
 }
 
-/* Menu button：不要再用 margin-top 推位置（位置交給 slot） */
 .menu-button{
   border-radius:999px;
   border:1px solid #e5e7eb;
@@ -266,7 +301,7 @@
   display:inline-flex;
   justify-content:center;
   gap:8px;
-  margin-top:0;              /* ✅ 關鍵：不要再推 */
+  margin-top:0;
   cursor:pointer;
   color:#1d4ed8;
   box-shadow: 0 3px 8px rgba(129,140,248,.25);
@@ -279,7 +314,6 @@
 }
 .menu-icon{font-size:16px;}
 
-/* Modules 主面板：永遠出現在按鈕下方 */
 .nav-panel{
   position:absolute;
   left:0;
@@ -294,7 +328,7 @@
   z-index:9999;
   display:none;
   max-height:70vh;
-  overflow:visible; /* 讓右邊 pop-out 不被裁掉 */
+  overflow:visible;
 }
 .nav-panel.open{ display:block; }
 
@@ -357,7 +391,6 @@
       position: relative; 
     }
 
-    /* unified sub-list pill btn */
     .sub-pill-btn{
       width:100%;
       border:none;
@@ -393,7 +426,6 @@
     }
     .sub-pill-btn.active .nav-chevron{ transform:rotate(180deg); }
 
-    /* ✅ 2nd level (Extruder / Blending...) active = blue */
 .maintenance-group-btn.active{
   background: var(--accent);
   color:#fff;
@@ -403,7 +435,6 @@
   transform:rotate(180deg);
 }
 
-    /* 子面板（Schematic / Maintenance / SCADA） */
     .schematic-panel,
     .maintenance-panel,
     .scada-panel{
@@ -434,7 +465,6 @@
       margin-bottom:8px;
     }
 
-    /* 3rd level buttons (Maintenance / SCADA) */
     .maintenance-sec-row,
     .scada-sec-row{
       display:flex;
@@ -484,7 +514,6 @@
       outline-offset:2px;
     }
 
-    /* Schematic SECTION + LINE unify */
     .schematic-sec-row{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -540,7 +569,6 @@
       outline-offset:2px;
     }
 
-    /* I/O list tags */
     .ls-tags{
       margin-top:6px;
       padding-top:6px;
@@ -574,24 +602,22 @@
       transform:translateY(-1px);
     }
 
-    /* Training group header */
 .training-group-title{
   margin:16px 6px 6px;
   padding:6px 10px;
-  font-size:11px;          /* 原本 12 → 改 11 */
-  font-weight:700;         /* 原本 900 → 改 700 */
-  letter-spacing:.12em;    /* 原本 .18 → 改小 */
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.12em;
   text-transform:uppercase;
   color:#1e40af;
   background:linear-gradient(to right, rgba(37,99,235,.06), transparent);
-  border-left:3px solid #2563eb;   /* 原本 4px → 改 3px */
+  border-left:3px solid #2563eb;
   border-radius:6px;
 }
 .training-group-title:first-child{
   border-top:none;
   margin-top:4px;
 }
-    /* ===== Training dual-column row ===== */
 .training-row-dual {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -599,7 +625,6 @@
   margin-bottom: 6px;
 }
 
-/* Left: course button */
 .training-row-dual .training-sec-btn {
   width: 100%;
   border: 1px solid var(--border-subtle);
@@ -635,7 +660,6 @@
   box-shadow: 0 8px 20px rgba(37,99,235,.35);
 }
 
-/* Right: material button (green tint) */
 .training-material-btn {
   width: 100%;
   border: 1px solid #d1fae5;
@@ -676,7 +700,6 @@
   font-weight: 600;
   box-shadow: 0 8px 20px rgba(5,150,105,.35);
 }
-/* Placeholder: greyed dashed */
 .training-material-btn[data-placeholder="true"] {
   border-style: dashed;
   border-color: #d1d5db;
@@ -692,7 +715,6 @@
   border-color: #d1d5db;
   color: #9ca3af;
 }
-    /* ===== Training accordion groups ===== */
 .training-group{ margin-top:10px; }
 
 .training-group-btn{
@@ -700,16 +722,16 @@
   border:1px solid rgba(229,231,235,1);
   background:linear-gradient(to right, rgba(37,99,235,.06), transparent);
   border-left:3px solid rgba(37,99,235,.85);
-  border-radius:10px;           /* 原本 12px → 小一點 */
-  padding:7px 10px;             /* 原本 10px 12px → 縮小 */
+  border-radius:10px;
+  padding:7px 10px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   cursor:pointer;
   color:#1e40af;
-  font-weight:600;              /* 原本 650 → 600 */
-  font-size:12px;               /* 新增：縮小字 */
-  letter-spacing:.08em;         /* 原本 .12 → 縮小 */
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:.08em;
   text-transform:uppercase;
   transition:transform .12s ease, box-shadow .15s ease, background .15s ease;
 }
@@ -731,7 +753,6 @@
 
 .training-group.open .training-group-body{ display:block; }
 .training-group.open .tg-chevron{ transform:rotate(180deg); }
-    /* ===== Maintenance: 2nd level pill + 3rd level pop-out ===== */
     .nav-group-maintenance{ position:relative; }
     .maintenance-group{ position:relative; }
 
@@ -770,12 +791,8 @@
 
 
 
-/* =========================
-   MOBILE (<=900px)
-   ========================= */
 @media (max-width:900px){
 
-  /* ===== 基本隱藏/版面 ===== */
   .page-jump{ display:none !important; }
   #jumpToggle{ display:none !important; }
   #moduleSlotTopbar{ display:contents; }
@@ -788,17 +805,15 @@
     padding:14px 14px 18px;
   }
 
-  /* ✅ 解包：讓 brand / meta / quote / menu 都能用 order 排序 */
   .top-left{ display:contents; min-height:0; }
 
-  /* ===== Modules 按鈕區塊：放最上面（App 感） ===== */
   .module-dock{
     order:0;
     width:auto;
     align-self:flex-start;
     margin-bottom:8px;
     position:relative;
-    z-index:9200; /* ✅ 保證在 overlay 之上可按 */
+    z-index:9200;
   }
 
   .brand-wrap{ order:1; }
@@ -828,34 +843,27 @@
     justify-content:space-between;
   }
 
-  /* ===== Menu button：手機改 pill ===== */
   .menu-button{
     width:auto !important;
     height:42px !important;
     padding:0 18px !important;
-
     border-radius:999px !important;
     display:flex;
     align-items:center;
     gap:8px;
-
     font-size:14px;
     font-weight:600;
     letter-spacing:.02em;
-
     background:#2563eb;
     color:#fff;
     border:none;
-
     box-shadow:
       0 8px 20px rgba(37,99,235,.25),
       inset 0 1px 0 rgba(255,255,255,.4);
-
     justify-content:center;
     transition:all .18s ease;
-
     position:relative;
-    z-index:9200; /* ✅ 避免被 overlay 蓋住 */
+    z-index:9200;
   }
 
   .menu-button:hover{ background:#1d4ed8; }
@@ -867,7 +875,6 @@
   }
   .menu-button[aria-expanded="true"]{ background:#1e40af; }
 
-  /* 文字一定顯示 */
   .menu-text{ display:inline !important; }
 
   .nav-panel{
@@ -876,10 +883,9 @@
   left:0 !important;
   bottom:0 !important;
   max-height: none !important;
-    height: 100dvh !important;     /* ✅ 你之前拿掉也行，但這個最保險 */
+    height: 100dvh !important;
     top: 0 !important;
-    bottom: auto !important;       /* 用 height 控制就不要 bottom */
-  /* ❌ 刪掉這行：height:100dvh !important; */
+    bottom: auto !important;
 
   width:calc(100vw - 48px);
   max-width:420px;
@@ -892,7 +898,6 @@
   border-top-right-radius:18px;
   border-bottom-right-radius:18px;
 
-  /* ✅ 這行是關鍵：底部自動吃安全區，不會「空一大塊」 */
   padding:16px 18px calc(14px + env(safe-area-inset-bottom));
 
   background:#fff !important;
@@ -907,7 +912,6 @@
   transform:translateX(0);
 }
 
-  /* ===== Drawer Header（放 Modules + X） ===== */
   .drawer-head{
     position:sticky;
     top:0;
@@ -929,13 +933,11 @@
     color:#111827;
   }
 
-  /* ✅ Drawer 打開時：把外面的 Modules pill 隱藏（避免抽屜底下還有一顆） */
   body.drawer-open #menuButton{
     opacity:0;
     pointer-events:none;
   }
 
-  /* ===== 子面板：手機改往下疊（抽屜內好用） ===== */
   .schematic-panel,
   .maintenance-panel,
   .scada-panel{
@@ -956,7 +958,6 @@
   }
   .maintenance-group.open .maintenance-third-panel{ display:block; }
 
-  /* ===== iframe 高度 ===== */
   .iframe-wrap{
     height:calc(100dvh - 160px);
     min-height:520px;
@@ -996,8 +997,10 @@
           <div class="mascot"></div>
           <div>
             <div class="brand-main">MAINTENANCE ONE</div>
-            <div class="brand-sub">To make the team’s life easier.</div>
+            <div class="brand-sub">To make the team's life easier.</div>
           </div>
+          <!-- ✅ About ? button -->
+          <button class="about-btn" id="aboutBtn" type="button" title="About Maintenance ONE" aria-label="About Maintenance ONE">?</button>
         </div>
         <div id="moduleSlotTopbar"></div>
       </div>
@@ -1085,7 +1088,7 @@
           </div>
         </li>
 
-        <!-- IO Description List (same selector as Updated Schematic) -->
+        <!-- IO Description List -->
 <li class="nav-group-io">
   <button class="nav-item-btn" type="button"
     data-role="io-parent"
@@ -1172,9 +1175,7 @@
               </button>
               <div class="maintenance-third-panel">
                 <div class="maintenance-third-title">Die</div>
-                <div class="maintenance-sec-row">
-
-                </div>
+                <div class="maintenance-sec-row"></div>
               </div>
             </div>
 
@@ -1186,9 +1187,7 @@
               </button>
               <div class="maintenance-third-panel">
                 <div class="maintenance-third-title">Chill Roll</div>
-                <div class="maintenance-sec-row">
-
-                </div>
+                <div class="maintenance-sec-row"></div>
               </div>
             </div>
 
@@ -1214,9 +1213,7 @@
               </button>
               <div class="maintenance-third-panel">
                 <div class="maintenance-third-title">TDO</div>
-                <div class="maintenance-sec-row">
-
-                </div>
+                <div class="maintenance-sec-row"></div>
               </div>
             </div>
 
@@ -1242,9 +1239,7 @@
               </button>
               <div class="maintenance-third-panel">
                 <div class="maintenance-third-title">Treaters</div>
-                <div class="maintenance-sec-row">
-
-                </div>
+                <div class="maintenance-sec-row"></div>
               </div>
             </div>
 
@@ -1274,9 +1269,7 @@
               </button>
               <div class="maintenance-third-panel">
                 <div class="maintenance-third-title">Grinder</div>
-                <div class="maintenance-sec-row">
-
-                </div>
+                <div class="maintenance-sec-row"></div>
               </div>
             </div>
 
@@ -1296,7 +1289,7 @@
           </div>
         </li>
 
-<!-- TRAINING — dual-column layout (course | material) -->
+<!-- TRAINING -->
 <li class="nav-group-training">
   <button class="nav-item-btn" type="button"
     data-role="training-parent"
@@ -1310,7 +1303,6 @@
   <div class="maintenance-panel" id="trainingPanel" aria-label="Training selector">
     <div class="maintenance-title">Training</div>
 
-    <!-- Column header labels -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px;padding:0 2px;">
       <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;text-align:center;">COURSE</span>
       <span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#059669;text-align:center;">MATERIAL</span>
@@ -1324,49 +1316,16 @@
       </button>
       <div class="training-group-body">
         <div class="training-row-dual">
-          <button class="training-sec-btn" type="button"
-            data-train-key="WORD"
-            data-train-url=""
-            data-label="MICROSOFT OFFICE - WORD">
-            <span class="code">WORD</span>
-          </button>
-          <button class="training-material-btn" type="button"
-            data-train-material-key="WORD_MATERIAL"
-            data-material-label="WORD – Material"
-            data-placeholder="false">
-            <span class="mat-icon">📄</span>
-            <span class="mat-label">Material</span>
-          </button>
+          <button class="training-sec-btn" type="button" data-train-key="WORD" data-train-url="" data-label="MICROSOFT OFFICE - WORD"><span class="code">WORD</span></button>
+          <button class="training-material-btn" type="button" data-train-material-key="WORD_MATERIAL" data-material-label="WORD – Material" data-placeholder="false"><span class="mat-icon">📄</span><span class="mat-label">Material</span></button>
         </div>
         <div class="training-row-dual">
-          <button class="training-sec-btn" type="button"
-            data-train-key="EXCEL"
-            data-train-url=""
-            data-label="EXCEL">
-            <span class="code">EXCEL</span>
-          </button>
-          <button class="training-material-btn" type="button"
-            data-train-material-key="EXCEL_MATERIAL"
-            data-material-label="EXCEL – Material"
-            data-placeholder="false">
-            <span class="mat-icon">📄</span>
-            <span class="mat-label">Material</span>
-          </button>
+          <button class="training-sec-btn" type="button" data-train-key="EXCEL" data-train-url="" data-label="EXCEL"><span class="code">EXCEL</span></button>
+          <button class="training-material-btn" type="button" data-train-material-key="EXCEL_MATERIAL" data-material-label="EXCEL – Material" data-placeholder="false"><span class="mat-icon">📄</span><span class="mat-label">Material</span></button>
         </div>
         <div class="training-row-dual">
-          <button class="training-sec-btn" type="button"
-            data-train-key="POWERPOINT"
-            data-train-url=""
-            data-label="POWERPOINT">
-            <span class="code">POWERPOINT</span>
-          </button>
-          <button class="training-material-btn" type="button"
-            data-train-material-key="POWERPOINT_MATERIAL"
-            data-material-label="POWERPOINT – Material"
-            data-placeholder="false">
-            <span class="mat-icon">📄</span>
-            <span class="mat-label">Material</span>
-          </button>
+          <button class="training-sec-btn" type="button" data-train-key="POWERPOINT" data-train-url="" data-label="POWERPOINT"><span class="code">POWERPOINT</span></button>
+          <button class="training-material-btn" type="button" data-train-material-key="POWERPOINT_MATERIAL" data-material-label="POWERPOINT – Material" data-placeholder="false"><span class="mat-icon">📄</span><span class="mat-label">Material</span></button>
         </div>
       </div>
     </div>
@@ -1379,49 +1338,16 @@
       </button>
       <div class="training-group-body">
         <div class="training-row-dual">
-          <button class="training-sec-btn" type="button"
-            data-train-key="PLC_MITSUBISHI"
-            data-train-url=""
-            data-label="PLC - MITSUBISHI">
-            <span class="code">MITSUBISHI</span>
-          </button>
-          <button class="training-material-btn" type="button"
-            data-train-material-key="PLC_MITSUBISHI_MATERIAL"
-            data-material-label="MITSUBISHI PLC – Material"
-            data-placeholder="false">
-            <span class="mat-icon">📄</span>
-            <span class="mat-label">Material</span>
-          </button>
+          <button class="training-sec-btn" type="button" data-train-key="PLC_MITSUBISHI" data-train-url="" data-label="PLC - MITSUBISHI"><span class="code">MITSUBISHI</span></button>
+          <button class="training-material-btn" type="button" data-train-material-key="PLC_MITSUBISHI_MATERIAL" data-material-label="MITSUBISHI PLC – Material" data-placeholder="false"><span class="mat-icon">📄</span><span class="mat-label">Material</span></button>
         </div>
         <div class="training-row-dual">
-          <button class="training-sec-btn" type="button"
-            data-train-key="ALLEN_BRADLEY"
-            data-train-url=""
-            data-label="ALLEN-BRADLEY">
-            <span class="code">ALLEN-BRADLEY</span>
-          </button>
-          <button class="training-material-btn" type="button"
-            data-train-material-key="ALLEN_BRADLEY_MATERIAL"
-            data-material-label="ALLEN-BRADLEY – Material"
-            data-placeholder="false">
-            <span class="mat-icon">📄</span>
-            <span class="mat-label">Material</span>
-          </button>
+          <button class="training-sec-btn" type="button" data-train-key="ALLEN_BRADLEY" data-train-url="" data-label="ALLEN-BRADLEY"><span class="code">ALLEN-BRADLEY</span></button>
+          <button class="training-material-btn" type="button" data-train-material-key="ALLEN_BRADLEY_MATERIAL" data-material-label="ALLEN-BRADLEY – Material" data-placeholder="false"><span class="mat-icon">📄</span><span class="mat-label">Material</span></button>
         </div>
         <div class="training-row-dual">
-          <button class="training-sec-btn" type="button"
-            data-train-key="SIEMENS"
-            data-train-url=""
-            data-label="SIEMENS">
-            <span class="code">SIEMENS</span>
-          </button>
-          <button class="training-material-btn" type="button"
-            data-train-material-key="SIEMENS_MATERIAL"
-            data-material-label="SIEMENS – Material"
-            data-placeholder="false">
-            <span class="mat-icon">📄</span>
-            <span class="mat-label">Material</span>
-          </button>
+          <button class="training-sec-btn" type="button" data-train-key="SIEMENS" data-train-url="" data-label="SIEMENS"><span class="code">SIEMENS</span></button>
+          <button class="training-material-btn" type="button" data-train-material-key="SIEMENS_MATERIAL" data-material-label="SIEMENS – Material" data-placeholder="false"><span class="mat-icon">📄</span><span class="mat-label">Material</span></button>
         </div>
       </div>
     </div>
@@ -1434,19 +1360,8 @@
       </button>
       <div class="training-group-body">
         <div class="training-row-dual">
-          <button class="training-sec-btn" type="button"
-            data-train-key="TROUBLESHOOTING_COMPUTER"
-            data-train-url=""
-            data-label="Troubleshooting computer">
-            <span class="code">Troubleshooting</span>
-          </button>
-          <button class="training-material-btn" type="button"
-            data-train-material-key="TROUBLESHOOTING_COMPUTER_MATERIAL"
-            data-material-label="Troubleshooting – Material"
-            data-placeholder="false">
-            <span class="mat-icon">📄</span>
-            <span class="mat-label">Material</span>
-          </button>
+          <button class="training-sec-btn" type="button" data-train-key="TROUBLESHOOTING_COMPUTER" data-train-url="" data-label="Troubleshooting computer"><span class="code">Troubleshooting</span></button>
+          <button class="training-material-btn" type="button" data-train-material-key="TROUBLESHOOTING_COMPUTER_MATERIAL" data-material-label="Troubleshooting – Material" data-placeholder="false"><span class="mat-icon">📄</span><span class="mat-label">Material</span></button>
         </div>
       </div>
     </div>
@@ -1511,6 +1426,11 @@
     </div>
   </div>
 
+<!-- ✅ About modal overlay -->
+<div id="aboutOverlay" role="dialog" aria-modal="true" aria-label="About Maintenance ONE">
+  <iframe id="aboutFrame" src="about:blank" title="About Maintenance ONE"></iframe>
+</div>
+
 <script>
   /* ---------- helpers ---------- */
   const isTouchDevice =
@@ -1549,21 +1469,21 @@
       `Always remember that you are absolutely unique. Just like everyone else. — Margaret Mead`,
       `An unexamined life is not worth living. — Socrates`,
       `Challenges are what make life interesting and overcoming them is what makes life meaningful. — Joshua J. Marine`,
-      `Don’t judge each day by the harvest you reap but by the seeds that you plant. — Robert Louis Stevenson`,
+      `Don't judge each day by the harvest you reap but by the seeds that you plant. — Robert Louis Stevenson`,
       `Education is not the filling of a pail but the lighting of a fire. — William Butler Yeats`,
       `Every man is a poet when he is in love. — Plato`,
-      `Genius only means hard-working all one’s life. — Mendeleyev`,
+      `Genius only means hard-working all one's life. — Mendeleyev`,
       `Happiness lies not in the mere possession of money; it lies in the joy of achievement, in the thrill of creative effort. — Franklin Roosevelt`,
       `I am a slow walker, but I never walk backwards. — Abraham Lincoln`,
-      `I can’t change the direction of the wind, but I can adjust my sails to always reach my destination. — Jimmy Dean`,
-      `I didn’t fail the test. I just found 100 ways to do it wrong. — Benjamin Franklin`,
+      `I can't change the direction of the wind, but I can adjust my sails to always reach my destination. — Jimmy Dean`,
+      `I didn't fail the test. I just found 100 ways to do it wrong. — Benjamin Franklin`,
       `I disapprove of what you say, but I will defend to the death your right to say it. — Voltaire`,
-      `If I looked compared to others far, is because I stand on giant’s shoulder. — Newton`,
-      `If you can’t fly, then run; if you can’t run, then walk; if you can’t walk, then crawl; but whatever you do, you have to keep moving forward. — Martin Luther King`,
-      `If you don’t like something, change it; if you can’t change it, change the way you think about it. — Mary Engelbreit`,
+      `If I looked compared to others far, is because I stand on giant's shoulder. — Newton`,
+      `If you can't fly, then run; if you can't run, then walk; if you can't walk, then crawl; but whatever you do, you have to keep moving forward. — Martin Luther King`,
+      `If you don't like something, change it; if you can't change it, change the way you think about it. — Mary Engelbreit`,
       `If you have no critics, you will likely have no success. — Malcolm S. Forbes`,
       `If you judge people, you have no time to love them. — Mother Teresa`,
-      `If you look at what you have in life, you’ll always have more. If you look at what you don’t have in life, you’ll never have enough. — Oprah Winfrey`,
+      `If you look at what you have in life, you'll always have more. If you look at what you don't have in life, you'll never have enough. — Oprah Winfrey`,
       `Imagination is more important than knowledge. — Albert Einstein`,
       `Intelligence plus character – that is the goal of real education. — Martin Luther King`,
       `It is not how much you do, but how much love you put into the doing that matters. — Mother Teresa`,
@@ -1579,8 +1499,8 @@
       `The first wealth is health. — Ralph Waldo Emerson`,
       `The greatest glory in living lies not in never falling, but in rising every time we fall. — Nelson Mandela`,
       `The only thing we have to fear is fear itself. — Franklin Roosevelt`,
-      `The only way to do great work is to love what you do. If you haven’t found it yet, keep looking. Don’t settle. — Steve Jobs`,
-      `The ordinary focus on what they’re getting. The extraordinary think about who they’re becoming. — Robin Sharma`,
+      `The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle. — Steve Jobs`,
+      `The ordinary focus on what they're getting. The extraordinary think about who they're becoming. — Robin Sharma`,
       `The past cannot be changed. The future is yet in your power. — Mary Pickford`,
       `The purpose of our lives is to be happy. — Dalai Lama`,
       `The way to get started is to quit talking and begin doing. — Walt Disney`,
@@ -1592,7 +1512,7 @@
       `When the whole world is silent, even one voice becomes powerful. — Malala`,
       `When we are saying this cannot be accomplished, this cannot be done, then we are short-changing ourselves. My brain, it cannot process failure. It will not process failure. — Kobe Bryant`,
       `Where there is a will, there is a way. — Thomas Edison`,
-      `You have to believe in yourself. That’s the secret of success. — Charles Chaplin`,
+      `You have to believe in yourself. That's the secret of success. — Charles Chaplin`,
       `You must be the change you want to see in the world. — Gandhi`
     ];
     let index = parseInt(localStorage.getItem('ms-quote-idx') || '0', 10);
@@ -1615,7 +1535,6 @@
   // ---- 子頁面同步主頁 style ----
   (function syncStyleToIframe(){
   function getFrontFrame(){
-    // 目前顯示的是 opacity=1 的那個
     const a = document.getElementById("mainFrameA");
     const b = document.getElementById("mainFrameB");
     if (!a || !b) return a || b;
@@ -1630,14 +1549,11 @@
     f.contentDocument.documentElement.setAttribute("data-style", style);
   }
 
-  // 讓其他地方可以呼叫
   window._msSyncFrameStyle = applyStyleToFront;
 
-  // 初次也同步一次
   document.addEventListener('DOMContentLoaded', ()=> setTimeout(applyStyleToFront, 30));
 })();
   
-// Modules 面板開關（Desktop: hover/dropdown, Mobile: left drawer）
 (function(){
   const menuBtn = document.getElementById('menuButton');
   const panel   = document.getElementById('navPanel');
@@ -1653,9 +1569,7 @@
   function openPanel(){
   panel.classList.add('open');
   menuBtn.setAttribute('aria-expanded','true');
-
-  document.body.classList.add('drawer-open'); // ✅ 加這行
-
+  document.body.classList.add('drawer-open');
   if (isMobile() && overlay){
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden','false');
@@ -1666,9 +1580,7 @@
 function closePanel(){
   panel.classList.remove('open');
   menuBtn.setAttribute('aria-expanded','false');
-
-  document.body.classList.remove('drawer-open'); // ✅ 加這行
-
+  document.body.classList.remove('drawer-open');
   if (overlay){
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden','true');
@@ -1693,32 +1605,24 @@ function closePanel(){
   }
 
   menuBtn.addEventListener('click', (e)=>{
-    // ✅ mobile drawer：純 toggle
     if (isMobile()){
       e.preventDefault();
       togglePanel();
       return;
     }
-    // 桌機：維持原本 click toggle（你原本就有）
     togglePanel();
   });
 
-  // 點 overlay 關閉（mobile）
   if (overlay){
     overlay.addEventListener('click', closePanel);
   }
 
-  // 點外面關閉（桌機 dropdown 用）
   document.addEventListener('click', (e)=>{
     if (!panel.classList.contains('open')) return;
-    if (isMobile()){
-      // mobile 由 overlay 管
-      return;
-    }
+    if (isMobile()) return;
     if (!panel.contains(e.target) && !menuBtn.contains(e.target)) closePanel();
   });
 
-  // Desktop hover 行為維持（mobile 不啟用）
   if (!isTouchDevice){
     menuBtn.addEventListener('mouseenter', ()=>{
       if (isMobile()) return;
@@ -1742,7 +1646,6 @@ function closePanel(){
     });
   }
 
-  // ✅ resize：從 mobile 切回桌機時，確保狀態乾淨
   window.addEventListener('resize', ()=>{
     if (!isMobile()){
       if (overlay){
@@ -1754,13 +1657,12 @@ function closePanel(){
   });
 })();
 
-  // ✅ 切換模組 + Line Schematic / Maintenance / SCADA（你這段完整 logic）
   (function(){
   const frameA = document.getElementById('mainFrameA');
 const frameB = document.getElementById('mainFrameB');
 
-let front = frameA;   // 目前顯示的
-let back  = frameB;   // 用來預載的
+let front = frameA;
+let back  = frameB;
 let navToken = 0;
 
 function syncStyleTo(frame){
@@ -1779,30 +1681,21 @@ function swapTo(src){
   navToken++;
   const t = navToken;
 
-  // back 先不可點 + 透明
   back.style.pointerEvents = 'none';
   back.style.opacity = '0';
 
-  // ✅ 如果 back 目前已經有文件（例如上一頁），先同步一次避免閃一下
   syncStyleTo(back);
 
   back.onload = () => {
     if (t !== navToken) return;
-
-    // ✅ 載入完成後，再同步一次（最保險）
     syncStyleTo(back);
-
     back.style.opacity = '1';
     back.style.pointerEvents = 'auto';
-
     front.style.opacity = '0';
     front.style.pointerEvents = 'none';
-
-    // 交換角色
     const tmp = front;
     front = back;
     back = tmp;
-
     back.onload = null;
   };
 
@@ -1816,7 +1709,6 @@ function swapTo(src){
   const menuBtn = document.getElementById('menuButton');
   const buttons = document.querySelectorAll('.nav-item-btn');
 
-  // 父按鈕
   const schematicParentBtn   = document.querySelector('[data-role="schematic-parent"]');
   const maintenanceParentBtn = document.querySelector('[data-role="maintenance-parent"]');
   const scadaParentBtn       = document.querySelector('[data-role="scada-parent"]');
@@ -1831,19 +1723,13 @@ function swapTo(src){
   let currentIoSection = null;
   let currentIoLine    = null;
   function applyIoActiveUI(){
-
-  // SECTION active
   ioSecBtns.forEach(b=>{
     const sec = b.getAttribute('data-io-section');
     b.classList.toggle('active', !!currentIoSection && sec === currentIoSection);
   });
-
-  // 顯示 / 隱藏 LINE
   updateIoChildrenVisibility();
-
-  // LINE active
   ioLineBtns.forEach(b=>{
-    const lk = b.getAttribute('data-io-line'); // "Line1"
+    const lk = b.getAttribute('data-io-line');
     b.classList.toggle('active', !!currentIoLine && lk === currentIoLine);
   });
 }
@@ -1854,35 +1740,24 @@ function swapTo(src){
   }
 
   updateIoChildrenVisibility();
-  // Panels
   const schematicPanel   = document.getElementById('schematicPanel');
   const maintenancePanel = document.getElementById('maintenancePanel');
   const scadaPanel       = document.getElementById('scadaPanel');
   const trainingParentBtn = document.querySelector('[data-role="training-parent"]');
   const trainingPanel     = document.getElementById('trainingPanel');
   const trainingSecBtns   = document.querySelectorAll('.training-sec-btn');
-  const trainingMaterialBtns = document.querySelectorAll('.training-material-btn');  // ✅ 新增
-  // Schematic
-  // ✅ 只抓 LINE 1~4（不包含 IO List）
+  const trainingMaterialBtns = document.querySelectorAll('.training-material-btn');
 const schematicLineBtns  = document.querySelectorAll('.schematic-line-row .schematic-line-btn');
-
-// ✅ SECTION
 const schematicSecBtns   = document.querySelectorAll('.schematic-sec-btn');
-
 const schematicLineRow   = document.querySelector('.schematic-line-row');
 const schematicLineTitle = document.querySelector('.line-title');
-
-
-
 
   let currentSchematicLine = null;
   let currentSchematicSection = null;
 
-  // Maintenance / SCADA buttons
   const maintenanceSecBtns = document.querySelectorAll('.maintenance-sec-btn');
   const scadaSecBtns       = document.querySelectorAll('.scada-sec-btn');
 
-  // 目前 active 父群組
   let currentParent = null;
 
   function setModule(title, sub){
@@ -1890,16 +1765,11 @@ const schematicLineTitle = document.querySelector('.line-title');
     if (subEl)   subEl.textContent   = sub   || '';
   }
 
-  // ✅ 接收 IO_Description_List.html 用 postMessage 通知的 section 變更
   window.addEventListener("message", (e) => {
   if (!e.data || e.data.type !== "ms-section-change") return;
-
   const sec = e.data.section;
-
-  // ✅ 用 front 取目前顯示頁的 src
   const src = front?.getAttribute("src") || "";
   if (!/IO_Description_List\.html/i.test(src)) return;
-
   setModule(
     "IO Description List – " + sec,
     "Browse I/O description CSV tables for " + sec + "."
@@ -1927,15 +1797,12 @@ const schematicLineTitle = document.querySelector('.line-title');
 function closeModules(){
   if (panel) panel.classList.remove('open');
   if (menuBtn) menuBtn.setAttribute('aria-expanded','false');
-
-  document.body.classList.remove('drawer-open'); // ✅ 关键：讓 menuButton 回來
-
+  document.body.classList.remove('drawer-open');
   const overlay = document.getElementById('drawerOverlay');
   if (overlay){
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden','true');
   }
-
   document.body.style.overflow = '';
   closeAllSubPanels();
 }
@@ -1943,11 +1810,8 @@ function closeModules(){
   function resetSchematicSelection(){
   currentSchematicLine = null;
   currentSchematicSection = null;
-
   schematicSecBtns.forEach(b => b.classList.remove('active'));
   schematicLineBtns.forEach(b => b.classList.remove('active'));
-     // ✅ 補這行
-
   updateSchematicChildrenVisibility();
 }
 
@@ -1973,26 +1837,23 @@ function closeModules(){
 
   function resetTrainingSelection(){
   trainingSecBtns.forEach(b => b.classList.remove('active'));
-  trainingMaterialBtns.forEach(b => b.classList.remove('active'));  // ✅ 新增
+  trainingMaterialBtns.forEach(b => b.classList.remove('active'));
 }
     
   function resetOtherGroups(activeGroup){
     if (activeGroup !== 'schematic')   resetSchematicSelection();
     if (activeGroup !== 'maintenance') resetMaintenanceSelection();
     if (activeGroup !== 'scada')       resetScadaSelection();
-    if (activeGroup !== 'io')          resetIoSelection(); // ← 只加這行
+    if (activeGroup !== 'io')          resetIoSelection();
     if (activeGroup !== 'training')    resetTrainingSelection();
     currentParent = activeGroup;
   }
 
-    // ===== Training accordion toggle =====
-// ===== Training accordion toggle =====
 (function(){
   const trainingPanel = document.getElementById('trainingPanel');
   if (!trainingPanel) return;
 
   trainingPanel.addEventListener('click', (e)=>{
-    // ✅ 如果點的是 course 或 material 按鈕，直接跳過，不處理 accordion
     if (e.target.closest('.training-sec-btn') || e.target.closest('.training-material-btn')) return;
 
     const btn = e.target.closest('.training-group-btn');
@@ -2039,7 +1900,6 @@ function closeModules(){
     const hasSection = !!currentSchematicSection;
     if (schematicLineTitle) schematicLineTitle.style.display = hasSection ? '' : 'none';
     if (schematicLineRow)   schematicLineRow.style.display   = hasSection ? '' : 'none';
-    
   }
 
   function formatLineLabel(lineKey){
@@ -2048,7 +1908,7 @@ function closeModules(){
   }
     
   function buildIoFileName(lineKey, sectionKey){
-    const n = (lineKey || '').replace('Line',''); // Line1 -> 1
+    const n = (lineKey || '').replace('Line','');
     return 'IO_List.html?line=' + encodeURIComponent(n) +
            '&sec=' + encodeURIComponent(sectionKey || '');
   }
@@ -2058,10 +1918,8 @@ function closeModules(){
     return 'Updated Schematic.html?line=' + encodeURIComponent(n) + '&sec=' + encodeURIComponent(sectionKey || '');
   }
 
-  // 初始收起
   updateSchematicChildrenVisibility();
 
-  // 桌機 hover 開子面板（schematic/maintenance/scada）
   if (!isTouchDevice){
     let t1=null,t2=null,t3=null;
 
@@ -2121,22 +1979,19 @@ if (!isTouchDevice){
     clearTimeout(ioTimer);
     ioTimer = setTimeout(()=>{
       ioPanel && ioPanel.classList.remove('open');
-    }, 220); // ✅ 給滑鼠跨越空隙的時間（可調 180~300）
+    }, 220);
   }
 
   if (ioGroup && ioPanel){
     ioGroup.addEventListener('mouseenter', ioOpen);
     ioGroup.addEventListener('mouseleave', ioClose);
-
-    // 進入 panel 不關；離開才開始倒數
     ioPanel.addEventListener('mouseenter', ioOpen);
     ioPanel.addEventListener('mouseleave', ioClose);
   }
 }
-    // ✅ Training：用整個 li 當 hover 區域（跟 IO 同招）
 if (!isTouchDevice){
   const trainingParentBtn = document.querySelector('[data-role="training-parent"]');
-  const trainingPanel     = document.getElementById('trainingPanel'); // ← 你的 Training panel id
+  const trainingPanel     = document.getElementById('trainingPanel');
   const trainingGroup     = trainingParentBtn?.closest('.nav-group-training');
 
   let trainingTimer = null;
@@ -2151,20 +2006,18 @@ if (!isTouchDevice){
     clearTimeout(trainingTimer);
     trainingTimer = setTimeout(()=>{
       trainingPanel && trainingPanel.classList.remove('open');
-    }, 220); // ✅ 給滑鼠跨越空隙的時間（180~300 都可）
+    }, 220);
   }
 
   if (trainingGroup && trainingPanel){
     trainingGroup.addEventListener('mouseenter', trainingOpen);
     trainingGroup.addEventListener('mouseleave', trainingClose);
-
     trainingPanel.addEventListener('mouseenter', trainingOpen);
     trainingPanel.addEventListener('mouseleave', trainingClose);
   }
 }
   }
 
-  // 點 nav item（Home/父群組）
   buttons.forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const role = btn.dataset.role || '';
@@ -2206,7 +2059,6 @@ if (!isTouchDevice){
       }
 
 if (role === 'training-parent'){
-
   if (isTouchDevice && currentParent==='training' && trainingPanel?.classList.contains('open')){
     trainingPanel.classList.remove('open');
     resetTrainingSelection();
@@ -2214,23 +2066,17 @@ if (role === 'training-parent'){
     currentParent = null;
     return;
   }
-
-  // ✅ 關掉所有其他主 panel（包含狀態）
   resetSchematicSelection();
   resetIoSelection();
-  resetMaintenanceSelection();   // ⭐ 關鍵
+  resetMaintenanceSelection();
   resetScadaSelection();
-
   schematicPanel && schematicPanel.classList.remove('open');
   ioPanel && ioPanel.classList.remove('open');
   maintenancePanel && maintenancePanel.classList.remove('open');
   scadaPanel && scadaPanel.classList.remove('open');
-
-  // ✅ 只開 Training
   resetOtherGroups('training');
   activateNav(trainingParentBtn);
   trainingPanel && trainingPanel.classList.add('open');
-
   currentParent = 'training';
   return;
 }
@@ -2243,10 +2089,8 @@ if (role === 'training-parent'){
         currentParent = null;
         return;
       }
-
         resetOtherGroups('io');
         activateNav(ioParentBtn);
-
         ioPanel && ioPanel.classList.add('open');
         schematicPanel && schematicPanel.classList.remove('open');
         maintenancePanel && maintenancePanel.classList.remove('open');
@@ -2254,7 +2098,6 @@ if (role === 'training-parent'){
         return;
       }
 
-      // 一般 module
       const src = btn.dataset.src;
       if (!src) return;
 
@@ -2267,12 +2110,11 @@ if (role === 'training-parent'){
       swapTo(src);
       setModule(btn.dataset.title || 'Module', btn.dataset.sub || '');
 
-      closeModules();  // ✅ 一次把 overlay + drawer-open 一起收乾淨
+      closeModules();
     });
   });
 
 
-  // SCADA 3 buttons
   scadaSecBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
       resetOtherGroups('scada');
@@ -2320,19 +2162,15 @@ schematicSecBtns.forEach(btn=>{
     currentSchematicSection = sec;
     currentSchematicLine = null;
 
-    // ✅ SECTION active
     schematicSecBtns.forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
 
-    // ✅ 清掉 LINE + IO List
     schematicLineBtns.forEach(b=>b.classList.remove('active'));
-    
 
     updateSchematicChildrenVisibility();
   });
 });
     
-  // Schematic LINE（真正切頁才改 Title）
   schematicLineBtns.forEach(btn=>{
   btn.addEventListener('click', ()=>{
     if (!currentSchematicSection) return;
@@ -2342,12 +2180,8 @@ schematicSecBtns.forEach(btn=>{
 
     currentSchematicLine = btn.getAttribute('data-line');
 
-    // ✅ LINE active
     schematicLineBtns.forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-
-    // ✅ IO List 清掉
-    
 
     const file = buildSchematicFileName(currentSchematicLine, currentSchematicSection);
     swapTo(file);
@@ -2361,7 +2195,6 @@ schematicSecBtns.forEach(btn=>{
   });
 });
 
-  // ===== IO Description List（貼在這裡）=====
 ioSecBtns.forEach(btn=>{
   btn.addEventListener('click', ()=>{
     resetOtherGroups('io');
@@ -2405,10 +2238,9 @@ ioLineBtns.forEach(btn=>{
   });
 });
 
-/* ===== 左邊 COURSE → 開新分頁 (YouTube 等外部連結) ===== */
 trainingSecBtns.forEach(btn=>{
   btn.addEventListener('click', (e)=>{
-    e.stopPropagation();   // ✅ 防止 accordion click 攔截
+    e.stopPropagation();
 
     const rawUrl = btn.getAttribute('data-train-url');
     if (!rawUrl || !rawUrl.trim()){
@@ -2423,15 +2255,14 @@ trainingSecBtns.forEach(btn=>{
     btn.classList.add('active');
     setTimeout(()=> btn.classList.remove('active'), 600);
 
-    closeModules();  // ✅ 關閉 menu + panel
+    closeModules();
   });
 });
 
-/* ===== 右邊 MATERIAL → 直接逐個綁定（不走 panel 委派）===== */
 document.querySelectorAll('.training-material-btn').forEach(btn=>{
   btn.addEventListener('click', function(e){
     e.preventDefault();
-    e.stopImmediatePropagation();  // ✅ 比 stopPropagation 更強，攔截所有同層 listener
+    e.stopImmediatePropagation();
 
     if (this.getAttribute('data-placeholder') === 'true'){
       this.style.outline = '2px dashed #f59e0b';
@@ -2455,10 +2286,9 @@ document.querySelectorAll('.training-material-btn').forEach(btn=>{
     this.classList.add('active');
 
     closeModules();
-  }, true);  // ✅ useCapture: true — 在捕獲階段就攔截，比任何冒泡 listener 都先執行
+  }, true);
 });;
 
-  // Maintenance：2nd/3rd layer
   if (maintenancePanel){
     let hoverCloseTimer = null;
 
@@ -2481,7 +2311,6 @@ document.querySelectorAll('.training-material-btn').forEach(btn=>{
       hoverCloseTimer = null;
     }
 
-    // 桌機 hover 開 3rd
     if (!isTouchDevice){
   maintenancePanel.addEventListener('mouseover', (e)=>{
     const group = e.target.closest('.maintenance-group');
@@ -2492,15 +2321,12 @@ document.querySelectorAll('.training-material-btn').forEach(btn=>{
 
     cancelClose();
     openGroup(group);
-
-    // ✅ hover 只開 panel，不改 active
   });
 
   maintenancePanel.addEventListener('mouseleave', scheduleCloseAll);
   maintenancePanel.addEventListener('mouseenter', cancelClose);
 }
 
-    // 手機 click toggle 2nd + click 3rd open pdf
     maintenancePanel.addEventListener('click', (e)=>{
       const groupBtn = e.target.closest('.maintenance-group-btn');
       if (groupBtn){
@@ -2519,7 +2345,6 @@ document.querySelectorAll('.training-material-btn').forEach(btn=>{
       const pdfBtn = e.target.closest('.maintenance-sec-btn');
       if (!pdfBtn) return;
 
-      // 讓第二層保持藍色 + open
       maintenancePanel.querySelectorAll('.maintenance-group-btn')
         .forEach(b=>b.classList.remove('active'));
 
@@ -2565,13 +2390,11 @@ document.querySelectorAll('.training-material-btn').forEach(btn=>{
   }catch(e){}
 }
 
-// ✅ 初次載入 / 重新整理時同步 active
 syncIoFromCurrentIframeUrl();
   }
 })();
 </script>
 <script>
-/* ===== Module Dock 搬家：Topbar <-> Iframe ===== */
 (function(){
   const dock      = document.querySelector('.module-dock');
   const slotTop   = document.getElementById('moduleSlotTopbar');
@@ -2581,25 +2404,21 @@ syncIoFromCurrentIframeUrl();
 
   if(!dock || !slotTop || !slotFrame || !frameWrap || !menuBtn) return;
 
-  // 初始化：先放到 Topbar 左下角
   if (!slotTop.contains(dock)) slotTop.appendChild(dock);
 
   let inFrame = false;
 
-  // 你圖二那個「切換點」：iframeWrap 的 top <= 這個值，就搬到 iframe
-  const SWITCH_Y = 110; // 想更早搬：調大；想更晚搬：調小
+  const SWITCH_Y = 110;
 
   function updateDockHome(){
-    // 📱 手機：強制放在 topbar 裡，而且是最後一個
 if (window.innerWidth <= 900){
   if (!slotTop.contains(dock)) slotTop.appendChild(dock);
-  dock.style.order = '999';   // ✅ 一定在最下面
+  dock.style.order = '999';
   inFrame = false;
   return;
 }else{
-  dock.style.order = '';      // 桌機清掉
+  dock.style.order = '';
 }
-
 
     const rect = frameWrap.getBoundingClientRect();
     const shouldGoFrame = rect.top <= SWITCH_Y;
@@ -2620,9 +2439,6 @@ if (window.innerWidth <= 900){
 </script>
 
 <script>
-  /* =========================
-     Style Theme (blue / panther / hangyodon)
-  ========================= */
   (function () {
     const STYLE_KEY = 'ms-style';
     const root   = document.documentElement;
@@ -2667,8 +2483,6 @@ if (window.innerWidth <= 900){
   })();
 </script> 
  <script>
-
-
 (function(){
   const btn = document.getElementById('jumpToggle');
   if (!btn) return;
@@ -2708,7 +2522,6 @@ if (window.innerWidth <= 900){
   }
 
   function enable(){
-    // 讓桌機版顯示/可用
     btn.style.display = '';
     if (bound) return;
     btn.addEventListener('click', onClick);
@@ -2719,7 +2532,6 @@ if (window.innerWidth <= 900){
   }
 
   function disable(){
-    // 手機版強制隱藏/不綁事件
     btn.style.display = 'none';
     if (!bound) return;
     btn.removeEventListener('click', onClick);
@@ -2733,14 +2545,53 @@ if (window.innerWidth <= 900){
     else enable();
   }
 
-  // 初始 + 旋轉/縮放時都會重新判斷
   if (mq.addEventListener) mq.addEventListener('change', apply);
-  else mq.addListener(apply); // 舊瀏覽器
+  else mq.addListener(apply);
 
   apply();
 })();
-
-
 </script>
+
+<!-- ✅ About ? button logic -->
+<script>
+(function(){
+  var btn     = document.getElementById('aboutBtn');
+  var overlay = document.getElementById('aboutOverlay');
+  var frame   = document.getElementById('aboutFrame');
+  if (!btn || !overlay || !frame) return;
+
+  var loaded = false;
+
+  function openAbout(){
+    if (!loaded){
+      frame.src = 'about.html';
+      loaded = true;
+    }
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAbout(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', function(e){ e.stopPropagation(); openAbout(); });
+
+  // Click backdrop to close
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeAbout(); });
+
+  // Listen for close message from about.html iframe
+  window.addEventListener('message', function(e){
+    if (e.data && e.data.type === 'ms-about-close') closeAbout();
+  });
+
+  // Esc key
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeAbout();
+  });
+})();
+</script>
+
 </body> 
 </html>
