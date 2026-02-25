@@ -1027,7 +1027,7 @@
   </div>
 
   <div class="pill">
-    <span class="pill-label">Modified on</span>
+    <span class="pill-label">Release date</span>
     <span class="pill-strong" id="modDate">Checking…</span>
   </div>
 </div>
@@ -1446,8 +1446,7 @@
       el.textContent = isNaN(d.getTime())
         ? 'N/A'
         : d.toLocaleString([], {
-            year: 'numeric', month: '2-digit', day: '2-digit',
-            hour: '2-digit', minute: '2-digit'
+            year: 'numeric', month: '2-digit', day: '2-digit'
           });
     }
     if (document.readyState === 'loading') {
