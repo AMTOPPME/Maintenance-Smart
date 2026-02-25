@@ -278,17 +278,6 @@
         </div>
       </div>
 
-      <!-- ★ Status field in the new-report form -->
-      <div class="form-row">
-        <div>
-          <label for="statusInput">Status</label>
-          <select id="statusInput">
-            <option value="Using">Using</option>
-            <option value="Spare">Spare</option>
-            <option value="Broken">Broken</option>
-          </select>
-        </div>
-      </div>
 
       <div class="form-row">
         <div>
@@ -301,6 +290,18 @@
         <div>
           <label for="actionInput">Action taken</label>
           <textarea id="actionInput" placeholder="Describe what you did to fix the issue…"></textarea>
+        </div>
+      </div>
+
+      <!-- Status field -->
+      <div class="form-row">
+        <div>
+          <label for="statusInput">Status</label>
+          <select id="statusInput">
+            <option value="Using">Using</option>
+            <option value="Spare">Spare</option>
+            <option value="Broken">Broken</option>
+          </select>
         </div>
       </div>
 
@@ -396,6 +397,7 @@
     const loc_to  =document.getElementById('locToInput').value.trim();
     const status  =document.getElementById('statusInput').value;
 
+
     if(!date||!assetId){
       updateStatus('Please fill <strong>Date</strong> and a valid <strong>Asset ID</strong> (PC-001 ~ PC-999).');
       return;
@@ -416,6 +418,9 @@
     try{await saveRecordToServer(serverPayload);serverOk=true;}
     catch(e){console.error(e);}
 
+    /* ★ Also update the Asset's current status in the Inventory sheet */
+    if(serverOk) updateInventoryStatus(assetId, status);
+
     const logs=loadRecords();
     logs.push(localRecord);
     saveRecords(logs);
@@ -435,6 +440,21 @@
     updateStatus(serverOk
       ?'✅ Record saved to <strong>Google Sheet</strong> and this browser.'
       :'⚠ Google Sheets backend unavailable – record saved in <strong>this browser only</strong>.');
+  }
+
+  /* ★ Update the current status of an Asset in the Inventory (PC sheet) */
+  function updateInventoryStatus(assetId, newStatus){
+    // Fire-and-forget — sends op=update_status to Apps Script
+    // Apps Script should handle this by finding the row in the Inventory sheet
+    // matching asset_id and updating its status column.
+    fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify({op: 'update_inventory_status', asset_id: assetId, status: newStatus})
+    }).then(r => {
+      if(!r.ok) console.warn('Inventory status update failed:', r.status);
+      else console.log('Inventory status updated:', assetId, '->', newStatus);
+    }).catch(e => console.warn('Inventory status update error:', e));
   }
 
   function downloadJson(){
