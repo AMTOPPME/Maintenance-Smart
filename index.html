@@ -84,7 +84,7 @@
       align-items:center;
       gap:6px
     }
-    .brand-sub{font-size:13px;color:var(--text-soft)}
+    .brand-sub{font-size:13px;color:#3b82f6}
 
     /* ── About ? button ── */
     .about-btn {
@@ -148,7 +148,7 @@
   font-size:11px;
   text-transform:uppercase;
   letter-spacing:.12em;
-  color:var(--text-soft);
+  color:#111827;
   margin-bottom:2px;
 }
     
@@ -209,8 +209,8 @@
   gap:8px;
 }
 
-.pill-label{color:var(--text-soft); font-size:10px;}
-.pill-strong{color:var(--text); font-weight:600; font-size:11px;}
+.pill-label{color:#111827; font-size:10px;}
+.pill-strong{color:#1d4ed8; font-weight:600; font-size:11px;}
 
 .pill.version{
   border-color:#dbeafe;
@@ -984,7 +984,292 @@
     overflow:visible;
   }
 }
+/* ═══════════════════════════════════════════════
+   FLOATING CHATBOT WIDGET STYLES
+═══════════════════════════════════════════════ */
 
+#chatToggleBtn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 89000;
+  box-shadow: 0 4px 20px rgba(37,99,235,0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
+  outline: none;
+}
+#chatToggleBtn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px rgba(37,99,235,0.65);
+}
+#chatToggleBtn .btn-icon-open  { font-size: 22px; transition: opacity 0.2s, transform 0.3s; position: absolute; }
+#chatToggleBtn .btn-icon-close { font-size: 18px; color: white; transition: opacity 0.2s, transform 0.3s; position: absolute; opacity: 0; transform: rotate(-90deg); }
+#chatToggleBtn.is-open .btn-icon-open  { opacity: 0; transform: rotate(90deg); }
+#chatToggleBtn.is-open .btn-icon-close { opacity: 1; transform: rotate(0deg); }
+
+.chat-notif-badge {
+  position: absolute;
+  top: -3px; right: -3px;
+  width: 18px; height: 18px;
+  background: #ef4444;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: ui-monospace, monospace;
+  border: 2px solid white;
+}
+
+#chatFloatPanel {
+  position: fixed;
+  bottom: 96px;
+  right: 28px;
+  width: 400px;
+  height: 580px;
+  border-radius: 20px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  z-index: 88000;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px) scale(0.97);
+  transition: opacity 0.25s cubic-bezier(0.34,1.56,0.64,1),
+              transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+#chatFloatPanel.cf-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.cf-header {
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.cf-header-icon { font-size: 22px; }
+.cf-header-info { flex: 1; }
+.cf-header-title { font-size: 14px; font-weight: 700; color: #e6edf3; }
+.cf-header-sub   { font-size: 11px; color: #7d8590; margin-top: 1px; }
+.cf-status-dot {
+  width: 8px; height: 8px;
+  background: #3fb950;
+  border-radius: 50%;
+  animation: cfPulse 2s infinite;
+}
+@keyframes cfPulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+.cf-close-btn {
+  background: none; border: none; color: #7d8590;
+  font-size: 18px; cursor: pointer; padding: 4px;
+  border-radius: 6px; transition: color 0.15s, background 0.15s;
+}
+.cf-close-btn:hover { color: #e6edf3; background: #30363d; }
+
+.cf-cats {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  border-bottom: 1px solid #21262d;
+  scrollbar-width: none;
+}
+.cf-cats::-webkit-scrollbar { display: none; }
+.cf-cat-btn {
+  white-space: nowrap;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid #30363d;
+  background: transparent;
+  color: #7d8590;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cf-cat-btn:hover { border-color: #2563eb; color: #e6edf3; }
+.cf-cat-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+.cf-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #30363d transparent;
+}
+.cf-messages::-webkit-scrollbar { width: 4px; }
+.cf-messages::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+
+.cf-msg {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  animation: cfFadeUp 0.2s ease;
+}
+@keyframes cfFadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cf-msg.cf-user { flex-direction: row-reverse; }
+
+.cf-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  background: #21262d;
+}
+.cf-avatar.user { background: #2563eb; }
+
+.cf-bubble {
+  max-width: 80%;
+  padding: 10px 13px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #e6edf3;
+  background: #161b22;
+  border: 1px solid #30363d;
+}
+.cf-msg.cf-user .cf-bubble {
+  background: #1a2a4a;
+  border-color: #2563eb44;
+  color: #cdd9f0;
+}
+
+.cf-alert {
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 6px 0;
+  font-size: 12px;
+  border-left: 3px solid;
+}
+.cf-alert.danger  { background: #2d1b1b; border-color: #f85149; color: #ffa198; }
+.cf-alert.warning { background: #2d2000; border-color: #d29922; color: #e3b341; }
+.cf-alert.info    { background: #0d2137; border-color: #388bfd; color: #79c0ff; }
+.cf-alert.success { background: #0d2d1a; border-color: #3fb950; color: #56d364; }
+
+.cf-steps { margin: 8px 0; display: flex; flex-direction: column; gap: 6px; }
+.cf-step  { display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: #c9d1d9; }
+.cf-step-n {
+  background: #2563eb; color: white;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; flex-shrink: 0;
+  font-family: ui-monospace, monospace;
+}
+.cf-step-txt { padding-top: 1px; line-height: 1.45; }
+
+.cf-quick-replies {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 8px;
+}
+.cf-qr {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid #30363d;
+  background: #21262d;
+  color: #7d8590;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cf-qr:hover { border-color: #2563eb; color: #e6edf3; background: #1a2a4a; }
+
+.cf-typing {
+  display: flex; gap: 4px;
+  padding: 10px 13px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  width: fit-content;
+}
+.cf-typing span {
+  width: 6px; height: 6px;
+  background: #7d8590;
+  border-radius: 50%;
+  animation: cfBounce 1.2s infinite;
+}
+.cf-typing span:nth-child(2) { animation-delay: 0.2s; }
+.cf-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes cfBounce {
+  0%,60%,100% { transform: translateY(0); }
+  30%          { transform: translateY(-5px); }
+}
+
+.cf-hint {
+  font-size: 10px; color: #334155; text-align: center;
+  padding: 0 12px 7px; flex-shrink: 0;
+  background: #1e293b;
+  font-family: ui-monospace, monospace;
+}
+
+.cf-input-area {
+  display: flex; gap: 8px; align-items: flex-end;
+  padding: 10px 12px 12px;
+  background: #161b22;
+  border-top: 1px solid #30363d;
+  flex-shrink: 0;
+}
+.cf-input {
+  flex: 1;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  color: #e6edf3;
+  font-size: 13px;
+  padding: 8px 11px;
+  resize: none;
+  min-height: 36px;
+  max-height: 96px;
+  font-family: inherit;
+  line-height: 1.4;
+  transition: border-color 0.15s;
+  overflow-y: auto;
+}
+.cf-input:focus { outline: none; border-color: #2563eb; }
+.cf-input::placeholder { color: #475569; }
+.cf-send {
+  width: 38px; height: 38px;
+  background: #2563eb; border: none;
+  border-radius: 8px;
+  color: white; font-size: 15px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, transform 0.1s;
+}
+.cf-send:hover  { background: #1d4ed8; }
+.cf-send:active { transform: scale(0.95); }
+
+@media (max-width: 600px) {
+  #chatFloatPanel { width: calc(100vw - 24px); right: 12px; bottom: 80px; }
+  #chatToggleBtn  { right: 16px; bottom: 16px; }
+}
   </style>
 </head>
 
@@ -2591,6 +2876,427 @@ if (window.innerWidth <= 900){
   });
 })();
 </script>
+<!-- ═══ FLOATING CHATBOT ═══ -->
+<button id="chatToggleBtn" aria-label="Open maintenance assistant">
+  <span class="btn-icon-open">🔧</span>
+  <span class="btn-icon-close">✕</span>
+  <div class="chat-notif-badge" id="chatBadge">1</div>
+</button>
 
+<div id="chatFloatPanel" role="dialog" aria-label="Maintenance Assistant">
+  <div class="cf-header">
+    <div class="cf-header-icon">🔧</div>
+    <div class="cf-header-info">
+      <div class="cf-header-title">Maintenance Assistant</div>
+      <div class="cf-header-sub">Equipment diagnostics & procedures</div>
+    </div>
+    <div class="cf-status-dot"></div>
+    <button class="cf-close-btn" id="cfCloseBtn" aria-label="Close">✕</button>
+  </div>
+
+  <div class="cf-cats">
+    <button class="cf-cat-btn active" onclick="cfSetCat('all',this)">All</button>
+    <button class="cf-cat-btn" onclick="cfSetCat('electrical',this)">⚡ Electrical</button>
+    <button class="cf-cat-btn" onclick="cfSetCat('mechanical',this)">⚙️ Mechanical</button>
+    <button class="cf-cat-btn" onclick="cfSetCat('processing',this)">🌡️ Processing</button>
+    <button class="cf-cat-btn" onclick="cfSetCat('safety',this)">🦺 Safety</button>
+    <button class="cf-cat-btn" onclick="cfSetCat('hvac',this)">❄️ HVAC</button>
+  </div>
+
+  <div class="cf-messages" id="cfMessages"></div>
+  <div class="cf-hint">Enter = Send &nbsp;·&nbsp; Shift+Enter = New line</div>
+
+  <div class="cf-input-area">
+    <textarea class="cf-input" id="cfInput" rows="1" placeholder="Describe equipment issue…"></textarea>
+    <button class="cf-send" onclick="cfSend()">➤</button>
+  </div>
+</div>
+  <script>
+(function(){
+  /* ── State ── */
+  var cfOpen     = false;
+  var cfCategory = 'all';
+
+  /* ── Knowledge Base ── */
+  var KB = {
+    electrical: {
+      'circuit breaker': function(){
+        return '<b>⚡ Circuit Breaker Trip</b>' +
+          '<div class="cf-alert warning">Identify cause before resetting.</div>' +
+          '<div class="cf-steps">' +
+          step(1,'Check for visible damage, burning smell or moisture.') +
+          step(2,'Verify load current with clamp meter — compare to breaker rating.') +
+          step(3,'Megger test: disconnect load, test insulation resistance (>1MΩ).') +
+          step(4,'If overload confirmed, reduce load then reset.') +
+          step(5,'If breaker trips again immediately, replace breaker.') +
+          '</div>' +
+          qr(['Motor overload','Ground fault','Short circuit']);
+      },
+      'motor fail': function(){
+        return '<b>⚡ Motor Failure</b>' +
+          '<div class="cf-alert danger">De-energize and LOTO before inspection.</div>' +
+          '<div class="cf-steps">' +
+          step(1,'Check supply voltage — should be ±10% of nameplate.') +
+          step(2,'Inspect overload relay — check trip class and reset.') +
+          step(3,'Test contactor contacts for wear or pitting.') +
+          step(4,'Measure winding resistance — compare all three phases.') +
+          step(5,'Megger test motor windings to ground (>1MΩ).') +
+          '</div>' +
+          qr(['VFD fault','Bearing noise','Overheating']);
+      },
+      'vfd': function(){
+        return '<b>⚡ VFD Fault Codes</b>' +
+          '<div class="cf-alert info">Note fault code before clearing.</div>' +
+          '<b>Common codes:</b><br>' +
+          '<div class="cf-steps">' +
+          step('OC','Overcurrent — check motor leads, reduce accel rate.') +
+          step('OV','Overvoltage — extend decel time or add braking resistor.') +
+          step('OH','Overheat — check cooling fan and ambient temp.') +
+          step('GF','Ground fault — megger test motor and cable.') +
+          step('UV','Undervoltage — check incoming supply.') +
+          '</div>' +
+          qr(['Reset VFD','Motor parameters','Communications fault']);
+      },
+      'arc flash': function(){
+        return '<div class="cf-alert danger">🚨 ARC FLASH HAZARD — DO NOT APPROACH</div>' +
+          '<div class="cf-steps">' +
+          step(1,'Evacuate 10 m radius immediately.') +
+          step(2,'Call supervisor and safety officer.') +
+          step(3,'Do NOT attempt to reset — qualified electrician only.') +
+          step(4,'Verify PPE: Arc flash suit, face shield, insulated gloves.') +
+          '</div>';
+      }
+    },
+    mechanical: {
+      'vibration': function(){
+        return '<b>⚙️ Vibration Analysis</b>' +
+          '<div class="cf-alert info">ISO 10816 limits: &lt;2.3 mm/s good, 2.3–4.5 acceptable, &gt;4.5 investigate.</div>' +
+          '<div class="cf-steps">' +
+          step(1,'Record RMS velocity at bearing housings (X/Y/Z).') +
+          step(2,'Check alignment — laser align if misalignment suspected.') +
+          step(3,'Check balance — add trial weight if 1× dominant.') +
+          step(4,'Inspect coupling for wear or looseness.') +
+          step(5,'Tighten all foundation bolts to spec.') +
+          '</div>' +
+          qr(['Bearing noise','Imbalance','Looseness']);
+      },
+      'bearing': function(){
+        return '<b>⚙️ Bearing Overheating</b>' +
+          '<div class="cf-alert warning">Max bearing temp: 80°C (176°F). Shutdown at 90°C.</div>' +
+          '<div class="cf-steps">' +
+          step(1,'IR thermometer check — record temperature.') +
+          step(2,'Check lubrication — grease type, quantity, interval.') +
+          step(3,'Listen for grinding/squealing with stethoscope.') +
+          step(4,'Inspect seals for damage or contamination ingress.') +
+          step(5,'Check radial/axial play — replace if excessive.') +
+          '</div>' +
+          qr(['Lubrication spec','Bearing replacement','Vibration check']);
+      },
+      'pump': function(){
+        return '<b>⚙️ Pump No Flow</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Check suction valve — confirm fully open.') +
+          step(2,'Prime pump — check for air in suction line.') +
+          step(3,'Check for cavitation (rattling noise) — increase NPSH.') +
+          step(4,'Inspect impeller for wear, clogging or damage.') +
+          step(5,'Verify rotation direction matches arrow on casing.') +
+          '</div>' +
+          qr(['Seal leak','Cavitation','Low pressure']);
+      },
+      'belt': function(){
+        return '<b>⚙️ Belt / Chain Issue</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Check tension — deflection should be ~1.6% of span.') +
+          step(2,'Inspect for fraying, cracking or glazing.') +
+          step(3,'Check sheave/sprocket alignment with straight edge.') +
+          step(4,'Verify matched belt set — replace all belts together.') +
+          step(5,'Lubricate chain with correct grade oil.') +
+          '</div>';
+      },
+      'leak': function(){
+        return '<b>⚙️ Fluid Leak</b>' +
+          '<div class="cf-alert warning">Contain spill before tracing source.</div>' +
+          '<div class="cf-steps">' +
+          step(1,'Deploy absorbent pads / drip tray.') +
+          step(2,'Trace leak — use UV dye if source unclear.') +
+          step(3,'Depressurize system before repair.') +
+          step(4,'Replace seal, gasket or fitting as required.') +
+          step(5,'Pressure test after repair — hold 1.5× working pressure.') +
+          '</div>' +
+          qr(['Oil leak','Water leak','Chemical spill']);
+      },
+      'gearbox': function(){
+        return '<b>⚙️ Gearbox Troubleshooting</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Check oil level via sight glass — top up if low.') +
+          step(2,'Sample oil — check for metal particles, colour, viscosity.') +
+          step(3,'Check temperature — max 80°C for most gearboxes.') +
+          step(4,'Listen for clicking or grinding — indicates gear wear.') +
+          step(5,'Check breather/vent — blockage causes seal failure.') +
+          '</div>';
+      }
+    },
+    processing: {
+      'temperature': function(){
+        return '<b>🌡️ Temperature Alarm</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Check thermocouple connections — resistance should be low.') +
+          step(2,'Compare PV vs setpoint — check PID tuning if oscillating.') +
+          step(3,'Inspect heater bands — measure resistance, check for open circuit.') +
+          step(4,'Check SSR or contactor — verify switching with clamp meter.') +
+          step(5,'Calibrate sensor with reference probe if reading appears offset.') +
+          '</div>' +
+          qr(['Heater band open','TC failure','PID tuning']);
+      },
+      'pressure': function(){
+        return '<b>🌡️ Pressure Issue</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Compare transmitter reading to local gauge.') +
+          step(2,'Calibrate sensor — zero and span check.') +
+          step(3,'Inspect relief valve — check setpoint and seat condition.') +
+          step(4,'Check for blockage in process line or impulse tube.') +
+          step(5,'Verify control valve position vs command signal.') +
+          '</div>';
+      },
+      'jam': function(){
+        return '<b>🌡️ Material Jam</b>' +
+          '<div class="cf-alert danger">Apply LOTO before clearing any jam.</div>' +
+          '<div class="cf-steps">' +
+          step(1,'STOP machine — initiate LOTO procedure.') +
+          step(2,'Remove jammed material manually with appropriate tools.') +
+          step(3,'Inspect rollers, guides and sensors for damage.') +
+          step(4,'Root cause: check material spec, tension settings, alignment.') +
+          step(5,'Document jam location and frequency for trend analysis.') +
+          '</div>' +
+          qr(['LOTO procedure','Sensor fault','Material spec']);
+      },
+      'quality': function(){
+        return '<b>🌡️ Quality Defect</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Record defect type: streaks, gels, thickness variation, etc.') +
+          step(2,'Compare current parameters to last good run.') +
+          step(3,'Check melt temperature profile across all zones.') +
+          step(4,'Verify raw material lot — check COA for spec.') +
+          step(5,'Purge extruder if contamination or degradation suspected.') +
+          '</div>';
+      },
+      'sensor': function(){
+        return '<b>🌡️ Sensor Fault</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Check 24VDC power supply at sensor terminal.') +
+          step(2,'Measure signal output — 4–20 mA or 0–10 V?') +
+          step(3,'Inspect cable for damage, pinching or water ingress.') +
+          step(4,'Verify I/O mapping in PLC — check tag address.') +
+          step(5,'Swap with spare sensor to confirm fault is in sensor.') +
+          '</div>' +
+          qr(['4-20mA loop test','PLC I/O check','Calibration']);
+      }
+    },
+    safety: {
+      'loto': function(){
+        return '<b>🦺 LOTO Procedure</b>' +
+          '<div class="cf-alert info">OSHA 29 CFR 1910.147</div>' +
+          '<div class="cf-steps">' +
+          step(1,'Notify affected employees of planned de-energization.') +
+          step(2,'Identify ALL energy sources (electrical, pneumatic, hydraulic, gravity).') +
+          step(3,'Shut down equipment using normal stopping procedure.') +
+          step(4,'Isolate each energy source — open disconnect, close valve.') +
+          step(5,'Apply personal lock and tag to each isolation point.') +
+          step(6,'Release/restrain stored energy (bleed pressure, block gravity).') +
+          step(7,'Verify zero energy — test for voltage, check pressure gauge.') +
+          '</div>' +
+          qr(['Electrical isolation','Pneumatic bleed','Hydraulic release']);
+      },
+      'spill': function(){
+        return '<b>🦺 Chemical Spill</b>' +
+          '<div class="cf-alert danger">Check SDS before approaching spill.</div>' +
+          '<div class="cf-steps">' +
+          step(1,'Identify chemical — check SDS for PPE requirements.') +
+          step(2,'Don appropriate PPE: gloves, goggles, apron.') +
+          step(3,'Contain spill with absorbent or berm.') +
+          step(4,'Eliminate ignition sources if flammable.') +
+          step(5,'Dispose of waste per site procedure — do not pour down drain.') +
+          step(6,'Complete spill report form.') +
+          '</div>';
+      },
+      'fire': function(){
+        return '<div class="cf-alert danger">🔥 FIRE EMERGENCY</div>' +
+          '<div class="cf-steps">' +
+          step(1,'Activate fire alarm immediately.') +
+          step(2,'Call emergency services: 911.') +
+          step(3,'Evacuate area — do not use elevators.') +
+          step(4,'Assist injured persons if safe to do so.') +
+          step(5,'Account for all personnel at muster point.') +
+          '</div>';
+      },
+      'injury': function(){
+        return '<div class="cf-alert danger">🚑 INJURY — CALL 911 IF SERIOUS</div>' +
+          '<div class="cf-steps">' +
+          step(1,'Ensure scene is safe before approaching.') +
+          step(2,'Call 911 for serious injury. Use first aid kit for minor.') +
+          step(3,'Do not move injured person unless in immediate danger.') +
+          step(4,'Notify supervisor immediately.') +
+          step(5,'Preserve scene and complete incident report within 24 hrs.') +
+          '</div>';
+      }
+    },
+    hvac: {
+      'cooling': function(){
+        return '<b>❄️ Cooling System Issue</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Check thermostat setpoint and mode (Cool).') +
+          step(2,'Inspect air filters — replace if clogged (>90 days or pressure drop).') +
+          step(3,'Check condenser coils for fouling — clean with coil cleaner.') +
+          step(4,'Verify refrigerant charge — look for ice on suction line.') +
+          step(5,'Check condenser fan motor and blade condition.') +
+          '</div>' +
+          qr(['Refrigerant low','Filter replacement','Compressor fault']);
+      },
+      'heating': function(){
+        return '<b>❄️ Heating Issue</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Check gas supply pressure — confirm valve open.') +
+          step(2,'Inspect igniter — measure resistance (should be 40–90 Ω).') +
+          step(3,'Check flame sensor — clean with fine steel wool if coated.') +
+          step(4,'Inspect heat exchanger for cracks (CO risk).') +
+          step(5,'Verify limit switches not tripped due to overtemp.') +
+          '</div>';
+      },
+      'ventilation': function(){
+        return '<b>❄️ Ventilation Issue</b>' +
+          '<div class="cf-steps">' +
+          step(1,'Check and replace supply/return air filters.') +
+          step(2,'Inspect ductwork for disconnections or blockage.') +
+          step(3,'Check damper positions — motorized dampers may need reset.') +
+          step(4,'Measure airflow with anemometer — compare to design CFM.') +
+          step(5,'Check fan belt tension and motor amp draw.') +
+          '</div>';
+      }
+    }
+  };
+
+  /* ── Helpers ── */
+  function step(n, txt){
+    return '<div class="cf-step"><div class="cf-step-n">'+n+'</div><div class="cf-step-txt">'+txt+'</div></div>';
+  }
+  function qr(items){
+    return '<div class="cf-quick-replies">' +
+      items.map(function(q){
+        return '<button class="cf-qr" onclick="cfAutoSend(\''+q+'\')">'+q+'</button>';
+      }).join('') +
+      '</div>';
+  }
+
+  /* ── Match query to KB ── */
+  function cfMatch(query){
+    var q = query.toLowerCase();
+    var cats = cfCategory === 'all' ? Object.keys(KB) : [cfCategory];
+    for (var ci = 0; ci < cats.length; ci++){
+      var cat = KB[cats[ci]];
+      if (!cat) continue;
+      var keys = Object.keys(cat);
+      for (var ki = 0; ki < keys.length; ki++){
+        if (q.indexOf(keys[ki]) !== -1) return cat[keys[ki]]();
+      }
+    }
+    if (cfCategory !== 'all'){
+      var allKeys = Object.keys(KB);
+      for (var ai = 0; ai < allKeys.length; ai++){
+        var aCat = KB[allKeys[ai]];
+        var aKeys = Object.keys(aCat);
+        for (var ak = 0; ak < aKeys.length; ak++){
+          if (q.indexOf(aKeys[ak]) !== -1) return aCat[aKeys[ak]]();
+        }
+      }
+    }
+    return null;
+  }
+
+  /* ── Add message bubble ── */
+  function cfAddMsg(role, html){
+    var box = document.getElementById('cfMessages');
+    var d   = document.createElement('div');
+    d.className = 'cf-msg cf-' + role;
+    d.innerHTML = '<div class="cf-avatar '+role+'">'+(role==='bot'?'🔧':'👷')+'</div>' +
+                  '<div class="cf-bubble">'+html+'</div>';
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  /* ── Send ── */
+  window.cfSend = function(){
+    var inp = document.getElementById('cfInput');
+    var val = inp.value.trim();
+    if (!val) return;
+    inp.value = '';
+    inp.style.height = '';
+    cfAddMsg('user', val);
+
+    var typingEl = document.createElement('div');
+    typingEl.className = 'cf-msg cf-bot';
+    typingEl.innerHTML = '<div class="cf-avatar bot">🔧</div>' +
+      '<div class="cf-typing"><span></span><span></span><span></span></div>';
+    var box = document.getElementById('cfMessages');
+    box.appendChild(typingEl);
+    box.scrollTop = box.scrollHeight;
+
+    setTimeout(function(){
+      box.removeChild(typingEl);
+      var resp = cfMatch(val);
+      if (!resp){
+        resp = 'I couldn\'t find a specific procedure for <b>"'+val+'"</b>. Try keywords like: ' +
+          '<code>circuit breaker</code>, <code>motor fail</code>, <code>vfd</code>, <code>bearing</code>, ' +
+          '<code>pump</code>, <code>loto</code>, <code>vibration</code>, <code>temperature</code>, <code>cooling</code>.' +
+          qr(['Circuit breaker','Motor fail','VFD fault','LOTO','Bearing heat']);
+      }
+      cfAddMsg('bot', resp);
+    }, 600 + Math.random() * 350);
+  };
+
+  window.cfAutoSend = function(q){
+    document.getElementById('cfInput').value = q;
+    cfSend();
+  };
+
+  window.cfSetCat = function(cat, btn){
+    cfCategory = cat;
+    document.querySelectorAll('.cf-cat-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+  };
+
+  /* ── Toggle open/close ── */
+  window.cfToggle = function(){
+    cfOpen = !cfOpen;
+    var panel = document.getElementById('chatFloatPanel');
+    var togBtn = document.getElementById('chatToggleBtn');
+    var badge  = document.getElementById('chatBadge');
+    panel.classList.toggle('cf-open', cfOpen);
+    togBtn.classList.toggle('is-open', cfOpen);
+    if (cfOpen && badge) badge.style.display = 'none';
+  };
+
+  /* ── Wire buttons ── */
+  document.getElementById('chatToggleBtn').addEventListener('click', window.cfToggle);
+  document.getElementById('cfCloseBtn').addEventListener('click', window.cfToggle);
+
+  /* ── Enter to send ── */
+  document.getElementById('cfInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); cfSend(); }
+  });
+
+  /* ── Auto-resize textarea ── */
+  document.getElementById('cfInput').addEventListener('input', function(){
+    this.style.height = '';
+    this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+  });
+
+  /* ── Welcome message ── */
+  cfAddMsg('bot',
+    'Hi! I\'m your <b>Maintenance Assistant</b>. Describe an equipment issue or pick a category above.' +
+    qr(['Circuit breaker trip','Motor failure','VFD fault','Bearing overheat','LOTO procedure','Cooling issue'])
+  );
+
+})();
+</script>
 </body> 
 </html>
