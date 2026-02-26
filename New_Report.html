@@ -419,7 +419,14 @@
     catch(e){console.error(e);}
 
     /* ★ Also update status + location in the SCADA PC Inventory sheet */
-    if(serverOk) updateInventoryStatus(assetId, status, loc_to);
+    let invResult = { ok: false, skipped: false };
+    if(serverOk){
+      if(loc_to){
+        invResult = await updateInventoryStatus(assetId, status, loc_to);
+      } else {
+        invResult = { ok: false, skipped: true };
+      }
+    }
 
     const logs=loadRecords();
     logs.push(localRecord);
@@ -437,26 +444,45 @@
     document.getElementById('locToInput').value='';
     document.getElementById('statusInput').value='Using';
 
-    updateStatus(serverOk
+    /* ── Build status message ── */
+    let invMsg = '';
+    if(!serverOk){
+      invMsg = '<span style="color:#f59e0b">⚠ Inventory not updated (backend unavailable)</span>';
+    } else if(invResult.skipped){
+      invMsg = '<span style="color:#9ca3af">ℹ Inventory location not updated (Location To was empty)</span>';
+    } else if(invResult.ok){
+      invMsg = `<span style="color:#059669">✅ Inventory updated — <strong>${assetId}</strong> location → <strong>${loc_to}</strong>, status → <strong>${status}</strong></span>`;
+    } else {
+      invMsg = `<span style="color:#dc2626">❌ Inventory update failed — <strong>${assetId}</strong> not found or sheet error. Check Asset ID.</span>`;
+    }
+
+    updateStatus((serverOk
       ?'✅ Record saved to <strong>Google Sheet</strong> and this browser.'
-      :'⚠ Google Sheets backend unavailable – record saved in <strong>this browser only</strong>.');
+      :'⚠ Google Sheets backend unavailable – record saved in <strong>this browser only</strong>.')
+      + '<br>' + invMsg);
   }
 
-  /* ★ Update status + location in the SCADA PC Inventory sheet */
-  function updateInventoryStatus(assetId, newStatus, locationTo){
-    fetch(API_BASE_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'text/plain;charset=utf-8'},
-      body: JSON.stringify({
-        op: 'update_inventory_status',
-        asset_id: assetId,
-        status: newStatus,
-        location_to: locationTo
-      })
-    }).then(r => {
-      if(!r.ok) console.warn('Inventory update failed:', r.status);
-      else console.log('Inventory updated:', assetId, '| status:', newStatus, '| location:', locationTo);
-    }).catch(e => console.warn('Inventory update error:', e));
+  /* ★ Update status + location in the SCADA PC Inventory sheet — returns {ok, skipped} */
+  async function updateInventoryStatus(assetId, newStatus, locationTo){
+    try{
+      const res = await fetch(API_BASE_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'text/plain;charset=utf-8'},
+        body: JSON.stringify({
+          op: 'update_inventory_status',
+          asset_id: assetId,
+          status: newStatus,
+          location_to: locationTo
+        })
+      });
+      if(!res.ok){ console.warn('Inventory update HTTP error:', res.status); return {ok:false}; }
+      const data = await res.json().catch(()=>({}));
+      console.log('Inventory update response:', data);
+      return { ok: data.ok === true };
+    } catch(e){
+      console.warn('Inventory update error:', e);
+      return { ok: false };
+    }
   }
 
   function downloadJson(){
