@@ -337,6 +337,10 @@
   const API_BASE_URL='https://script.google.com/macros/s/AKfycbx7CDsQJdIOmrgRFiFAyvZVcLvJrqr2dF1RM4oqy0Aj9FPiZDmTRUP75o8ZUp3bFHXvfg/exec';
   const LOGS_ENDPOINT=API_BASE_URL;
 
+  // ★ SCADA PC Inventory Web App (PC_SHEET) — separate deployment
+  // Replace the URL below with your PC_SHEET Web App URL
+  const INVENTORY_API_URL='https://script.google.com/macros/s/AKfycbznKRp5Q1y0XvdENwdLWze7CDuMAztTCwYfVjv3pbWdZViIz78JdgQG4jMEvWSjud_x/exec';
+
   const STATUS_OPTIONS=['Using','Spare','Broken'];
 
   function loadRecords(){
@@ -465,7 +469,7 @@
   /* ★ Update status + location in the SCADA PC Inventory sheet — returns {ok, skipped} */
   async function updateInventoryStatus(assetId, newStatus, locationTo){
     try{
-      const res = await fetch(API_BASE_URL, {
+      const res = await fetch(INVENTORY_API_URL, {
         method: 'POST',
         headers: {'Content-Type': 'text/plain;charset=utf-8'},
         body: JSON.stringify({
