@@ -352,7 +352,9 @@
     if (!allowedSecs.includes(sec))  sec  = 'F13';
 
     // ===== PDF 檔名 =====
-    const pdfFileName = `docs/schematic/Line-${line}-${sec}-Schematic.pdf`;
+    const pdfFileName = sec === 'F16'
+      ? `docs/schematic/Line-${line}-F16-Esixting Updated Schematic.pdf`
+      : `docs/schematic/Line-${line}-${sec}-Schematic.pdf`;
 
     // 給「手機 / iPad 按鈕」用（Line-1-4-Schematic.html 與 PDF 同一層）
     const pdfUrlForDirect = pdfFileName;
