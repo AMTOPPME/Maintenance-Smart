@@ -1021,7 +1021,7 @@
 
   <div class="pill">
     <span class="pill-label">Release date</span>
-    <span class="pill-strong" id="modDate">Checking…</span>
+    <span class="pill-strong">02/26/2026</span>
   </div>
 </div>
 </div>
@@ -1429,25 +1429,6 @@
   const isTouchDevice =
     ('ontouchstart' in window) ||
     (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
-
-  /* ---------- Modified Date ---------- */
-  (function () {
-    function updateModDate() {
-      const el = document.getElementById('modDate');
-      if (!el) return;
-      const d = new Date(document.lastModified);
-      el.textContent = isNaN(d.getTime())
-        ? 'N/A'
-        : d.toLocaleString([], {
-            year: 'numeric', month: '2-digit', day: '2-digit'
-          });
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', updateModDate);
-    } else {
-      updateModDate();
-    }
-  })();
 
   /* ---------- Quote rotate ---------- */
   (function () {
