@@ -373,12 +373,16 @@
     const openNewTab= document.getElementById('openNewTab');
 
     // ===== 更新標題 =====
-    if (titleEl){
-      titleEl.textContent = `Updated Schematic – Line ${line} – ${sec}`;
-    }
-    if (subEl){
-      subEl.textContent = `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
-    }
+  if (titleEl){
+    titleEl.textContent = sec === 'F16'
+      ? `Updated Schematic – Line ${line} – F16 Esixting Updated Schematic`
+      : `Updated Schematic – Line ${line} – ${sec}`;
+  }
+  if (subEl){
+    subEl.textContent = sec === 'F16'
+      ? `Production Line ${line} – F16 Esixting Updated Schematic`
+      : `Production Line ${line} – Section ${sec} Wiring and PLC Diagram`;
+  }
     // ===== 裝置偵測 =====
     // ===== 裝置偵測 =====
 // ✅ iPad / iPadOS 偵測（含 iPadOS 桌面模式：MacIntel + touch）
