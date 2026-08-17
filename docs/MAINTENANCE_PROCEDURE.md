@@ -8,12 +8,12 @@
 |---|---|
 | 系統名稱 | Maintenance ONE（頁面標題有時顯示 Maintenance Smart，是同一套系統） |
 | 用途 | 廠內電路圖、設備 Procedure、IO 清單、維修紀錄的統一入口 |
-| **正式網站** | **<https://amtoppme.github.io/Maintenance-Smart/>** |
+| **正式網站** | <https://amtoppme.github.io/Maintenance-Smart/> |
 | 託管方式 | GitHub Pages（免費、由 GitHub 直接提供，公司內沒有伺服器需要維護） |
 | GitHub Repository | `AMTOPPME/Maintenance-Smart`（分支：`main`） |
 | 本機工作資料夾 | `C:\Users\Franklin\Documents\GitHub2\Maintenance-Smart` |
 | 主要工具 | **GitHub Desktop**（不需要用命令列） |
-| 文件版本 | v1.2 |
+| 文件版本 | v1.4 |
 | 最後更新 | 2026-08-17 |
 
 ---
@@ -473,10 +473,14 @@ grep -oh -E "docs/(schematic|procedures)/[^\"']*\.pdf" *.html | grep -v '\$' | s
 ### 6.2 IO 對照表檢查（每月／每次改 CSV 後）
 
 ```bash
-cd "C:/Users/Franklin/Documents/GitHub2/Maintenance-Smart" && python -c "import json,os,glob;d=json.load(open('IODescriptionList/index.json',encoding='utf-8'));t=[];w=lambda o:[w(v) for v in o.values()] if isinstance(o,dict) else (t.append(o) if isinstance(o,str) and o.endswith('.csv') else None);w(d);m=[p for p in t if not os.path.isfile(p)];print(f'登錄 {len(t)} 筆 / 磁碟 {len(glob.glob(\"IODescriptionList/**/*.csv\",recursive=True))} 個 / 找不到 {len(m)} 筆');[print('  MISSING:',x) for x in m]"
+cd "C:/Users/Franklin/Documents/GitHub2/Maintenance-Smart" && python -X utf8 -c "import json,os,glob;d=json.load(open('IODescriptionList/index.json',encoding='utf-8'));t=[];w=lambda o:[w(v) for v in o.values()] if isinstance(o,dict) else (t.append(o) if isinstance(o,str) and o.endswith('.csv') else None);w(d);m=[p for p in t if not os.path.isfile(p)];print(f'登錄 {len(t)} 筆 / 磁碟 {len(glob.glob(\"IODescriptionList/**/*.csv\",recursive=True))} 個 / 找不到 {len(m)} 筆');[print('  MISSING:',x) for x in m]"
 ```
 
+> `-X utf8` 不可省略。Windows 主控台預設編碼（cp1252）無法輸出中文，
+> 省略會直接噴 `UnicodeEncodeError` 而不是給你檢查結果。
+
 **判讀：** 「找不到 0 筆」= 正常。有 MISSING = 使用者選到該項目會看到空白表格。
+目前已知有 11 筆，詳見 §8.5。
 
 ### 6.3 後端連線檢查（Records 頁面出問題時用）
 
@@ -608,9 +612,9 @@ fetch('https://script.google.com/macros/s/AKfycbx7CDsQJdIOmrgRFiFAyvZVcLvJrqr2dF
 | 中期 | Apps Script 增加「操作日誌」工作表，記錄每次寫入的時間與內容 | 中（至少能追溯） |
 | 長期 | 改為需 Google 帳號登入（限公司網域）的部署方式 | 高（使用者要登入） |
 
-### 8.4 🟡 已存在的斷鏈（1 筆）
+### 8.4 ✅ 已存在的斷鏈（1 筆）—— 已於 2026-08-17 修正
 
-`CalibrationProcedure.html` 裡寫的是：
+`CalibrationProcedure.html` 第 386 行原本寫的是：
 ```
 docs/procedures/Bardac Drive Download Procedure_SimpleVersion.pdf
 ```
@@ -620,24 +624,43 @@ docs/procedures/Bardac Drive Download_Procedure_SimpleVersion.pdf
                                     ↑ 這裡是底線，不是空白
 ```
 
-**建議：** 修改 HTML 裡的文字讓它符合實際檔名（改檔名會讓既有書籤失效）。
+**處理方式：** 已改 HTML 裡的字串使其符合實際檔名（不改檔名，以免既有書籤失效）。
+修正後執行 §6.1 檢查，PDF 連結為零錯誤。
+
+> 這是最典型的「檔名沒有一模一樣」案例，留在文件裡當作範例。
 
 ### 8.5 🟡 IO 對照表有 11 筆無效登錄
 
 `IODescriptionList/index.json` 登錄了 102 筆 CSV，但磁碟上只有 101 個檔案，其中 11 筆對不上。
-使用者選到這些項目會看到空白表格：
+使用者選到這些項目會看到**空白表格**。
 
-| 位置 | 筆數 | 疑似原因 |
+已逐筆比對磁碟實況，**其中 10 筆是 `index.json` 路徑打錯，檔案其實都在**，只要改字串就好：
+
+| # | index.json 目前寫的（錯） | 磁碟上實際的（對） |
 |---|---|---|
-| `F12/WORD1BIT1 - missing pg 6/` | 5 | 磁碟上的資料夾叫 `WORDBIT1 - missing pg 6`（少一個 `1`） |
-| `F13/WORDBIT/…4750-4808.csv` | 1 | 檔案不存在 |
-| `F13/TEMP CONTROL/` | 3 | `DATA`、`TC 50`、`TEMP RANGE` |
-| `F16/GoOnline/Master Form/…TIMER.csv` | 1 | 檔案不存在 |
-| （其餘） | 1 | 執行 §6.2 可列出完整清單 |
+| 1–5 | `F12/WORD1BIT1 - missing pg 6/F12 - 8 - WORD1BIT1 - …` | `F12/WORDBIT1 - missing pg 6/F12 - 8 - WORDBIT1 - …`　（多打一個 `1`，共 ORIGINAL + XE01~XE04 五筆） |
+| 6 | `F13 - 8 - WORDBIT - 4750-4808.csv` | `F13 - 8 - WORDBIT - 4750 - 4808.csv`　（數字間少了空格） |
+| 7 | `F13 - 12 - TEMP CONTROL - DATA.csv` | `F13 - 12 - TEMP CONTROL - DATA WORD.csv` |
+| 8 | `F13 - 12 - TEMP CONTROL - TC 50.csv` | `F13 - 12 - TEMP CONTROL - TC 50 WORDS.csv` |
+| 9 | `F13 - 12 - TEMP CONTROL - TEMP RANGE.csv` | `F13 - 12 - TEMP CONTROL - TEMP REGULATOR 50 WORD.csv`　⚠️ 名稱差異較大，**請先確認是否為同一份資料再改** |
+| 10 | `F201 - 4 - CW - CW assign for winder.csv` | `F201 - 4 - CW - CW assign for winder W.csv`　（結尾少一個 `W`） |
 
-**處理原則：** 逐筆確認 ——
-- 檔案存在但路徑打錯 → 修正 `index.json`
-- 檔案確實沒有 → 從 `index.json` 移除該筆登錄
+**剩下 1 筆是檔案真的不存在：**
+
+| # | 項目 | 說明 |
+|---|---|---|
+| 11 | `F16/GoOnline/Master Form/… - TIMER.csv` | `Master Form` 資料夾裡沒有 TIMER，但隔壁 `Master Form Updated` 有。<br>需判斷：改指向 Updated 版，或從 `index.json` 移除這筆 |
+
+**另外發現 3 個檔案存在磁碟上但沒有登錄**，使用者在網頁上選不到：
+- `F13/TEMP CONTROL/F13 - 12 - TEMP CONTROL - TC 16 BIT.csv`
+- `F201/CW/F201 - 4 - CW - cdw.csv`
+- `F201/CW/F201 - 4 - CW - cw.csv`
+
+**處理原則：**
+1. 第 1~8、10 項可直接修正 `index.json` 路徑字串
+2. 第 9、11 項需先與熟悉該產線的工程師確認內容是否對應
+3. 未登錄的 3 個檔案，確認是否應該讓使用者看到，是的話補進 `index.json`
+4. 每改一次都執行 §6.2 驗證，目標是「找不到 0 筆」
 
 ### 8.6 🟡 帳號安全
 
@@ -681,9 +704,13 @@ docs/procedures/Bardac Drive Download_Procedure_SimpleVersion.pdf
 
 > 這一項與 §8.1（repo 過大）可以合併考慮 —— 方案 B / C 同時解決兩個問題。
 
-### 8.8 🟢 缺少專案說明文件
+### 8.8 ✅ 缺少專案說明文件 —— 已於 2026-08-17 補上
 
-Repo 內沒有 `README.md`。建議新增，說明專案用途與目錄結構，讓下一位接手者不需要口頭交接。
+已新增 `README.md`，內容包含：專案用途、功能模組、系統架構、目錄結構、
+更新 SOP 摘要、健康檢查指令、統計報表產生方式，並連結至本手冊。
+
+GitHub 會自動把 `README.md` 顯示在 repo 首頁，是新接手者第一眼會看到的東西。
+**日後目錄結構或更新流程有變動時，記得同步修改 `README.md`。**
 
 ### 8.9 🟢 Commit 訊息品質
 
@@ -754,7 +781,7 @@ Maintenance-Smart/
 
 ### 9.4 待確認事項（請與前任逐項確認並填寫）
 
-- [x] ~~正式網站網址~~ → **<https://amtoppme.github.io/Maintenance-Smart/>**（GitHub Pages，已確認）
+- [x] ~~正式網站網址~~ → <https://amtoppme.github.io/Maintenance-Smart/>（GitHub Pages，已確認）
 - [ ] Google Apps Script / Sheets 擁有者帳號：`_________________`
 - [ ] 維修紀錄 Sheets 連結：`_________________`
 - [ ] SCADA PC Inventory Sheets 連結：`_________________`
@@ -771,6 +798,8 @@ Maintenance-Smart/
 | v1.0 | 2026-08-17 | — | 初版建立 |
 | v1.1 | 2026-08-17 | — | 改寫為交接手冊；操作流程改以 GitHub Desktop 為主；明確化「檔名一模一樣、直接覆蓋」規則 |
 | v1.2 | 2026-08-17 | — | 補上正式網站網址與 GitHub Pages 發布流程；新增 §8.7 公開存取風險 |
+| v1.3 | 2026-08-17 | — | §8.4 斷鏈已修正；§8.5 補上 11 筆無效登錄的逐筆對應與 3 筆未登錄檔案 |
+| v1.4 | 2026-08-17 | — | §8.8 已新增 `README.md` |
 
 ---
 
